@@ -1,4 +1,4 @@
-package com.arshia.freetube.ui.theme
+package com.github.freetube.ui.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
