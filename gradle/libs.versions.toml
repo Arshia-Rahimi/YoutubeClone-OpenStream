@@ -18,6 +18,7 @@ serialization-json = "1.7.3"
 koin = "4.0.0"
 coreSplashscreen = "1.0.1"
 uiAndroid = "1.7.8"
+newpipeExtractor = "0.24.4"
 
 [libraries]
 ## android
@@ -59,6 +60,8 @@ androidx-datastore-datastore = { module = "androidx.datastore:datastore", versio
 ## coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+## newpipe
+newpipe-extractor = { module="com.github.teamnewpipe:NewPipeExtractor", version.ref="newpipeExtractor"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
