@@ -100,6 +100,4 @@ dependencies {
     // coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.ktor3)
-    // newPipe
-    implementation(libs.newpipe.extractor)
 }

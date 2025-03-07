@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun LibreTubeScaffold(
     modifier: Modifier = Modifier,
-    topBar: () -> Unit = {},
+    topBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
