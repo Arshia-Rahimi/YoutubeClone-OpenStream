@@ -2,12 +2,11 @@ package com.github.freetube.core.data.imp
 
 import com.github.freetube.core.data.LibreTubeDataRepository
 import com.github.freetube.core.datastore.LibreTubeDataStore
-import com.github.freetube.core.model.AppTheme
 import com.github.freetube.core.model.LibreTubeData
 import kotlinx.coroutines.flow.map
 
 class PDLibreTubeDataRepository(
-    private val dataStore: LibreTubeDataStore
+    dataStore: LibreTubeDataStore
 ): LibreTubeDataRepository {
     
     override val data = dataStore.data
@@ -16,7 +15,4 @@ class PDLibreTubeDataRepository(
                 appTheme = it.appTheme,
             )
         }
-
-    override suspend fun setAppTheme(appTheme: AppTheme) = 
-        dataStore.setAppTheme(appTheme = appTheme)
 }

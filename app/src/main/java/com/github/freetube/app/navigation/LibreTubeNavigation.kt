@@ -3,7 +3,7 @@ package com.github.freetube.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import com.github.freetube.app.LibreTubeAppState
-import com.github.freetube.ui.feature.main.navigation.mainScreenNavigation
+import com.github.freetube.ui.feature.home.navigation.mainScreenNavigation
 import com.github.freetube.ui.feature.settings.navigation.settingsScreenNavigation
 
 @Composable
@@ -14,11 +14,13 @@ fun LibreTubeNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = LibreTubeRoutes.MainRoute
+        startDestination = LibreTubeRoutes.Home
     ) {
         mainScreenNavigation(
-            toSettingsScreen = { navController.navigate(LibreTubeRoutes.SettingsRoute) }
+            toSettingsScreen = { navController.navigate(LibreTubeRoutes.Settings) }
         )
-        settingsScreenNavigation()
+        settingsScreenNavigation(
+            toHomeScreen = { navController.navigate(LibreTubeRoutes.Home)}
+        )
     }
 }

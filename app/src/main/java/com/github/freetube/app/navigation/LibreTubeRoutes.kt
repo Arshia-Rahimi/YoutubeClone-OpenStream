@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 sealed interface LibreTubeRoutes {
     @Serializable
-    data object MainRoute
+    data object Home
     
     @Serializable
-    data object SettingsRoute
+    data object Settings
 }
