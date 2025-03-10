@@ -1,5 +1,6 @@
 package com.github.freetube.ui.designsystem
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,6 +23,7 @@ fun LibreTubeContainer(
     inHomeScreen: Boolean = false,
     toSettingsScreen: () -> Unit = {},
     toHomeScreen: () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -30,7 +33,8 @@ fun LibreTubeContainer(
         modifier = modifier,
         topBar = {
             LibreTubeTopBar(
-                title = title,
+                title = { Text(title) },
+                actions = actions,
                 navigationIcon = {
                     IconButton(
                         onClick = { scope.launch { drawerState.open() } },
@@ -40,7 +44,7 @@ fun LibreTubeContainer(
                             contentDescription = "navigation drawer",
                         )
                     }
-                }
+                },
             )
         },
     ) { ip ->
