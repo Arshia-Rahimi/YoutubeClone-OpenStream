@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FreeTube</string>
+    <string name="subs">subs</string>
+    <string name="library">library</string>
+    <string name="settings">settings</string>
+    <string name="search">search</string>
 </resources>

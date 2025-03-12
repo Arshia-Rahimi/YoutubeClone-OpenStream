@@ -10,7 +10,7 @@ sealed interface LibreTubeRoutes {
     data object Subscriptions
     
     @Serializable
-    data object Playlists
+    data object Library
     
     @Serializable
     data object Settings

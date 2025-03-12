@@ -12,10 +12,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -29,21 +32,27 @@ fun LibreTubeScaffold(
     appState: LibreTubeAppState,
     content: @Composable (Modifier) -> Unit,
 ) {
+    val currentDestination = appState.currentDestination
+    
     NavigationSuiteScaffold(
         modifier = modifier
             .fillMaxSize(),
         navigationSuiteItems = {
             TopLevelDestinations.entries.forEachIndexed { index, destination ->
-                val selected = appState.currentDestination
-                    .isInRouteHierarchy(destination.route::class)
+                val selected = currentDestination.isInRouteHierarchy(destination.route::class)
                 item(
                     selected = selected,
                     onClick = { appState.navigateToTopLevelDestination(destination) },
                     icon = {
                         Icon(
-                            imageVector = destination.icon,
+                            painter = painterResource(
+                                if(selected) destination.selectedIcon else destination.icon
+                            ),
                             contentDescription = null,
                         )
+                    },
+                    label = {
+                        Text(stringResource(destination.label))
                     }
                 )
             }

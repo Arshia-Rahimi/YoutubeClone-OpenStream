@@ -1,30 +1,37 @@
 package com.github.freetube.app.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.arshia.freetube.R
 
 enum class TopLevelDestinations(
-    val icon: ImageVector,
     val route: Any,
+    @DrawableRes val icon: Int,
+    @DrawableRes val selectedIcon: Int,
+    @StringRes val label: Int,
 ) {
     Search(
-        icon = Icons.Default.Search,
+        icon = R.drawable.search,
+        selectedIcon = R.drawable.search_red,
+        label = R.string.search,
         route = LibreTubeRoutes.Search,
     ),
     Subscriptions(
-        icon = Icons.Default.Notifications,
+        icon = R.drawable.subs,
+        selectedIcon = R.drawable.subs_red,
+        label = R.string.subs,
         route = LibreTubeRoutes.Subscriptions,
     ),
-    Playlists(
-        Icons.AutoMirrored.Default.List,
-        route = LibreTubeRoutes.Playlists,
+    Library(
+        icon = R.drawable.library,
+        selectedIcon = R.drawable.library_red,
+        label = R.string.library,
+        route = LibreTubeRoutes.Library,
     ),
     Settings(
-        icon = Icons.Default.Settings,
+        icon = R.drawable.settings,
+        selectedIcon = R.drawable.settings_red,
+        label = R.string.settings,
         route = LibreTubeRoutes.Settings,
     )
 }

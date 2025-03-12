@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import com.github.freetube.app.rememberLibreTubeAppState
 import com.github.freetube.ui.designsystem.LibreTubeScaffold
-import com.github.freetube.ui.feature.playlists.navigation.playlistsScreenNavigation
+import com.github.freetube.ui.feature.library.navigation.libraryScreenNavigation
 import com.github.freetube.ui.feature.search.navigation.searchScreenNavigation
 import com.github.freetube.ui.feature.settings.navigation.settingsScreenNavigation
 import com.github.freetube.ui.feature.subscriptions.navigation.subscriptionsScreenNavigation
@@ -48,7 +48,7 @@ fun LibreTubeNavigation() {
             ) {
                 subscriptionsScreenNavigation()
                 settingsScreenNavigation()
-                playlistsScreenNavigation()
+                libraryScreenNavigation()
                 searchScreenNavigation()
             }
             Row (
