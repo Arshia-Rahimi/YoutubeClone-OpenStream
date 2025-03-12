@@ -10,9 +10,14 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,7 +38,33 @@ fun LibreTubeScaffold(
     content: @Composable (Modifier) -> Unit,
 ) {
     val currentDestination = appState.currentDestination
-    
+    val navigationItemColors = NavigationSuiteItemColors(
+        NavigationBarItemColors(
+            selectedIconColor = Color.Unspecified,
+            unselectedIconColor = Color.Unspecified,
+            selectedTextColor = Color.White,
+            unselectedTextColor = Color.White.copy(0.7f),
+            selectedIndicatorColor = Color(0xFF3A2E31),
+            disabledTextColor = Color.Unspecified,
+            disabledIconColor = Color.Unspecified,
+        ),
+        NavigationRailItemColors(
+            selectedIconColor = Color.Unspecified,
+            unselectedIconColor = Color.Unspecified,
+            selectedTextColor = Color.White,
+            unselectedTextColor = Color.White.copy(0.7f),
+            selectedIndicatorColor = Color(0xFF3A2E31),
+            disabledTextColor = Color.Unspecified,
+            disabledIconColor = Color.Unspecified,
+        ),
+        NavigationDrawerItemDefaults.colors(
+            selectedIconColor = Color.Unspecified,
+            unselectedIconColor = Color.Unspecified,
+            selectedTextColor = Color.White,
+            unselectedTextColor = Color.White.copy(0.7f),
+        ),
+    )
+
     NavigationSuiteScaffold(
         modifier = modifier
             .fillMaxSize(),
@@ -46,17 +77,24 @@ fun LibreTubeScaffold(
                     icon = {
                         Icon(
                             painter = painterResource(
-                                if(selected) destination.selectedIcon else destination.icon
+                                if (selected) destination.selectedIcon else destination.icon
                             ),
                             contentDescription = null,
                         )
                     },
                     label = {
                         Text(stringResource(destination.label))
-                    }
+                    },
+                    colors = navigationItemColors,
                 )
             }
         },
+        navigationSuiteColors = NavigationSuiteDefaults.colors(
+            navigationBarContainerColor = Color(0xFF1A1A1A),
+            navigationDrawerContainerColor = Color(0xFF1A1A1A),
+            navigationRailContainerColor = Color(0xFF1A1A1A),
+        ),
+        containerColor = Color(0xFF111111),
     ) {
         Scaffold(
             modifier = modifier.fillMaxSize(),
@@ -73,7 +111,8 @@ fun LibreTubeScaffold(
             },
         ) { ip ->
             content(
-                Modifier.fillMaxSize()
+                Modifier
+                    .fillMaxSize()
                     .padding(ip)
                     .consumeWindowInsets(ip)
                     .windowInsetsPadding(
@@ -97,3 +136,4 @@ private fun NavDestination?.isInRouteHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any {
         it.hasRoute(route)
     } == true
+

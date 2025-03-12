@@ -37,9 +37,9 @@ fun LibreTubeNavigation() {
 
     LibreTubeScaffold(
         appState = appState,
-    ) {
+    ) { modifier ->
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
         ) {
             NavHost(
                 modifier = Modifier.fillMaxSize(),
