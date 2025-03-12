@@ -10,17 +10,17 @@ enum class TopLevelDestinations(
     @DrawableRes val selectedIcon: Int,
     @StringRes val label: Int,
 ) {
-    Search(
-        icon = R.drawable.search,
-        selectedIcon = R.drawable.search_red,
-        label = R.string.search,
-        route = LibreTubeRoutes.Search,
-    ),
     Subscriptions(
         icon = R.drawable.subs,
         selectedIcon = R.drawable.subs_red,
         label = R.string.subs,
         route = LibreTubeRoutes.Subscriptions,
+    ),
+    Search(
+        icon = R.drawable.search,
+        selectedIcon = R.drawable.search_red,
+        label = R.string.search,
+        route = LibreTubeRoutes.Search,
     ),
     Library(
         icon = R.drawable.library,
