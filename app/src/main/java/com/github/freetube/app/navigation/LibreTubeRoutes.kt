@@ -4,7 +4,13 @@ import kotlinx.serialization.Serializable
 
 sealed interface LibreTubeRoutes {
     @Serializable
-    data object Home
+    data object Search
+
+    @Serializable
+    data object Subscriptions
+    
+    @Serializable
+    data object Playlists
     
     @Serializable
     data object Settings

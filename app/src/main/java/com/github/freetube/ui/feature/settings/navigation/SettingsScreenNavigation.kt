@@ -5,12 +5,8 @@ import androidx.navigation.compose.composable
 import com.github.freetube.app.navigation.LibreTubeRoutes
 import com.github.freetube.ui.feature.settings.SettingsScreen
 
-fun NavGraphBuilder.settingsScreenNavigation(
-    toHomeScreen: () -> Unit,
-) {
+fun NavGraphBuilder.settingsScreenNavigation() {
     composable<LibreTubeRoutes.Settings> {
-        SettingsScreen(
-            toHomeScreen = toHomeScreen,
-        )
+        SettingsScreen()
     }
 }

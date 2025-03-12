@@ -19,13 +19,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsScreenViewModel = koinViewModel(),
-    toHomeScreen: () -> Unit,
 ) {
+    val viewModel = koinViewModel<SettingsScreenViewModel>()
     val settingsData by viewModel.settingsData.collectAsStateWithLifecycle()
     val appTheme = settingsData.appTheme
     LibreTubeContainer(
-        toHomeScreen = toHomeScreen,
         inSettingsScreen = true,
         title = "Settings",
     ) {
