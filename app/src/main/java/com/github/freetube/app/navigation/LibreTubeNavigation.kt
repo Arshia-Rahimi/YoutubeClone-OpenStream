@@ -1,6 +1,7 @@
 package com.github.freetube.app.navigation
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,9 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
-import com.github.freetube.app.LibreTubeAppState
+import com.github.freetube.app.rememberLibreTubeAppState
+import com.github.freetube.core.model.LibreTubeData
 import com.github.freetube.ui.designsystem.LibreTubeScaffold
 import com.github.freetube.ui.feature.playlists.navigation.playlistsScreenNavigation
 import com.github.freetube.ui.feature.search.navigation.searchScreenNavigation
@@ -25,23 +30,24 @@ import com.github.freetube.ui.feature.subscriptions.navigation.subscriptionsScre
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibreTubeNavigation(
-    libreTubeAppState: LibreTubeAppState,
+    libreTubeData: LibreTubeData,
 ) {
-    val navController = libreTubeAppState.navController
+    val appState = rememberLibreTubeAppState(libreTubeData)
+    val navController = appState.navController
     val sheetState = rememberModalBottomSheetState()
     
-    val showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     LibreTubeScaffold(
         navController = navController,
+        appState = appState,
     ) { ip ->
-        Column(
+        Box(
             modifier = Modifier.fillMaxSize()
                 .padding(ip),
         ) {
             NavHost(
-                modifier = Modifier.fillMaxWidth()
-                    .weight(1f),
+                modifier = Modifier.fillMaxSize(),
                 navController = navController,
                 startDestination = LibreTubeRoutes.Subscriptions
             ) {
@@ -51,7 +57,13 @@ fun LibreTubeNavigation(
                 searchScreenNavigation()
             }
             Row (
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(vertical = 6.dp, horizontal = 12.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        showBottomSheet = true
+                    },
             ){
                 // todo miniPLayer
                 Text("miniPlayer")

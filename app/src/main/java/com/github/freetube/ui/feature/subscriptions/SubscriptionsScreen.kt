@@ -1,6 +1,7 @@
 package com.github.freetube.ui.feature.subscriptions
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import org.koin.androidx.compose.koinViewModel
 
@@ -9,5 +10,5 @@ import org.koin.androidx.compose.koinViewModel
 fun SubscriptionsScreen(
 ) {
     val viewModel = koinViewModel<SubscriptionsScreenViewModel>()
-
+    Text("SubscriptionsScreen")
 }

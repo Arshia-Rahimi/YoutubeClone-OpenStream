@@ -13,11 +13,11 @@ enum class LibreTubeDestinations(
 ) {
     Search(
         icon = Icons.Default.Search,
-        route = LibreTubeRoutes.Search
+        route = LibreTubeRoutes.Search,
     ),
     Subscriptions(
         icon = Icons.Default.Notifications,
-        route = LibreTubeRoutes.Search,
+        route = LibreTubeRoutes.Subscriptions,
     ),
     Playlists(
         Icons.AutoMirrored.Default.List,

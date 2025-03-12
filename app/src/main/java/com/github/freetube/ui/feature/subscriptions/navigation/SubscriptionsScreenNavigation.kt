@@ -6,7 +6,7 @@ import com.github.freetube.app.navigation.LibreTubeRoutes
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsScreen
 
 fun NavGraphBuilder.subscriptionsScreenNavigation() {
-    composable<LibreTubeRoutes> {
+    composable<LibreTubeRoutes.Subscriptions> {
         SubscriptionsScreen()
     }
 }
