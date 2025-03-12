@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class LibreTubeDestinations(
+enum class TopLevelDestinations(
     val icon: ImageVector,
     val route: Any,
 ) {

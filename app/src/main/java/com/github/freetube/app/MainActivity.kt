@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                 val libreTubeData by viewModel.libreTubeData.collectAsStateWithLifecycle()
                 libreTubeData?.let {
                     FreeTubeTheme(it.appTheme) {
-                        LibreTubeNavigation(it)
+                        LibreTubeNavigation()
                     }
                 }
             }

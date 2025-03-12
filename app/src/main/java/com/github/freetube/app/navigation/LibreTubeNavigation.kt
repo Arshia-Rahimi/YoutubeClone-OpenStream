@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import com.github.freetube.app.rememberLibreTubeAppState
-import com.github.freetube.core.model.LibreTubeData
 import com.github.freetube.ui.designsystem.LibreTubeScaffold
 import com.github.freetube.ui.feature.playlists.navigation.playlistsScreenNavigation
 import com.github.freetube.ui.feature.search.navigation.searchScreenNavigation
@@ -29,22 +28,18 @@ import com.github.freetube.ui.feature.subscriptions.navigation.subscriptionsScre
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibreTubeNavigation(
-    libreTubeData: LibreTubeData,
-) {
-    val appState = rememberLibreTubeAppState(libreTubeData)
-    val navController = appState.navController
+fun LibreTubeNavigation() {
+    val appState = rememberLibreTubeAppState()
     val sheetState = rememberModalBottomSheetState()
+    val navController = appState.navController
     
     var showBottomSheet by remember { mutableStateOf(false) }
 
     LibreTubeScaffold(
-        navController = navController,
         appState = appState,
-    ) { ip ->
+    ) {
         Box(
-            modifier = Modifier.fillMaxSize()
-                .padding(ip),
+            modifier = Modifier.fillMaxSize(),
         ) {
             NavHost(
                 modifier = Modifier.fillMaxSize(),
@@ -71,8 +66,7 @@ fun LibreTubeNavigation(
         }
         if(showBottomSheet) {
             ModalBottomSheet(
-                modifier = Modifier.fillMaxSize()
-                    .padding(ip),
+                modifier = Modifier.fillMaxSize(),
                 onDismissRequest = {},
                 sheetState = sheetState,
                 dragHandle = {
