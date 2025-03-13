@@ -10,28 +10,34 @@ enum class TopLevelDestinations(
     @DrawableRes val selectedIcon: Int,
     @StringRes val label: Int,
 ) {
-    Subscriptions(
-        icon = R.drawable.subs,
-        selectedIcon = R.drawable.subs_red,
-        label = R.string.subs,
-        route = LibreTubeRoutes.Subscriptions,
-    ),
     Search(
+        route = LibreTubeRoutes.Search,
         icon = R.drawable.search,
         selectedIcon = R.drawable.search_red,
         label = R.string.search,
-        route = LibreTubeRoutes.Search,
+    ),
+    Downloads(
+        route = LibreTubeRoutes.Downloads,
+        icon = R.drawable.downlaods,
+        selectedIcon = R.drawable.downlaods_red,
+        label = R.string.downloads,
+    ),
+    Subscriptions(
+        route = LibreTubeRoutes.Subscriptions,
+        icon = R.drawable.subs,
+        selectedIcon = R.drawable.subs_red,
+        label = R.string.subs,
     ),
     Library(
+        route = LibreTubeRoutes.Library,
         icon = R.drawable.library,
         selectedIcon = R.drawable.library_red,
         label = R.string.library,
-        route = LibreTubeRoutes.Library,
     ),
     Settings(
+        route = LibreTubeRoutes.Settings,
         icon = R.drawable.settings,
         selectedIcon = R.drawable.settings_red,
         label = R.string.settings,
-        route = LibreTubeRoutes.Settings,
     )
 }

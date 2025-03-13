@@ -14,4 +14,7 @@ sealed interface LibreTubeRoutes {
     
     @Serializable
     data object Settings
+    
+    @Serializable
+    data object Downloads
 }

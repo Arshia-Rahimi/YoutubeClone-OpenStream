@@ -12,6 +12,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.github.freetube.app.navigation.TopLevelDestinations
+import com.github.freetube.ui.feature.downloads.navigation.navigationToDownloadsScreen
 import com.github.freetube.ui.feature.library.navigation.navigateToLibrary
 import com.github.freetube.ui.feature.search.navigation.navigateToSearch
 import com.github.freetube.ui.feature.settings.navigation.navigateToSettings
@@ -66,6 +67,7 @@ class LibreTubeAppState(
             TopLevelDestinations.Library -> navController.navigateToLibrary(topLevelNavOptions)
             TopLevelDestinations.Search -> navController.navigateToSearch(topLevelNavOptions)
             TopLevelDestinations.Settings -> navController.navigateToSettings(topLevelNavOptions)
+            TopLevelDestinations.Downloads -> navController.navigationToDownloadsScreen(topLevelNavOptions)
         }
     }
 }
