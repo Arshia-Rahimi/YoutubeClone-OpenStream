@@ -2,6 +2,7 @@ package com.github.freetube.core.datastore.di
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStoreFile
 import com.github.freetube.core.datastore.LibreTubeDataStore
 import com.github.freetube.core.datastore.LibreTubeDataStoreModel
@@ -14,7 +15,8 @@ val dataStoreModule = module {
     single<DataStore<LibreTubeDataStoreModel>> {
         DataStoreFactory.create(
             serializer = LibreTubeDataStoreModelSerializer(),
-            produceFile = { androidContext().dataStoreFile("rose.pb") }
+            produceFile = { androidContext().dataStoreFile("freeTube.pb") },
+            corruptionHandler = ReplaceFileCorruptionHandler { _ -> LibreTubeDataStoreModel() },
         )
     }
     

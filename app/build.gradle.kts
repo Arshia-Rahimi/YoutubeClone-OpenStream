@@ -40,6 +40,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -101,4 +102,8 @@ dependencies {
     // coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.ktor3)
+    // newPipe
+    implementation(libs.newpipe.extractor)
+    // desugaring
+    coreLibraryDesugaring(libs.desugaring)
 }
