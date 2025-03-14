@@ -106,4 +106,6 @@ dependencies {
     implementation(libs.newpipe.extractor)
     // desugaring
     coreLibraryDesugaring(libs.desugaring)
+    // okhttp
+    implementation(libs.okhttp)
 }

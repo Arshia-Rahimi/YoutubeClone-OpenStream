@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.freetube.core.common.util.onFirst
 import com.github.freetube.core.data.LibreTubeDataRepository
-import com.github.freetube.core.extractor.KtorDownloader
+import com.github.freetube.core.extractor.OkHttpDownloader
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 
 class MainActivityViewModel(
-    private val downloader: KtorDownloader,
+    private val downloader: OkHttpDownloader,
     libreTubeData: LibreTubeDataRepository,
 ): ViewModel() {
     
