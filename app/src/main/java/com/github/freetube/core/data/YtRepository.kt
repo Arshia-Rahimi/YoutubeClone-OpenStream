@@ -9,5 +9,5 @@ interface YtRepository {
         query: String,
         contentFilter: List<String>? = null,
         sortFilter: String? = null,
-    ): Flow<Resource<String>>
+    ): Flow<Resource<Class<*>>>
 }
