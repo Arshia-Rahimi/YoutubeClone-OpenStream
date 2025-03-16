@@ -1,6 +1,7 @@
 package com.github.freetube.core.data
 
 import com.github.freetube.core.common.util.Resource
+import com.github.freetube.core.extractor.DataItem
 import kotlinx.coroutines.flow.Flow
 
 interface YtRepository {
@@ -9,5 +10,7 @@ interface YtRepository {
         query: String,
         contentFilter: List<String>? = null,
         sortFilter: String? = null,
-    ): Flow<Resource<Class<*>>>
+    ): Flow<Resource<List<List<DataItem>>>>
+    
+    suspend fun getNextPage(): Flow<Resource<List<List<DataItem>>>>
 }
