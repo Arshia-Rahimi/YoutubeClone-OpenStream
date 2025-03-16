@@ -9,7 +9,7 @@ interface YtRepository {
     
     suspend fun search(
         query: String,
-        contentFilter: List<String>? = null,
+        contentFilter: List<String> = emptyList(),
         sortFilter: String? = null,
     ): Flow<Resource<InitialSearchResult>>
     

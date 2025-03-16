@@ -5,12 +5,12 @@ import org.schabi.newpipe.extractor.Page
 
 class SearchUnit(
     query: String,
-    contentFilter: List<String>? = null,
-    sortFilter: String? = null,
+    contentFilter: List<String>,
+    sortFilter: String?,
 ) {
     private var nextPage: Page?
-    private val extractor = youtubeService
-        .getSearchExtractor(query, contentFilter, sortFilter)
+    // wtffffffffffffffffffffff
+    private val extractor = youtubeService.getSearchExtractor(query, contentFilter, sortFilter)
     
     init {
         extractor.fetchPage()
@@ -31,4 +31,3 @@ class SearchUnit(
             return currentPage.items.toList()
         }
 }
-

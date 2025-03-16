@@ -20,13 +20,13 @@ class NeYtRepository: YtRepository {
     @RequiresApi(Build.VERSION_CODES.S)
     override suspend fun search(
         query: String,
-        contentFilter: List<String>?,
+        contentFilter: List<String>,
         sortFilter: String?,
     ): Flow<Resource<InitialSearchResult>> = withContext(Dispatchers.IO) {
         flow {
             search = SearchUnit(query, contentFilter, sortFilter)
-            emit(search.getFirstPage())
-        }.asResult()
+            emit(Resource.Success(search.getFirstPage()))
+        }
     }
     
     override suspend fun getNextPage(): Flow<Resource<List<DataItem>?>> = withContext(Dispatchers.IO) {
