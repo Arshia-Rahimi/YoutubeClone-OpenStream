@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-class NeYtRepository: YtRepository {
+class ExtractorYtRepository: YtRepository {
     
     private lateinit var search: SearchUnit
     
@@ -25,8 +25,8 @@ class NeYtRepository: YtRepository {
     ): Flow<Resource<InitialSearchResult>> = withContext(Dispatchers.IO) {
         flow {
             search = SearchUnit(query, contentFilter, sortFilter)
-            emit(Resource.Success(search.getFirstPage()))
-        }
+            emit(search.getFirstPage())
+        }.asResult()
     }
     
     override suspend fun getNextPage(): Flow<Resource<List<DataItem>?>> = withContext(Dispatchers.IO) {

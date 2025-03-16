@@ -66,7 +66,7 @@ coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.r
 ## newpipe extractor
 newpipe-extractor = { module="com.github.TeamNewPipe:NewPipeExtractor", version.ref="newPipeExtractor" }
 ## desugaring
-desugaring = { module="com.android.tools:desugar_jdk_libs", version.ref="desugaring" }
+desugaring = { module="com.android.tools:desugar_jdk_libs_nio", version.ref="desugaring" }
 ## okhttp
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 
