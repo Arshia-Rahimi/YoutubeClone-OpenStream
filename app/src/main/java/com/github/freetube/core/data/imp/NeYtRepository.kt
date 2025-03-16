@@ -6,6 +6,7 @@ import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.common.util.asResult
 import com.github.freetube.core.data.YtRepository
 import com.github.freetube.core.extractor.DataItem
+import com.github.freetube.core.extractor.InitialSearchResult
 import com.github.freetube.core.extractor.SearchUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,17 +22,14 @@ class NeYtRepository: YtRepository {
         query: String,
         contentFilter: List<String>?,
         sortFilter: String?,
-    ): Flow<Resource<List<List<DataItem>>>> = withContext(Dispatchers.IO) {
+    ): Flow<Resource<InitialSearchResult>> = withContext(Dispatchers.IO) {
         flow {
             search = SearchUnit(query, contentFilter, sortFilter)
-            emit(search.result.toList())
+            emit(search.getFirstPage())
         }.asResult()
     }
     
-    override suspend fun getNextPage(): Flow<Resource<List<List<DataItem>>>> = withContext(Dispatchers.IO) {
-        flow {
-            search.fetchNextPage()
-            emit(search.result)
-        }.asResult()
+    override suspend fun getNextPage(): Flow<Resource<List<DataItem>?>> = withContext(Dispatchers.IO) {
+        flow { emit(search.getNextPage()) }.asResult()
     }
 }
