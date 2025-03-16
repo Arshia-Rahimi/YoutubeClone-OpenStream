@@ -1,4 +1,4 @@
-package com.github.freetube.ui.globalcomponent.player
+package com.github.freetube.ui.global.player
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api

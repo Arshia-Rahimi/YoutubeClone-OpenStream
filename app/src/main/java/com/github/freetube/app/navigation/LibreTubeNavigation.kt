@@ -18,8 +18,8 @@ import com.github.freetube.ui.feature.library.navigation.libraryScreenNavigation
 import com.github.freetube.ui.feature.search.navigation.searchScreenNavigation
 import com.github.freetube.ui.feature.settings.navigation.settingsScreenNavigation
 import com.github.freetube.ui.feature.subscriptions.navigation.subscriptionsScreenNavigation
-import com.github.freetube.ui.globalcomponent.player.MiniPlayer
-import com.github.freetube.ui.globalcomponent.player.PlayerSheet
+import com.github.freetube.ui.global.player.MiniPlayer
+import com.github.freetube.ui.global.player.PlayerSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

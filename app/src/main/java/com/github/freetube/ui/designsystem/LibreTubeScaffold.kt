@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -87,7 +88,10 @@ fun LibreTubeScaffold(
                         )
                     },
                     label = {
-                        Text(stringResource(destination.label))
+                        Text(
+                            text = stringResource(destination.label),
+                            fontSize = 12.sp,
+                        )
                     },
                     colors = navigationItemColors,
                 )
@@ -136,8 +140,9 @@ private fun LibreTubeTopBar() {
         title = { Text("LibreTube") },
         colors = TopAppBarDefaults.topAppBarColors()
             .copy(
-               containerColor = Color(0xFF111111),
+                containerColor = Color(0xFF111111),
                 scrolledContainerColor = Color(0xFF111111),
+                titleContentColor = Color.White,
             )
     )
 }

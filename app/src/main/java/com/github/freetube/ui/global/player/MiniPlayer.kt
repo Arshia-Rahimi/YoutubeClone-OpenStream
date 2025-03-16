@@ -1,4 +1,4 @@
-package com.github.freetube.ui.globalcomponent.player
+package com.github.freetube.ui.global.player
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

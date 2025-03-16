@@ -9,7 +9,6 @@ class SearchUnit(
     sortFilter: String?,
 ) {
     private var nextPage: Page?
-    // wtffffffffffffffffffffff
     private val extractor = youtubeService.getSearchExtractor(query, contentFilter, sortFilter)
     
     init {

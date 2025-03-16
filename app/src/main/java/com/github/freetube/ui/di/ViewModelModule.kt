@@ -5,7 +5,7 @@ import com.github.freetube.ui.feature.library.LibraryScreenViewModel
 import com.github.freetube.ui.feature.search.SearchScreenViewModel
 import com.github.freetube.ui.feature.settings.SettingsScreenViewModel
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsScreenViewModel
-import com.github.freetube.ui.globalcomponent.player.PlayerViewModel
+import com.github.freetube.ui.global.player.PlayerViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

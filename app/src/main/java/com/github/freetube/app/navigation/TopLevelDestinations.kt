@@ -18,7 +18,7 @@ enum class TopLevelDestinations(
     ),
     Downloads(
         route = LibreTubeRoutes.Downloads,
-        icon = R.drawable.downlaods,
+        icon = R.drawable.downloads,
         selectedIcon = R.drawable.downlaods_red,
         label = R.string.downloads,
     ),
