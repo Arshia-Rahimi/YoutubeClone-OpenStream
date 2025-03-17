@@ -5,13 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -24,13 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
-import com.github.freetube.core.common.util.convertToTime
+import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.extractor.DataItem
 import com.github.freetube.core.extractor.StreamType
 import com.github.freetube.ui.designsystem.components.noRippleClickable
@@ -61,7 +56,7 @@ fun Video(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
-                    text = item.duration.convertToTime(),
+                    text = item.duration.toTime(),
                     color = Color.White,
                     fontSize = 16.sp,
                 )
