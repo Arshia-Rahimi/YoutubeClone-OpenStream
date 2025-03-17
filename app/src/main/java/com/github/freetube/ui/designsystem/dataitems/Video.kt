@@ -1,10 +1,12 @@
 package com.github.freetube.ui.designsystem.dataitems
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,11 +24,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
+import com.github.freetube.core.common.util.convertToTime
 import com.github.freetube.core.extractor.DataItem
 import com.github.freetube.core.extractor.StreamType
 import com.github.freetube.ui.designsystem.components.noRippleClickable
@@ -42,20 +46,26 @@ fun Video(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        BadgedBox(
-            modifier = modifier.fillMaxWidth()
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
                 .weight(1f)
                 .clip(RoundedCornerShape(8.dp)),
-            badge = {
-                Badge(
-                    containerColor = Color(0x99000000),
-                    modifier = Modifier.align(Alignment.BottomEnd)
-                        .clip(RoundedCornerShape(4.dp)),
-                ) {
-                    Text(item.duration.toString(), color = Color.White)
-                }
-            }
+            contentAlignment = Alignment.BottomEnd,
         ) {
+            Box(
+                modifier = Modifier
+                    .padding(end = 12.dp, bottom = 12.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.Black.copy(alpha = 0.25f)),
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+                    text = item.duration.convertToTime(),
+                    color = Color.White,
+                    fontSize = 16.sp,
+                )
+            }
             AsyncImage(
                 modifier = Modifier
                     .matchParentSize(),
@@ -78,14 +88,12 @@ fun Video(
                 )
             }
             Column(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier,
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                        .fillMaxWidth(),
                     text = item.name,
                     fontSize = 20.sp,
                     lineHeight = 24.sp,
