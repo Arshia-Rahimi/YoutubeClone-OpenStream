@@ -19,25 +19,25 @@ sealed class DataItem(
         url: String,
         name: String,
         thumbnails: List<String>,
-        streamType: StreamType,
-        channelName: String,
-        shortDescription: String,
-        uploadDate: String?,
-        viewCount: Long,
-        duration: Long,
-        channelUrl: String,
-        channelVerified: Boolean,
-        isShort: Boolean,
-        channelAvatars: List<String>,
+        val streamType: StreamType,
+        val channelName: String,
+        val shortDescription: String?,
+        val uploadDate: String?,
+        val viewCount: Long,
+        val duration: Long,
+        val channelUrl: String,
+        val channelVerified: Boolean,
+        val isShort: Boolean,
+        val channelAvatars: List<String>,
     ) : DataItem(url, name, thumbnails)
 
     class Playlist(
         url: String,
         name: String,
         thumbnails: List<String>,
-        channelName: String,
-        channelUrl: String,
-        channelVerified: Boolean,
+        val channelName: String,
+        val channelUrl: String,
+        val channelVerified: Boolean,
     ) : DataItem(url, name, thumbnails)
 
     // todo 
@@ -51,9 +51,9 @@ sealed class DataItem(
         url: String,
         name: String,
         thumbnails: List<String>,
-        description: String,
-        subscriberCount: Long,
-        verified: Boolean,
+        val description: String,
+        val subscriberCount: Long,
+        val verified: Boolean,
     ) : DataItem(url, name, thumbnails)
 }
 

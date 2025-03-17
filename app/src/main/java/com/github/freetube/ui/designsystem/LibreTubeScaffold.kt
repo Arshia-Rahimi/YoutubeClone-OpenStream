@@ -74,7 +74,7 @@ fun LibreTubeScaffold(
         modifier = modifier
             .fillMaxSize(),
         navigationSuiteItems = {
-            TopLevelDestinations.entries.forEachIndexed { index, destination ->
+            TopLevelDestinations.entries.forEach { destination ->
                 val selected = currentDestination.isInRouteHierarchy(destination.route::class)
                 item(
                     selected = selected,
@@ -90,7 +90,7 @@ fun LibreTubeScaffold(
                     label = {
                         Text(
                             text = stringResource(destination.label),
-                            fontSize = 12.sp,
+                            fontSize = 8.sp,
                         )
                     },
                     colors = navigationItemColors,
