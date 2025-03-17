@@ -9,9 +9,9 @@ import com.github.freetube.ui.designsystem.dataitems.Playlist
 import com.github.freetube.ui.designsystem.dataitems.Video
 
 @Composable
-fun LibreTubeDataItem(
-    modifier: Modifier = Modifier,
+fun DataItem(
     item: DataItem,
+    modifier: Modifier = Modifier,
 ) {
     when(item) {
         is DataItem.Video -> Video(modifier, item)
