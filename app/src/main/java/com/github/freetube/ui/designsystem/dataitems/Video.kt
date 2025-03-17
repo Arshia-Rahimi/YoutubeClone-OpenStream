@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
+import com.github.freetube.core.common.toViewCount
 import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.extractor.DataItem
 import com.github.freetube.core.extractor.StreamType
@@ -108,7 +109,7 @@ fun Video(
                         )
                     }
                     SubText(
-                        text = "• ${item.viewCount} • ${item.uploadDate}"
+                        text = "• ${item.viewCount.toViewCount()} • ${item.uploadDate}"
                     )
                 }
             }
@@ -154,7 +155,7 @@ private fun Preview(
         channelAvatars = listOf(""),
         shortDescription = "description",
         uploadDate = "5 days ago",
-        viewCount = 45666L,
+        viewCount = 4566604L,
         duration = 120000L,
         channelUrl = "",
         channelVerified = true,
