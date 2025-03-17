@@ -1,7 +1,5 @@
 package com.github.freetube.core.data.imp
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.common.util.asResult
 import com.github.freetube.core.data.YtRepository
@@ -17,7 +15,6 @@ class ExtractorYtRepository: YtRepository {
     
     private lateinit var search: SearchUnit
     
-    @RequiresApi(Build.VERSION_CODES.S)
     override suspend fun search(
         query: String,
         contentFilter: List<String>,

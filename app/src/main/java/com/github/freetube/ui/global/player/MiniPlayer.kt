@@ -27,7 +27,7 @@ fun MiniPlayer(
             .widthIn(max = 600.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable { showBottomSheet },
+            .clickable { showBottomSheet() },
     ) {
         // todo miniPLayer
         Text("miniPlayer")
