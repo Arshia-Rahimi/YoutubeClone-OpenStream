@@ -3,9 +3,11 @@ package com.github.freetube.ui.feature.search
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.DataItem
 import com.github.freetube.ui.designsystem.LoadingBox
@@ -41,37 +44,50 @@ fun SearchScreen() {
     LaunchedEffect(shouldLoadNextPage) {
         if(shouldLoadNextPage) viewModel.getNextPage()
     }
-    
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = lazyColumnState,
+
+    Column(
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        item {
-            SearchField(
-                searchQuery = searchQuery,
-                setSearchQuery = { searchQuery = it },
-                isSearchFieldFocused = isSearchFieldFocused,
-                searchFieldInteractionSource = searchFieldInteractionSource,
-                search = { viewModel.search() }
+        SearchField(
+            searchQuery = searchQuery,
+            setSearchQuery = { searchQuery = it },
+            isSearchFieldFocused = isSearchFieldFocused,
+            searchFieldInteractionSource = searchFieldInteractionSource,
+            search = { viewModel.search() }
+        )
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            state = lazyColumnState,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 8.dp,
+                alignment = Alignment.CenterVertically,
             )
-        }
-        item {
-            SearchInfo(
-                isCorrectedSearch = isCorrectedSearch,
-                searchSuggestion = searchSuggestion,
-            )
-        }
-        items(results, key = { it.url }, contentType = { it }) {
-            DataItem(it)
-        }
-        item {
-            if(isLoadingNextPage) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    CircularProgressIndicator()
+        ) {
+            item {
+                SearchInfo(
+                    isCorrectedSearch = isCorrectedSearch,
+                    searchSuggestion = searchSuggestion,
+                )
+
+            }
+            items(results, key = { it.url }, contentType = { it }) {
+                DataItem(it)
+            }
+            item {
+                if (isLoadingNextPage) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }

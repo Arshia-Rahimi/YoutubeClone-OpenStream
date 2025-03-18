@@ -1,7 +1,22 @@
 package com.github.freetube.core.common
 
+import java.util.Locale
+
 fun Long.toViewCount(): String =
-    if (this < 1000) "$this"
-    else if (this < 1_000_000) (this / 100).toDouble().toString() + "K"
-    else if (this < 1_000_000_000) (this / 1_000_00).toDouble().toString() + "M"
-    else (this / 1_000_000_00).toDouble().toString() + "B"
+    when {
+        this < 1000L -> "$this"
+        this < 1_000_000L -> divideByWithOneFloatingPoint(1000) + "K"
+        this < 1_000_000_000L -> divideByWithOneFloatingPoint(1_000_000) + "M"
+        else -> divideByWithOneFloatingPoint(1_000_000_000) + "B"
+    }
+
+private fun Long.divideByWithOneFloatingPoint(d: Int): String {
+    require(d != 0)
+
+    val result = this.toDouble() / d
+    return if (result % 1.0 == 0.0) {
+        result.toInt().toString()
+    } else {
+        String.format(locale = Locale("en", "US"), "%.1f", result)
+    }
+}

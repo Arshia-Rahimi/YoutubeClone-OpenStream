@@ -37,71 +37,71 @@ fun SearchField(
     setSearchQuery: (TextFieldValue) -> Unit,
     search: () -> Unit,
 ) {
-        val focusManager = LocalFocusManager.current
-        TextField(
-            modifier = Modifier
-                .padding(vertical = 12.dp, horizontal = 16.dp)
-                .clip(RoundedCornerShape(95.dp))
-                .fillMaxWidth(),
-            singleLine = true,
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-            ),
-            interactionSource = searchFieldInteractionSource,
-            value = searchQuery,
-            onValueChange = setSearchQuery,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFF1D1D1D),
-                unfocusedContainerColor = Color(0xFF1D1D1D),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                disabledTextColor = Color.White,
-                errorTextColor = Color.White,
-                cursorColor = Color.White,
-                errorCursorColor = Color.White,
-            ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Search,
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
+    val focusManager = LocalFocusManager.current
+    TextField(
+        modifier = Modifier
+            .padding(vertical = 12.dp)
+            .clip(RoundedCornerShape(95.dp))
+            .fillMaxWidth(),
+        singleLine = true,
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+        ),
+        interactionSource = searchFieldInteractionSource,
+        value = searchQuery,
+        onValueChange = setSearchQuery,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color(0xFF1D1D1D),
+            unfocusedContainerColor = Color(0xFF1D1D1D),
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            disabledTextColor = Color.White,
+            errorTextColor = Color.White,
+            cursorColor = Color.White,
+            errorCursorColor = Color.White,
+        ),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                search()
+                focusManager.clearFocus()
+            },
+        ),
+        leadingIcon = {
+            NoRippleIconButton(
+                onClick = {
                     search()
                     focusManager.clearFocus()
                 },
-            ),
-            leadingIcon = {
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.search),
+                    contentDescription = "",
+                    tint = Color(0xFF8E8E8E),
+                )
+            }
+        },
+        trailingIcon = {
+            if (isSearchFieldFocused) {
                 NoRippleIconButton(
                     onClick = {
-                        search()
+                        setSearchQuery(TextFieldValue())
                         focusManager.clearFocus()
                     },
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.search),
+                        painter = painterResource(R.drawable.cross),
                         contentDescription = "",
                         tint = Color(0xFF8E8E8E),
                     )
                 }
-            },
-            trailingIcon = {
-                if (isSearchFieldFocused) {
-                    NoRippleIconButton(
-                        onClick = {
-                            setSearchQuery(TextFieldValue())
-                            focusManager.clearFocus()
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.cross),
-                            contentDescription = "",
-                            tint = Color(0xFF8E8E8E),
-                        )
-                    }
-                }
             }
-        )
+        }
+    )
 }
 
 @SuppressLint("UnrememberedMutableInteractionSource")
