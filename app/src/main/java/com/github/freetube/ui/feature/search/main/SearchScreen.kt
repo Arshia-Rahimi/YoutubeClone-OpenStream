@@ -1,4 +1,4 @@
-package com.github.freetube.ui.feature.search
+package com.github.freetube.ui.feature.search.main
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.DataItem
 import com.github.freetube.ui.designsystem.LoadingBox
-import com.github.freetube.ui.feature.search.components.SearchField
+import com.github.freetube.ui.feature.search.main.components.SearchField
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

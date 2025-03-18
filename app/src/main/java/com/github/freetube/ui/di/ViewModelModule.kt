@@ -2,7 +2,7 @@ package com.github.freetube.ui.di
 
 import com.github.freetube.ui.feature.downloads.DownloadsScreenViewModel
 import com.github.freetube.ui.feature.library.LibraryScreenViewModel
-import com.github.freetube.ui.feature.search.SearchScreenViewModel
+import com.github.freetube.ui.feature.search.main.SearchScreenViewModel
 import com.github.freetube.ui.feature.settings.SettingsScreenViewModel
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsScreenViewModel
 import com.github.freetube.ui.global.player.PlayerViewModel

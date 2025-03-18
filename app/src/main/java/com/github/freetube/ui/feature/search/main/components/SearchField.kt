@@ -1,4 +1,4 @@
-package com.github.freetube.ui.feature.search.components
+package com.github.freetube.ui.feature.search.main.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

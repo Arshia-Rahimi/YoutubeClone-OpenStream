@@ -39,10 +39,16 @@ fun LibreTubeNavigation() {
                 navController = navController,
                 startDestination = LibreTubeRoutes.Subscriptions
             ) {
-                subscriptionsScreenNavigation()
+                subscriptionsScreenNavigation(
+                    toSearchScreen = { appState.navigateToTopLevelDestination(TopLevelDestinations.Search) },
+                    toSubsPlaylistScreen = { navController.navigate(LibreTubeRoutes.Subscriptions.Playlist) }
+                )
                 settingsScreenNavigation()
                 libraryScreenNavigation()
-                searchScreenNavigation()
+                searchScreenNavigation(
+                    toSubsScreen = { appState.navigateToTopLevelDestination(TopLevelDestinations.Subscriptions) },
+                    toSubsChannelScreen = { navController.navigate(LibreTubeRoutes.Subscriptions.Channel) }
+                )
                 downloadsScreenNavigation()
             }
             MiniPlayer(
