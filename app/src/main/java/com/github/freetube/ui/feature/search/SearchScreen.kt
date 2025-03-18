@@ -1,5 +1,6 @@
 package com.github.freetube.ui.feature.search
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.DataItem
@@ -39,6 +42,7 @@ fun SearchScreen() {
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val lazyColumnState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
     val shouldLoadNextPage by remember { derivedStateOf { !lazyColumnState.canScrollForward } }
     
     LaunchedEffect(shouldLoadNextPage) {
@@ -48,12 +52,18 @@ fun SearchScreen() {
     Column(
         modifier = Modifier
             .padding(12.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = { focusManager.clearFocus() },
+                )
+            },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SearchField(
             searchQuery = searchQuery,
+            focusManager = focusManager,
             setSearchQuery = { searchQuery = it },
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
@@ -74,7 +84,6 @@ fun SearchScreen() {
                     isCorrectedSearch = isCorrectedSearch,
                     searchSuggestion = searchSuggestion,
                 )
-
             }
             items(results, key = { it.url }, contentType = { it }) {
                 DataItem(it)
@@ -92,6 +101,7 @@ fun SearchScreen() {
             }
         }
     }
+    // todo the box should not be covering the textField
     if (isLoading) LoadingBox()
 }
 
@@ -100,6 +110,7 @@ private fun SearchInfo(
     isCorrectedSearch: Boolean,
     searchSuggestion: String,
 ) {
+    // todo 
 //    Row(
 //        modifier = Modifier
 //            .fillMaxWidth()

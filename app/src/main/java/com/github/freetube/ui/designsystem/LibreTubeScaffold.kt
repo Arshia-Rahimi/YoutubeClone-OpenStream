@@ -90,6 +90,7 @@ fun LibreTubeScaffold(
                     label = {
                         Text(
                             text = stringResource(destination.label),
+                            maxLines = 1,
                             fontSize = 8.sp,
                         )
                     },

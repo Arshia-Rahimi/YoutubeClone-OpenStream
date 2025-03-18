@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,12 +45,12 @@ fun Video(
             .fillMaxWidth()
             .height(320.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(0.75f)
                 .clip(RoundedCornerShape(24.dp)),
         ) {
             AsyncImage(
@@ -71,12 +72,14 @@ fun Video(
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.25f),
             verticalAlignment = Alignment.Top,
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .padding(end = 8.dp)
+                    .padding(end = 12.dp)
                     .clip(CircleShape)
                     .width(40.dp)
                     .aspectRatio(1f)
@@ -88,15 +91,21 @@ fun Video(
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.Top,
             ) {
                 Text(
                     text = item.name,
                     fontSize = 20.sp,
                     lineHeight = 24.sp,
                     color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 )
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -126,6 +135,7 @@ fun Video(
                 Icon(
                     painter = painterResource(R.drawable.options),
                     contentDescription = "options",
+                    tint = Color.White,
                 )
             }
         }
