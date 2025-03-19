@@ -23,11 +23,13 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaul
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -41,7 +43,7 @@ fun LibreTubeScaffold(
     appState: LibreTubeAppState,
     content: @Composable (Modifier) -> Unit,
 ) {
-    val currentDestination = appState.currentDestination
+    val currentDestination by appState.currentDestination.collectAsStateWithLifecycle()
     // todo add lightScheme colors
     val navigationItemColors = NavigationSuiteItemColors(
         NavigationBarItemColors(
