@@ -15,7 +15,6 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -28,13 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import com.github.freetube.app.LibreTubeAppState
-import com.github.freetube.app.navigation.TopLevelDestinations
+import com.github.freetube.app.rootcomponent.TopLevelDestinations
 
 @Composable
 fun LibreTubeScaffold(
-    modifier: Modifier = Modifier,
-    appState: LibreTubeAppState,
     currentTLD: TopLevelDestinations,
     content: @Composable (Modifier) -> Unit,
 ) {
@@ -67,15 +63,16 @@ fun LibreTubeScaffold(
     )
 
     NavigationSuiteScaffold(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize(),
         navigationSuiteItems = {
             TopLevelDestinations.entries.forEach { destination ->
-//                val selected = currentDestination.isInRouteHierarchy(destination.route::class)
                 val selected = currentTLD == destination
                 item(
                     selected = selected,
-                    onClick = { appState.navigateToTopLevelDestination(destination) },
+                    onClick = {
+//                        appState.navigateToTopLevelDestination(destination) 
+                    },
                     icon = {
                         Icon(
                             painter = painterResource(
@@ -103,7 +100,7 @@ fun LibreTubeScaffold(
         containerColor = Color(0xFF111111),
     ) {
         Scaffold(
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentColor = MaterialTheme.colorScheme.onBackground,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             containerColor = Color.Transparent,
@@ -111,9 +108,9 @@ fun LibreTubeScaffold(
                 LibreTubeTopBar()
             },
             snackbarHost = {
-                SnackbarHost(
-                    hostState = appState.snackbarHostState,
-                )
+//                SnackbarHost(
+//                    hostState = snackbarHostState,
+//                )
             },
         ) { ip ->
             content(

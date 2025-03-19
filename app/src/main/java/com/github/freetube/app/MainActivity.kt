@@ -5,33 +5,50 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.freetube.app.navigation.LibreTubeNavigation
+import androidx.lifecycle.lifecycleScope
+import com.arkivanov.decompose.extensions.compose.pages.ChildPages
+import com.arkivanov.decompose.retainedComponent
+import com.github.freetube.app.rootcomponent.LibreTubeRootComponent
+import com.github.freetube.app.rootcomponent.TopLevelDestinations
+import com.github.freetube.ui.designsystem.LibreTubeScaffold
 import com.github.freetube.ui.designsystem.theme.FreeTubeTheme
-import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {
-    
-    private val viewModel by inject<MainActivityViewModel>()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val root = retainedComponent { LibreTubeRootComponent(it, lifecycleScope) }
+
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                viewModel.libreTubeData.value == null
+                root.libreTubeData.value == null
             }
         }
         
         setContent {
             KoinAndroidContext {
-                val libreTubeData by viewModel.libreTubeData.collectAsStateWithLifecycle()
+                val libreTubeData by root.libreTubeData.collectAsStateWithLifecycle()
+                var currentTLD by remember { mutableStateOf(TopLevelDestinations.Subscriptions) }
                 libreTubeData?.let {
                     FreeTubeTheme(it.appTheme) {
-                        LibreTubeNavigation()
+                        LibreTubeScaffold(
+                            currentTLD = currentTLD,
+                        ) {
+                            ChildPages(
+                                pages = root.pages,
+                                onPageSelected = {
+                                    currentTLD = TopLevelDestinations.entries[it - 1]
+                                },
+                            ) { _, _ -> }
+                        }
                     }
                 }
             }

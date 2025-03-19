@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.github.freetube.app.navigation.TopLevelDestinations
+import com.github.freetube.app.rootcomponent.TopLevelDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

@@ -1,13 +1,13 @@
 package com.github.freetube.ui.feature.settings
 
 import com.arkivanov.decompose.ComponentContext
-import com.github.freetube.app.PageComponent
+import com.github.freetube.ui.designsystem.TabComponent
 
 class SettingsComponent(
     componentContext: ComponentContext,
 //    private val settingsRepository: SettingsRepository,
-) : PageComponent, ComponentContext by componentContext {
-//    
+) : TabComponent, ComponentContext by componentContext {
+    //    
 //    val settingsData = settingsRepository.settings
 //        .stateIn(
 //            scope = ioContext,

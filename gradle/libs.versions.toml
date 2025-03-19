@@ -75,7 +75,6 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 ## essenty
-#essenty-lifecycle = {module="com.arkivanov.essenty:lifecycle", version.ref="essenty"}
 
 
 [plugins]
