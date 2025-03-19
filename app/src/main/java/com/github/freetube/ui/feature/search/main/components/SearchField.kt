@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,11 +34,11 @@ import com.github.freetube.ui.designsystem.components.NoRippleIconButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchField(
-    searchQuery: TextFieldValue,
+    searchQuery: String,
     isSearchFieldFocused: Boolean,
     searchFieldInteractionSource: MutableInteractionSource,
     focusManager: FocusManager,
-    setSearchQuery: (TextFieldValue) -> Unit,
+    setSearchQuery: (String) -> Unit,
     search: () -> Unit,
 ) {
     BasicTextField(
@@ -92,7 +91,7 @@ fun SearchField(
             if (isSearchFieldFocused) {
                 NoRippleIconButton(
                     onClick = {
-                        setSearchQuery(TextFieldValue())
+                        setSearchQuery("")
                         focusManager.clearFocus()
                     },
                 ) {
@@ -115,7 +114,7 @@ private fun SearchPreview() {
         LazyColumn {
             item {
                 SearchField(
-                    searchQuery = TextFieldValue("as;kgnqrh"),
+                    searchQuery = "as;kgnqrh",
                     setSearchQuery = {},
                     isSearchFieldFocused = true,
                     searchFieldInteractionSource = MutableInteractionSource(),

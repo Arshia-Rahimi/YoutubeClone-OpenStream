@@ -20,6 +20,8 @@ coreSplashscreen = "1.0.1"
 uiAndroid = "1.7.8"
 newPipeExtractor = "0.24.5"
 desugaring = "2.1.5"
+decompose = "3.3.0"
+essenty = "2.5.1"
 
 [libraries]
 ## android
@@ -69,6 +71,12 @@ newpipe-extractor = { module="com.github.TeamNewPipe:NewPipeExtractor", version.
 desugaring = { module="com.android.tools:desugar_jdk_libs_nio", version.ref="desugaring" }
 ## okhttp
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+## decompose
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+## essenty
+#essenty-lifecycle = {module="com.arkivanov.essenty:lifecycle", version.ref="essenty"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

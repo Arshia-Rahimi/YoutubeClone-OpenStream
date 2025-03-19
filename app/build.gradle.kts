@@ -108,4 +108,9 @@ dependencies {
     coreLibraryDesugaring(libs.desugaring)
     // okhttp
     implementation(libs.okhttp)
+    // decompose
+    implementation(libs.decompose)
+    implementation(libs.decompose.extensions)
+    // essenty
+//    implementation(libs.essenty.lifecycle)
 }

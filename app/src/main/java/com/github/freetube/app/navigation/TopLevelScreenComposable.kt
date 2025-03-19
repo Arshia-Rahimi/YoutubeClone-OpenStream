@@ -1,8 +1,10 @@
 package com.github.freetube.app.navigation
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -12,7 +14,7 @@ import kotlin.reflect.KType
 inline fun <reified T : Any> NavGraphBuilder.topLevelScreenComposable(
     typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    noinline content: @Composable () -> Unit,
+    crossinline content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
     composable<T>(
         typeMap = typeMap,
@@ -41,6 +43,6 @@ inline fun <reified T : Any> NavGraphBuilder.topLevelScreenComposable(
                 tween(400),
             )
         },
-        content = { content() },
+        content = { content(it) },
     )
 }

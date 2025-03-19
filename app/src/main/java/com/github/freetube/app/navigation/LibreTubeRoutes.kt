@@ -2,7 +2,8 @@ package com.github.freetube.app.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed interface LibreTubeRoutes {
+@Serializable
+sealed class LibreTubeRoutes {
     @Serializable
     data object Search {
         @Serializable

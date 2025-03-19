@@ -1,19 +1,20 @@
 package com.github.freetube.ui.feature.settings.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.github.freetube.app.navigation.LibreTubeRoutes
 import com.github.freetube.ui.feature.settings.SettingsScreen
 
-fun NavController.navigateToSettings(navOptions: NavOptions) =
-    navigate(route = LibreTubeRoutes.Settings, navOptions =  navOptions)
-
-fun NavGraphBuilder.settingsScreenNavigation() {
-    navigation<LibreTubeRoutes.Settings>(
+@Composable
+fun SettingsScreenNavigation(
+    navController: NavHostController,
+) {
+    NavHost(
         startDestination = LibreTubeRoutes.Settings.Main,
+        navController = navController,
+        route = LibreTubeRoutes.Settings::class,
     ) {
         composable<LibreTubeRoutes.Settings.Main> {
             SettingsScreen()

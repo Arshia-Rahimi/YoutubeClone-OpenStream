@@ -1,19 +1,20 @@
 package com.github.freetube.ui.feature.downloads.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.github.freetube.app.navigation.LibreTubeRoutes
 import com.github.freetube.ui.feature.downloads.DownloadsScreen
 
-fun NavController.navigationToDownloadsScreen(navOptions: NavOptions) = 
-    navigate(route = LibreTubeRoutes.Downloads, navOptions = navOptions)
-
-fun NavGraphBuilder.downloadsScreenNavigation() {
-    navigation<LibreTubeRoutes.Downloads>(
+@Composable
+fun DownloadsScreenNavigation(
+    navController: NavHostController,
+) {
+    NavHost(
         startDestination = LibreTubeRoutes.Downloads.Main,
+        navController = navController,
+        route = LibreTubeRoutes.Downloads::class,
     ) {
         composable<LibreTubeRoutes.Downloads.Main> {
             DownloadsScreen()

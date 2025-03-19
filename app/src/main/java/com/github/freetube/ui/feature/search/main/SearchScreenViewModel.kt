@@ -1,10 +1,7 @@
 package com.github.freetube.ui.feature.search.main
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,8 +19,8 @@ import kotlinx.coroutines.launch
 class SearchScreenViewModel(
     private val ytRepo: YtRepository,
     private val handle: SavedStateHandle,
-): ViewModel() {
-    
+) : ViewModel() {
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
     private val _searchSuggestion = MutableStateFlow("")
@@ -38,28 +35,24 @@ class SearchScreenViewModel(
         ),
         init = { mutableStateListOf<DataItem>() }
     )
-    val searchQuery by handle.saveable(
-        saver = Saver(
-            save = { it.value.text },
-            restore = { mutableStateOf(TextFieldValue(it)) }
-        ),
-        init = { mutableStateOf(TextFieldValue()) }
-    )
-   
-    fun setSearchQuery(value: TextFieldValue) {
-        searchQuery.value = value
+
+    val searchQuery = handle.getStateFlow("searchQuery", "")
+
+    fun setSearchQuery(value: String) {
+        handle["searchQuery"] = value
     }
-    
+
     fun search() {
         viewModelScope.launch(Dispatchers.IO) {
-            ytRepo.search(searchQuery.value.text)
-                .collect { 
-                    when(it) {
+            ytRepo.search(searchQuery.value)
+                .collect {
+                    when (it) {
                         is Resource.Loading -> _isLoading.value = true
                         is Resource.Error -> {
                             println(it.message)
                             _isLoading.value = false
                         }
+
                         is Resource.Success -> {
                             _searchSuggestion.value = it.data.searchSuggestion
                             _isCorrectedSearch.value = it.data.isCorrectedSearch
@@ -70,17 +63,19 @@ class SearchScreenViewModel(
                 }
         }
     }
-    
+
     fun getNextPage() {
         viewModelScope.launch {
             ytRepo.getNextPage().collect {
-                when(it) {
+                when (it) {
                     is Resource.Error -> {
                         println(it.message)
                     }
+
                     is Resource.Success -> {
                         it.data?.let { nextPage -> results += nextPage }
                     }
+
                     else -> {}
                 }
             }
