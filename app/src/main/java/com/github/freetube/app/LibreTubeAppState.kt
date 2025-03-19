@@ -57,10 +57,10 @@ class LibreTubeAppState(
                 navOptions {
                     popUpTo(target.route) {
                         inclusive = true
-                        saveState = false
+                        saveState = true
                     }
                     launchSingleTop = true
-                    restoreState = false
+                    restoreState = true
                 }
             }
         } else {

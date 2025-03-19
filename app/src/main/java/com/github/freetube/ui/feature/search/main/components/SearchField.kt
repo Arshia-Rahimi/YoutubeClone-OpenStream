@@ -48,7 +48,7 @@ fun SearchField(
             .padding(vertical = 12.dp)
             .clip(RoundedCornerShape(95.dp))
             .fillMaxWidth(),
-        maxLines = 2,
+        maxLines = 1,
         textStyle = TextStyle(fontSize = 16.sp, color = Color.White),
         interactionSource = searchFieldInteractionSource,
         onValueChange = setSearchQuery,
