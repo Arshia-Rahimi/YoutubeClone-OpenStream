@@ -7,7 +7,7 @@ import com.github.freetube.app.navigation.LibreTubeRoutes
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class TopLevelDestinations(
+enum class Tabs(
     val route: Any,
     @DrawableRes val icon: Int,
     @DrawableRes val selectedIcon: Int,

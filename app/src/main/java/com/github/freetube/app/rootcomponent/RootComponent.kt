@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.router.pages.Pages
 import com.arkivanov.decompose.router.pages.PagesNavigation
 import com.arkivanov.decompose.router.pages.childPages
+import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
 import com.github.freetube.core.common.util.onFirst
 import com.github.freetube.core.data.LibreTubeDataRepository
@@ -24,7 +25,9 @@ import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 
 interface RootComponent {
-    val pages: Value<ChildPages<TopLevelDestinations, TabComponent>>
+    val pages: Value<ChildPages<Tabs, TabComponent>>
+
+    fun selectTab(index: Int)
 }
 
 class LibreTubeRootComponent(
@@ -49,15 +52,17 @@ class LibreTubeRootComponent(
         NewPipe.init(downloader, Localization("en", "US"))
 
     // tab navigation logic
-    private val navigation = PagesNavigation<TopLevelDestinations>()
+    private val navigation = PagesNavigation<Tabs>()
+
+    override fun selectTab(index: Int) = navigation.select(index)
 
     override val pages = childPages(
         source = navigation,
-        serializer = TopLevelDestinations.serializer(),
+        serializer = Tabs.serializer(),
         initialPages = {
             Pages(
-                items = TopLevelDestinations.entries,
-                selectedIndex = 3,
+                items = Tabs.entries,
+                selectedIndex = 2,
             )
         },
         pageStatus = { _, _ -> Status.RESUMED },
@@ -65,13 +70,13 @@ class LibreTubeRootComponent(
     )
 
     private fun childFactory(
-        tab: TopLevelDestinations,
+        tab: Tabs,
         context: ComponentContext,
     ): TabComponent = when (tab) {
-        TopLevelDestinations.Settings -> SettingsComponent(context)
-        TopLevelDestinations.Downloads -> DownloadsComponent(context)
-        TopLevelDestinations.Subscriptions -> SubscriptionsComponent(context)
-        TopLevelDestinations.Library -> LibraryComponent(context)
-        TopLevelDestinations.Search -> SearchComponent(context)
+        Tabs.Settings -> SettingsComponent(context)
+        Tabs.Downloads -> DownloadsComponent(context)
+        Tabs.Subscriptions -> SubscriptionsComponent(context)
+        Tabs.Library -> LibraryComponent(context)
+        Tabs.Search -> SearchComponent(context)
     }
 }

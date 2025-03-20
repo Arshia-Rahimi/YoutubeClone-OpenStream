@@ -1,4 +1,4 @@
-package com.github.freetube.ui.feature.search.main
+package com.github.freetube.ui.feature.search
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -25,25 +24,25 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.DataItem
 import com.github.freetube.ui.designsystem.LoadingBox
 import com.github.freetube.ui.feature.search.main.components.SearchField
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SearchScreen() {
-    val viewModel = koinViewModel<SearchScreenViewModel>()
-    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val results = viewModel.results
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val isCorrectedSearch by viewModel.isCorrectedSearch.collectAsStateWithLifecycle()
-    val searchSuggestion by viewModel.searchSuggestion.collectAsStateWithLifecycle()
+fun SearchScreen(
+    component: SearchComponent,
+) {
+    val searchQuery by component.searchQuery
+    val results = component.results
+    val isLoading by component.isLoading.collectAsStateWithLifecycle()
+    val isCorrectedSearch by component.isCorrectedSearch.collectAsStateWithLifecycle()
+    val searchSuggestion by component.searchSuggestion.collectAsStateWithLifecycle()
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val lazyColumnState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     val shouldLoadNextPage by remember { derivedStateOf { !lazyColumnState.canScrollForward } }
-    
-    LaunchedEffect(shouldLoadNextPage) {
-        if(shouldLoadNextPage) viewModel.getNextPage()
-    }
+
+//    LaunchedEffect(shouldLoadNextPage) {
+//        if(shouldLoadNextPage) co.getNextPage()
+//    }
 
     Column(
         modifier = Modifier
@@ -60,10 +59,10 @@ fun SearchScreen() {
         SearchField(
             searchQuery = searchQuery,
             focusManager = focusManager,
-            setSearchQuery = { viewModel.setSearchQuery(it) },
+            setSearchQuery = {},
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
-            search = { viewModel.search() }
+            search = {}
         )
         LazyColumn(
             modifier = Modifier

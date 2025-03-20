@@ -27,11 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import com.github.freetube.app.rootcomponent.TopLevelDestinations
+import com.github.freetube.app.rootcomponent.Tabs
 
 @Composable
 fun LibreTubeScaffold(
-    currentTLD: TopLevelDestinations,
+    currentTab: Tabs,
+    navigateToTab: (Tabs) -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
     // todo add lightScheme colors
@@ -66,24 +67,22 @@ fun LibreTubeScaffold(
         modifier = Modifier
             .fillMaxSize(),
         navigationSuiteItems = {
-            TopLevelDestinations.entries.forEach { destination ->
-                val selected = currentTLD == destination
+            Tabs.entries.forEach { tab ->
+                val selected = currentTab == tab
                 item(
                     selected = selected,
-                    onClick = {
-//                        appState.navigateToTopLevelDestination(destination) 
-                    },
+                    onClick = { navigateToTab(tab) },
                     icon = {
                         Icon(
                             painter = painterResource(
-                                if (selected) destination.selectedIcon else destination.icon
+                                if (selected) tab.selectedIcon else tab.icon
                             ),
                             contentDescription = null,
                         )
                     },
                     label = {
                         Text(
-                            text = stringResource(destination.label),
+                            text = stringResource(tab.label),
                             maxLines = 1,
                             fontSize = 8.sp,
                         )

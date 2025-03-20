@@ -112,5 +112,6 @@ dependencies {
     implementation(libs.decompose)
     implementation(libs.decompose.extensions)
     // essenty
-//    implementation(libs.essenty.lifecycle)
+    implementation(libs.essenty.lifecycle)
+    implementation(libs.essenty.lifecycle.coroutines)
 }
