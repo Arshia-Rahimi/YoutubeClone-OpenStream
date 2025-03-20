@@ -27,13 +27,13 @@ import com.github.freetube.ui.feature.search.main.components.SearchField
 
 @Composable
 fun SearchScreen(
-    component: SearchComponent,
+    screenModel: SearchScreenModel,
 ) {
-    val searchQuery by component.searchQuery
-    val results = component.results
-    val isLoading by component.isLoading.collectAsStateWithLifecycle()
-    val isCorrectedSearch by component.isCorrectedSearch.collectAsStateWithLifecycle()
-    val searchSuggestion by component.searchSuggestion.collectAsStateWithLifecycle()
+    val searchQuery by screenModel.searchQuery
+    val results = screenModel.results
+    val isLoading by screenModel.isLoading.collectAsStateWithLifecycle()
+    val isCorrectedSearch by screenModel.isCorrectedSearch.collectAsStateWithLifecycle()
+    val searchSuggestion by screenModel.searchSuggestion.collectAsStateWithLifecycle()
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val lazyColumnState = rememberLazyListState()
@@ -59,10 +59,10 @@ fun SearchScreen(
         SearchField(
             searchQuery = searchQuery,
             focusManager = focusManager,
-            setSearchQuery = {},
+            setSearchQuery = { screenModel.searchQuery.value = it },
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
-            search = {}
+            search = { screenModel.search() },
         )
         LazyColumn(
             modifier = Modifier

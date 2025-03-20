@@ -5,8 +5,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun LibraryScreen(
-    component: LibraryComponent,
+    screenModel: LibraryScreenModel,
 ) {
-
     Text("Playlists")
 }

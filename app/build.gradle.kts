@@ -108,10 +108,11 @@ dependencies {
     coreLibraryDesugaring(libs.desugaring)
     // okhttp
     implementation(libs.okhttp)
-    // decompose
-    implementation(libs.decompose)
-    implementation(libs.decompose.extensions)
-    // essenty
-    implementation(libs.essenty.lifecycle)
-    implementation(libs.essenty.lifecycle.coroutines)
+    // voyager
+    implementation(libs.voyager)
+    implementation(libs.voyager.screenmodel)
+    implementation(libs.voyager.bottom.sheet)
+    implementation(libs.voyager.tab)
+    implementation(libs.voyager.transitions)
+    implementation(libs.voyager.koin)
 }

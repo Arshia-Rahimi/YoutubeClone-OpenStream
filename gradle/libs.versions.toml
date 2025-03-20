@@ -20,8 +20,7 @@ coreSplashscreen = "1.0.1"
 uiAndroid = "1.7.8"
 newPipeExtractor = "0.24.5"
 desugaring = "2.1.5"
-decompose = "3.3.0"
-essenty = "2.5.0"
+voyager = "1.1.0-beta03"
 
 [libraries]
 ## android
@@ -71,12 +70,14 @@ newpipe-extractor = { module="com.github.TeamNewPipe:NewPipeExtractor", version.
 desugaring = { module="com.android.tools:desugar_jdk_libs_nio", version.ref="desugaring" }
 ## okhttp
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-## decompose
-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
-## essenty
-essenty-lifecycle = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
-essenty-lifecycle-coroutines = { module = "com.arkivanov.essenty:lifecycle-coroutines", version.ref = "essenty" }
+## voyager
+voyager = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-bottom-sheet = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tab = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

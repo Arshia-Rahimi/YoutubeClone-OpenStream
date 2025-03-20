@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionsScreen(
-    component: SubscriptionsComponent,
+    screenModel: SubscriptionsScreenModel,
 ) {
     Box(
         modifier = Modifier

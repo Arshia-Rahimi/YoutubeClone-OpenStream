@@ -5,8 +5,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun DownloadsScreen(
-    component: DownloadsComponent,
+    screenModel: DownloadsScreenModel,
 ) {
-
     Text("downloads")
 }

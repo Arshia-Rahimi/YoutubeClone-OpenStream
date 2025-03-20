@@ -27,12 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import com.github.freetube.app.rootcomponent.Tabs
+import cafe.adriel.voyager.navigator.tab.Tab
+import com.github.freetube.app.navigation.Tabs
 
 @Composable
 fun LibreTubeScaffold(
     currentTab: Tabs,
-    navigateToTab: (Tabs) -> Unit,
+    navigateToTab: (Tab) -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
     // todo add lightScheme colors
@@ -71,7 +72,7 @@ fun LibreTubeScaffold(
                 val selected = currentTab == tab
                 item(
                     selected = selected,
-                    onClick = { navigateToTab(tab) },
+                    onClick = { navigateToTab(tab.singleton) },
                     icon = {
                         Icon(
                             painter = painterResource(
@@ -82,7 +83,7 @@ fun LibreTubeScaffold(
                     },
                     label = {
                         Text(
-                            text = stringResource(tab.label),
+                            text = stringResource(tab.title),
                             maxLines = 1,
                             fontSize = 8.sp,
                         )

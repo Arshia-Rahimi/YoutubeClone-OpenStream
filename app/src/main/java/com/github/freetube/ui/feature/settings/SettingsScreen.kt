@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SettingsScreen(
-    component: SettingsComponent,
+    screenModel: SettingsScreenModel,
 ) {
     Text("settings", modifier = Modifier.background(Color.Green))
 }
