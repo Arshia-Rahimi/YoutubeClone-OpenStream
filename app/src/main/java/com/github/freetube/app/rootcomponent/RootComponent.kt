@@ -1,17 +1,16 @@
 package com.github.freetube.app.rootcomponent
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.children.ChildNavState.Status
 import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.router.pages.Pages
 import com.arkivanov.decompose.router.pages.PagesNavigation
 import com.arkivanov.decompose.router.pages.childPages
 import com.arkivanov.decompose.router.pages.select
 import com.arkivanov.decompose.value.Value
+import com.github.freetube.app.rootcomponent.RootComponent.Child
 import com.github.freetube.core.common.util.onFirst
 import com.github.freetube.core.data.LibreTubeDataRepository
 import com.github.freetube.core.extractor.OkHttpDownloader
-import com.github.freetube.ui.designsystem.TabComponent
 import com.github.freetube.ui.feature.downloads.DownloadsComponent
 import com.github.freetube.ui.feature.library.LibraryComponent
 import com.github.freetube.ui.feature.search.SearchComponent
@@ -25,9 +24,17 @@ import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 
 interface RootComponent {
-    val pages: Value<ChildPages<Tabs, TabComponent>>
+    val pages: Value<ChildPages<Tabs, Child>>
 
     fun selectTab(index: Int)
+
+    sealed class Child {
+        data class SettingsChild(val component: SettingsComponent) : Child()
+        data class DownloadsChild(val component: DownloadsComponent) : Child()
+        data class SearchChild(val component: SearchComponent) : Child()
+        data class LibraryChild(val component: LibraryComponent) : Child()
+        data class SubscriptionsChild(val component: SubscriptionsComponent) : Child()
+    }
 }
 
 class LibreTubeRootComponent(
@@ -65,18 +72,18 @@ class LibreTubeRootComponent(
                 selectedIndex = 2,
             )
         },
-        pageStatus = { _, _ -> Status.RESUMED },
+//        pageStatus = { _, _ -> Status.RESUMED },
         childFactory = ::childFactory,
     )
 
     private fun childFactory(
         tab: Tabs,
         context: ComponentContext,
-    ): TabComponent = when (tab) {
-        Tabs.Settings -> SettingsComponent(context)
-        Tabs.Downloads -> DownloadsComponent(context)
-        Tabs.Subscriptions -> SubscriptionsComponent(context)
-        Tabs.Library -> LibraryComponent(context)
-        Tabs.Search -> SearchComponent(context)
+    ): Child = when (tab) {
+        Tabs.Settings -> Child.SettingsChild(SettingsComponent(context))
+        Tabs.Downloads -> Child.DownloadsChild(DownloadsComponent(context))
+        Tabs.Subscriptions -> Child.SubscriptionsChild(SubscriptionsComponent(context))
+        Tabs.Library -> Child.LibraryChild(LibraryComponent(context))
+        Tabs.Search -> Child.SearchChild(SearchComponent(context))
     }
 }
