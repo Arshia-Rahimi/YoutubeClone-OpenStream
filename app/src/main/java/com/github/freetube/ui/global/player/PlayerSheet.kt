@@ -13,7 +13,7 @@ import org.koin.compose.koinInject
 @Composable
 fun PlayerSheet(
 ) {
-    val viewModel = koinInject<PlayerViewModel>()
+    val viewModel = koinInject<PlayerScreenModel>()
     
     ModalBottomSheet(
         containerColor = Color(0xFF111111),

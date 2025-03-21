@@ -1,7 +1,7 @@
 package com.github.freetube.app
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.github.freetube.core.common.util.onFirst
 import com.github.freetube.core.data.LibreTubeDataRepository
 import com.github.freetube.core.extractor.OkHttpDownloader
@@ -10,15 +10,15 @@ import kotlinx.coroutines.flow.stateIn
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 
-class MainActivityViewModel(
+class MainActivityScreenModel(
     private val downloader: OkHttpDownloader,
     libreTubeData: LibreTubeDataRepository,
-): ViewModel() {
+) : ScreenModel {
     
     val libreTubeData = libreTubeData.data
         .onFirst { loadNewPipeConfig() }
         .stateIn(
-            scope = viewModelScope,
+            scope = screenModelScope,
             initialValue = null,
             started = SharingStarted.WhileSubscribed(5000L)
         )

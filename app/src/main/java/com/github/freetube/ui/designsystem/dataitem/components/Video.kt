@@ -1,4 +1,4 @@
-package com.github.freetube.ui.designsystem.dataitems
+package com.github.freetube.ui.designsystem.dataitem.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +44,8 @@ import com.github.freetube.ui.designsystem.components.noRippleClickable
 @Composable
 fun Video(
     item: DataItem.Video,
+    toChannelScreen: (String) -> Unit,
+    playVideo: (String) -> Unit,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Column(
@@ -58,9 +60,7 @@ fun Video(
                 .fillMaxWidth()
                 .weight(0.75f)
                 .clip(RoundedCornerShape(24.dp))
-                .noRippleClickable {
-                    // todo play video
-                },
+                .noRippleClickable { playVideo(item.url) },
         ) {
             AsyncImage(
                 modifier = Modifier.matchParentSize(),
@@ -92,9 +92,7 @@ fun Video(
                     .clip(CircleShape)
                     .width(40.dp)
                     .aspectRatio(1f)
-                    .noRippleClickable {
-                        // todo open channel page
-                    },
+                    .noRippleClickable { toChannelScreen(item.url) },
                 model = item.channelAvatars.first(),
                 contentDescription = "channel avatar",
             )
@@ -112,9 +110,7 @@ fun Video(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .noRippleClickable {
-                            // todo play video
-                        },
+                        .noRippleClickable { playVideo(item.url) },
                 )
                 Row(
                     horizontalArrangement = Arrangement.Start,
@@ -194,6 +190,6 @@ private fun Preview(
     )
 ) {
     MaterialTheme {
-        Video(item = item)
+        Video(item = item, {}, {})
     }
 }

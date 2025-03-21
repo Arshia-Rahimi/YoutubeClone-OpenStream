@@ -1,4 +1,4 @@
-package com.github.freetube.ui.designsystem.dataitems
+package com.github.freetube.ui.designsystem.dataitem.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +33,7 @@ import com.github.freetube.ui.designsystem.components.noRippleClickable
 @Composable
 fun Channel(
     item: DataItem.Channel,
+    toChannelScreen: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -51,9 +52,7 @@ fun Channel(
                 modifier = Modifier
                     .clip(CircleShape)
                     .aspectRatio(1f)
-                    .noRippleClickable {
-                        // todo
-                    },
+                    .noRippleClickable { toChannelScreen(item.url) },
                 model = item.thumbnails.first(),
                 contentDescription = "channel avatar",
             )
@@ -118,7 +117,8 @@ private fun Preview() {
                 verified = true,
                 subscriberCount = 45552365L,
                 thumbnails = listOf(""),
-            )
+            ),
+            toChannelScreen = {},
         )
     }
 }

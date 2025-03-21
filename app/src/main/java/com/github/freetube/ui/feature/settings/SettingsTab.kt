@@ -9,7 +9,7 @@ import com.arshia.freetube.R
 import com.github.freetube.app.navigation.LibreTubeTab
 import com.github.freetube.app.navigation.TabData
 
-object SettingsTab : LibreTubeTab {
+object SettingsTab : LibreTubeTab() {
 
     override val data = TabData(
         index = 4u,

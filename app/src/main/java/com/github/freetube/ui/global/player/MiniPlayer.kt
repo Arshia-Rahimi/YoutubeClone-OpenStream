@@ -18,7 +18,7 @@ fun MiniPlayer(
     modifier: Modifier = Modifier,
     showBottomSheet: () -> Unit,
 ) {
-    val viewModel = koinInject<PlayerViewModel>()
+    val viewModel = koinInject<PlayerScreenModel>()
     
     Row (
         modifier = modifier

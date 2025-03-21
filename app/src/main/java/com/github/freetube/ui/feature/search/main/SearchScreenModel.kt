@@ -1,4 +1,4 @@
-package com.github.freetube.ui.feature.search
+package com.github.freetube.ui.feature.search.main
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +56,6 @@ class SearchScreenModel(
                     is Resource.Success -> {
                         it.data?.let { nextPage -> results += nextPage }
                     }
-
                     else -> {}
                 }
             }

@@ -1,4 +1,4 @@
-package com.github.freetube.ui.designsystem.dataitems
+package com.github.freetube.ui.designsystem.dataitem.components
 
 import androidx.compose.runtime.Composable
 import com.github.freetube.core.extractor.DataItem

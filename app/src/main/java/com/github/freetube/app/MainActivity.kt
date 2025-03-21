@@ -14,7 +14,7 @@ import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by inject<MainActivityViewModel>()
+    private val viewModel by inject<MainActivityScreenModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

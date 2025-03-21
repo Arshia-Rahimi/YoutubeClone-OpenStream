@@ -6,7 +6,7 @@ import com.github.freetube.core.data.di.dataModule
 import com.github.freetube.core.database.di.databaseModule
 import com.github.freetube.core.datastore.di.dataStoreModule
 import com.github.freetube.core.extractor.di.extractorModule
-import com.github.freetube.ui.di.viewModelModule
+import com.github.freetube.ui.di.screenModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.androix.startup.KoinStartup
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -19,7 +19,7 @@ class MainApplication: Application(), KoinStartup {
         androidContext(this@MainApplication)
         modules(
             mainModule,
-            viewModelModule,
+            screenModelModule,
             dataModule,
             dataStoreModule,
             databaseModule,

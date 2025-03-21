@@ -2,11 +2,6 @@ package com.github.freetube.app.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import cafe.adriel.voyager.navigator.tab.Tab
-
-interface LibreTubeTab : Tab {
-    val data: TabData
-}
 
 data class TabData(
     val index: UShort,

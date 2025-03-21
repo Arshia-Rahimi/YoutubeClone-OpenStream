@@ -1,15 +1,16 @@
 package com.github.freetube.ui.feature.search
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.res.stringResource
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.tab.TabOptions
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.arshia.freetube.R
 import com.github.freetube.app.navigation.LibreTubeTab
 import com.github.freetube.app.navigation.TabData
+import com.github.freetube.ui.feature.search.main.components.SearchTabScreen
 
-object SearchTab : LibreTubeTab {
+object SearchTab : LibreTubeTab() {
 
     override val data = TabData(
         index = 0u,
@@ -20,21 +21,17 @@ object SearchTab : LibreTubeTab {
 
     private fun readResolve(): Any = SearchTab
 
-    override val options: TabOptions
-        @Composable
-        get() {
-            val title = stringResource(data.title)
-            return remember {
-                TabOptions(
-                    title = title,
-                    index = data.index,
-                )
-            }
-        }
-
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
-        val screenModel = koinScreenModel<SearchScreenModel>()
-        SearchScreen(screenModel)
+        Navigator(
+            screen = SearchTabScreen(),
+            disposeBehavior = NavigatorDisposeBehavior(disposeSteps = false)
+        ) { navigator ->
+            SlideTransition(
+                navigator = navigator,
+                disposeScreenAfterTransitionEnd = true,
+            )
+        }
     }
 }
