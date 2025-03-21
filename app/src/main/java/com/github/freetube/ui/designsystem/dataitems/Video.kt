@@ -126,6 +126,7 @@ fun Video(
                             modifier = Modifier.padding(start = 4.dp, end = 8.dp),
                             painter = painterResource(R.drawable.verified),
                             contentDescription = "verified",
+                            tint = Color(0xFFAAAAAA)
                         )
                     }
                     SubText(
