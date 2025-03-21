@@ -9,24 +9,21 @@ import com.github.freetube.core.extractor.search.SearchUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 
 class ExtractorSearchRepository : SearchRepository {
 
     private var search: SearchUnit? = null
-    
+
     override suspend fun search(
         query: String,
         contentFilter: List<String>,
         sortFilter: String?,
-    ): Flow<Resource<InitialSearchResult>> = withContext(Dispatchers.IO) {
-        flow {
-            search = SearchUnit(query, contentFilter, sortFilter)
-            emit(search?.getFirstPage() ?: InitialSearchResult("", false, emptyList()))
-        }.asResult()
-    }
-    
-    override suspend fun getNextPage(): Flow<Resource<List<DataItem>?>> = withContext(Dispatchers.IO) {
-        flow { emit(search?.getNextPage()) }.asResult()
-    }
+    ): Flow<Resource<InitialSearchResult>> = flow {
+        search = SearchUnit(query, contentFilter, sortFilter)
+        emit(search?.firstPage ?: InitialSearchResult("", false, emptyList()))
+    }.asResult(Dispatchers.IO)
+
+    override suspend fun getNextPage(): Flow<Resource<List<DataItem>?>> =
+        flow { emit(search?.fetchNextPage()) }
+            .asResult(Dispatchers.IO)
 }

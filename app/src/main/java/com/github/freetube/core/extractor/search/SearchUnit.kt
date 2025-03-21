@@ -1,6 +1,6 @@
 package com.github.freetube.core.extractor.search
 
-import com.github.freetube.core.common.youtubeService
+import com.github.freetube.core.extractor.YtService
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.toList
 import org.schabi.newpipe.extractor.Page
@@ -11,21 +11,20 @@ class SearchUnit(
     sortFilter: String?,
 ) {
     private var nextPage: Page?
-    private val extractor = youtubeService.getSearchExtractor(query, contentFilter, sortFilter)
+    private val extractor = YtService.getSearchExtractor(query, contentFilter, sortFilter)
+    val firstPage: InitialSearchResult
     
     init {
         extractor.fetchPage()
-        nextPage = extractor.initialPage.nextPage
-    }
-    
-    fun getFirstPage() =
-        InitialSearchResult(
+        firstPage = InitialSearchResult(
             searchSuggestion = extractor.searchSuggestion,
             isCorrectedSearch = extractor.isCorrectedSearch,
             firstPage = extractor.initialPage.items.toList(),
         )
-    
-    fun getNextPage(): List<DataItem>? =
+        nextPage = extractor.initialPage.nextPage
+    }
+
+    fun fetchNextPage(): List<DataItem>? =
         nextPage?.let {
             val currentPage = extractor.getPage(nextPage)
             nextPage = currentPage.nextPage

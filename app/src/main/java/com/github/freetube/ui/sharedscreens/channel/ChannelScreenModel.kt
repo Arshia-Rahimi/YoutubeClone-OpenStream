@@ -16,12 +16,12 @@ class ChannelScreenModel(
     init {
         screenModelScope.launch {
             channelRepository.getChannelData(url)
-                .collect(::println)
+                .collect {}
         }
     }
 
     override fun onDispose() {
-        super.onDispose()
         channelRepository.disposeChannel(url)
+        super.onDispose()
     }
 }

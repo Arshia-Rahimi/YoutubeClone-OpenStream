@@ -7,7 +7,6 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.SearchRepository
 import com.github.freetube.core.extractor.model.DataItem
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -28,7 +27,7 @@ class SearchScreenModel(
     var searchQuery = mutableStateOf("")
 
     fun search() {
-        screenModelScope.launch(Dispatchers.IO) {
+        screenModelScope.launch {
             ytRepo.search(searchQuery.value)
                 .collect {
                     when (it) {
@@ -40,6 +39,7 @@ class SearchScreenModel(
                         is Resource.Success -> {
                             _searchSuggestion.value = it.data.searchSuggestion
                             _isCorrectedSearch.value = it.data.isCorrectedSearch
+                            results.clear()
                             results += it.data.firstPage
                             _isLoading.value = false
                         }

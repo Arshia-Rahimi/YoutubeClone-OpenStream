@@ -7,6 +7,11 @@ data class ChannelData(
     val thumbnails: String,
     val verified: Boolean,
     val banner: String,
-    val tabs: List<String>,
+    val tabs: List<ChannelTab>,
     val id: String,
+)
+
+data class ChannelTab(
+    val name: String,
+    val url: String,
 )

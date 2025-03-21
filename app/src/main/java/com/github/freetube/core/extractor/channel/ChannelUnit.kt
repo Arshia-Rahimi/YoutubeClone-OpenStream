@@ -1,12 +1,12 @@
 package com.github.freetube.core.extractor.channel
 
-import com.github.freetube.core.common.youtubeService
+import com.github.freetube.core.extractor.YtService
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 
 class ChannelUnit(
     val url: String,
 ) {
-    private val extractor = youtubeService.getChannelExtractor(url)
+    private val extractor = YtService.getChannelExtractor(url)
     private val tabExtractors: List<ChannelTabExtractor>
     val data: ChannelData
 
@@ -19,15 +19,24 @@ class ChannelUnit(
             thumbnails = extractor.avatars.first().url,
             verified = extractor.isVerified,
             banner = extractor.banners.first().url,
-            tabs = extractor.tabs.map { it.url },
             id = extractor.id,
+            tabs = extractor.tabs.map {
+                ChannelTab(
+                    name = it.url.split("/").last(),
+                    url = it.url,
+                )
+            },
         )
-        println(extractor.id + "--" + extractor.tabs.first().id)
         tabExtractors = buildList {
             data.tabs.forEach {
-                add(youtubeService.getChannelTabExtractorFromId(data.id, it))
+                add(YtService.getChannelTabExtractorFromId(data.id, it.url))
             }
         }
     }
 
+    fun fetchTab(tab: ChannelTab) {
+        val tabExtractor = tabExtractors.first { it.url == tab.url }
+        tabExtractor.fetchPage()
+        // todo return result
+    }
 }
