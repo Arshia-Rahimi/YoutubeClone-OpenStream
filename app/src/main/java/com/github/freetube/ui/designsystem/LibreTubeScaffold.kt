@@ -25,14 +25,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.Tab
-import com.github.freetube.app.navigation.Tabs
+import com.github.freetube.ui.feature.downloads.DownloadsTab
+import com.github.freetube.ui.feature.library.LibraryTab
+import com.github.freetube.ui.feature.search.SearchTab
+import com.github.freetube.ui.feature.settings.SettingsTab
+import com.github.freetube.ui.feature.subscriptions.SubscriptionsTab
+
+val libreTubeTabs = arrayOf(
+    SearchTab,
+    LibraryTab,
+    SubscriptionsTab,
+    DownloadsTab,
+    SettingsTab,
+)
 
 @Composable
 fun LibreTubeScaffold(
-    currentTab: Tabs,
+    currentTab: Tab,
     navigateToTab: (Tab) -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
@@ -68,22 +79,22 @@ fun LibreTubeScaffold(
         modifier = Modifier
             .fillMaxSize(),
         navigationSuiteItems = {
-            Tabs.entries.forEach { tab ->
+            libreTubeTabs.forEach { tab ->
                 val selected = currentTab == tab
                 item(
                     selected = selected,
-                    onClick = { navigateToTab(tab.singleton) },
+                    onClick = { navigateToTab(tab) },
                     icon = {
                         Icon(
                             painter = painterResource(
-                                if (selected) tab.selectedIcon else tab.icon
+                                if (selected) tab.data.selectedIcon else tab.data.icon
                             ),
                             contentDescription = null,
                         )
                     },
                     label = {
                         Text(
-                            text = stringResource(tab.title),
+                            text = tab.options.title,
                             maxLines = 1,
                             fontSize = 8.sp,
                         )

@@ -25,7 +25,7 @@ fun TabNavigation() {
         val tabNavigator = LocalTabNavigator.current
         val currentTab by remember { derivedStateOf { tabNavigator.current } }
         LibreTubeScaffold(
-            currentTab = Tabs.entries[currentTab.options.index.toInt()],
+            currentTab = currentTab,
             navigateToTab = { navigator.current = it }
         ) { modifier ->
             Box(
