@@ -1,6 +1,6 @@
 package com.github.freetube.core.extractor.channel
 
-data class ChannelData(
+data class ChannelInfo(
     val name: String,
     val subscriberCount: Long,
     val description: String,

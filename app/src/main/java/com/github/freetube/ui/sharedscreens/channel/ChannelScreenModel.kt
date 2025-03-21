@@ -1,22 +1,35 @@
 package com.github.freetube.ui.sharedscreens.channel
 
-import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.ChannelRepository
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.github.freetube.core.extractor.channel.ChannelInfo
+import com.github.freetube.ui.designsystem.scaffold.topBar
 import kotlinx.coroutines.launch
 
 class ChannelScreenModel(
     private val url: String,
     private val channelRepository: ChannelRepository,
-) : ScreenModel {
+) : StateScreenModel<ChannelScreenModel.UiState>(UiState.Loading) {
 
-    private val data = MutableStateFlow(null)
+    sealed interface UiState {
+        data object Loading : UiState
+        data class Error(val message: String? = null) : UiState
+        data class Success(val channelInfo: ChannelInfo) : UiState
+    }
 
     init {
+        topBar.value = null
         screenModelScope.launch {
             channelRepository.getChannelData(url)
-                .collect {}
+                .collect {
+                    mutableState.value = when (it) {
+                        is Resource.Loading -> UiState.Loading
+                        is Resource.Error -> UiState.Error(it.message)
+                        is Resource.Success -> UiState.Success(it.data)
+                    }
+                }
         }
     }
 

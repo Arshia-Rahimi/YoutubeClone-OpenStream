@@ -3,7 +3,7 @@ package com.github.freetube.core.data.imp
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.common.util.asResult
 import com.github.freetube.core.data.ChannelRepository
-import com.github.freetube.core.extractor.channel.ChannelData
+import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
 import com.github.freetube.core.extractor.channel.ChannelUnit
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ class ExtractorChannelRepository : ChannelRepository {
 
     private fun getCurrentChannel(url: String): ChannelUnit? = channels.first { it.url == url }
 
-    override suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelData>> =
+    override suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelInfo>> =
         flow {
             val newChannel = ChannelUnit(channelUrl)
             channels += newChannel

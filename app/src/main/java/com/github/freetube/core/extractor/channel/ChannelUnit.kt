@@ -3,16 +3,18 @@ package com.github.freetube.core.extractor.channel
 import com.github.freetube.core.extractor.YtService
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 
+const val Channel_Base_Url = "https://youtube.com/channel"
+
 class ChannelUnit(
     val url: String,
 ) {
     private val extractor = YtService.getChannelExtractor(url)
     private val tabExtractors: List<ChannelTabExtractor>
-    val data: ChannelData
+    val data: ChannelInfo
 
     init {
         extractor.fetchPage()
-        data = ChannelData(
+        data = ChannelInfo(
             name = extractor.name,
             subscriberCount = extractor.subscriberCount,
             description = extractor.description,
@@ -23,13 +25,16 @@ class ChannelUnit(
             tabs = extractor.tabs.map {
                 ChannelTab(
                     name = it.url.split("/").last(),
-                    url = it.url,
+                    url = Channel_Base_Url + it.url,
                 )
             },
         )
         tabExtractors = buildList {
             data.tabs.forEach {
-                add(YtService.getChannelTabExtractorFromId(data.id, it.url))
+                try {
+                    add(YtService.getChannelTabExtractor(YtService.channelTabLHFactory.fromUrl(it.url)))
+                } catch (e: Exception) {
+                }
             }
         }
     }

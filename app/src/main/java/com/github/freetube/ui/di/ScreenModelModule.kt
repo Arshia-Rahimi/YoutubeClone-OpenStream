@@ -1,5 +1,6 @@
 package com.github.freetube.ui.di
 
+import com.github.freetube.ui.designsystem.scaffold.ScaffoldScreenModel
 import com.github.freetube.ui.feature.downloads.DownloadsScreenModel
 import com.github.freetube.ui.feature.library.LibraryScreenModel
 import com.github.freetube.ui.feature.search.main.SearchScreenModel
@@ -21,4 +22,5 @@ val screenModelModule = module {
     factoryOf(::ChannelScreenModel)
     factoryOf(::PlaylistScreenModel)
     singleOf(::PlayerScreenModel)
+    singleOf(::ScaffoldScreenModel)
 }

@@ -1,4 +1,4 @@
-package com.github.freetube.ui.designsystem
+package com.github.freetube.ui.designsystem.scaffold
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -22,16 +22,19 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaul
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.tab.Tab
 import com.github.freetube.ui.feature.downloads.DownloadsTab
 import com.github.freetube.ui.feature.library.LibraryTab
 import com.github.freetube.ui.feature.search.SearchTab
 import com.github.freetube.ui.feature.settings.SettingsTab
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsTab
+import kotlinx.coroutines.flow.MutableStateFlow
 
 val libreTubeTabs = arrayOf(
     SearchTab,
@@ -41,13 +44,15 @@ val libreTubeTabs = arrayOf(
     SettingsTab,
 )
 
+val topBar: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
+
 @Composable
 fun LibreTubeScaffold(
     currentTab: Tab,
     navigateToTab: (Tab) -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
-    // todo add lightScheme colors
+    val topBar by topBar.collectAsStateWithLifecycle()
     val navigationItemColors = NavigationSuiteItemColors(
         NavigationBarItemColors(
             selectedIconColor = Color.Unspecified,
@@ -115,9 +120,7 @@ fun LibreTubeScaffold(
             contentColor = MaterialTheme.colorScheme.onBackground,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             containerColor = Color.Transparent,
-            topBar = {
-                LibreTubeTopBar()
-            },
+            topBar = { topBar?.invoke() ?: LibreTubeTopBar() },
             snackbarHost = {
 //                SnackbarHost(
 //                    hostState = snackbarHostState,
@@ -152,8 +155,3 @@ private fun LibreTubeTopBar() {
             )
     )
 }
-
-//private fun NavDestination?.isInRouteHierarchy(route: KClass<*>): Boolean =
-//    this?.hierarchy?.any {
-//        it.hasRoute(route)
-//    } == true
