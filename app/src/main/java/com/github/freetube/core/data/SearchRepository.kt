@@ -1,11 +1,11 @@
 package com.github.freetube.core.data
 
 import com.github.freetube.core.common.util.Resource
-import com.github.freetube.core.extractor.DataItem
-import com.github.freetube.core.extractor.InitialSearchResult
+import com.github.freetube.core.extractor.model.DataItem
+import com.github.freetube.core.extractor.search.InitialSearchResult
 import kotlinx.coroutines.flow.Flow
 
-interface YtRepository {
+interface SearchRepository {
     
     suspend fun search(
         query: String,

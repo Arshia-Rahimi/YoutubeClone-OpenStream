@@ -1,6 +1,8 @@
-package com.github.freetube.core.extractor
+package com.github.freetube.core.extractor.search
 
 import com.github.freetube.core.common.youtubeService
+import com.github.freetube.core.extractor.model.DataItem
+import com.github.freetube.core.extractor.model.toList
 import org.schabi.newpipe.extractor.Page
 
 class SearchUnit(

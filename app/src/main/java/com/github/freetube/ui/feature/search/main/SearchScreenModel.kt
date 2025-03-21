@@ -5,15 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.github.freetube.core.common.util.Resource
-import com.github.freetube.core.data.YtRepository
-import com.github.freetube.core.extractor.DataItem
+import com.github.freetube.core.data.SearchRepository
+import com.github.freetube.core.extractor.model.DataItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchScreenModel(
-    private val ytRepo: YtRepository,
+    private val ytRepo: SearchRepository,
 ) : ScreenModel {
 
     private val _isLoading = MutableStateFlow(false)

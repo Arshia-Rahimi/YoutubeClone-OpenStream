@@ -1,9 +1,9 @@
-package com.github.freetube.core.extractor
+package com.github.freetube.core.extractor.model
 
-import com.github.freetube.core.extractor.DataItem.Channel
-import com.github.freetube.core.extractor.DataItem.Comment
-import com.github.freetube.core.extractor.DataItem.Playlist
-import com.github.freetube.core.extractor.DataItem.Video
+import com.github.freetube.core.extractor.model.DataItem.Channel
+import com.github.freetube.core.extractor.model.DataItem.Comment
+import com.github.freetube.core.extractor.model.DataItem.Playlist
+import com.github.freetube.core.extractor.model.DataItem.Video
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem
@@ -13,12 +13,12 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 sealed class DataItem(
     val url: String,
     val name: String,
-    val thumbnails: List<String>,
+    val thumbnails: String,
 ) {
     class Video(
         url: String,
         name: String,
-        thumbnails: List<String>,
+        thumbnails: String,
         val streamType: StreamType,
         val channelName: String,
         val shortDescription: String?,
@@ -28,13 +28,13 @@ sealed class DataItem(
         val channelUrl: String,
         val channelVerified: Boolean,
         val isShort: Boolean,
-        val channelAvatars: List<String>,
+        val channelAvatars: String,
     ) : DataItem(url, name, thumbnails)
 
     class Playlist(
         url: String,
         name: String,
-        thumbnails: List<String>,
+        thumbnails: String,
         val channelName: String,
         val channelUrl: String,
         val channelVerified: Boolean,
@@ -44,13 +44,13 @@ sealed class DataItem(
     class Comment(
         url: String,
         name: String,
-        thumbnails: List<String>,
+        thumbnails: String,
     ) : DataItem(url, name, thumbnails)
 
     class Channel(
         url: String,
         name: String,
-        thumbnails: List<String>,
+        thumbnails: String,
         val description: String,
         val subscriberCount: Long,
         val verified: Boolean,
@@ -65,7 +65,7 @@ private fun InfoItem.toDataItem(): DataItem? =
             Playlist(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.map { it.url },
+                thumbnails = thumbnails.first().url,
                 channelName = uploaderName,
                 channelUrl = url,
                 channelVerified = isUploaderVerified,
@@ -75,7 +75,7 @@ private fun InfoItem.toDataItem(): DataItem? =
             Channel(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.map { it.url },
+                thumbnails = thumbnails.first().url,
                 description = description,
                 subscriberCount = subscriberCount,
                 verified = isVerified,
@@ -85,22 +85,22 @@ private fun InfoItem.toDataItem(): DataItem? =
             Comment(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.map { it.url },
+                thumbnails = thumbnails.first().url,
             )
 
         is StreamInfoItem ->
             Video(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.map { it.url },
-                channelUrl = uploaderName,
+                thumbnails = thumbnails.first().url,
+                channelUrl = uploaderUrl,
                 viewCount = viewCount,
                 uploadDate = textualUploadDate,
                 shortDescription = shortDescription,
                 duration = duration,
                 channelVerified = isUploaderVerified,
                 isShort = isShortFormContent,
-                channelAvatars = uploaderAvatars.map { it.url },
+                channelAvatars = uploaderAvatars.first().url,
                 channelName = uploaderName,
                 streamType = when (streamType) {
                     org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.LIVE_STREAM

@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
 import com.github.freetube.core.common.toViewCount
-import com.github.freetube.core.extractor.DataItem
+import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.components.noRippleClickable
 
 @Composable
@@ -53,7 +53,7 @@ fun Channel(
                     .clip(CircleShape)
                     .aspectRatio(1f)
                     .noRippleClickable { toChannelScreen(item.url) },
-                model = item.thumbnails.first(),
+                model = item.thumbnails,
                 contentDescription = "channel avatar",
             )
         }
@@ -116,7 +116,7 @@ private fun Preview() {
                 description = "description",
                 verified = true,
                 subscriberCount = 45552365L,
-                thumbnails = listOf(""),
+                thumbnails = "",
             ),
             toChannelScreen = {},
         )

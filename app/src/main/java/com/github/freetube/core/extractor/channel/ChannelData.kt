@@ -1,0 +1,12 @@
+package com.github.freetube.core.extractor.channel
+
+data class ChannelData(
+    val name: String,
+    val subscriberCount: Long,
+    val description: String,
+    val thumbnails: String,
+    val verified: Boolean,
+    val banner: String,
+    val tabs: List<String>,
+    val id: String,
+)

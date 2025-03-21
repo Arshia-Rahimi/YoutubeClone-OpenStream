@@ -37,8 +37,8 @@ import coil3.compose.AsyncImage
 import com.arshia.freetube.R
 import com.github.freetube.core.common.toViewCount
 import com.github.freetube.core.common.util.toTime
-import com.github.freetube.core.extractor.DataItem
-import com.github.freetube.core.extractor.StreamType
+import com.github.freetube.core.extractor.model.DataItem
+import com.github.freetube.core.extractor.model.StreamType
 import com.github.freetube.ui.designsystem.components.noRippleClickable
 
 @Composable
@@ -64,7 +64,7 @@ fun Video(
         ) {
             AsyncImage(
                 modifier = Modifier.matchParentSize(),
-                model = item.thumbnails.first(),
+                model = item.thumbnails,
                 contentDescription = "thumbnail",
                 contentScale = ContentScale.FillHeight,
             )
@@ -92,8 +92,8 @@ fun Video(
                     .clip(CircleShape)
                     .width(40.dp)
                     .aspectRatio(1f)
-                    .noRippleClickable { toChannelScreen(item.url) },
-                model = item.channelAvatars.first(),
+                    .noRippleClickable { toChannelScreen(item.channelUrl) },
+                model = item.channelAvatars,
                 contentDescription = "channel avatar",
             )
             Column(
@@ -176,10 +176,10 @@ private fun Preview(
     item: DataItem.Video = DataItem.Video(
         url = "",
         name = "name",
-        thumbnails = listOf(""),
+        thumbnails = "",
         streamType = StreamType.NORMAL,
         channelName = "channelName",
-        channelAvatars = listOf(""),
+        channelAvatars = "",
         shortDescription = "description",
         uploadDate = "5 days ago",
         viewCount = 4566604L,
