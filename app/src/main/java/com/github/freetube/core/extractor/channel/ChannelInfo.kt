@@ -4,7 +4,7 @@ data class ChannelInfo(
     val name: String,
     val subscriberCount: Long,
     val description: String,
-    val thumbnails: String,
+    val avatar: String,
     val verified: Boolean,
     val banner: String,
     val tabs: List<ChannelTab>,

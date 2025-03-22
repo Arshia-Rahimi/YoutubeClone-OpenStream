@@ -18,7 +18,7 @@ class ChannelUnit(
             name = extractor.name,
             subscriberCount = extractor.subscriberCount,
             description = extractor.description,
-            thumbnails = extractor.avatars.first().url,
+            avatar = extractor.avatars.first().url,
             verified = extractor.isVerified,
             banner = extractor.banners.first().url,
             id = extractor.id,

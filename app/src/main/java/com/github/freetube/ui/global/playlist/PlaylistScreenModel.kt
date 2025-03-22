@@ -1,4 +1,4 @@
-package com.github.freetube.ui.sharedscreens.playlist
+package com.github.freetube.ui.global.playlist
 
 import cafe.adriel.voyager.core.model.ScreenModel
 

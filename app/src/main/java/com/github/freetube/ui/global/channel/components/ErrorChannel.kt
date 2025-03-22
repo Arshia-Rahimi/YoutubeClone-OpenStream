@@ -1,4 +1,4 @@
-package com.github.freetube.ui.sharedscreens.channel.components
+package com.github.freetube.ui.global.channel.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

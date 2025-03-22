@@ -1,11 +1,10 @@
-package com.github.freetube.ui.sharedscreens.channel
+package com.github.freetube.ui.global.channel
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.ChannelRepository
 import com.github.freetube.core.extractor.channel.ChannelInfo
-import com.github.freetube.ui.designsystem.scaffold.topBar
 import kotlinx.coroutines.launch
 
 class ChannelScreenModel(
@@ -20,7 +19,6 @@ class ChannelScreenModel(
     }
 
     init {
-        topBar.value = null
         screenModelScope.launch {
             channelRepository.getChannelData(url)
                 .collect {

@@ -53,7 +53,7 @@ fun Channel(
                     .clip(CircleShape)
                     .aspectRatio(1f)
                     .noRippleClickable { toChannelScreen(item.url) },
-                model = item.thumbnails,
+                model = item.thumbnail,
                 contentDescription = "channel avatar",
             )
         }
@@ -116,7 +116,7 @@ private fun Preview() {
                 description = "description",
                 verified = true,
                 subscriberCount = 45552365L,
-                thumbnails = "",
+                thumbnail = "",
             ),
             toChannelScreen = {},
         )

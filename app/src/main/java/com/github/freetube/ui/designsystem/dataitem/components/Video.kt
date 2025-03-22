@@ -64,7 +64,7 @@ fun Video(
         ) {
             AsyncImage(
                 modifier = Modifier.matchParentSize(),
-                model = item.thumbnails,
+                model = item.thumbnail,
                 contentDescription = "thumbnail",
                 contentScale = ContentScale.FillHeight,
             )
@@ -176,7 +176,7 @@ private fun Preview(
     item: DataItem.Video = DataItem.Video(
         url = "",
         name = "name",
-        thumbnails = "",
+        thumbnail = "",
         streamType = StreamType.NORMAL,
         channelName = "channelName",
         channelAvatars = "",

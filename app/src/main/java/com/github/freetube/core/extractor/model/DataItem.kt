@@ -13,12 +13,12 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 sealed class DataItem(
     val url: String,
     val name: String,
-    val thumbnails: String,
+    val thumbnail: String,
 ) {
     class Video(
         url: String,
         name: String,
-        thumbnails: String,
+        thumbnail: String,
         val streamType: StreamType,
         val channelName: String,
         val shortDescription: String?,
@@ -29,32 +29,32 @@ sealed class DataItem(
         val channelVerified: Boolean,
         val isShort: Boolean,
         val channelAvatars: String,
-    ) : DataItem(url, name, thumbnails)
+    ) : DataItem(url, name, thumbnail)
 
     class Playlist(
         url: String,
         name: String,
-        thumbnails: String,
+        thumbnail: String,
         val channelName: String,
         val channelUrl: String,
         val channelVerified: Boolean,
-    ) : DataItem(url, name, thumbnails)
+    ) : DataItem(url, name, thumbnail)
 
     // todo 
     class Comment(
         url: String,
         name: String,
-        thumbnails: String,
-    ) : DataItem(url, name, thumbnails)
+        thumbnail: String,
+    ) : DataItem(url, name, thumbnail)
 
     class Channel(
         url: String,
         name: String,
-        thumbnails: String,
+        thumbnail: String,
         val description: String,
         val subscriberCount: Long,
         val verified: Boolean,
-    ) : DataItem(url, name, thumbnails)
+    ) : DataItem(url, name, thumbnail)
 }
 
 fun List<InfoItem>.toList(): List<DataItem> = buildList { this@toList.forEach { it.toDataItem()?.let(::add) } }
@@ -65,7 +65,7 @@ private fun InfoItem.toDataItem(): DataItem? =
             Playlist(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.first().url,
+                thumbnail = thumbnails.first().url,
                 channelName = uploaderName,
                 channelUrl = url,
                 channelVerified = isUploaderVerified,
@@ -75,7 +75,7 @@ private fun InfoItem.toDataItem(): DataItem? =
             Channel(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.first().url,
+                thumbnail = thumbnails.first().url,
                 description = description,
                 subscriberCount = subscriberCount,
                 verified = isVerified,
@@ -85,14 +85,14 @@ private fun InfoItem.toDataItem(): DataItem? =
             Comment(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.first().url,
+                thumbnail = thumbnails.first().url,
             )
 
         is StreamInfoItem ->
             Video(
                 url = url,
                 name = name,
-                thumbnails = thumbnails.first().url,
+                thumbnail = thumbnails.first().url,
                 channelUrl = uploaderUrl,
                 viewCount = viewCount,
                 uploadDate = textualUploadDate,

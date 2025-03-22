@@ -3,12 +3,12 @@ package com.github.freetube.ui.di
 import com.github.freetube.ui.designsystem.scaffold.ScaffoldScreenModel
 import com.github.freetube.ui.feature.downloads.DownloadsScreenModel
 import com.github.freetube.ui.feature.library.LibraryScreenModel
-import com.github.freetube.ui.feature.search.main.SearchScreenModel
+import com.github.freetube.ui.feature.search.SearchScreenModel
 import com.github.freetube.ui.feature.settings.SettingsScreenModel
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsScreenModel
+import com.github.freetube.ui.global.channel.ChannelScreenModel
 import com.github.freetube.ui.global.player.PlayerScreenModel
-import com.github.freetube.ui.sharedscreens.channel.ChannelScreenModel
-import com.github.freetube.ui.sharedscreens.playlist.PlaylistScreenModel
+import com.github.freetube.ui.global.playlist.PlaylistScreenModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module

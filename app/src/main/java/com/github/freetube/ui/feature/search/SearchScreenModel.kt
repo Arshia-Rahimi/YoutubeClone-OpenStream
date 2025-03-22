@@ -1,4 +1,4 @@
-package com.github.freetube.ui.feature.search.main
+package com.github.freetube.ui.feature.search
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,10 +23,14 @@ class SearchScreenModel(
     val isCorrectedSearch = _isCorrectedSearch.asStateFlow()
 
     val results = mutableStateListOf<DataItem>()
-
     var searchQuery = mutableStateOf("")
 
-    fun search() {
+    fun onAction(action: SearchAction) = when (action) {
+        is SearchAction.OnSearch -> search()
+        is SearchAction.OnNextPage -> getNextPage()
+    }
+
+    private fun search() {
         screenModelScope.launch {
             ytRepo.search(searchQuery.value)
                 .collect {
@@ -48,7 +52,7 @@ class SearchScreenModel(
         }
     }
 
-    fun getNextPage() {
+    private fun getNextPage() {
         screenModelScope.launch {
             ytRepo.getNextPage().collect {
                 when (it) {

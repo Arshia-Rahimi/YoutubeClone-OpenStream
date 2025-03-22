@@ -8,7 +8,6 @@ import cafe.adriel.voyager.transitions.SlideTransition
 import com.arshia.freetube.R
 import com.github.freetube.app.navigation.LibreTubeTab
 import com.github.freetube.app.navigation.TabData
-import com.github.freetube.ui.feature.search.main.components.SearchTabScreen
 
 object SearchTab : LibreTubeTab() {
 

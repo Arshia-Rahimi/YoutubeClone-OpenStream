@@ -16,8 +16,6 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -34,7 +32,7 @@ import com.github.freetube.ui.feature.library.LibraryTab
 import com.github.freetube.ui.feature.search.SearchTab
 import com.github.freetube.ui.feature.settings.SettingsTab
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsTab
-import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.compose.koinInject
 
 val libreTubeTabs = arrayOf(
     SearchTab,
@@ -44,15 +42,15 @@ val libreTubeTabs = arrayOf(
     SettingsTab,
 )
 
-val topBar: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibreTubeScaffold(
     currentTab: Tab,
     navigateToTab: (Tab) -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
-    val topBar by topBar.collectAsStateWithLifecycle()
+    val screenModel = koinInject<ScaffoldScreenModel>()
+    val topBar by screenModel.topBar.collectAsStateWithLifecycle()
     val navigationItemColors = NavigationSuiteItemColors(
         NavigationBarItemColors(
             selectedIconColor = Color.Unspecified,
@@ -117,10 +115,11 @@ fun LibreTubeScaffold(
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+//                .nestedScroll(screenModel.scrollBehavior.nestedScrollConnection),
             contentColor = MaterialTheme.colorScheme.onBackground,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             containerColor = Color.Transparent,
-            topBar = { topBar?.invoke() ?: LibreTubeTopBar() },
+            topBar = { topBar() },
             snackbarHost = {
 //                SnackbarHost(
 //                    hostState = snackbarHostState,
@@ -140,18 +139,4 @@ fun LibreTubeScaffold(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun LibreTubeTopBar() {
-    TopAppBar(
-        title = { Text("LibreTube") },
-        colors = TopAppBarDefaults.topAppBarColors()
-            .copy(
-                containerColor = Color(0xFF111111),
-                scrolledContainerColor = Color(0xFF111111),
-                titleContentColor = Color.White,
-            )
-    )
 }
