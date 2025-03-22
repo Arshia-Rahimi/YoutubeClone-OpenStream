@@ -5,6 +5,8 @@ import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.toList
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelTabExtractor
+import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelTabLinkHandlerFactory
 
 const val Channel_Base_Url = "https://youtube.com/channel/"
 
@@ -12,7 +14,7 @@ class ChannelUnit(
     val url: String,
 ) {
     private val channelExtractor = YtService.getChannelExtractor(url)
-    private val tabExtractors: MutableMap<ChannelTabExtractor, Page?>
+    private val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>
     val data: ChannelInfo
 
     init {
@@ -28,37 +30,44 @@ class ChannelUnit(
             tabs = channelExtractor.tabs.map {
                 ChannelTab(
                     name = it.url.split("/").last(),
-                    url = it.baseUrl,
+                    url = it.url,
                 )
             },
         )
-        tabExtractors = buildMap<ChannelTabExtractor, Page?> {
+        tabExtractors = buildList<Triple<String, ChannelTabExtractor, Page?>> {
             data.tabs.forEach {
-                try {
-                    val url = Channel_Base_Url + channelExtractor.id + "/" + it.name
-                    val tab =
-                        YtService.getChannelTabExtractor(YtService.channelTabLHFactory.fromUrl(url))
-                    tab?.let { put(it, null) }
-                } catch (e: Exception) {
-                }
+//                try {
+                val url = "channel/" + channelExtractor.id
+                var name = it.name.lowercase()
+                name = if (name == "streams") "livestreams" else name
+                val tab = YoutubeChannelTabExtractor(
+                    YtService,
+                    YoutubeChannelTabLinkHandlerFactory.getInstance()
+                        .fromQuery(url, listOf(name), null)
+                )
+                add(Triple(name, tab, null))
+//                } catch (e: Exception) { println(e.message) }
             }
-        }.toMutableMap()
+        }.toMutableList()
     }
 
     private fun getTabExtractor(tab: ChannelTab) =
-        tabExtractors.entries.first { it.key.url == Channel_Base_Url + channelExtractor.id + "/" + tab.name }
+        tabExtractors.first { it.first == tab.name.lowercase() }
 
     fun fetchTab(tab: ChannelTab): List<DataItem>? {
-        val extractor = getTabExtractor(tab).key
-        extractor.fetchPage()
-        tabExtractors[extractor] = extractor.initialPage.nextPage
-        return extractor.initialPage.items.toList()
+        val extractor = getTabExtractor(tab)
+        extractor.second.fetchPage()
+        val index = tabExtractors.indexOfFirst { it.first == extractor.first }
+        tabExtractors[index] =
+            Triple(extractor.first, extractor.second, extractor.second.initialPage.nextPage)
+        return extractor.second.initialPage.items.toList()
     }
 
     fun fetchNextPage(tab: ChannelTab): List<DataItem>? {
         val tab = getTabExtractor(tab)
-        val currentPage = tab.key.getPage(tab.value)
-        tabExtractors[tab.key] = currentPage.nextPage
+        val currentPage = tab.second.getPage(tab.third)
+        val index = tabExtractors.indexOfFirst { it.first == tab.first }
+        tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
         return currentPage.items.toList()
     }
 }

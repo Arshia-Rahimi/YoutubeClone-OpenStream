@@ -13,12 +13,12 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem
 sealed class DataItem(
     val url: String,
     val name: String,
-    val thumbnail: String,
+    val thumbnail: String?,
 ) {
     class Video(
         url: String,
         name: String,
-        thumbnail: String,
+        thumbnail: String?,
         val streamType: StreamType,
         val channelName: String,
         val shortDescription: String?,
@@ -28,13 +28,13 @@ sealed class DataItem(
         val channelUrl: String,
         val channelVerified: Boolean,
         val isShort: Boolean,
-        val channelAvatars: String,
+        val channelAvatars: String?,
     ) : DataItem(url, name, thumbnail)
 
     class Playlist(
         url: String,
         name: String,
-        thumbnail: String,
+        thumbnail: String?,
         val channelName: String,
         val channelUrl: String,
         val channelVerified: Boolean,
@@ -44,13 +44,13 @@ sealed class DataItem(
     class Comment(
         url: String,
         name: String,
-        thumbnail: String,
+        thumbnail: String?,
     ) : DataItem(url, name, thumbnail)
 
     class Channel(
         url: String,
         name: String,
-        thumbnail: String,
+        thumbnail: String?,
         val description: String,
         val subscriberCount: Long,
         val verified: Boolean,
@@ -100,7 +100,7 @@ private fun InfoItem.toDataItem(): DataItem? =
                 duration = duration,
                 channelVerified = isUploaderVerified,
                 isShort = isShortFormContent,
-                channelAvatars = uploaderAvatars.first().url,
+                channelAvatars = uploaderAvatars.firstOrNull()?.url,
                 channelName = uploaderName,
                 streamType = when (streamType) {
                     org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.LIVE_STREAM

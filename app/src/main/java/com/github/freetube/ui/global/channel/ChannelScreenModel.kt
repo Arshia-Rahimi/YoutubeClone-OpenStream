@@ -1,12 +1,17 @@
 package com.github.freetube.ui.global.channel
 
+import android.annotation.SuppressLint
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.ChannelRepository
 import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
+import com.github.freetube.core.extractor.model.DataItem
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class ChannelScreenModel(
@@ -20,10 +25,14 @@ class ChannelScreenModel(
         data class Success(val channelInfo: ChannelInfo) : UiState
     }
 
-    val tabResults = mutableStateOf(emptyList<ChannelTab>())
+    private val loadingChannel: Job
+
+    @SuppressLint("MutableCollectionMutableState")
+    val tabResults = mutableStateOf(mutableListOf<ChannelTab>())
+    val tabItems = mutableStateListOf<SnapshotStateList<DataItem>>()
 
     init {
-        screenModelScope.launch {
+        loadingChannel = screenModelScope.launch {
             channelRepository.getChannelData(url)
                 .collect {
                     mutableState.value = when (it) {
@@ -33,7 +42,8 @@ class ChannelScreenModel(
                         }
 
                         is Resource.Success -> {
-                            tabResults.value = it.data.tabs
+                            repeat(it.data.tabs.size) { tabItems.add(mutableStateListOf()) }
+                            tabResults.value += it.data.tabs
                             UiState.Success(it.data)
                         }
                     }
@@ -53,20 +63,23 @@ class ChannelScreenModel(
 
     private fun getTabFromIndex(index: Int): ChannelTab = tabResults.value[index]
 
-//    private fun setTab(index: Int, new: ChannelTab) { tabResults.value[index] = new }
-
     private fun getTab(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
+            loadingChannel.join()
             channelRepository.getTab(url, tab)
                 .collect {
                     when (it) {
                         is Resource.Loading -> {}
                         is Resource.Error -> {
-//                            setTab(index, getTab(index).copy(isLoading = false, error = it.message))
+                            tabResults.value[index] = tabResults.value[index]
+                                .copy(
+                                    isLoading = false,
+                                    error = it.message,
+                                )
                         }
-
                         is Resource.Success -> {
-                            getTabFromIndex(index).items + it.data
+                            tabItems[index].addAll(it.data ?: emptyList())
+                            println(tabItems)
                         }
                     }
                 }
@@ -80,11 +93,14 @@ class ChannelScreenModel(
                     when (it) {
                         is Resource.Loading -> {}
                         is Resource.Error -> {
-//                            setTab(index, getTab(index).copy(isLoading = false, error = it.message))
+                            tabResults.value[index] = tabResults.value[index]
+                                .copy(
+                                    isLoading = false,
+                                    error = it.message,
+                                )
                         }
-
                         is Resource.Success -> {
-                            getTabFromIndex(index).items + it.data
+                            tabItems[index].addAll(it.data ?: emptyList())
                         }
                     }
                 }
