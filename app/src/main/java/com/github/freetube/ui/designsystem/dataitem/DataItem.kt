@@ -12,14 +12,13 @@ fun DataItem(
     item: DataItem,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (String) -> Unit,
+    playVideo: (String) -> Unit,
 ) {
     when(item) {
         is DataItem.Video -> Video(
             item = item,
             toChannelScreen = toChannelScreen,
-            playVideo = {
-                // todo
-            },
+            playVideo = playVideo,
         )
 
         is DataItem.Playlist -> Playlist(

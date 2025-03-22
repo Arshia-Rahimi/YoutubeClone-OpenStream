@@ -78,7 +78,6 @@ fun SearchScreen(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
-                        println("tap")
                         focusManager.clearFocus()
                     },
                 )
@@ -99,6 +98,7 @@ fun SearchScreen(
                     item = it,
                     toChannelScreen = toChannelScreen,
                     toPlaylistScreen = toPlaylistScreen,
+                    playVideo = {},
                 )
             }
             item {

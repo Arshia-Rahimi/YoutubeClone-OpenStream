@@ -56,11 +56,11 @@ class SearchScreenModel(
         screenModelScope.launch {
             ytRepo.getNextPage().collect {
                 when (it) {
+                    is Resource.Loading -> {}
                     is Resource.Error -> {}
                     is Resource.Success -> {
                         it.data?.let { nextPage -> results += nextPage }
                     }
-                    else -> {}
                 }
             }
         }

@@ -22,6 +22,7 @@ fun <T> Flow<T>.asResult(dispatcher: CoroutineDispatcher = Dispatchers.Default):
     .catch {
         if (BuildConfig.DEBUG) Log.d("Resource", "${it.cause}: ${it.localizedMessage}")
         emit(Resource.Error(it.message))
-    }.flowOn(dispatcher)
+    }
+        .flowOn(dispatcher)
 
 data object Success

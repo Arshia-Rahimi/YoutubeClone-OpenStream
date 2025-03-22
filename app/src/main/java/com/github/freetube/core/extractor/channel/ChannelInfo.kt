@@ -1,5 +1,9 @@
 package com.github.freetube.core.extractor.channel
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.github.freetube.core.extractor.model.DataItem
+
 data class ChannelInfo(
     val name: String,
     val subscriberCount: Long,
@@ -14,4 +18,7 @@ data class ChannelInfo(
 data class ChannelTab(
     val name: String,
     val url: String,
+    val items: SnapshotStateList<DataItem> = mutableStateListOf(),
+    val isLoading: Boolean = true,
+    val error: String? = null,
 )
