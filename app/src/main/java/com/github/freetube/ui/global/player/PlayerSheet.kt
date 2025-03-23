@@ -12,12 +12,13 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun PlayerSheet(
     screenModel: PlayerScreenModel,
+    dismissSheet: () -> Unit,
 ) {
     
     ModalBottomSheet(
         containerColor = Color(0xFF111111),
         modifier = Modifier.fillMaxSize(),
-        onDismissRequest = {},
+        onDismissRequest = dismissSheet,
         dragHandle = {
             // todo video player
         }

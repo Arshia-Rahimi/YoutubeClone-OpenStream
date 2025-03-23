@@ -33,7 +33,7 @@ import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.LoadingBox
-import com.github.freetube.ui.designsystem.dataitem.DataItem
+import com.github.freetube.ui.designsystem.dataitem.small.SmallDataItem
 import com.github.freetube.ui.global.channel.components.ChannelTopBar
 import com.github.freetube.ui.global.channel.components.ErrorChannel
 import kotlinx.coroutines.CoroutineScope
@@ -123,7 +123,7 @@ private fun ChannelScreen(
                 )
             ) {
                 items(currentItems, key = { it.url + "-" + Uuid.random() }, contentType = { it }) {
-                    DataItem(
+                    SmallDataItem(
                         item = it,
                         toChannelScreen = {},
                         toPlaylistScreen = {},

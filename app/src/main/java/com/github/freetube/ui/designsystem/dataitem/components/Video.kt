@@ -47,6 +47,11 @@ fun Video(
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
 ) {
+    val timeString = " • ${item.viewCount.toViewCount()} • " + when (item.streamType) {
+        StreamType.NORMAL -> ""
+        StreamType.LIVE_STREAM -> "started streaming"
+        StreamType.POST_LIVE_STREAM -> "streamed "
+    } + item.uploadDate
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -126,7 +131,7 @@ fun Video(
                         )
                     }
                     SubText(
-                        text = " • ${item.viewCount.toViewCount()} • ${item.uploadDate}"
+                        text = timeString
                     )
                 }
             }
@@ -166,7 +171,8 @@ fun SubText(
     Text(
         text = text,
         fontSize = 12.sp,
-        color = Color(0xFFAAAAAA)
+        color = Color(0xFFAAAAAA),
+        maxLines = 1,
     )
 }
 
@@ -177,7 +183,7 @@ private fun Preview(
         url = "",
         name = "name",
         thumbnail = "",
-        streamType = StreamType.NORMAL,
+        streamType = StreamType.POST_LIVE_STREAM,
         channelName = "channelName",
         channelAvatars = "",
         shortDescription = "description",
