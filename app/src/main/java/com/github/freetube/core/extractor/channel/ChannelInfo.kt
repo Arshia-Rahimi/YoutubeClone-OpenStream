@@ -14,6 +14,6 @@ data class ChannelInfo(
 data class ChannelTab(
     val name: String,
     val url: String,
-    val isLoading: Boolean = true,
-    val error: String? = null,
+    var isLoading: Boolean = true,
+    var error: String? = null,
 )

@@ -1,6 +1,7 @@
 package com.github.freetube.ui.global.channel
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -28,7 +29,7 @@ class ChannelScreenModel(
     private val loadingChannel: Job
 
     @SuppressLint("MutableCollectionMutableState")
-    val tabResults = mutableStateOf(mutableListOf<ChannelTab>())
+    val tabResults = mutableStateOf(emptyList<MutableState<ChannelTab>>())
     val tabItems = mutableStateListOf<SnapshotStateList<DataItem>>()
 
     init {
@@ -43,7 +44,7 @@ class ChannelScreenModel(
 
                         is Resource.Success -> {
                             repeat(it.data.tabs.size) { tabItems.add(mutableStateListOf()) }
-                            tabResults.value += it.data.tabs
+                            tabResults.value = it.data.tabs.map { mutableStateOf(it) }
                             UiState.Success(it.data)
                         }
                     }
@@ -52,16 +53,12 @@ class ChannelScreenModel(
     }
 
     fun onAction(action: ChannelAction) {
+        val tab = tabResults.value[action.tab].value
         when (action) {
-            is ChannelAction.GetTab -> getTab(getTabFromIndex(action.index), action.index)
-            is ChannelAction.GetTabNextPage -> getTabNextPage(
-                getTabFromIndex(action.index),
-                action.index
-            )
+            is ChannelAction.GetTab -> getTab(tab, action.index)
+            is ChannelAction.GetTabNextPage -> getTabNextPage(tab, action.index)
         }
     }
-
-    private fun getTabFromIndex(index: Int): ChannelTab = tabResults.value[index]
 
     private fun getTab(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
@@ -71,15 +68,12 @@ class ChannelScreenModel(
                     when (it) {
                         is Resource.Loading -> {}
                         is Resource.Error -> {
-                            tabResults.value[index] = tabResults.value[index]
-                                .copy(
-                                    isLoading = false,
-                                    error = it.message,
-                                )
+                            tabResults.value[index].value = tabResults.value[index].value
+                                .copy(isLoading = false, error = it.message)
                         }
                         is Resource.Success -> {
-                            tabResults.value[index] =
-                                tabResults.value[index].copy(isLoading = false)
+                            tabResults.value[index].value =
+                                tabResults.value[index].value.copy(isLoading = false)
                             tabItems[index].addAll(it.data ?: emptyList())
                             println(tabItems)
                         }
@@ -95,15 +89,12 @@ class ChannelScreenModel(
                     when (it) {
                         is Resource.Loading -> {}
                         is Resource.Error -> {
-                            tabResults.value[index] = tabResults.value[index]
-                                .copy(
-                                    isLoading = false,
-                                    error = it.message,
-                                )
+                            tabResults.value[index].value = tabResults.value[index].value
+                                .copy(isLoading = false, error = it.message)
                         }
                         is Resource.Success -> {
-                            tabResults.value[index] =
-                                tabResults.value[index].copy(isLoading = false)
+                            tabResults.value[index].value =
+                                tabResults.value[index].value.copy(isLoading = false)
                             tabItems[index].addAll(it.data ?: emptyList())
                         }
                     }

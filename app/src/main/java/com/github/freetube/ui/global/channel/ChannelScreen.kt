@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -43,6 +44,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+// todo needs refactoring
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +82,7 @@ fun ChannelScreen(
 private fun ChannelScreen(
     channelInfo: ChannelInfo,
     scope: CoroutineScope,
-    tabResults: List<ChannelTab>?,
+    tabResults: List<MutableState<ChannelTab>>?,
     tabItems: SnapshotStateList<SnapshotStateList<DataItem>>,
     trigger: (ChannelAction) -> Unit,
     navigateBack: () -> Unit,
@@ -108,7 +111,7 @@ private fun ChannelScreen(
                         .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(tab.name, fontSize = 16.sp)
+                    Text(tab.value.name, fontSize = 16.sp)
                 }
             }
         }
@@ -120,8 +123,8 @@ private fun ChannelScreen(
             val currentItems = tabItems[page]
             when {
                 // not recomposed
-                tabResults?.get(page)?.isLoading != false -> LoadingBox()
-                tabResults[page].error != null -> ErrorChannel(tabResults[page].error) { navigateBack() }
+                tabResults?.get(page)?.value?.isLoading != false -> LoadingBox()
+                tabResults[page].value.error != null -> ErrorChannel(tabResults[page].value.error) { navigateBack() }
                 else -> {
                     val lazyColumnState = rememberLazyListState()
                     val shouldLoadNextPage by remember {
