@@ -53,8 +53,8 @@ fun Video(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { playVideo(item.url) },
+            .clickable { playVideo(item.url) }
+            .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
             modifier = Modifier
@@ -121,13 +121,14 @@ fun Video(
             DropdownMenu(
                 expanded = isDropDownExpanded,
                 onDismissRequest = { isDropDownExpanded = false },
+                tonalElevation = 4.dp,
             ) {
                 DropdownMenuItem(
                     text = { Text("view channel") },
                     onClick = {
                         isDropDownExpanded = false
                         toChannelScreen(item.channelUrl)
-                    }
+                    },
                 )
             }
         }

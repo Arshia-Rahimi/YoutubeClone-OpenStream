@@ -46,8 +46,8 @@ fun Playlist(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { toPlaylistScreen(item.url) },
+            .clickable { toPlaylistScreen(item.url) }
+            .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
             modifier = Modifier
@@ -112,6 +112,7 @@ fun Playlist(
             DropdownMenu(
                 expanded = isDropDownExpanded,
                 onDismissRequest = { isDropDownExpanded = false },
+                tonalElevation = 4.dp,
             ) {
                 DropdownMenuItem(
                     text = { Text("viewChannel") },

@@ -146,7 +146,8 @@ private fun ChannelScreen(
                         items(
                             currentItems,
                             key = { it.url + "-" + Uuid.random() },
-                            contentType = { it }) {
+                            contentType = { it }
+                        ) {
                             DataItem(
                                 item = it,
                                 toChannelScreen = {},

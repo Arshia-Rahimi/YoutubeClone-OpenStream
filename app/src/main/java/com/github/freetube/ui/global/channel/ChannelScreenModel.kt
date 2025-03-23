@@ -75,7 +75,6 @@ class ChannelScreenModel(
                             tabResults.value[index].value =
                                 tabResults.value[index].value.copy(isLoading = false)
                             tabItems[index].addAll(it.data ?: emptyList())
-                            println(tabItems)
                         }
                     }
                 }
@@ -84,6 +83,7 @@ class ChannelScreenModel(
 
     private fun getTabNextPage(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
+            // todo need to stop when reaching the end
             channelRepository.getTabNextPage(url, tab)
                 .collect {
                     when (it) {

@@ -8,7 +8,7 @@ import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelTabLinkHandlerFactory
 
-const val Channel_Base_Url = "https://youtube.com/channel/"
+// terrible code but it works don't touch it newPipeExtractor is a nightmare
 
 class ChannelUnit(
     val url: String,
@@ -29,7 +29,8 @@ class ChannelUnit(
             id = channelExtractor.id,
             tabs = channelExtractor.tabs.map {
                 ChannelTab(
-                    name = it.url.split("/").last(),
+                    name = it.url.split("/").last().lowercase()
+                        .let { last -> if (last == "streams") "livestreams" else last },
                     url = it.url,
                 )
             },
@@ -38,8 +39,8 @@ class ChannelUnit(
             data.tabs.forEach {
 //                try {
                 val url = "channel/" + channelExtractor.id
-                var name = it.name.lowercase()
-                name = if (name == "streams") "livestreams" else name
+                var name = it.url.split("/").last().lowercase()
+                    .let { last -> if (last == "streams") "livestreams" else last }
                 val tab = YoutubeChannelTabExtractor(
                     YtService,
                     YoutubeChannelTabLinkHandlerFactory.getInstance()
@@ -59,15 +60,22 @@ class ChannelUnit(
         extractor.second.fetchPage()
         val index = tabExtractors.indexOfFirst { it.first == extractor.first }
         tabExtractors[index] =
-            Triple(extractor.first, extractor.second, extractor.second.initialPage.nextPage)
+            Triple(
+                extractor.first, extractor.second,
+                if (extractor.second.initialPage.hasNextPage())
+                    extractor.second.initialPage.nextPage
+                else null
+            )
         return extractor.second.initialPage.items.toList()
     }
 
     fun fetchNextPage(tab: ChannelTab): List<DataItem>? {
         val tab = getTabExtractor(tab)
-        val currentPage = tab.second.getPage(tab.third)
-        val index = tabExtractors.indexOfFirst { it.first == tab.first }
-        tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
-        return currentPage.items.toList()
+        return tab.third?.let {
+            val currentPage = tab.second.getPage(it)
+            val index = tabExtractors.indexOfFirst { it.first == tab.first }
+            tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
+            currentPage.items.toList()
+        }
     }
 }
