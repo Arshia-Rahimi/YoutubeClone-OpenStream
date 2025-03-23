@@ -78,6 +78,8 @@ class ChannelScreenModel(
                                 )
                         }
                         is Resource.Success -> {
+                            tabResults.value[index] =
+                                tabResults.value[index].copy(isLoading = false)
                             tabItems[index].addAll(it.data ?: emptyList())
                             println(tabItems)
                         }
@@ -100,6 +102,8 @@ class ChannelScreenModel(
                                 )
                         }
                         is Resource.Success -> {
+                            tabResults.value[index] =
+                                tabResults.value[index].copy(isLoading = false)
                             tabItems[index].addAll(it.data ?: emptyList())
                         }
                     }

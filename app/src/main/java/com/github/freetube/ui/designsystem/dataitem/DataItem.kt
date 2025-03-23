@@ -24,6 +24,7 @@ fun DataItem(
         is DataItem.Playlist -> Playlist(
             item = item,
             toPlaylistScreen = toPlaylistScreen,
+            toChannelScreen = toChannelScreen,
         )
 
         is DataItem.Channel -> Channel(

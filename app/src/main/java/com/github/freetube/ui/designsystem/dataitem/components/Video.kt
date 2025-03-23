@@ -1,16 +1,15 @@
 package com.github.freetube.ui.designsystem.dataitem.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,10 +34,8 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
 import com.github.freetube.core.common.toViewCount
-import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.StreamType
-import com.github.freetube.ui.designsystem.components.noRippleClickable
 
 @Composable
 fun Video(
@@ -47,118 +43,92 @@ fun Video(
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
 ) {
-    val timeString = " • ${item.viewCount.toViewCount()} • " + when (item.streamType) {
+    val timeString = "${item.viewCount.toViewCount()} views • " + when (item.streamType) {
         StreamType.NORMAL -> ""
         StreamType.LIVE_STREAM -> "started streaming"
         StreamType.POST_LIVE_STREAM -> "streamed "
     } + item.uploadDate
     var isDropDownExpanded by remember { mutableStateOf(false) }
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(320.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .height(100.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { playVideo(item.url) },
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.75f)
-                .clip(RoundedCornerShape(24.dp))
-                .noRippleClickable { playVideo(item.url) },
+                .fillMaxHeight()
+                .weight(0.4f)
+                .padding(end = 8.dp)
+                .clip(RoundedCornerShape(16.dp)),
         ) {
             AsyncImage(
-                modifier = Modifier.matchParentSize(),
                 model = item.thumbnail,
                 contentDescription = "thumbnail",
-                contentScale = ContentScale.FillHeight,
-            )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 12.dp, bottom = 12.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.Black.copy(alpha = 0.75f))
-                    .padding(vertical = 4.dp, horizontal = 12.dp),
-                text = item.duration.toTime(),
-                color = Color.White,
-                fontSize = 16.sp,
+                modifier = Modifier.matchParentSize(),
             )
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.25f),
-            verticalAlignment = Alignment.Top,
+        Column(
+            modifier = Modifier.weight(0.6f),
+            verticalArrangement = Arrangement.Top,
         ) {
-            AsyncImage(
+            Text(
+                text = item.name,
+                fontSize = 20.sp,
+                lineHeight = 24.sp,
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .padding(end = 12.dp)
-                    .clip(CircleShape)
-                    .width(40.dp)
-                    .aspectRatio(1f)
-                    .noRippleClickable { toChannelScreen(item.channelUrl) },
-                model = item.channelAvatars,
-                contentDescription = "channel avatar",
+                    .padding(top = 4.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
             )
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Top,
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = item.name,
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .noRippleClickable { playVideo(item.url) },
-                )
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SubText(text = item.channelName)
-                    if (item.channelVerified) {
-                        Icon(
-                            modifier = Modifier.padding(start = 4.dp, end = 8.dp),
-                            painter = painterResource(R.drawable.verified),
-                            contentDescription = "verified",
-                            tint = Color(0xFFAAAAAA)
-                        )
-                    }
-                    SubText(
-                        text = timeString
+                SubText(text = item.channelName)
+                if (item.channelVerified) {
+                    Icon(
+                        modifier = Modifier.padding(start = 8.dp),
+                        painter = painterResource(R.drawable.verified),
+                        contentDescription = "verified",
+                        tint = Color(0xFFAAAAAA)
                     )
                 }
             }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Top)
-                    .width(24.dp)
+            SubText(
+                text = timeString
+            )
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.Top)
+                .width(24.dp)
+        ) {
+            IconButton(
+                modifier = Modifier,
+                onClick = { isDropDownExpanded = !isDropDownExpanded },
             ) {
-                IconButton(
-                    modifier = Modifier,
-                    onClick = { isDropDownExpanded = !isDropDownExpanded },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.options),
-                        contentDescription = "options",
-                        tint = Color.White,
-                    )
-                }
-                DropdownMenu(
-                    expanded = isDropDownExpanded,
-                    onDismissRequest = { isDropDownExpanded = false },
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("test") },
-                        onClick = {}
-                    )
-                }
+                Icon(
+                    painter = painterResource(R.drawable.options),
+                    contentDescription = "options",
+                    tint = Color.White,
+                )
+            }
+            DropdownMenu(
+                expanded = isDropDownExpanded,
+                onDismissRequest = { isDropDownExpanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text("view channel") },
+                    onClick = {
+                        isDropDownExpanded = false
+                        toChannelScreen(item.channelUrl)
+                    }
+                )
             }
         }
     }
@@ -176,26 +146,29 @@ fun SubText(
     )
 }
 
+
 @Preview
 @Composable
-private fun Preview(
-    item: DataItem.Video = DataItem.Video(
-        url = "",
-        name = "name",
-        thumbnail = "",
-        streamType = StreamType.POST_LIVE_STREAM,
-        channelName = "channelName",
-        channelAvatars = "",
-        shortDescription = "description",
-        uploadDate = "5 days ago",
-        viewCount = 4566604L,
-        duration = 120000L,
-        channelUrl = "",
-        channelVerified = true,
-        isShort = false,
-    )
-) {
+private fun Preview() {
     MaterialTheme {
-        Video(item = item, {}, {})
+        Video(
+            item = DataItem.Video(
+                name = "name",
+                channelUrl = "",
+                isShort = false,
+                channelName = "channel",
+                viewCount = 545664L,
+                channelVerified = true,
+                shortDescription = "description",
+                streamType = StreamType.NORMAL,
+                channelAvatars = "",
+                url = "",
+                thumbnail = "",
+                uploadDate = "5 days ago",
+                duration = 14533L,
+            ),
+            toChannelScreen = {},
+            playVideo = {},
+        )
     }
 }

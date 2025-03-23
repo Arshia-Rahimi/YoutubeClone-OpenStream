@@ -28,8 +28,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.LoadingBox
 import com.github.freetube.ui.designsystem.dataitem.DataItem
 import com.github.freetube.ui.feature.search.components.SearchField
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun SearchScreen(
     screenModel: SearchScreenModel,
@@ -93,7 +95,7 @@ fun SearchScreen(
                 alignment = Alignment.CenterVertically,
             )
         ) {
-            items(results, key = { it.url }, contentType = { it }) {
+            items(results, key = { it.url + "-" + Uuid.random() }, contentType = { it }) {
                 DataItem(
                     item = it,
                     toChannelScreen = toChannelScreen,

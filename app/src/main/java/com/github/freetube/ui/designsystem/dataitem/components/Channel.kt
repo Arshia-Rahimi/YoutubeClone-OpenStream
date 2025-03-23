@@ -38,7 +38,8 @@ fun Channel(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp),
+            .height(100.dp)
+            .noRippleClickable { toChannelScreen(item.url) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -51,8 +52,7 @@ fun Channel(
             AsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .aspectRatio(1f)
-                    .noRippleClickable { toChannelScreen(item.url) },
+                    .aspectRatio(1f),
                 model = item.thumbnail,
                 contentDescription = "channel avatar",
             )

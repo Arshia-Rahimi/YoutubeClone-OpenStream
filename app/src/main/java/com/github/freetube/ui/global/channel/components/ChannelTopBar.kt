@@ -2,6 +2,7 @@ package com.github.freetube.ui.global.channel.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.github.freetube.core.common.toViewCount
 import com.github.freetube.core.extractor.channel.ChannelInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +50,12 @@ fun ChannelTopBar(
                 )
                 Text(
                     text = info.name,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = info.subscriberCount.toViewCount() + " subscribers",
+                    modifier = Modifier,
+                    fontSize = 16.sp,
                 )
             }
         }

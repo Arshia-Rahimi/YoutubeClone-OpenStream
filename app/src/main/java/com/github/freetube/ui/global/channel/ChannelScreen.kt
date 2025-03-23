@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +22,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -33,7 +36,7 @@ import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.LoadingBox
-import com.github.freetube.ui.designsystem.dataitem.small.SmallDataItem
+import com.github.freetube.ui.designsystem.dataitem.DataItem
 import com.github.freetube.ui.global.channel.components.ChannelTopBar
 import com.github.freetube.ui.global.channel.components.ErrorChannel
 import kotlinx.coroutines.CoroutineScope
@@ -61,11 +64,12 @@ fun ChannelScreen(
 
         is ChannelScreenModel.UiState.Success -> ChannelScreen(
             (uiState as ChannelScreenModel.UiState.Success).channelInfo,
-            onAction = { screenModel.onAction(it) },
+            trigger = { screenModel.onAction(it) },
             topBar = topBar,
             tabResults = tabResults,
             scope = scope,
             tabItems = screenModel.tabItems,
+            navigateBack = navigateBack,
         )
     }
 }
@@ -77,7 +81,8 @@ private fun ChannelScreen(
     scope: CoroutineScope,
     tabResults: List<ChannelTab>?,
     tabItems: SnapshotStateList<SnapshotStateList<DataItem>>,
-    onAction: (ChannelAction) -> Unit,
+    trigger: (ChannelAction) -> Unit,
+    navigateBack: () -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
     topBar { ChannelTopBar(channelInfo) }
@@ -111,27 +116,45 @@ private fun ChannelScreen(
             state = pagerState,
             modifier = Modifier.weight(1f),
         ) { page ->
-            LaunchedEffect(page) { onAction(ChannelAction.GetTab(page)) }
+            LaunchedEffect(page) { trigger(ChannelAction.GetTab(page)) }
             val currentItems = tabItems[page]
-            LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(
-                    space = 8.dp,
-                    alignment = Alignment.CenterVertically,
-                )
-            ) {
-                items(currentItems, key = { it.url + "-" + Uuid.random() }, contentType = { it }) {
-                    SmallDataItem(
-                        item = it,
-                        toChannelScreen = {},
-                        toPlaylistScreen = {},
-                        playVideo = {},
-                    )
-                }
-                item {
-                    if (currentItems.isNotEmpty()) Spacer(Modifier.height(48.dp))
+            when {
+                // not recomposed
+                tabResults?.get(page)?.isLoading != false -> LoadingBox()
+                tabResults[page].error != null -> ErrorChannel(tabResults[page].error) { navigateBack() }
+                else -> {
+                    val lazyColumnState = rememberLazyListState()
+                    val shouldLoadNextPage by remember {
+                        derivedStateOf { !lazyColumnState.canScrollForward && currentItems.isNotEmpty() }
+                    }
+                    LaunchedEffect(shouldLoadNextPage) {
+                        if (shouldLoadNextPage) trigger(ChannelAction.GetTabNextPage(page))
+                    }
+                    LazyColumn(
+                        state = lazyColumnState,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(
+                            space = 8.dp,
+                            alignment = Alignment.CenterVertically,
+                        )
+                    ) {
+                        items(
+                            currentItems,
+                            key = { it.url + "-" + Uuid.random() },
+                            contentType = { it }) {
+                            DataItem(
+                                item = it,
+                                toChannelScreen = {},
+                                toPlaylistScreen = {},
+                                playVideo = {},
+                            )
+                        }
+                        item {
+                            if (currentItems.isNotEmpty()) Spacer(Modifier.height(48.dp))
+                        }
+                    }
                 }
             }
         }
