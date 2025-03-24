@@ -16,7 +16,6 @@ class ExtractorChannelRepository : ChannelRepository {
         flow { emit(ChannelUnit(channelUrl)) }.asResult(Dispatchers.IO)
 
     override suspend fun getTab(
-        channelUrl: String,
         tab: ChannelTab,
         currentChannel: ChannelUnit,
     ): Flow<Resource<List<DataItem>?>> =
@@ -25,7 +24,6 @@ class ExtractorChannelRepository : ChannelRepository {
         }.asResult(Dispatchers.IO)
 
     override suspend fun getTabNextPage(
-        channelUrl: String,
         tab: ChannelTab,
         currentChannel: ChannelUnit,
     ): Flow<Resource<List<DataItem>?>> =

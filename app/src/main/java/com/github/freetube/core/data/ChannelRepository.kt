@@ -10,13 +10,11 @@ interface ChannelRepository {
     suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>>
 
     suspend fun getTab(
-        channelUrl: String,
         tab: ChannelTab,
         currentChannel: ChannelUnit
     ): Flow<Resource<List<DataItem>?>>
 
     suspend fun getTabNextPage(
-        channelUrl: String,
         tab: ChannelTab,
         currentChannel: ChannelUnit
     ): Flow<Resource<List<DataItem>?>>

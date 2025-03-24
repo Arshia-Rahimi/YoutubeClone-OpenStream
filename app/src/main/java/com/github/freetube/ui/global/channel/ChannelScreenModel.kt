@@ -66,7 +66,7 @@ class ChannelScreenModel(
     private fun getTab(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
             loadingChannel.join()
-            channelRepository.getTab(url, tab, channel)
+            channelRepository.getTab(tab, channel)
                 .collect {
                     when (it) {
                         is Resource.Loading -> {}
@@ -87,7 +87,7 @@ class ChannelScreenModel(
     private fun getTabNextPage(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
             // todo need to stop when reaching the end
-            channelRepository.getTabNextPage(url, tab, channel)
+            channelRepository.getTabNextPage(tab, channel)
                 .collect {
                     when (it) {
                         is Resource.Loading -> {}
