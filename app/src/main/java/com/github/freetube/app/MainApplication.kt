@@ -4,6 +4,7 @@ import android.app.Application
 import com.github.freetube.core.data.di.dataModule
 import com.github.freetube.core.database.di.databaseModule
 import com.github.freetube.core.datastore.di.dataStoreModule
+import com.github.freetube.core.media3.di.media3Module
 import com.github.freetube.ui.di.screenModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.androix.startup.KoinStartup
@@ -20,6 +21,7 @@ class MainApplication: Application(), KoinStartup {
             dataModule,
             dataStoreModule,
             databaseModule,
+            media3Module,
         )
     }
 
