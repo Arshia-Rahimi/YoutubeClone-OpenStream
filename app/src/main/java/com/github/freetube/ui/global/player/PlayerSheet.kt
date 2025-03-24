@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,8 +15,9 @@ fun PlayerSheet(
     screenModel: PlayerScreenModel,
     dismissSheet: () -> Unit,
 ) {
-    
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
+        sheetState = sheetState,
         containerColor = Color(0xFF111111),
         modifier = Modifier.fillMaxSize(),
         onDismissRequest = dismissSheet,
