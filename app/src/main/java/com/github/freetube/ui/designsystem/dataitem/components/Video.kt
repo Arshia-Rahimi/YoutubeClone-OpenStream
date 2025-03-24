@@ -42,6 +42,7 @@ fun Video(
     item: DataItem.Video,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
+    shouldViewChannel: Boolean,
 ) {
     val timeString = "${item.viewCount.toViewCount()} views • " + when (item.streamType) {
         StreamType.NORMAL -> ""
@@ -123,13 +124,15 @@ fun Video(
                 onDismissRequest = { isDropDownExpanded = false },
                 tonalElevation = 4.dp,
             ) {
-                DropdownMenuItem(
-                    text = { Text("view channel") },
-                    onClick = {
-                        isDropDownExpanded = false
-                        toChannelScreen(item.channelUrl)
-                    },
-                )
+                if (shouldViewChannel) {
+                    DropdownMenuItem(
+                        text = { Text("view channel") },
+                        onClick = {
+                            isDropDownExpanded = false
+                            toChannelScreen(item.channelUrl)
+                        },
+                    )
+                }
             }
         }
     }
@@ -170,6 +173,7 @@ private fun Preview() {
             ),
             toChannelScreen = {},
             playVideo = {},
+            shouldViewChannel = true,
         )
     }
 }

@@ -40,6 +40,7 @@ fun Playlist(
     item: DataItem.Playlist,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (String) -> Unit,
+    shouldViewChannel: Boolean,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
@@ -114,13 +115,15 @@ fun Playlist(
                 onDismissRequest = { isDropDownExpanded = false },
                 tonalElevation = 4.dp,
             ) {
-                DropdownMenuItem(
-                    text = { Text("viewChannel") },
-                    onClick = {
-                        isDropDownExpanded = false
-                        toChannelScreen(item.channelUrl)
-                    },
-                )
+                if (shouldViewChannel) {
+                    DropdownMenuItem(
+                        text = { Text("viewChannel") },
+                        onClick = {
+                            isDropDownExpanded = false
+                            toChannelScreen(item.channelUrl)
+                        },
+                    )
+                }
             }
         }
     }
@@ -141,6 +144,7 @@ private fun Preview() {
             ),
             toChannelScreen = {},
             toPlaylistScreen = {},
+            shouldViewChannel = true,
         )
     }
 }

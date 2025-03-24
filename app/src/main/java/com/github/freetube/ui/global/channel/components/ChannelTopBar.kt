@@ -1,5 +1,6 @@
 package com.github.freetube.ui.global.channel.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import com.github.freetube.core.extractor.channel.ChannelInfo
 @Composable
 fun ChannelTopBar(
     info: ChannelInfo,
+    openBottomSheet: () -> Unit,
 //    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     CenterAlignedTopAppBar(
@@ -44,12 +46,15 @@ fun ChannelTopBar(
                         .padding(end = 12.dp)
                         .clip(CircleShape)
                         .width(48.dp)
-                        .aspectRatio(1f),
+                        .aspectRatio(1f)
+                        .clickable { openBottomSheet() },
                     model = info.avatar,
                     contentDescription = "channel avatar",
                 )
                 Text(
                     text = info.name,
+                    modifier = Modifier
+                        .clickable { openBottomSheet() },
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
@@ -78,6 +83,7 @@ private fun Preview() {
                 banner = "",
                 tabs = emptyList(),
             ),
+            openBottomSheet = {},
 //            TopAppBarDefaults.enterAlwaysScrollBehavior(),
         )
     }
