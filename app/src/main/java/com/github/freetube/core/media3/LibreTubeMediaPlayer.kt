@@ -11,7 +11,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
 import com.github.freetube.core.datastore.proto.playerconfig.PlayerConfigDataStore
 import com.github.freetube.core.datastore.proto.playerconfig.PlayerConfigDataStoreModel
-import com.github.freetube.core.extractor.model.DataItem
+import com.github.freetube.core.extractor.video.VideoData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -87,13 +87,13 @@ class LibreTubeMediaPlayer(
         _player = null
     }
 
-    fun prepareSingleVideo(video: DataItem.Video) {
+    fun prepareSingleVideo(video: VideoData) {
         val mediaItem = MediaItem.fromUri(video.url)
         player.setMediaItem(mediaItem)
         player.prepare()
     }
 
-    fun prepareFromPlaylist(playlist: List<DataItem.Video>) {
+    fun prepareFromPlaylist(playlist: List<VideoData>) {
         val mediaItems = playlist.map { MediaItem.fromUri(it.url) }
         player.setMediaItems(mediaItems, true)
         player.prepare()
