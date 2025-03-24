@@ -41,10 +41,12 @@ fun TabNavigation() {
                     showBottomSheet = { showBottomSheet = true }
                 )
             }
-            if (showBottomSheet) PlayerSheet(
-                screenModel = screenModel,
-                dismissSheet = { showBottomSheet = false }
-            )
+            if (showBottomSheet) {
+                PlayerSheet(
+                    screenModel = screenModel,
+                    dismissSheet = { showBottomSheet = false },
+                )
+            }
         }
     }
 }

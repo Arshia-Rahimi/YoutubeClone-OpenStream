@@ -24,5 +24,5 @@ data class VideoData(
     val videoStreams: List<VideoStream>,
     val videoOnlyStreams: List<VideoStream>,
     val subtitles: List<SubtitlesStream>,
-    val mediaItem: MediaItem? = null,
+    val mediaItem: MediaItem,
 )

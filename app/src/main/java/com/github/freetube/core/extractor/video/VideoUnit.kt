@@ -1,5 +1,6 @@
 package com.github.freetube.core.extractor.video
 
+import androidx.media3.common.MediaItem
 import com.github.freetube.core.extractor.YtService
 import com.github.freetube.core.extractor.model.StreamType
 
@@ -31,6 +32,7 @@ class VideoUnit(url: String) {
                 org.schabi.newpipe.extractor.stream.StreamType.POST_LIVE_STREAM -> StreamType.POST_LIVE_STREAM
                 else -> StreamType.NORMAL
             },
+            mediaItem = MediaItem.fromUri(extractor.url),
         )
     }
 }

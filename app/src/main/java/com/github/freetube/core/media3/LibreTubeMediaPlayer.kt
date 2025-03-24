@@ -14,10 +14,14 @@ import com.github.freetube.core.datastore.proto.playerconfig.PlayerConfigDataSto
 import com.github.freetube.core.extractor.video.VideoData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
 @OptIn(UnstableApi::class)
@@ -30,12 +34,31 @@ class LibreTubeMediaPlayer(
         .stateIn(scope, SharingStarted.WhileSubscribed(5000L), PlayerConfigDataStoreModel())
 
     private var _player: ExoPlayer? = null
-    private val player: ExoPlayer
+    val player: ExoPlayer
         get() = _player ?: throw PlayerNotInitializedException()
 
     // returns null when uninitialized
     private var _playerState = MutableStateFlow<PlayerState?>(null)
     val playerState = _playerState.asStateFlow()
+
+    // null when not in playlistMode
+    private var currentPlaylist: List<VideoData>? = emptyList<VideoData>()
+
+    private var _currentVideo = MutableStateFlow<VideoData?>(null)
+    val currentVideo = _currentVideo.asStateFlow()
+
+    @kotlin.OptIn(ExperimentalCoroutinesApi::class)
+    val playerPosition = playerState.flatMapLatest { state ->
+        if (state == null) flow { emit(0L) }
+        flow {
+            while (true) {
+                if (playerState.value?.playingStatus == PlayingStatus.PLAYING) {
+                    emit(player.currentPosition)
+                }
+                delay(1000L)
+            }
+        }
+    }
 
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -52,7 +75,9 @@ class LibreTubeMediaPlayer(
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            update(_playerState.value?.copy(currentItem = mediaItem))
+            currentPlaylist?.let {
+                _currentVideo.value = it.first { video -> video.mediaItem == mediaItem }
+            }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
@@ -85,18 +110,22 @@ class LibreTubeMediaPlayer(
         player.release()
         _playerState.value = null
         _player = null
+        _currentVideo.value = null
+        currentPlaylist = null
     }
 
     fun prepareSingleVideo(video: VideoData) {
-        val mediaItem = MediaItem.fromUri(video.url)
-        player.setMediaItem(mediaItem)
+        player.setMediaItem(video.mediaItem)
         player.prepare()
+        _currentVideo.value = video
+        currentPlaylist = null
     }
 
     fun prepareFromPlaylist(playlist: List<VideoData>) {
-        val mediaItems = playlist.map { MediaItem.fromUri(it.url) }
+        val mediaItems = playlist.map { it.mediaItem }
         player.setMediaItems(mediaItems, true)
         player.prepare()
+        currentPlaylist = playlist
     }
 
     fun resume() = player.play()
