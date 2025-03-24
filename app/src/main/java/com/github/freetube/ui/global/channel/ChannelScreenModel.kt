@@ -11,6 +11,7 @@ import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.ChannelRepository
 import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
+import com.github.freetube.core.extractor.channel.ChannelUnit
 import com.github.freetube.core.extractor.model.DataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -25,6 +26,8 @@ class ChannelScreenModel(
         data class Error(val message: String? = null) : UiState
         data class Success(val channelInfo: ChannelInfo) : UiState
     }
+
+    private lateinit var channel: ChannelUnit
 
     private val loadingChannel: Job
 
@@ -41,11 +44,11 @@ class ChannelScreenModel(
                         is Resource.Error -> {
                             UiState.Error(it.message)
                         }
-
                         is Resource.Success -> {
-                            repeat(it.data.tabs.size) { tabItems.add(mutableStateListOf()) }
-                            tabResults.value = it.data.tabs.map { mutableStateOf(it) }
-                            UiState.Success(it.data)
+                            channel = it.data
+                            repeat(it.data.data.tabs.size) { tabItems.add(mutableStateListOf()) }
+                            tabResults.value = it.data.data.tabs.map { mutableStateOf(it) }
+                            UiState.Success(it.data.data)
                         }
                     }
                 }
@@ -63,7 +66,7 @@ class ChannelScreenModel(
     private fun getTab(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
             loadingChannel.join()
-            channelRepository.getTab(url, tab)
+            channelRepository.getTab(url, tab, channel)
                 .collect {
                     when (it) {
                         is Resource.Loading -> {}
@@ -84,7 +87,7 @@ class ChannelScreenModel(
     private fun getTabNextPage(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
             // todo need to stop when reaching the end
-            channelRepository.getTabNextPage(url, tab)
+            channelRepository.getTabNextPage(url, tab, channel)
                 .collect {
                     when (it) {
                         is Resource.Loading -> {}
@@ -100,10 +103,5 @@ class ChannelScreenModel(
                     }
                 }
         }
-    }
-
-    override fun onDispose() {
-        channelRepository.disposeChannel(url)
-        super.onDispose()
     }
 }

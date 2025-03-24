@@ -2,7 +2,7 @@ package com.github.freetube.core.data
 
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.extractor.model.DataItem
-import com.github.freetube.core.extractor.search.InitialSearchResult
+import com.github.freetube.core.extractor.search.SearchUnit
 import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
@@ -11,7 +11,7 @@ interface SearchRepository {
         query: String,
         contentFilter: List<String> = emptyList(),
         sortFilter: String? = null,
-    ): Flow<Resource<InitialSearchResult>>
-    
-    suspend fun getNextPage(): Flow<Resource<List<DataItem>?>>
+    ): Flow<Resource<SearchUnit>>
+
+    suspend fun getNextPage(currentSearch: SearchUnit): Flow<Resource<List<DataItem>?>>
 }

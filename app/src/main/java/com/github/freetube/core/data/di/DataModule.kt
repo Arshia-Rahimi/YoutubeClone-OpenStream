@@ -9,6 +9,7 @@ import com.github.freetube.core.data.imp.ExtractorSearchRepository
 import com.github.freetube.core.data.imp.PDLibreTubeDataRepository
 import com.github.freetube.core.data.imp.PDSettingsRepository
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -17,15 +18,15 @@ val dataModule = module {
         bind<LibreTubeDataRepository>()
     }
 
-    singleOf(::PDSettingsRepository) {
+    factoryOf(::PDSettingsRepository) {
         bind<SettingsRepository>()
     }
 
-    singleOf(::ExtractorSearchRepository) {
+    factoryOf(::ExtractorSearchRepository) {
         bind<SearchRepository>()
     }
 
-    singleOf(::ExtractorChannelRepository) {
+    factoryOf(::ExtractorChannelRepository) {
         bind<ChannelRepository>()
     }
 }

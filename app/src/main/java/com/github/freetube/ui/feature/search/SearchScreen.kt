@@ -92,7 +92,7 @@ fun SearchScreen(
             state = lazyColumnState,
             verticalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
-                alignment = Alignment.CenterVertically,
+                alignment = Alignment.Top,
             )
         ) {
             items(results, key = { it.url + "-" + Uuid.random() }, contentType = { it }) {

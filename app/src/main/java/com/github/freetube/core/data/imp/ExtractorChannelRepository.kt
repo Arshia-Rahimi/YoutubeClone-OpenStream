@@ -3,7 +3,6 @@ package com.github.freetube.core.data.imp
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.common.util.asResult
 import com.github.freetube.core.data.ChannelRepository
-import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
 import com.github.freetube.core.extractor.channel.ChannelUnit
 import com.github.freetube.core.extractor.model.DataItem
@@ -12,36 +11,25 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ExtractorChannelRepository : ChannelRepository {
-    override val channels = mutableListOf<ChannelUnit>()
 
-    private fun getCurrentChannel(url: String): ChannelUnit? = channels.first { it.url == url }
-
-    override suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelInfo>> =
-        flow {
-            val newChannel = ChannelUnit(channelUrl)
-            channels += newChannel
-            emit(newChannel.data)
-        }.asResult(Dispatchers.IO)
+    override suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>> =
+        flow { emit(ChannelUnit(channelUrl)) }.asResult(Dispatchers.IO)
 
     override suspend fun getTab(
         channelUrl: String,
-        tab: ChannelTab
+        tab: ChannelTab,
+        currentChannel: ChannelUnit,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
-            val currentChannel = getCurrentChannel(channelUrl)
-            emit(currentChannel?.fetchTab(tab))
+            emit(currentChannel.fetchTab(tab))
         }.asResult(Dispatchers.IO)
 
     override suspend fun getTabNextPage(
         channelUrl: String,
-        tab: ChannelTab
+        tab: ChannelTab,
+        currentChannel: ChannelUnit,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
-            val currentChannel = getCurrentChannel(channelUrl)
-            emit(currentChannel?.fetchNextPage(tab))
+            emit(currentChannel.fetchNextPage(tab))
         }.asResult(Dispatchers.IO)
-
-    override fun disposeChannel(channelUrl: String) {
-        channels.removeAll { it.url == channelUrl }
-    }
 }

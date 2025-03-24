@@ -140,8 +140,8 @@ private fun ChannelScreen(
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(
                             space = 8.dp,
-                            alignment = Alignment.CenterVertically,
-                        )
+                            alignment = Alignment.Top,
+                        ),
                     ) {
                         items(
                             currentItems,
