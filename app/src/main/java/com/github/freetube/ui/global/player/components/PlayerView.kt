@@ -20,7 +20,7 @@ import androidx.media3.ui.PlayerView
 @OptIn(UnstableApi::class)
 @Composable
 fun PlayerView(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     player: Player,
 ) {
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
@@ -32,7 +32,7 @@ fun PlayerView(
     }
 
     AndroidView(
-        modifier = Modifier.aspectRatio(16f / 9f),
+        modifier = modifier.aspectRatio(16f / 9f),
         factory = { context ->
             PlayerView(context).also {
                 it.player = player

@@ -33,6 +33,9 @@ class VideoUnit(url: String) {
                 else -> StreamType.NORMAL
             },
         )
+        println(extractor.videoStreams)
+        println(extractor.videoOnlyStreams)
+        println(extractor.audioStreams)
         val url = data.videoStreams.first().content
         item = MediaItem.Builder()
             .setTag(data)

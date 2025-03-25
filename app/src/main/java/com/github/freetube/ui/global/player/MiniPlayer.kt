@@ -1,19 +1,21 @@
 package com.github.freetube.ui.global.player
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,16 +43,15 @@ fun MiniPlayer(
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
     val playerState by screenModel.playerState.collectAsStateWithLifecycle()
-    val video by screenModel.currentVideo.collectAsStateWithLifecycle()
     val currentPosition by screenModel.currentPosition.collectAsStateWithLifecycle()
 
     Row(
         modifier = modifier
-            .padding(bottom = 12.dp)
-            .padding(horizontal = 20.dp)
             .widthIn(max = 600.dp)
+            .height(80.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surface)
             .clickable { showBottomSheet() },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -65,9 +66,10 @@ fun MiniPlayer(
                 MiniPlayer(
                     player = screenModel.viewPlayer,
                     playerState = playerState,
-                    video = video,
+                    video = (uiState as PlayerScreenModel.UiState.Success).data,
                     togglePlay = { screenModel.togglePlay() },
                     currentPosition = currentPosition,
+                    dispose = { screenModel.dispose() },
                 )
             }
         }
@@ -81,21 +83,21 @@ private fun RowScope.MiniPlayer(
     video: VideoData?,
     currentPosition: Long,
     togglePlay: () -> Unit,
+    dispose: () -> Unit,
 ) {
     PlayerView(
-        modifier = Modifier.fillMaxHeight(),
         player = player,
     )
     Column(
         modifier = Modifier
-            .fillMaxHeight()
+            .padding(4.dp)
             .weight(1f),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.Start,
     ) {
-        playerState?.let {
+        video?.let {
             Text(
-                text = video?.name ?: "",
+                text = it.name,
                 fontSize = 16.sp,
                 modifier = Modifier.basicMarquee(),
                 maxLines = 2,
@@ -111,7 +113,7 @@ private fun RowScope.MiniPlayer(
                     maxLines = 1,
                 )
                 Text(
-                    text = video?.length?.toTime() + " / ",
+                    text = it.length.toTime(),
                     fontSize = 12.sp,
                     color = Color(0xFFAAAAAA),
                     maxLines = 1,
@@ -123,7 +125,7 @@ private fun RowScope.MiniPlayer(
         CircularProgressIndicator()
     } else {
         IconButton(
-            onClick = togglePlay,
+            onClick = { togglePlay() },
         ) {
             Icon(
                 painter = painterResource(if (playerState?.playingStatus == PlayingStatus.PAUSED) R.drawable.play else R.drawable.pause),
@@ -132,9 +134,7 @@ private fun RowScope.MiniPlayer(
         }
     }
     IconButton(
-        onClick = {
-            // todo 
-        },
+        onClick = { dispose() },
     ) {
         Icon(
             painter = painterResource(R.drawable.exit),

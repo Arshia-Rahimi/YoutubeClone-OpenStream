@@ -11,15 +11,9 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 val dataModule = module {
-    factoryOf(::ExtractorSearchRepository) {
-        bind<SearchRepository>()
-    }
+    factoryOf(::ExtractorSearchRepository) { bind<SearchRepository>() }
 
-    factoryOf(::ExtractorChannelRepository) {
-        bind<ChannelRepository>()
-    }
+    factoryOf(::ExtractorChannelRepository) { bind<ChannelRepository>() }
 
-    factoryOf(::ExtractorVideoRepository) {
-        bind<VideoRepository>()
-    }
+    factoryOf(::ExtractorVideoRepository) { bind<VideoRepository>() }
 }

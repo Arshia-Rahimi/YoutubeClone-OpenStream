@@ -176,7 +176,7 @@ private fun ChannelScreen(
                             )
                         }
                         item {
-                            if (currentItems.isNotEmpty()) Spacer(Modifier.height(48.dp))
+                            if (currentItems.isNotEmpty()) Spacer(Modifier.height(80.dp))
                         }
                     }
                 }

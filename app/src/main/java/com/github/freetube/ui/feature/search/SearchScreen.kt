@@ -38,6 +38,7 @@ fun SearchScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (String) -> Unit,
+    playVideo: (String) -> Unit,
 ) {
     val trigger: (SearchAction) -> Unit = { screenModel.onAction(it) }
     val searchQuery by screenModel.searchQuery
@@ -100,11 +101,11 @@ fun SearchScreen(
                     item = it,
                     toChannelScreen = toChannelScreen,
                     toPlaylistScreen = toPlaylistScreen,
-                    playVideo = {},
+                    playVideo = playVideo,
                 )
             }
             item {
-                if (results.isNotEmpty()) Spacer(Modifier.height(48.dp))
+                if (results.isNotEmpty()) Spacer(Modifier.height(80.dp))
             }
 //            item {
 //                if(isLoadingNextPage) {

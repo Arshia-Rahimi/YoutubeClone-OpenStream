@@ -38,12 +38,6 @@ class LibreTubeMediaPlayer(
     private var _playerState = MutableStateFlow<PlayerState?>(null)
     val playerState = _playerState.asStateFlow()
 
-    // null when not in playlistMode
-    private var currentPlaylist: List<MediaItem>? = emptyList()
-
-    private var _currentVideo = MutableStateFlow<MediaItem?>(null)
-    val currentVideo = _currentVideo.asStateFlow()
-
     val playerPosition = playerState.transform { state ->
         if (state == null || _player == null) emit(0L)
         else {
@@ -68,12 +62,6 @@ class LibreTubeMediaPlayer(
             val cause = error.cause
             // todo catch httpError
             update(_playerState.value?.copy(playerError = error.localizedMessage))
-        }
-
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            currentPlaylist?.let {
-                _currentVideo.value = it.first { video -> video == mediaItem }
-            }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
@@ -102,25 +90,17 @@ class LibreTubeMediaPlayer(
     }
 
     fun release() {
-        player.removeListener(playerListener)
-        player.release()
+        _player?.removeListener(playerListener)
+        _player?.release()
         _playerState.value = null
         _player = null
-        _currentVideo.value = null
-        currentPlaylist = null
     }
 
     fun prepareSingleVideo(video: MediaItem) {
+        player.pause()
+        player.clearMediaItems()
         player.setMediaItem(video)
         player.prepare()
-        _currentVideo.value = video
-        currentPlaylist = null
-    }
-
-    fun prepareFromPlaylist(playlist: List<MediaItem>) {
-        player.setMediaItems(playlist, true)
-        player.prepare()
-        currentPlaylist = playlist
     }
 
     fun resume() = player.play()

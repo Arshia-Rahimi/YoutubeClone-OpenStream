@@ -2,9 +2,11 @@ package com.github.freetube.ui.global.player
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -32,8 +34,12 @@ fun PlayerSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         containerColor = Color(0xFF111111),
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .displayCutoutPadding(),
         onDismissRequest = dismissSheet,
+        scrimColor = Color.Transparent,
         dragHandle = {
             if (uiState is PlayerScreenModel.UiState.Success) {
                 PlayerView(
@@ -41,7 +47,7 @@ fun PlayerSheet(
                     player = screenModel.viewPlayer
                 )
             }
-        }
+        },
     ) {
         when (uiState) {
             is PlayerScreenModel.UiState.Loading -> LoadingBox()

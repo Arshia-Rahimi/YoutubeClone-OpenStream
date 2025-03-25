@@ -8,6 +8,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.freetube.app.navigation.LibreTubeScreen
 import com.github.freetube.ui.designsystem.scaffold.ScaffoldScreenModel
 import com.github.freetube.ui.global.channel.ChannelTabScreen
+import com.github.freetube.ui.global.player.PlayerScreenModel
 import com.github.freetube.ui.global.playlist.PlaylistTabScreen
 import org.koin.compose.koinInject
 
@@ -18,11 +19,13 @@ class SearchTabScreen : LibreTubeScreen() {
         val navigator = LocalNavigator.currentOrThrow
         val screenModel = koinScreenModel<SearchScreenModel>()
         val scaffoldScreenModel = koinInject<ScaffoldScreenModel>()
+        val playerScreenModel = koinInject<PlayerScreenModel>()
         SearchScreen(
             screenModel = screenModel,
             topBar = { scaffoldScreenModel.topBar.value = it },
             toChannelScreen = { navigator.push(ChannelTabScreen(it)) },
             toPlaylistScreen = { navigator.push(PlaylistTabScreen(it)) },
+            playVideo = { playerScreenModel.start(it) },
         )
     }
 }
