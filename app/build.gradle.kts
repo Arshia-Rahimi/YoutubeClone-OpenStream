@@ -120,4 +120,5 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.media3.session)
+    implementation(libs.media3.hls)
 }

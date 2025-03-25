@@ -1,6 +1,5 @@
 package com.github.freetube.core.extractor.video
 
-import androidx.media3.common.MediaItem
 import com.github.freetube.core.extractor.model.StreamType
 import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.SubtitlesStream
@@ -24,5 +23,4 @@ data class VideoData(
     val videoStreams: List<VideoStream>,
     val videoOnlyStreams: List<VideoStream>,
     val subtitles: List<SubtitlesStream>,
-    val mediaItem: MediaItem,
 )

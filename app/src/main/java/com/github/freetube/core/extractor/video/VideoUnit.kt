@@ -6,11 +6,11 @@ import com.github.freetube.core.extractor.model.StreamType
 
 class VideoUnit(url: String) {
     private val extractor = YtService.getStreamExtractor(url)
-    val data: VideoData
+    val item: MediaItem
 
     init {
         extractor.fetchPage()
-        data = VideoData(
+        val data = VideoData(
             name = extractor.name,
             url = extractor.url,
             description = extractor.description.content,
@@ -32,7 +32,11 @@ class VideoUnit(url: String) {
                 org.schabi.newpipe.extractor.stream.StreamType.POST_LIVE_STREAM -> StreamType.POST_LIVE_STREAM
                 else -> StreamType.NORMAL
             },
-            mediaItem = MediaItem.fromUri(extractor.url),
         )
+        val url = data.videoStreams.first().content
+        item = MediaItem.Builder()
+            .setTag(data)
+            .setUri(url)
+            .build()
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
@@ -23,6 +24,7 @@ import org.koin.compose.koinInject
 fun TabNavigation() {
     val screenModel = koinInject<PlayerScreenModel>()
     var showBottomSheet by remember { mutableStateOf(false) }
+    val showMiniPlayer by screenModel.showMiniPlayer.collectAsStateWithLifecycle()
 
     TabNavigator(SubscriptionsTab) { navigator ->
         val tabNavigator = LocalTabNavigator.current
@@ -35,11 +37,13 @@ fun TabNavigation() {
                 modifier = modifier,
             ) {
                 CurrentTab()
-                MiniPlayer(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    screenModel = screenModel,
-                    showBottomSheet = { showBottomSheet = true }
-                )
+                if (showMiniPlayer) {
+                    MiniPlayer(
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        screenModel = screenModel,
+                        showBottomSheet = { showBottomSheet = true }
+                    )
+                }
             }
             if (showBottomSheet) {
                 PlayerSheet(

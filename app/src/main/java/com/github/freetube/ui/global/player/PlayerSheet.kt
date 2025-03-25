@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.LoadingBox
 import com.github.freetube.ui.global.player.components.PlayerView
+import com.github.freetube.ui.global.player.components.SheetBody
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,15 +64,9 @@ fun PlayerSheet(
                     }
                 }
             }
-
             is PlayerScreenModel.UiState.Success -> {
                 SheetBody()
             }
         }
     }
-}
-
-@Composable
-fun SheetBody() {
-
 }
