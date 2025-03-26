@@ -35,14 +35,14 @@ class LibreTubeMediaPlayer(
         get() = _player ?: throw PlayerNotInitializedException()
 
     // returns null when uninitialized
-    private var _playerState = MutableStateFlow<PlayerState?>(null)
+    private var _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
 
     val playerPosition = playerState.transform { state ->
-        if (state == null || _player == null) emit(0L)
+        if (_player == null) emit(0L)
         else {
             while (true) {
-                if (playerState.value?.playingStatus == PlayingStatus.PLAYING) {
+                if (playerState.value.playingStatus == PlayingStatus.PLAYING) {
                     emit(player.currentPosition)
                 }
                 delay(1000L)
@@ -55,28 +55,28 @@ class LibreTubeMediaPlayer(
             val status = if (isPlaying) PlayingStatus.PLAYING
             else if (player.playbackState == Player.STATE_BUFFERING) PlayingStatus.BUFFERING
             else PlayingStatus.PAUSED
-            update(_playerState.value?.copy(playingStatus = status))
+            update(_playerState.value.copy(playingStatus = status))
         }
 
         override fun onPlayerError(error: PlaybackException) {
             val cause = error.cause
             // todo catch httpError
-            update(_playerState.value?.copy(playerError = error.localizedMessage))
+            update(_playerState.value.copy(playerError = error.localizedMessage))
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
-            update(_playerState.value?.copy(repeatMode = repeatMode))
+            update(_playerState.value.copy(repeatMode = repeatMode))
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            update(_playerState.value?.copy(shuffleModeEnabled = shuffleModeEnabled))
+            update(_playerState.value.copy(shuffleModeEnabled = shuffleModeEnabled))
         }
 
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-            update(_playerState.value?.copy(playbackSpeed = playbackParameters.speed))
+            update(_playerState.value.copy(playbackSpeed = playbackParameters.speed))
         }
 
-        private fun update(newState: PlayerState?) {
+        private fun update(newState: PlayerState) {
             _playerState.value = newState
         }
     }
@@ -92,7 +92,7 @@ class LibreTubeMediaPlayer(
     fun release() {
         _player?.removeListener(playerListener)
         _player?.release()
-        _playerState.value = null
+        _playerState.value = PlayerState()
         _player = null
     }
 

@@ -1,5 +1,6 @@
 package com.github.freetube.ui.designsystem.dataitem.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
 import com.github.freetube.core.common.toViewCount
+import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.StreamType
 
@@ -69,6 +71,20 @@ fun Video(
                 contentDescription = "thumbnail",
                 modifier = Modifier.matchParentSize(),
             )
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 4.dp, end = 4.dp)
+                    .align(Alignment.BottomEnd)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.Black.copy(0.3f))
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
+                    text = item.duration.toTime(),
+                    fontSize = 12.sp,
+                    color = Color.White,
+                )
+            }
         }
         Column(
             modifier = Modifier.weight(0.6f),

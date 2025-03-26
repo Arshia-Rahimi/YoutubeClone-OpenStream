@@ -87,6 +87,7 @@ private fun RowScope.MiniPlayer(
 ) {
     PlayerView(
         player = player,
+        showController = false,
     )
     Column(
         modifier = Modifier
@@ -107,7 +108,7 @@ private fun RowScope.MiniPlayer(
                 horizontalArrangement = Arrangement.Start,
             ) {
                 Text(
-                    text = currentPosition.toTime() + " / ",
+                    text = (currentPosition / 1000).toTime() + " / ",
                     fontSize = 12.sp,
                     color = Color(0xFFAAAAAA),
                     maxLines = 1,

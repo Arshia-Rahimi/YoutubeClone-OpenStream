@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.LoadingBox
@@ -40,6 +41,7 @@ fun PlayerSheet(
             .displayCutoutPadding(),
         onDismissRequest = dismissSheet,
         scrimColor = Color.Transparent,
+        shape = RectangleShape,
         dragHandle = {
             if (uiState is PlayerScreenModel.UiState.Success) {
                 PlayerView(
