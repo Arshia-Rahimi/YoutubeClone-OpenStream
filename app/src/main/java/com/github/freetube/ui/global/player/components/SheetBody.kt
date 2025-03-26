@@ -1,5 +1,6 @@
 package com.github.freetube.ui.global.player.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arshia.freetube.R
+import com.github.freetube.core.common.toShortForm
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.StreamType
 import com.github.freetube.core.extractor.video.VideoData
@@ -42,13 +44,14 @@ fun SheetBody(
     val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
-            .padding(horizontal = 8.dp)
             .fillMaxSize()
+            .background(Color(0xFF111111))
             .padding(top = 12.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
             modifier = Modifier
+                .padding(horizontal = 8.dp)
                 .fillMaxWidth()
                 .clickable {
                     scope.launch { showDescription = true }
@@ -65,18 +68,35 @@ fun SheetBody(
                 modifier = Modifier.weight(1f),
             )
             Icon(
-                painter = painterResource(if (showDescription) R.drawable.condense else R.drawable.expand),
+                painter = painterResource(if (!showDescription) R.drawable.condense else R.drawable.expand),
                 contentDescription = "description sheet",
             )
         }
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = videoData.description,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onTertiary,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.view),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onTertiary,
+            )
+            Text(
+                text = videoData.viewCount.toShortForm(),
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onTertiary,
+            )
+            Icon(
+                painter = painterResource(R.drawable.calendar),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onTertiary,
+            )
+            Text(
+                text = videoData.uploadDate,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onTertiary,
+            )
+        }
         Channel(
             toChannelScreen = toChannelScreen,
             item = DataItem.Channel(
@@ -104,7 +124,6 @@ private fun Preview() {
                     channelAvatar = "",
                     isChannelVerified = true,
                     length = 34324L,
-                    uploadDate = "5",
                     viewCount = 454222L,
                     channelUrl = "",
                     channelName = "channel",
@@ -116,6 +135,7 @@ private fun Preview() {
                     subtitles = emptyList(),
                     subscriberCount = 454321L,
                     likeCount = 3234L,
+                    uploadDate = "",
                 )
             )
         }

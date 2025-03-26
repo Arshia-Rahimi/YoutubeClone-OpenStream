@@ -7,6 +7,7 @@ import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import java.time.format.DateTimeFormatter
 
 sealed class DataItem(
     val url: String,
@@ -20,7 +21,8 @@ sealed class DataItem(
         val streamType: StreamType,
         val channelName: String,
         val shortDescription: String?,
-        val uploadDate: String?,
+        val uploadOffset: String,
+        val uploadDate: String,
         val viewCount: Long,
         val duration: Long,
         val channelUrl: String,
@@ -79,13 +81,15 @@ private fun InfoItem.toDataItem(): DataItem? =
                 thumbnail = thumbnails.first().url,
                 channelUrl = uploaderUrl,
                 viewCount = viewCount,
-                uploadDate = textualUploadDate,
+                uploadOffset = textualUploadDate ?: "",
                 shortDescription = shortDescription,
                 duration = duration,
                 channelVerified = isUploaderVerified,
                 isShort = isShortFormContent,
                 channelAvatars = uploaderAvatars.firstOrNull()?.url,
                 channelName = uploaderName,
+                uploadDate = uploadDate?.offsetDateTime()?.toLocalDateTime()
+                    ?.format(DateTimeFormatter.ofPattern("d MMM uuuu")) ?: "",
                 streamType = when (streamType) {
                     org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.LIVE_STREAM
                     org.schabi.newpipe.extractor.stream.StreamType.POST_LIVE_STREAM -> StreamType.POST_LIVE_STREAM

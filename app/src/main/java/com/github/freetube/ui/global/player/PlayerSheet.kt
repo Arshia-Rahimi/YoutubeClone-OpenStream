@@ -1,13 +1,15 @@
 package com.github.freetube.ui.global.player
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -20,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.freetube.ui.designsystem.LoadingBox
 import com.github.freetube.ui.global.player.components.PlayerView
 import com.github.freetube.ui.global.player.components.SheetBody
 
@@ -36,12 +37,12 @@ fun PlayerSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         containerColor = Color(0xFF111111),
+        contentColor = Color(0xFF111111),
+        scrimColor = Color(0xFF111111),
         modifier = Modifier
-            .fillMaxSize()
             .systemBarsPadding()
-            .displayCutoutPadding(),
+            .fillMaxSize(),
         onDismissRequest = dismissSheet,
-        scrimColor = Color.Transparent,
         shape = RectangleShape,
         dragHandle = {
             if (uiState is PlayerScreenModel.UiState.Success) {
@@ -54,10 +55,19 @@ fun PlayerSheet(
     ) {
         // content animation based on progress currently not possible 
         when (uiState) {
-            is PlayerScreenModel.UiState.Loading -> LoadingBox()
+            is PlayerScreenModel.UiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF111111)),
+                    contentAlignment = Alignment.Center,
+                ) { CircularProgressIndicator() }
+            }
             is PlayerScreenModel.UiState.Error -> {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF111111)),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {

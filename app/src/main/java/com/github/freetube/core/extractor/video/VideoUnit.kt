@@ -3,6 +3,7 @@ package com.github.freetube.core.extractor.video
 import androidx.media3.common.MediaItem
 import com.github.freetube.core.extractor.YtService
 import com.github.freetube.core.extractor.model.StreamType
+import java.time.format.DateTimeFormatter
 
 class VideoUnit(url: String) {
     private val extractor = YtService.getStreamExtractor(url)
@@ -19,7 +20,8 @@ class VideoUnit(url: String) {
             subscriberCount = extractor.uploaderSubscriberCount,
             isChannelVerified = extractor.isUploaderVerified,
             length = extractor.length,
-            uploadDate = extractor.textualUploadDate,
+            uploadDate = extractor.uploadDate?.offsetDateTime()?.toLocalDateTime()
+                ?.format(DateTimeFormatter.ofPattern("d MMM uuuu")) ?: "",
             viewCount = extractor.viewCount,
             videoStreams = extractor.videoStreams,
             audioStreams = extractor.audioStreams,

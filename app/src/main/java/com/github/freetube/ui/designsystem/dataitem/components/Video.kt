@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
-import com.github.freetube.core.common.toViewCount
+import com.github.freetube.core.common.toShortForm
 import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.StreamType
@@ -46,11 +46,11 @@ fun Video(
     playVideo: (String) -> Unit,
     shouldViewChannel: Boolean,
 ) {
-    val timeString = "${item.viewCount.toViewCount()} views • " + when (item.streamType) {
+    val timeString = "${item.viewCount.toShortForm()} views • " + when (item.streamType) {
         StreamType.NORMAL -> ""
         StreamType.LIVE_STREAM -> "started streaming"
         StreamType.POST_LIVE_STREAM -> "streamed "
-    } + item.uploadDate
+    } + item.uploadOffset
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -186,6 +186,7 @@ private fun Preview() {
                 thumbnail = "",
                 uploadDate = "5 days ago",
                 duration = 14533L,
+                uploadOffset = "",
             ),
             toChannelScreen = {},
             playVideo = {},

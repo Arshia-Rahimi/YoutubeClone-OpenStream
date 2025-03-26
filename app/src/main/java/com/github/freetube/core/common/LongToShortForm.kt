@@ -2,7 +2,7 @@ package com.github.freetube.core.common
 
 import java.util.Locale
 
-fun Long.toViewCount(): String =
+fun Long.toShortForm(): String =
     when {
         this < 1000L -> "$this"
         this < 1_000_000L -> divideByWithOneFloatingPoint(1000) + "K"

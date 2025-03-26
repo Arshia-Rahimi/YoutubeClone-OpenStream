@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.github.freetube.core.common.toViewCount
+import com.github.freetube.core.common.toShortForm
 import com.github.freetube.core.extractor.channel.ChannelInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +58,7 @@ fun ChannelTopBar(
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = info.subscriberCount.toViewCount() + " subscribers",
+                    text = info.subscriberCount.toShortForm() + " subscribers",
                     modifier = Modifier,
                     fontSize = 16.sp,
                 )

@@ -1,5 +1,7 @@
 package com.github.freetube.ui.designsystem.dataitem.components
 
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,9 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
-import com.github.freetube.core.common.toViewCount
+import com.github.freetube.core.common.toShortForm
 import com.github.freetube.core.extractor.model.DataItem
-import com.github.freetube.ui.designsystem.components.noRippleClickable
 
 @Composable
 fun Channel(
@@ -38,15 +39,17 @@ fun Channel(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .noRippleClickable { toChannelScreen(item.url) },
+            .height(80.dp)
+            .clickable { toChannelScreen(item.url) }
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.4f)
-                .padding(10.dp),
+                .padding(end = 4.dp)
+                .padding(vertical = 8.dp),
             contentAlignment = Alignment.Center,
         ) {
             AsyncImage(
@@ -73,6 +76,8 @@ fun Channel(
                     text = item.name,
                     fontSize = 20.sp,
                     color = Color.White,
+                    maxLines = 1,
+                    modifier = Modifier.basicMarquee(),
                 )
                 if (item.verified) {
                     Icon(
@@ -84,7 +89,7 @@ fun Channel(
                 }
             }
             Text(
-                text = "${item.subscriberCount.toViewCount()} subscribers",
+                text = "${item.subscriberCount.toShortForm()} subscribers",
                 color = MaterialTheme.colorScheme.onTertiary,
                 maxLines = 1,
                 fontSize = 12.sp,
@@ -94,7 +99,6 @@ fun Channel(
             onClick = {
                 // todo
             },
-            modifier = Modifier.padding(end = 16.dp, start = 8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFCC2849),
             )
