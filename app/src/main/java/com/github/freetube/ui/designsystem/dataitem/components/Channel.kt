@@ -85,7 +85,9 @@ fun Channel(
             }
             Text(
                 text = "${item.subscriberCount.toViewCount()} subscribers",
-                color = Color(0xFFAAAAAA)
+                color = MaterialTheme.colorScheme.onTertiary,
+                maxLines = 1,
+                fontSize = 12.sp,
             )
         }
         Button(

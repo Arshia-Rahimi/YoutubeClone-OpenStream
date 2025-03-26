@@ -28,6 +28,7 @@ import com.github.freetube.ui.global.player.components.SheetBody
 @Composable
 fun PlayerSheet(
     screenModel: PlayerScreenModel,
+    toChannelScreen: (String) -> Unit,
     dismissSheet: () -> Unit,
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
@@ -74,7 +75,10 @@ fun PlayerSheet(
                 }
             }
             is PlayerScreenModel.UiState.Success -> {
-                SheetBody((uiState as PlayerScreenModel.UiState.Success).data)
+                SheetBody(
+                    videoData = (uiState as PlayerScreenModel.UiState.Success).data,
+                    toChannelScreen = toChannelScreen,
+                )
             }
         }
     }

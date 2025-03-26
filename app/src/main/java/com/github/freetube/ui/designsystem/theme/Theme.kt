@@ -15,7 +15,8 @@ private val DarkColorScheme = darkColorScheme(
     onSecondary = Color.White,
     primaryContainer = Color(0xFFCC2849),
     secondaryContainer = Color(0xFF2A2A2A),
-    tertiary = Color(0xFFAAAAAA)
+    tertiary = Color(0xFFAAAAAA),
+    onTertiary = Color(0xFFAAAAAA),
 )
 
 @Composable

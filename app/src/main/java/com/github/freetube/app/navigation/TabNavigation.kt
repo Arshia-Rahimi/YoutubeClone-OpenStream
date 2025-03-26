@@ -49,6 +49,9 @@ fun TabNavigation() {
                 PlayerSheet(
                     screenModel = screenModel,
                     dismissSheet = { showBottomSheet = false },
+                    toChannelScreen = {
+                        // todo
+                    }
                 )
             }
         }
