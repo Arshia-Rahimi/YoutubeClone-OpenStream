@@ -3,7 +3,6 @@ package com.github.freetube.ui.designsystem.dataitem
 import androidx.compose.runtime.Composable
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.dataitem.components.Channel
-import com.github.freetube.ui.designsystem.dataitem.components.Comment
 import com.github.freetube.ui.designsystem.dataitem.components.Playlist
 import com.github.freetube.ui.designsystem.dataitem.components.Video
 
@@ -34,6 +33,5 @@ fun DataItem(
             item = item,
             toChannelScreen = toChannelScreen,
         )
-        is DataItem.Comment -> Comment(item)
     }
 }

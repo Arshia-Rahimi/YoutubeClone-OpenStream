@@ -5,17 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,13 +35,12 @@ import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.LoadingBox
-import com.github.freetube.ui.designsystem.dataitem.DataItem
+import com.github.freetube.ui.designsystem.components.DataItemList
 import com.github.freetube.ui.global.channel.components.ChannelTopBar
 import com.github.freetube.ui.global.channel.components.ErrorChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 // todo needs refactoring
 
@@ -56,6 +49,7 @@ import kotlin.uuid.Uuid
 fun ChannelScreen(
     screenModel: ChannelScreenModel,
     topBar: (@Composable () -> Unit) -> Unit,
+    playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
@@ -77,6 +71,7 @@ fun ChannelScreen(
             scope = scope,
             tabItems = screenModel.tabItems,
             navigateBack = navigateBack,
+            playVideo = playVideo,
         )
     }
 }
@@ -90,6 +85,7 @@ private fun ChannelScreen(
     tabItems: SnapshotStateList<SnapshotStateList<DataItem>>,
     trigger: (ChannelAction) -> Unit,
     navigateBack: () -> Unit,
+    playVideo: (String) -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
     val pagerState = rememberPagerState { channelInfo.tabs.size }
@@ -141,44 +137,15 @@ private fun ChannelScreen(
             LaunchedEffect(page) { trigger(ChannelAction.GetTab(page)) }
             val currentItems = tabItems[page]
             when {
-                // not recomposed
                 tabResults?.get(page)?.value?.isLoading != false -> LoadingBox()
                 tabResults[page].value.error != null -> ErrorChannel(tabResults[page].value.error) { navigateBack() }
                 else -> {
-                    val lazyColumnState = rememberLazyListState()
-                    val shouldLoadNextPage by remember {
-                        derivedStateOf { !lazyColumnState.canScrollForward && currentItems.isNotEmpty() }
-                    }
-                    LaunchedEffect(shouldLoadNextPage) {
-                        if (shouldLoadNextPage) trigger(ChannelAction.GetTabNextPage(page))
-                    }
-                    LazyColumn(
-                        state = lazyColumnState,
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(
-                            space = 8.dp,
-                            alignment = Alignment.Top,
-                        ),
-                    ) {
-                        items(
-                            currentItems,
-                            key = { it.url + "-" + Uuid.random() },
-                            contentType = { it }
-                        ) {
-                            DataItem(
-                                shouldViewChannel = false,
-                                item = it,
-                                toChannelScreen = {},
-                                toPlaylistScreen = {},
-                                playVideo = {},
-                            )
-                        }
-                        item {
-                            if (currentItems.isNotEmpty()) Spacer(Modifier.height(80.dp))
-                        }
-                    }
+                    DataItemList(
+                        items = currentItems,
+                        shouldViewChannel = false,
+                        loadNextPage = { trigger(ChannelAction.GetTabNextPage(page)) },
+                        playVideo = playVideo,
+                    ) 
                 }
             }
         }

@@ -1,12 +1,10 @@
 package com.github.freetube.core.extractor.model
 
 import com.github.freetube.core.extractor.model.DataItem.Channel
-import com.github.freetube.core.extractor.model.DataItem.Comment
 import com.github.freetube.core.extractor.model.DataItem.Playlist
 import com.github.freetube.core.extractor.model.DataItem.Video
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
-import org.schabi.newpipe.extractor.comments.CommentsInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 
@@ -38,13 +36,6 @@ sealed class DataItem(
         val channelName: String,
         val channelUrl: String,
         val channelVerified: Boolean,
-    ) : DataItem(url, name, thumbnail)
-
-    // todo 
-    class Comment(
-        url: String,
-        name: String,
-        thumbnail: String?,
     ) : DataItem(url, name, thumbnail)
 
     class Channel(
@@ -79,13 +70,6 @@ private fun InfoItem.toDataItem(): DataItem? =
                 description = description,
                 subscriberCount = subscriberCount,
                 verified = isVerified,
-            )
-
-        is CommentsInfoItem ->
-            Comment(
-                url = url,
-                name = name,
-                thumbnail = thumbnails.first().url,
             )
 
         is StreamInfoItem ->
