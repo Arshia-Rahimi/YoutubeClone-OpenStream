@@ -43,7 +43,7 @@ class LibreTubeMediaPlayer(
         else {
             while (true) {
                 if (playerState.value.playingStatus == PlayingStatus.PLAYING) {
-                    emit(player.currentPosition)
+                    emit(player.currentPosition / 1000)
                 }
                 delay(1000L)
             }

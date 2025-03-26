@@ -51,6 +51,7 @@ fun PlayerSheet(
             }
         },
     ) {
+        // content animation based on progress currently not possible 
         when (uiState) {
             is PlayerScreenModel.UiState.Loading -> LoadingBox()
             is PlayerScreenModel.UiState.Error -> {
@@ -73,7 +74,7 @@ fun PlayerSheet(
                 }
             }
             is PlayerScreenModel.UiState.Success -> {
-                SheetBody()
+                SheetBody((uiState as PlayerScreenModel.UiState.Success).data)
             }
         }
     }
