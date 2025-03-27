@@ -57,6 +57,7 @@ class SearchScreenModel(
 
     private fun getNextPage() {
         screenModelScope.launch {
+            if (search.nextPage == null) return@launch
             ytRepo.getNextPage(search).collect {
                 when (it) {
                     is Resource.Loading -> {}

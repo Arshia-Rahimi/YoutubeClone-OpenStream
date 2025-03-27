@@ -14,7 +14,7 @@ class ChannelUnit(
     val url: String,
 ) {
     private val channelExtractor = YtService.getChannelExtractor(url)
-    private val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>
+    val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>
     val data: ChannelInfo
 
     init {
@@ -37,17 +37,18 @@ class ChannelUnit(
         )
         tabExtractors = buildList<Triple<String, ChannelTabExtractor, Page?>> {
             data.tabs.forEach {
-//                try {
-                val url = "channel/" + channelExtractor.id
-                var name = it.url.split("/").last().lowercase()
-                    .let { last -> if (last == "streams") "livestreams" else last }
-                val tab = YoutubeChannelTabExtractor(
-                    YtService,
-                    YoutubeChannelTabLinkHandlerFactory.getInstance()
-                        .fromQuery(url, listOf(name), null)
-                )
-                add(Triple(name, tab, null))
-//                } catch (e: Exception) { println(e.message) }
+                try {
+                    val url = "channel/" + channelExtractor.id
+                    var name = it.url.split("/").last().lowercase()
+                        .let { last -> if (last == "streams") "livestreams" else last }
+                    val tab = YoutubeChannelTabExtractor(
+                        YtService,
+                        YoutubeChannelTabLinkHandlerFactory.getInstance()
+                            .fromQuery(url, listOf(name), null)
+                    )
+                    add(Triple(name, tab, null))
+                } catch (e: Exception) {
+                }
             }
         }.toMutableList()
     }

@@ -48,6 +48,7 @@ class ChannelScreenModel(
                             channel = it.data
                             repeat(it.data.data.tabs.size) { tabItems.add(mutableStateListOf()) }
                             tabResults.value = it.data.data.tabs.map { mutableStateOf(it) }
+                            println(it.data)
                             UiState.Success(it.data.data)
                         }
                     }
@@ -86,7 +87,7 @@ class ChannelScreenModel(
 
     private fun getTabNextPage(tab: ChannelTab, index: Int) {
         screenModelScope.launch {
-            // todo need to stop when reaching the end
+            if (channel.tabExtractors[index].third == null) return@launch
             channelRepository.getTabNextPage(tab, channel)
                 .collect {
                     when (it) {

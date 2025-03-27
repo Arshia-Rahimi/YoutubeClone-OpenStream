@@ -10,7 +10,7 @@ class SearchUnit(
     contentFilter: List<String>,
     sortFilter: String?,
 ) {
-    private var nextPage: Page?
+    var nextPage: Page?
     private val extractor = YtService.getSearchExtractor(query, contentFilter, sortFilter)
     val firstPage: InitialSearchResult
     

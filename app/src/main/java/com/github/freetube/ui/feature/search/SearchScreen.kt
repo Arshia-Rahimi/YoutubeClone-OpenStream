@@ -33,7 +33,6 @@ fun SearchScreen(
     val isLoading by screenModel.isLoading.collectAsStateWithLifecycle()
     val isCorrectedSearch by screenModel.isCorrectedSearch.collectAsStateWithLifecycle()
     val searchSuggestion by screenModel.searchSuggestion.collectAsStateWithLifecycle()
-//    var isLoadingNextPage by remember { mutableStateOf(false) }
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
@@ -68,7 +67,6 @@ fun SearchScreen(
             playVideo = playVideo,
             loadNextPage = { trigger(SearchAction.OnNextPage) },
         ) 
-        // todo the box should not be covering the textField
         if (isLoading) LoadingBox()
     }
 }

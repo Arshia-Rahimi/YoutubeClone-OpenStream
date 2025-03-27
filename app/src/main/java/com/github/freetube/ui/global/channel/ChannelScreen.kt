@@ -42,8 +42,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
 
-// todo needs refactoring
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChannelScreen(
@@ -57,7 +55,10 @@ fun ChannelScreen(
     val scope = rememberCoroutineScope()
 
     when (uiState) {
-        is ChannelScreenModel.UiState.Loading -> LoadingBox()
+        is ChannelScreenModel.UiState.Loading -> {
+            topBar {}
+            LoadingBox()
+        }
         is ChannelScreenModel.UiState.Error -> ErrorChannel(
             (uiState as ChannelScreenModel.UiState.Error).message,
             navigateBack
