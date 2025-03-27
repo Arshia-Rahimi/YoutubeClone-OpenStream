@@ -33,11 +33,12 @@ import com.github.freetube.core.extractor.model.DataItem
 
 @Composable
 fun Channel(
+    modifier: Modifier,
     item: DataItem.Channel,
     toChannelScreen: (String) -> Unit,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
             .clickable { toChannelScreen(item.url) }
@@ -116,7 +117,7 @@ fun Channel(
 private fun Preview() {
     MaterialTheme {
         Channel(
-            DataItem.Channel(
+            item = DataItem.Channel(
                 url = "",
                 name = "channel name",
                 description = "description",
@@ -125,6 +126,7 @@ private fun Preview() {
                 thumbnail = "",
             ),
             toChannelScreen = {},
+            modifier = Modifier,
         )
     }
 }

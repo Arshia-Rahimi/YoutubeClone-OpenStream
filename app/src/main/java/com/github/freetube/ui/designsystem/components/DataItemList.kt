@@ -52,6 +52,7 @@ fun DataItemList(
             contentType = { it }
         ) {
             DataItem(
+                modifier = Modifier.animateItem(),
                 shouldViewChannel = shouldViewChannel,
                 item = it,
                 toChannelScreen = toChannelScreen,

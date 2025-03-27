@@ -132,6 +132,7 @@ fun SheetBody(
             )
         }
         Channel(
+            modifier = Modifier,
             toChannelScreen = toChannelScreen,
             item = DataItem.Channel(
                 url = videoData.channelUrl,

@@ -37,6 +37,7 @@ import com.github.freetube.core.extractor.model.DataItem
 
 @Composable
 fun Playlist(
+    modifier: Modifier,
     item: DataItem.Playlist,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (String) -> Unit,
@@ -44,7 +45,7 @@ fun Playlist(
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(100.dp)
             .clickable { toPlaylistScreen(item.url) }
@@ -145,6 +146,7 @@ private fun Preview() {
             toChannelScreen = {},
             toPlaylistScreen = {},
             shouldViewChannel = true,
+            modifier = Modifier,
         )
     }
 }

@@ -61,12 +61,10 @@ class PlayerScreenModel(
     }
 
     fun togglePlay() {
-        playerState.value?.let {
-            when (it.playingStatus) {
-                PlayingStatus.PLAYING -> player.pause()
-                PlayingStatus.PAUSED -> player.resume()
-                else -> Unit
-            }
+        when (playerState.value.playingStatus) {
+            PlayingStatus.PLAYING -> player.pause()
+            PlayingStatus.PAUSED -> player.resume()
+            else -> Unit
         }
     }
 

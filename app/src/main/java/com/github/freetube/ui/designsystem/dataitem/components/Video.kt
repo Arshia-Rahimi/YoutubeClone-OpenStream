@@ -41,6 +41,7 @@ import com.github.freetube.core.extractor.model.StreamType
 
 @Composable
 fun Video(
+    modifier: Modifier,
     item: DataItem.Video,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
@@ -53,7 +54,7 @@ fun Video(
     } + item.uploadOffset
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(100.dp)
             .clickable { playVideo(item.url) }
@@ -191,6 +192,7 @@ private fun Preview() {
             toChannelScreen = {},
             playVideo = {},
             shouldViewChannel = true,
+            modifier = Modifier,
         )
     }
 }
