@@ -8,17 +8,13 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItemColors
-import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -51,92 +47,60 @@ fun LibreTubeScaffold(
 ) {
     val screenModel = koinInject<ScaffoldScreenModel>()
     val topBar by screenModel.topBar.collectAsStateWithLifecycle()
-    val navigationItemColors = NavigationSuiteItemColors(
-        NavigationBarItemColors(
-            selectedIconColor = Color.Unspecified,
-            unselectedIconColor = Color.Unspecified,
-            selectedTextColor = Color.White,
-            unselectedTextColor = Color.White.copy(0.7f),
-            selectedIndicatorColor = Color(0xFF3A2E31),
-            disabledTextColor = Color.Unspecified,
-            disabledIconColor = Color.Unspecified,
-        ),
-        NavigationRailItemColors(
-            selectedIconColor = Color.Unspecified,
-            unselectedIconColor = Color.Unspecified,
-            selectedTextColor = Color.White,
-            unselectedTextColor = Color.White.copy(0.7f),
-            selectedIndicatorColor = Color(0xFF3A2E31),
-            disabledTextColor = Color.Unspecified,
-            disabledIconColor = Color.Unspecified,
-        ),
-        NavigationDrawerItemDefaults.colors(
-            selectedIconColor = Color.Unspecified,
-            unselectedIconColor = Color.Unspecified,
-            selectedTextColor = Color.White,
-            unselectedTextColor = Color.White.copy(0.7f),
-        ),
-    )
 
-    NavigationSuiteScaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        navigationSuiteItems = {
-            libreTubeTabs.forEach { tab ->
-                val selected = currentTab == tab
-                item(
-                    selected = selected,
-                    onClick = { navigateToTab(tab) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(
-                                if (selected) tab.data.selectedIcon else tab.data.icon
-                            ),
-                            contentDescription = null,
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = tab.options.title,
-                            maxLines = 1,
-                            fontSize = 8.sp,
-                        )
-                    },
-                    colors = navigationItemColors,
-                )
-            }
-        },
-        navigationSuiteColors = NavigationSuiteDefaults.colors(
-            navigationBarContainerColor = Color(0xFF1A1A1A),
-            navigationDrawerContainerColor = Color(0xFF1A1A1A),
-            navigationRailContainerColor = Color(0xFF1A1A1A),
-        ),
-        containerColor = Color(0xFF111111),
-    ) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
 //                .nestedScroll(screenModel.scrollBehavior.nestedScrollConnection),
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            containerColor = Color.Transparent,
-            topBar = { topBar() },
-            snackbarHost = {
+        containerColor = Color(0xFF111111),
+        topBar = { topBar() },
+        snackbarHost = {
 //                SnackbarHost(
 //                    hostState = snackbarHostState,
 //                )
-            },
-        ) { ip ->
-            content(
-                Modifier
-                    .fillMaxSize()
-                    .padding(ip)
-                    .consumeWindowInsets(ip)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal
-                        ),
-                    ),
-            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                contentColor = Color(0xFF1A1A1A),
+                containerColor = Color(0xFF1A1A1A),
+            ) {
+                libreTubeTabs.forEach { tab ->
+                    val selected = currentTab == tab
+                    // todo migrate to m3
+                    BottomNavigationItem(
+                        selected = selected,
+                        onClick = { navigateToTab(tab) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(
+                                    if (selected) tab.data.selectedIcon else tab.data.icon
+                                ),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = tab.options.title,
+                                maxLines = 1,
+                                fontSize = 8.sp,
+                                color = if (selected) Color.White else Color(0xFFBABABA)
+                            )
+                        },
+                    )
+                }
+            }
         }
+    ) { ip ->
+        content(
+            Modifier
+                .fillMaxSize()
+                .padding(ip)
+                .consumeWindowInsets(ip)
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(
+                        WindowInsetsSides.Horizontal
+                    ),
+                ),
+        )
     }
 }
