@@ -47,7 +47,7 @@ fun Playlist(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
             .clickable { toPlaylistScreen(item.url) }
             .clip(RoundedCornerShape(12.dp)),
     ) {

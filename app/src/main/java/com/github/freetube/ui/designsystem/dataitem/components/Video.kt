@@ -56,7 +56,7 @@ fun Video(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
             .clickable { playVideo(item.url) }
             .clip(RoundedCornerShape(12.dp)),
     ) {

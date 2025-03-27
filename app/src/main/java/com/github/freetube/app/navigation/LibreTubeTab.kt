@@ -14,7 +14,7 @@ abstract class LibreTubeTab : Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val title = stringResource(DownloadsTab.data.title)
+            val title = stringResource(data.title)
             return remember {
                 TabOptions(
                     index = DownloadsTab.data.index,

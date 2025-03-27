@@ -40,7 +40,7 @@ fun Channel(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(60.dp)
             .clickable { toChannelScreen(item.url) }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,

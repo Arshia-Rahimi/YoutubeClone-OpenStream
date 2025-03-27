@@ -53,7 +53,7 @@ fun MiniPlayer(
     Row(
         modifier = modifier
             .widthIn(max = 600.dp)
-            .height(80.dp)
+            .height(60.dp)
             .fillMaxWidth()
             .background(Color(0xFF272727))
             .clickable { showBottomSheet() },
