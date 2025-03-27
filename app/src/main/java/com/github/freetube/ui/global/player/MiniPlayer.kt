@@ -78,6 +78,7 @@ fun MiniPlayer(
                     currentPosition = currentPosition,
                     dispose = { screenModel.dispose() },
                     shouldShowMiniPlayer = shouldShowMiniPlayer,
+                    screenModel = screenModel,
                 )
             }
         }
@@ -86,6 +87,7 @@ fun MiniPlayer(
 
 @Composable
 private fun RowScope.MiniPlayer(
+    screenModel: PlayerScreenModel,
     player: Player,
     playerState: PlayerState?,
     video: VideoData,
@@ -120,8 +122,11 @@ private fun RowScope.MiniPlayer(
         ) {
             if (shouldShowMiniPlayer) {
                 PlayerView(
+                    currentPosition = currentPosition,
+                    length = video.length,
                     player = player,
-                    showController = false,
+                    isInSheet = false,
+                    playerState = playerState ?: PlayerState(),
                 )
             } else Box(Modifier.aspectRatio(16 / 9f))
             Column(

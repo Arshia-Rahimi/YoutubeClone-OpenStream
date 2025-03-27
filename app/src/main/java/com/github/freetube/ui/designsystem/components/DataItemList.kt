@@ -14,7 +14,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.freetube.core.extractor.model.DataItem
@@ -43,12 +42,8 @@ fun DataItemList(
     LazyColumn(
         state = lazyColumnState,
         modifier = Modifier
-            .padding(horizontal = 8.dp)
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(
-            8.dp,
-            Alignment.Top,
-        ),
+        verticalArrangement = Arrangement.Top,
     ) {
         items(
             items,
@@ -56,7 +51,10 @@ fun DataItemList(
             contentType = { it }
         ) {
             DataItem(
-                modifier = Modifier.animateItem(),
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .padding(bottom = 8.dp)
+                    .animateItem(),
                 shouldViewChannel = shouldViewChannel,
                 item = it,
                 toChannelScreen = toChannelScreen,

@@ -40,6 +40,8 @@ fun PlayerSheet(
     dismissSheet: () -> Unit,
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
+    val currentPosition by screenModel.currentPosition.collectAsStateWithLifecycle()
+    val playerState by screenModel.playerState.collectAsStateWithLifecycle()
     var showDescription by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     ModalBottomSheet(
@@ -55,8 +57,11 @@ fun PlayerSheet(
         dragHandle = {
             if (uiState is PlayerScreenModel.UiState.Success && sheetState.currentValue != SheetValue.Hidden) {
                 PlayerView(
+                    currentPosition = currentPosition,
+                    length = (uiState as PlayerScreenModel.UiState.Success).data.length,
                     modifier = Modifier.fillMaxWidth(),
-                    player = screenModel.viewPlayer
+                    player = screenModel.viewPlayer,
+                    playerState = playerState,
                 )
             } else Box(Modifier
                 .fillMaxWidth()
