@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,6 +46,7 @@ import com.github.freetube.ui.global.player.components.PlayerView
 fun MiniPlayer(
     modifier: Modifier = Modifier,
     screenModel: PlayerScreenModel,
+    shouldShowMiniPlayer: Boolean,
     showBottomSheet: () -> Unit,
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
@@ -74,6 +77,7 @@ fun MiniPlayer(
                     togglePlay = { screenModel.togglePlay() },
                     currentPosition = currentPosition,
                     dispose = { screenModel.dispose() },
+                    shouldShowMiniPlayer = shouldShowMiniPlayer,
                 )
             }
         }
@@ -85,6 +89,7 @@ private fun RowScope.MiniPlayer(
     player: Player,
     playerState: PlayerState?,
     video: VideoData,
+    shouldShowMiniPlayer: Boolean,
     currentPosition: Long,
     togglePlay: () -> Unit,
     dispose: () -> Unit,
@@ -113,10 +118,12 @@ private fun RowScope.MiniPlayer(
                 .weight(1f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlayerView(
-                player = player,
-                showController = false,
-            )
+            if (shouldShowMiniPlayer) {
+                PlayerView(
+                    player = player,
+                    showController = false,
+                )
+            } else Box(Modifier.aspectRatio(16 / 9f))
             Column(
                 modifier = Modifier
                     .padding(4.dp)

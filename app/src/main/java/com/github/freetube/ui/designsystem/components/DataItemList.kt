@@ -14,6 +14,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.freetube.core.extractor.model.DataItem
@@ -44,7 +45,10 @@ fun DataItemList(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.Top,
+        ),
     ) {
         items(
             items,

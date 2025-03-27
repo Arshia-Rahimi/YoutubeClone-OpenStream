@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,8 +14,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,10 +36,10 @@ import com.github.freetube.ui.global.player.components.SheetBody
 fun PlayerSheet(
     screenModel: PlayerScreenModel,
     toChannelScreen: (String) -> Unit,
+    sheetState: SheetState,
     dismissSheet: () -> Unit,
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showDescription by rememberSaveable { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     ModalBottomSheet(
@@ -51,12 +53,14 @@ fun PlayerSheet(
         onDismissRequest = dismissSheet,
         shape = RectangleShape,
         dragHandle = {
-            if (uiState is PlayerScreenModel.UiState.Success) {
+            if (uiState is PlayerScreenModel.UiState.Success && sheetState.currentValue != SheetValue.Hidden) {
                 PlayerView(
                     modifier = Modifier.fillMaxWidth(),
                     player = screenModel.viewPlayer
                 )
-            }
+            } else Box(Modifier
+                .fillMaxWidth()
+                .aspectRatio(16 / 9f))
         },
     ) {
         // content animation based on progress currently not possible 

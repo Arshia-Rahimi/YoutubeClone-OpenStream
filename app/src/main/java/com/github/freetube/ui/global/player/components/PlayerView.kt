@@ -38,15 +38,15 @@ fun PlayerView(
     AndroidView(
         modifier = modifier.aspectRatio(16f / 9f),
         factory = { context ->
-            PlayerView(context).also {
-                it.player = player
-                it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
-                it.useController = showController
+            PlayerView(context).apply {
+                this.player = player
+                setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+                useController = showController
                 if (showController) {
-                    it.findViewById<View>(R.id.exo_next).isVisible = false
-                    it.findViewById<View>(R.id.exo_prev).isVisible = false
-                    it.findViewById<View>(R.id.exo_ffwd_with_amount).isVisible = false
-                    it.findViewById<View>(R.id.exo_rew_with_amount).isVisible = false
+                    findViewById<View>(R.id.exo_next).isVisible = false
+                    findViewById<View>(R.id.exo_prev).isVisible = false
+                    findViewById<View>(R.id.exo_ffwd_with_amount).isVisible = false
+                    findViewById<View>(R.id.exo_rew_with_amount).isVisible = false
                 }
             }
         },
