@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,6 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +38,8 @@ fun PlayerSheet(
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showDescription by rememberSaveable { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
     ModalBottomSheet(
         sheetState = sheetState,
         containerColor = Color(0xFF111111),
@@ -88,6 +94,13 @@ fun PlayerSheet(
                 SheetBody(
                     videoData = (uiState as PlayerScreenModel.UiState.Success).data,
                     toChannelScreen = toChannelScreen,
+                    showDescription = showDescription,
+                    scrollState = scrollState,
+                    likeVideo = {},
+                    addToPlaylist = {},
+                    shareVideo = {},
+                    setShowDescription = { showDescription = it },
+                    addToWatchLater = {},
                 )
             }
         }

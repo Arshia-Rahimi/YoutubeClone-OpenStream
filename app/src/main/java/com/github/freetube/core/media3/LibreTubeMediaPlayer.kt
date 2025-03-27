@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 
@@ -55,29 +56,25 @@ class LibreTubeMediaPlayer(
             val status = if (isPlaying) PlayingStatus.PLAYING
             else if (player.playbackState == Player.STATE_BUFFERING) PlayingStatus.BUFFERING
             else PlayingStatus.PAUSED
-            update(_playerState.value.copy(playingStatus = status))
+            _playerState.getAndUpdate { it.copy(playingStatus = status) }
         }
 
         override fun onPlayerError(error: PlaybackException) {
             val cause = error.cause
             // todo catch httpError
-            update(_playerState.value.copy(playerError = error.localizedMessage))
+            _playerState.getAndUpdate { it.copy(playerError = error.localizedMessage) }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
-            update(_playerState.value.copy(repeatMode = repeatMode))
+            _playerState.getAndUpdate { it.copy(repeatMode = repeatMode) }
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            update(_playerState.value.copy(shuffleModeEnabled = shuffleModeEnabled))
+            _playerState.getAndUpdate { it.copy(shuffleModeEnabled = shuffleModeEnabled) }
         }
 
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-            update(_playerState.value.copy(playbackSpeed = playbackParameters.speed))
-        }
-
-        private fun update(newState: PlayerState) {
-            _playerState.value = newState
+            _playerState.getAndUpdate { it.copy(playbackSpeed = playbackParameters.speed) }
         }
     }
 

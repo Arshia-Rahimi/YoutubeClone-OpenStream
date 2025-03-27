@@ -91,7 +91,7 @@ private fun RowScope.MiniPlayer(
 ) {
     var progress by remember { mutableFloatStateOf(0f) }
     LaunchedEffect(currentPosition) {
-        progress = currentPosition.toFloat() / video.length.toFloat(); println(progress)
+        progress = currentPosition.toFloat() / video.length.toFloat()
     }
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
@@ -104,7 +104,7 @@ private fun RowScope.MiniPlayer(
             strokeCap = StrokeCap.Square,
             trackColor = Color(0xFF5D5D5D),
             color = Color(0xFFBBBBBB),
-            progress = { 0.5f },
+            progress = { animatedProgress },
             modifier = Modifier.fillMaxWidth(),
         )
         Row(
