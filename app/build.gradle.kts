@@ -122,4 +122,8 @@ dependencies {
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.media3.session)
     implementation(libs.media3.hls)
+    // room 
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 }
