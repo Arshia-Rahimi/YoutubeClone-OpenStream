@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface PlaylistRepository {
     suspend fun getPlaylist(url: String): Flow<Resource<PlaylistUnit>>
 
-    suspend fun getNextPage(currentPlaylist: PlaylistUnit): Flow<Resource<List<DataItem.Video>?>>
+    suspend fun getNextPage(currentPlaylist: PlaylistUnit): Flow<Resource<List<DataItem>?>>
 }

@@ -24,7 +24,7 @@ object SearchTab : LibreTubeTab() {
     @Composable
     override fun Content() {
         Navigator(
-            screen = SearchTabScreen(),
+            screen = SearchDestination(),
             disposeBehavior = NavigatorDisposeBehavior(disposeSteps = false)
         ) { navigator ->
             SlideTransition(

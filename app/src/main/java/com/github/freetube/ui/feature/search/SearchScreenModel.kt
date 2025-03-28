@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchScreenModel(
-    private val ytRepo: SearchRepository,
+    private val searchRepo: SearchRepository,
 ) : ScreenModel {
 
     private val _isLoading = MutableStateFlow(false)
@@ -34,7 +34,7 @@ class SearchScreenModel(
 
     private fun search() {
         screenModelScope.launch {
-            ytRepo.search(searchQuery.value)
+            searchRepo.search(searchQuery.value)
                 .collect {
                     when (it) {
                         is Resource.Loading -> _isLoading.value = true
@@ -58,7 +58,7 @@ class SearchScreenModel(
     private fun getNextPage() {
         screenModelScope.launch {
             if (search.nextPage == null) return@launch
-            ytRepo.getNextPage(search).collect {
+            searchRepo.getNextPage(search).collect {
                 when (it) {
                     is Resource.Loading -> {}
                     is Resource.Error -> {}

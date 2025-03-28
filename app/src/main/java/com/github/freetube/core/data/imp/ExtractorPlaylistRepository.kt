@@ -14,7 +14,7 @@ class ExtractorPlaylistRepository : PlaylistRepository {
         flow { emit(PlaylistUnit(url)) }
             .asResult(Dispatchers.IO)
 
-    override suspend fun getNextPage(currentPlaylist: PlaylistUnit): Flow<Resource<List<DataItem.Video>?>> =
+    override suspend fun getNextPage(currentPlaylist: PlaylistUnit): Flow<Resource<List<DataItem>?>> =
         flow { emit(currentPlaylist.fetchNextPage()) }
             .asResult(Dispatchers.IO)
 }

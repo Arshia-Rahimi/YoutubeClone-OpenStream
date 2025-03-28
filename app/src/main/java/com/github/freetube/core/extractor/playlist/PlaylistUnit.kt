@@ -5,7 +5,6 @@ import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.toList
 import org.schabi.newpipe.extractor.Page
 
-@Suppress("UNCHECKED_CAST")
 class PlaylistUnit(
     private val url: String,
 ) {
@@ -17,19 +16,20 @@ class PlaylistUnit(
         extractor.fetchPage()
         firstPage = PlaylistResult(
             name = extractor.name,
-            items = extractor.initialPage.items.toList() as List<DataItem.Video>,
+            items = extractor.initialPage.items.toList(),
             channelName = extractor.uploaderName,
             channelUrl = extractor.uploaderUrl,
             isChannelVerified = extractor.isUploaderVerified,
             description = extractor.description.content,
+            count = extractor.streamCount,
         )
         nextPage = extractor.initialPage.nextPage
     }
 
-    fun fetchNextPage(): List<DataItem.Video>? =
+    fun fetchNextPage(): List<DataItem>? =
         nextPage?.let {
             val currentPage = extractor.getPage(nextPage)
             nextPage = currentPage.nextPage
-            return currentPage.items.toList() as List<DataItem.Video>
+            return currentPage.items.toList()
         }
 }

@@ -34,10 +34,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.core.extractor.channel.ChannelInfo
 import com.github.freetube.core.extractor.channel.ChannelTab
 import com.github.freetube.core.extractor.model.DataItem
-import com.github.freetube.ui.designsystem.LoadingBox
 import com.github.freetube.ui.designsystem.components.DataItemList
+import com.github.freetube.ui.designsystem.components.ErrorPage
+import com.github.freetube.ui.designsystem.components.LoadingBox
 import com.github.freetube.ui.global.channel.components.ChannelTopBar
-import com.github.freetube.ui.global.channel.components.ErrorChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -49,6 +49,7 @@ fun ChannelScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
+    toPlaylistScreen: (String) -> Unit,
 ) {
     val uiState by screenModel.state.collectAsStateWithLifecycle()
     val tabResults by screenModel.tabResults
@@ -59,7 +60,7 @@ fun ChannelScreen(
             topBar {}
             LoadingBox()
         }
-        is ChannelScreenModel.UiState.Error -> ErrorChannel(
+        is ChannelScreenModel.UiState.Error -> ErrorPage(
             (uiState as ChannelScreenModel.UiState.Error).message,
             navigateBack
         )
@@ -73,6 +74,7 @@ fun ChannelScreen(
             tabItems = screenModel.tabItems,
             navigateBack = navigateBack,
             playVideo = playVideo,
+            toPlaylistScreen = toPlaylistScreen,
         )
     }
 }
@@ -87,6 +89,7 @@ private fun ChannelScreen(
     trigger: (ChannelAction) -> Unit,
     navigateBack: () -> Unit,
     playVideo: (String) -> Unit,
+    toPlaylistScreen: (String) -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
     val pagerState = rememberPagerState { channelInfo.tabs.size }
@@ -139,13 +142,14 @@ private fun ChannelScreen(
             val currentItems = tabItems[page]
             when {
                 tabResults?.get(page)?.value?.isLoading != false -> LoadingBox()
-                tabResults[page].value.error != null -> ErrorChannel(tabResults[page].value.error) { navigateBack() }
+                tabResults[page].value.error != null -> ErrorPage(tabResults[page].value.error) { navigateBack() }
                 else -> {
                     DataItemList(
                         items = currentItems,
                         shouldViewChannel = false,
                         loadNextPage = { trigger(ChannelAction.GetTabNextPage(page)) },
                         playVideo = playVideo,
+                        toPlaylistScreen = toPlaylistScreen,
                     ) 
                 }
             }

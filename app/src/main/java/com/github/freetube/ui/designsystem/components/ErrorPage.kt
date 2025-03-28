@@ -1,4 +1,4 @@
-package com.github.freetube.ui.global.channel.components
+package com.github.freetube.ui.designsystem.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-internal fun ErrorChannel(
+internal fun ErrorPage(
     error: String?,
     navigateBack: () -> Unit,
 ) {

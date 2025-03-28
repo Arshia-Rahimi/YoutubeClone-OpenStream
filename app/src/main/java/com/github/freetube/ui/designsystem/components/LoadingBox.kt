@@ -1,4 +1,4 @@
-package com.github.freetube.ui.designsystem
+package com.github.freetube.ui.designsystem.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

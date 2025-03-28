@@ -1,31 +1,33 @@
-package com.github.freetube.ui.global.playlist
+package com.github.freetube.ui.global.channel
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.freetube.app.navigation.LibreTubeScreen
 import com.github.freetube.ui.designsystem.scaffold.ScaffoldScreenModel
-import com.github.freetube.ui.global.channel.ChannelTabScreen
 import com.github.freetube.ui.global.player.PlayerScreenModel
+import com.github.freetube.ui.global.playlist.PlaylistDestination
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
-class PlaylistTabScreen(
+data class ChannelDestination(
     private val url: String,
 ) : LibreTubeScreen() {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val screenModel = koinScreenModel<PlaylistScreenModel> { parametersOf(url) }
+        val screenModel = koinScreenModel<ChannelScreenModel> { parametersOf(url) }
         val scaffoldScreenModel = koinInject<ScaffoldScreenModel>()
         val playerScreenModel = koinInject<PlayerScreenModel>()
-        PlaylistScreen(
+        ChannelScreen(
             screenModel = screenModel,
-            playVideo = { playerScreenModel.start(it) },
-            navigateBack = { navigator.pop() },
             topBar = { scaffoldScreenModel.topBar.value = it },
-            toChannelScreen = { navigator.push(ChannelTabScreen(it)) },
+            navigateBack = { navigator.pop() },
+            playVideo = { playerScreenModel.start(it) },
+            toPlaylistScreen = { navigator.push(PlaylistDestination(it)) }
         )
     }
 }

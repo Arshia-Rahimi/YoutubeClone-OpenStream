@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.freetube.ui.designsystem.LoadingBox
 import com.github.freetube.ui.designsystem.components.DataItemList
+import com.github.freetube.ui.designsystem.components.LoadingBox
 import com.github.freetube.ui.feature.search.components.SearchField
 import kotlin.uuid.ExperimentalUuidApi
 

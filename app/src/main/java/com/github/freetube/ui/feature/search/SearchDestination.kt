@@ -7,12 +7,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.freetube.app.navigation.LibreTubeScreen
 import com.github.freetube.ui.designsystem.scaffold.ScaffoldScreenModel
-import com.github.freetube.ui.global.channel.ChannelTabScreen
+import com.github.freetube.ui.global.channel.ChannelDestination
 import com.github.freetube.ui.global.player.PlayerScreenModel
-import com.github.freetube.ui.global.playlist.PlaylistTabScreen
+import com.github.freetube.ui.global.playlist.PlaylistDestination
 import org.koin.compose.koinInject
 
-class SearchTabScreen : LibreTubeScreen() {
+class SearchDestination : LibreTubeScreen() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
@@ -23,8 +23,8 @@ class SearchTabScreen : LibreTubeScreen() {
         SearchScreen(
             screenModel = screenModel,
             topBar = { scaffoldScreenModel.topBar.value = it },
-            toChannelScreen = { navigator.push(ChannelTabScreen(it)) },
-            toPlaylistScreen = { navigator.push(PlaylistTabScreen(it)) },
+            toChannelScreen = { navigator.push(ChannelDestination(it)) },
+            toPlaylistScreen = { navigator.push(PlaylistDestination(it)) },
             playVideo = { playerScreenModel.start(it) },
         )
     }
