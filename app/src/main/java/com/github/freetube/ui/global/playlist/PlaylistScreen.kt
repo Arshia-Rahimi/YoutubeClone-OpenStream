@@ -6,6 +6,10 @@ import androidx.compose.runtime.Composable
 @Composable
 fun PlaylistScreen(
     screenModel: PlaylistScreenModel,
+    topBar: (@Composable () -> Unit) -> Unit,
+    playVideo: (String) -> Unit,
+    navigateBack: () -> Unit,
+    toChannelScreen: (String) -> Unit,
 ) {
     Text("playlist")
 }

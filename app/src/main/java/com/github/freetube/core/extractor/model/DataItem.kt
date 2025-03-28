@@ -38,6 +38,7 @@ sealed class DataItem(
         val channelName: String,
         val channelUrl: String,
         val channelVerified: Boolean,
+        val count: Long,
     ) : DataItem(url, name, thumbnail)
 
     class Channel(
@@ -62,6 +63,7 @@ private fun InfoItem.toDataItem(): DataItem? =
                 channelName = uploaderName,
                 channelUrl = url,
                 channelVerified = isUploaderVerified,
+                count = streamCount,
             )
 
         is ChannelInfoItem ->

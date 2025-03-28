@@ -77,7 +77,7 @@ fun Video(
                     .padding(bottom = 4.dp, end = 4.dp)
                     .align(Alignment.BottomEnd)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color.Black.copy(0.3f))
+                    .background(Color.Black.copy(0.5f))
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),

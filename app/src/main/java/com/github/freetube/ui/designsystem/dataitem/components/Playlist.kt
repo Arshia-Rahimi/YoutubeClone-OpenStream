@@ -1,5 +1,6 @@
 package com.github.freetube.ui.designsystem.dataitem.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,6 +64,27 @@ fun Playlist(
                 contentDescription = "thumbnail",
                 modifier = Modifier.matchParentSize(),
             )
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 4.dp, end = 4.dp)
+                    .align(Alignment.BottomEnd)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.Black.copy(0.5f))
+                    .padding(vertical = 4.dp, horizontal = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.playlist),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                )
+                Text(
+                    text = item.count.toString(),
+                    fontSize = 12.sp,
+                    color = Color.White,
+                )
+            }
         }
         Column(
             modifier = Modifier.weight(0.6f),
@@ -142,6 +164,7 @@ private fun Preview() {
                 channelVerified = true,
                 url = "",
                 thumbnail = "",
+                count = 25L,
             ),
             toChannelScreen = {},
             toPlaylistScreen = {},
