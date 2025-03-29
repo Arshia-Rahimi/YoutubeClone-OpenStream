@@ -41,7 +41,7 @@ fun Channel(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clickable { toChannelScreen(item.url) }
+            .clickable { toChannelScreen(item.url ?: "") }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

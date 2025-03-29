@@ -17,23 +17,23 @@ val databaseModule = module {
             androidContext(),
             LibreTubeDatabase::class.java,
             LibreTubeDatabase.NAME,
-        ).build().also {
-            val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-            scope.launch {
-                if (it.playlistDao().index().first().none { it.name == "watch later" }) {
-                    it.playlistDao().upsert(
-                        PlaylistEntity(
-                            name = "watch later",
-                            channelUrl = "",
-                            description = "",
-                            isChannelVerified = false,
-                            count = 0,
-                            channelName = "",
-                            id = 0,
+        ).build()
+            .also {
+                val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+                scope.launch {
+                    if (it.playlistDao().index().first().none { it.name == "watch later" }) {
+                        it.playlistDao().upsert(
+                            PlaylistEntity(
+                                name = "watch later",
+                                channelUrl = "",
+                                isChannelVerified = false,
+                                count = 0,
+                                channelName = "",
+                                id = 0,
+                            )
                         )
-                    )
+                    }
                 }
             }
-        }
     }
 }

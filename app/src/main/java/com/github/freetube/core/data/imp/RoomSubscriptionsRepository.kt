@@ -20,7 +20,7 @@ class RoomSubscriptionsRepository(
         it.map {
             DataItem.Channel(
                 name = it.name,
-                url = it.url,
+                url = it.url ?: "",
                 thumbnail = it.avatar,
                 subscriberCount = it.subscriberCount,
                 verified = it.isVerified,

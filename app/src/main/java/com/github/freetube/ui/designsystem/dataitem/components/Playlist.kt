@@ -49,7 +49,7 @@ fun Playlist(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { toPlaylistScreen(item.url) }
+            .clickable { toPlaylistScreen(item.url ?: "") }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
@@ -106,8 +106,8 @@ fun Playlist(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SubText(text = item.channelName)
-                if (item.channelVerified) {
+                SubText(text = item.channelName ?: "")
+                if (item.channelVerified == true) {
                     Icon(
                         modifier = Modifier.padding(start = 4.dp, end = 8.dp),
                         painter = painterResource(R.drawable.verified),
@@ -143,7 +143,7 @@ fun Playlist(
                         text = { Text("viewChannel") },
                         onClick = {
                             isDropDownExpanded = false
-                            toChannelScreen(item.channelUrl)
+                            toChannelScreen(item.channelUrl ?: "")
                         },
                     )
                 }
