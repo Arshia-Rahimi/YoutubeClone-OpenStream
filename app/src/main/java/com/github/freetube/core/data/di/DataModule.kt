@@ -2,15 +2,13 @@ package com.github.freetube.core.data.di
 
 import com.github.freetube.core.data.ChannelRepository
 import com.github.freetube.core.data.PlaylistRepository
-import com.github.freetube.core.data.PlaylistsRepository
 import com.github.freetube.core.data.SearchRepository
 import com.github.freetube.core.data.SubscriptionsRepository
 import com.github.freetube.core.data.VideoRepository
 import com.github.freetube.core.data.imp.ExtractorChannelRepository
-import com.github.freetube.core.data.imp.ExtractorPlaylistRepository
 import com.github.freetube.core.data.imp.ExtractorSearchRepository
 import com.github.freetube.core.data.imp.ExtractorVideoRepository
-import com.github.freetube.core.data.imp.RoomPlaylistsRepository
+import com.github.freetube.core.data.imp.OfflineFirstPlaylistRepository
 import com.github.freetube.core.data.imp.RoomSubscriptionsRepository
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -23,7 +21,7 @@ val dataModule = module {
 
     factoryOf(::ExtractorVideoRepository) { bind<VideoRepository>() }
 
-    factoryOf(::ExtractorPlaylistRepository) { bind<PlaylistRepository>() }
+    factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
 
     factoryOf(::RoomPlaylistsRepository) { bind<PlaylistsRepository>() }
 

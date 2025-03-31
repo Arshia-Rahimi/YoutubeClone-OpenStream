@@ -3,20 +3,22 @@ package com.github.freetube.core.data.imp
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.common.util.Success
 import com.github.freetube.core.common.util.asResult
-import com.github.freetube.core.data.PlaylistsRepository
+import com.github.freetube.core.data.PlaylistRepository
 import com.github.freetube.core.database.LibreTubeDatabase
 import com.github.freetube.core.database.entities.PlaylistEntity
 import com.github.freetube.core.extractor.model.DataItem
+import com.github.freetube.core.extractor.playlist.PlaylistUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
-class RoomPlaylistsRepository(
+class OfflineFirstPlaylistRepository(
     private val db: LibreTubeDatabase,
-) : PlaylistsRepository {
-    override val playlists = db.playlistDao().index().map {
+) : PlaylistRepository {
+
+    override val localPlaylists = db.playlistDao().index().map {
         it.map {
             // todo get count from videos table
             DataItem.Playlist(
@@ -43,7 +45,7 @@ class RoomPlaylistsRepository(
 
     override suspend fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
         flow {
-            db.playlistDao().delete(playlist.toEntity() as PlaylistEntity)
+            db.playlistDao().delete(playlist.toEntity(null) as PlaylistEntity)
             emit(Success)
         }.asResult(Dispatchers.IO)
 
@@ -63,4 +65,12 @@ class RoomPlaylistsRepository(
         // todo
         emit(Success)
     }.asResult(Dispatchers.IO)
+
+    override suspend fun getPlaylist(url: String): Flow<Resource<PlaylistUnit>> =
+        flow { emit(PlaylistUnit(url)) }
+            .asResult(Dispatchers.IO)
+
+    override suspend fun getNextPage(currentPlaylist: PlaylistUnit): Flow<Resource<List<DataItem>?>> =
+        flow { emit(currentPlaylist.fetchNextPage()) }
+            .asResult(Dispatchers.IO)
 }
