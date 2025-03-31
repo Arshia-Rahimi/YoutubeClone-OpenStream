@@ -1,5 +1,6 @@
 package com.github.freetube.ui.global.player
 
+import androidx.compose.runtime.Composable
 import androidx.media3.common.Player
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -20,6 +21,9 @@ class PlayerScreenModel(
     private val player: LibreTubeMediaPlayer,
     private val videoRepository: VideoRepository,
 ) : StateScreenModel<PlayerScreenModel.UiState>(UiState.Loading) {
+    //    val scrollBehavior     
+    //    @Composable get() = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topBar: MutableStateFlow<(@Composable () -> Unit)> = MutableStateFlow({})
 
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()

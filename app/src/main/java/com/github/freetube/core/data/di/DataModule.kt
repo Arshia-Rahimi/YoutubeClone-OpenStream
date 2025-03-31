@@ -23,7 +23,5 @@ val dataModule = module {
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
 
-    factoryOf(::RoomPlaylistsRepository) { bind<PlaylistsRepository>() }
-
     factoryOf(::RoomSubscriptionsRepository) { bind<SubscriptionsRepository>() }
 }

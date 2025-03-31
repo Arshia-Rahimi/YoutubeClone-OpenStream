@@ -6,7 +6,6 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.freetube.app.navigation.LibreTubeScreen
-import com.github.freetube.ui.designsystem.scaffold.ScaffoldScreenModel
 import com.github.freetube.ui.global.player.PlayerScreenModel
 import com.github.freetube.ui.global.playlist.PlaylistDestination
 import org.koin.compose.koinInject
@@ -20,11 +19,10 @@ data class ChannelDestination(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val screenModel = koinScreenModel<ChannelScreenModel> { parametersOf(url) }
-        val scaffoldScreenModel = koinInject<ScaffoldScreenModel>()
         val playerScreenModel = koinInject<PlayerScreenModel>()
         ChannelScreen(
             screenModel = screenModel,
-            topBar = { scaffoldScreenModel.topBar.value = it },
+            topBar = { playerScreenModel.topBar.value = it },
             navigateBack = { navigator.pop() },
             playVideo = { playerScreenModel.start(it) },
             toPlaylistScreen = { navigator.push(PlaylistDestination(it)) }

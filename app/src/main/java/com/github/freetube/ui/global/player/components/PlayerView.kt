@@ -40,7 +40,6 @@ import com.arshia.freetube.R
 import com.github.freetube.core.media3.PlayerState
 import com.github.freetube.core.media3.PlayingStatus
 import com.github.freetube.ui.designsystem.components.noRippleClickable
-import kotlinx.coroutines.delay
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -55,18 +54,19 @@ fun PlayerView(
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
     val lifecycleOwner = LocalLifecycleOwner.current
     var controllerVisible by remember { mutableStateOf(true) }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event -> lifecycle = event }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    if (isInSheet) {
-        LaunchedEffect(controllerVisible) {
-            delay(3000L)
-            controllerVisible = false
-        }
-    }
+//    if (isInSheet) {
+//        LaunchedEffect(controllerVisible) {
+//            delay(3000L)
+//            controllerVisible = false
+//        }
+//    }
 
     Box(
         modifier = Modifier
@@ -97,15 +97,15 @@ fun PlayerView(
                 }
             },
         )
-        if (isInSheet) {
-            PlayerController(
-                controllerVisible = controllerVisible,
-                currentPosition = currentPosition,
-                length = length,
-                player = player,
-                playerState = playerState,
-            )
-        }
+//        if (isInSheet) {
+//            PlayerController(
+//                controllerVisible = controllerVisible,
+//                currentPosition = currentPosition,
+//                length = length,
+//                player = player,
+//                playerState = playerState,
+//            )
+//        }
     }
 }
 

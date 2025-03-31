@@ -32,7 +32,7 @@ class RoomSubscriptionsRepository(
     override suspend fun toggleSubscribe(channel: DataItem.Channel): Flow<Resource<Success>> =
         flow {
             val isSubscribed = db.channelDao().index().first().any { it.url == channel.url }
-            val channel = channel.toEntity() as ChannelEntity
+            val channel = channel.toEntity(null) as ChannelEntity
 
             if (isSubscribed) db.channelDao().delete(channel)
             else db.channelDao().upsert(channel)
