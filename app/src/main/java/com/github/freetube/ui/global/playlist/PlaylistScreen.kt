@@ -10,15 +10,18 @@ import com.github.freetube.ui.designsystem.components.DataItemList
 import com.github.freetube.ui.designsystem.components.ErrorPage
 import com.github.freetube.ui.designsystem.components.LoadingBox
 import com.github.freetube.ui.global.playlist.components.PlaylistTopBar
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parameterSetOf
 
 @Composable
 fun PlaylistScreen(
-    viewModel: PlaylistViewModel,
+    url: String,
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
     toChannelScreen: (String) -> Unit,
 ) {
+    val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parameterSetOf(url) })
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
