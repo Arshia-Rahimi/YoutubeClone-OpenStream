@@ -40,38 +40,42 @@ import com.github.freetube.ui.designsystem.components.LoadingBox
 import com.github.freetube.ui.global.channel.components.ChannelTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChannelScreen(
-    screenModel: ChannelScreenModel,
+    url: String,
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
     toPlaylistScreen: (String) -> Unit,
 ) {
-    val uiState by screenModel.state.collectAsStateWithLifecycle()
-    val tabResults by screenModel.tabResults
+    val viewModel = koinViewModel<ChannelViewModel>(parameters = { parametersOf(url) })
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val tabResults by viewModel.tabResults
     val scope = rememberCoroutineScope()
 
     when (uiState) {
-        is ChannelScreenModel.UiState.Loading -> {
+        is ChannelViewModel.UiState.Loading -> {
             topBar {}
             LoadingBox()
         }
-        is ChannelScreenModel.UiState.Error -> ErrorPage(
-            (uiState as ChannelScreenModel.UiState.Error).message,
+
+        is ChannelViewModel.UiState.Error -> ErrorPage(
+            (uiState as ChannelViewModel.UiState.Error).message,
             navigateBack
         )
 
-        is ChannelScreenModel.UiState.Success -> ChannelScreen(
-            (uiState as ChannelScreenModel.UiState.Success).channelInfo,
-            trigger = { screenModel.onAction(it) },
+        is ChannelViewModel.UiState.Success -> ChannelScreen(
+            (uiState as ChannelViewModel.UiState.Success).channelInfo,
+            trigger = { viewModel.onAction(it) },
             topBar = topBar,
             tabResults = tabResults,
             scope = scope,
-            tabItems = screenModel.tabItems,
+            tabItems = viewModel.tabItems,
             navigateBack = navigateBack,
             playVideo = playVideo,
             toPlaylistScreen = toPlaylistScreen,

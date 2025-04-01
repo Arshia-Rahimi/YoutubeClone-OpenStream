@@ -109,13 +109,6 @@ dependencies {
     coreLibraryDesugaring(libs.desugaring)
     // okhttp
     implementation(libs.okhttp)
-    // voyager
-    implementation(libs.voyager)
-    implementation(libs.voyager.screenmodel)
-    implementation(libs.voyager.bottom.sheet)
-    implementation(libs.voyager.tab)
-    implementation(libs.voyager.transitions)
-    implementation(libs.voyager.koin)
     // media3
     implementation(libs.media3.ui)
     implementation(libs.media3.exoplayer)

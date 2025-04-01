@@ -1,6 +1,5 @@
 package com.github.freetube.ui.global.player
 
-//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -15,41 +14,33 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.navigator.tab.Tab
-import com.github.freetube.ui.feature.downloads.DownloadsTab
-import com.github.freetube.ui.feature.library.LibraryTab
-import com.github.freetube.ui.feature.search.SearchTab
-import com.github.freetube.ui.feature.settings.SettingsTab
-import com.github.freetube.ui.feature.subscriptions.SubscriptionsTab
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import com.github.freetube.app.navigation.Tabs
+import com.github.freetube.app.navigation.TopLevelDestination
 import org.koin.compose.koinInject
-
-val libreTubeTabs = arrayOf(
-    SearchTab,
-    LibraryTab,
-    SubscriptionsTab,
-    DownloadsTab,
-    SettingsTab,
-)
+import kotlin.reflect.KClass
 
 const val LOADING_SHARED_KEY = ""
 
@@ -57,35 +48,30 @@ const val LOADING_SHARED_KEY = ""
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun LibreTubeScaffold(
-    currentTab: Tab,
-    navigateToTab: (Tab) -> Unit,
+    sheetScaffoldState: BottomSheetScaffoldState,
+    currentEntry: NavDestination?,
+    navigateToTab: (TopLevelDestination) -> Unit,
     content: @Composable (Modifier) -> Unit,
 ) {
-    val screenModel = koinInject<PlayerScreenModel>()
-    val topBar by screenModel.topBar.collectAsStateWithLifecycle()
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(
-            initialValue = SheetValue.PartiallyExpanded,
-            skipHiddenState = false,
-        )
-    )
+    val viewModel = koinInject<PlayerViewModel>()
+    val topBar by viewModel.topBar.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             BottomBar(
-                currentTab = currentTab,
+                currentEntry = currentEntry,
                 navigateToTab = navigateToTab,
             )
         }
     ) {
         SharedTransitionLayout {
-            AnimatedContent(bottomSheetScaffoldState.bottomSheetState.currentValue) { state ->
+            AnimatedContent(sheetScaffoldState.bottomSheetState.currentValue) { state ->
                 BottomSheetScaffold(
                     sheetPeekHeight = 150.dp,
                     modifier = Modifier
                         .fillMaxSize(),
-                    scaffoldState = bottomSheetScaffoldState,
+                    scaffoldState = sheetScaffoldState,
 //                .nestedScroll(screenModel.scrollBehavior.nestedScrollConnection),
                     topBar = { topBar() },
                     snackbarHost = {
@@ -109,13 +95,13 @@ fun LibreTubeScaffold(
                     },
                     sheetContent = {
                         PlayerSheet(
-                            screenModel = screenModel,
+                            viewModel = viewModel,
                             toChannelScreen = {
                                 // todo
                             },
                             sheetValue = state,
                             animatedVisibilityScope = this@AnimatedContent,
-                            sheetState = bottomSheetScaffoldState.bottomSheetState,
+                            sheetState = sheetScaffoldState.bottomSheetState,
                             columnScope = this,
                         )
                     },
@@ -139,24 +125,24 @@ fun LibreTubeScaffold(
 
 @Composable
 private fun BottomBar(
-    currentTab: Tab,
-    navigateToTab: (Tab) -> Unit,
+    currentEntry: NavDestination?,
+    navigateToTab: (TopLevelDestination) -> Unit,
 ) {
     BottomAppBar(
         contentColor = Color(0xFF1A1A1A),
         containerColor = Color(0xFF1A1A1A),
     ) {
-        libreTubeTabs.forEach { tab ->
-            val selected = currentTab == tab
+        Tabs.entries.forEach { tab ->
+            val selected = currentEntry.isRouteInHierarchy(tab.route::class)
             // todo migrate to m3
             BottomNavigationItem(
                 modifier = Modifier.navigationBarsPadding(),
                 selected = selected,
-                onClick = { navigateToTab(tab) },
+                onClick = { navigateToTab(tab.route) },
                 icon = {
                     Icon(
                         painter = painterResource(
-                            if (selected) tab.data.selectedIcon else tab.data.icon
+                            if (selected) tab.selectedIcon else tab.icon
                         ),
                         contentDescription = null,
                         tint = Color.Unspecified,
@@ -164,7 +150,7 @@ private fun BottomBar(
                 },
                 label = {
                     Text(
-                        text = tab.options.title,
+                        text = stringResource(tab.title),
                         maxLines = 1,
                         fontSize = 8.sp,
                         color = if (selected) Color.White else Color(0xFFBABABA)
@@ -174,3 +160,8 @@ private fun BottomBar(
         }
     }
 }
+
+private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
+    this?.hierarchy?.any {
+        it.hasRoute(route)
+    } == true

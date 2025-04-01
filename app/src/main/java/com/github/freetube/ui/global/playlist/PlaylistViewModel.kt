@@ -1,19 +1,21 @@
 package com.github.freetube.ui.global.playlist
 
 import androidx.compose.runtime.mutableStateListOf
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.PlaylistRepository
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.playlist.PlaylistResult
 import com.github.freetube.core.extractor.playlist.PlaylistUnit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PlaylistScreenModel(
+class PlaylistViewModel(
     private val url: String,
     private val playlistRepository: PlaylistRepository,
-) : StateScreenModel<PlaylistScreenModel.UiState>(UiState.Loading) {
+) : ViewModel() {
 
     sealed interface UiState {
         data object Loading : UiState
@@ -21,14 +23,17 @@ class PlaylistScreenModel(
         data class Success(val playlistResult: PlaylistResult) : UiState
     }
 
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    val uiState = _uiState.asStateFlow()
+
     private lateinit var playlist: PlaylistUnit
     val items = mutableStateListOf<DataItem>()
 
     init {
-        screenModelScope.launch {
+        viewModelScope.launch {
             playlistRepository.getPlaylist(url)
                 .collect {
-                    mutableState.value = when (it) {
+                    _uiState.value = when (it) {
                         is Resource.Loading -> UiState.Loading
                         is Resource.Error -> UiState.Error(it.message)
                         is Resource.Success -> {
@@ -43,7 +48,7 @@ class PlaylistScreenModel(
 
 
     fun getNextPage() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             if (playlist.nextPage == null) return@launch
             playlistRepository.getNextPage(playlist)
                 .collect {

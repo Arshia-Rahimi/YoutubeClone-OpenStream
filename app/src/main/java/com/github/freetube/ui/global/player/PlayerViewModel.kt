@@ -1,9 +1,9 @@
 package com.github.freetube.ui.global.player
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.VideoRepository
 import com.github.freetube.core.extractor.video.VideoData
@@ -17,10 +17,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class PlayerScreenModel(
+class PlayerViewModel(
     private val player: LibreTubeMediaPlayer,
     private val videoRepository: VideoRepository,
-) : StateScreenModel<PlayerScreenModel.UiState>(UiState.Loading) {
+) : ViewModel() {
     //    val scrollBehavior     
     //    @Composable get() = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val topBar: MutableStateFlow<(@Composable () -> Unit)> = MutableStateFlow({})
@@ -29,14 +29,17 @@ class PlayerScreenModel(
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
         .apply {
             onEach { if (it) player.init() else player.release() }
-                .launchIn(screenModelScope)
+                .launchIn(viewModelScope)
         }
 
     val viewPlayer: Player
         get() = player.player
     val playerState = player.playerState
     val currentPosition = player.playerPosition
-        .stateIn(screenModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
+
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    val uiState = _uiState.asStateFlow()
 
     sealed interface UiState {
         data object Loading : UiState
@@ -46,10 +49,10 @@ class PlayerScreenModel(
 
     fun start(videoUrl: String) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
-        screenModelScope.launch {
+        viewModelScope.launch {
             videoRepository.fetchVideo(videoUrl)
                 .collect { video ->
-                    mutableState.value = when (video) {
+                    _uiState.value = when (video) {
                         is Resource.Loading -> UiState.Loading
                         is Resource.Error -> UiState.Error(video.message)
                         is Resource.Success -> {

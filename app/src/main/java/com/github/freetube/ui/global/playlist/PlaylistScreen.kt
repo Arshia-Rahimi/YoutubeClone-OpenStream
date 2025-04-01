@@ -13,33 +13,33 @@ import com.github.freetube.ui.global.playlist.components.PlaylistTopBar
 
 @Composable
 fun PlaylistScreen(
-    screenModel: PlaylistScreenModel,
+    viewModel: PlaylistViewModel,
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
     toChannelScreen: (String) -> Unit,
 ) {
-    val uiState by screenModel.state.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (uiState) {
-        is PlaylistScreenModel.UiState.Loading -> {
+        is PlaylistViewModel.UiState.Loading -> {
             topBar {}
             LoadingBox()
         }
 
-        is PlaylistScreenModel.UiState.Error -> ErrorPage(
-            (uiState as PlaylistScreenModel.UiState.Error).message,
+        is PlaylistViewModel.UiState.Error -> ErrorPage(
+            (uiState as PlaylistViewModel.UiState.Error).message,
             navigateBack
         )
 
-        is PlaylistScreenModel.UiState.Success -> {
+        is PlaylistViewModel.UiState.Success -> {
             PlaylistScreen(
-                playlist = (uiState as PlaylistScreenModel.UiState.Success).playlistResult,
-                items = screenModel.items,
+                playlist = (uiState as PlaylistViewModel.UiState.Success).playlistResult,
+                items = viewModel.items,
                 topBar = topBar,
                 playVideo = playVideo,
                 toChannelScreen = toChannelScreen,
-                loadNextPage = { screenModel.getNextPage() }
+                loadNextPage = { viewModel.getNextPage() }
             )
         }
     }

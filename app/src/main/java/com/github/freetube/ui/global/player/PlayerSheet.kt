@@ -22,16 +22,16 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.PlayerSheet(
-    screenModel: PlayerScreenModel,
+    viewModel: PlayerViewModel,
     toChannelScreen: (String) -> Unit,
     sheetValue: SheetValue,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sheetState: SheetState,
     columnScope: ColumnScope,
 ) {
-    val uiState by screenModel.state.collectAsStateWithLifecycle()
-    val currentPosition by screenModel.currentPosition.collectAsStateWithLifecycle()
-    val playerState by screenModel.playerState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
+    val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 

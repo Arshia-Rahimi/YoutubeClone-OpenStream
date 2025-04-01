@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import com.github.freetube.app.navigation.TabNavigation
+import com.github.freetube.app.navigation.Navigation
 import com.github.freetube.core.extractor.OkHttpDownloader
 import com.github.freetube.ui.designsystem.theme.FreeTubeTheme
 import org.koin.androidx.compose.KoinAndroidContext
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             KoinAndroidContext {
                 FreeTubeTheme {
-                    TabNavigation()
+                    Navigation()
                 }
             }
         }

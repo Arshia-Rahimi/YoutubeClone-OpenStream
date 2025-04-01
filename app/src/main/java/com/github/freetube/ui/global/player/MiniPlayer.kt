@@ -45,11 +45,11 @@ import com.github.freetube.ui.global.player.components.PlayerView
 @Composable
 fun MiniPlayer(
     modifier: Modifier = Modifier,
-    screenModel: PlayerScreenModel,
+    screenModel: PlayerViewModel,
     shouldShowMiniPlayer: Boolean,
     showBottomSheet: () -> Unit,
 ) {
-    val uiState by screenModel.state.collectAsStateWithLifecycle()
+//    val uiState by screenModel.state.collectAsStateWithLifecycle()
     val playerState by screenModel.playerState.collectAsStateWithLifecycle()
     val currentPosition by screenModel.currentPosition.collectAsStateWithLifecycle()
 
@@ -63,31 +63,31 @@ fun MiniPlayer(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        when (uiState) {
-            is PlayerScreenModel.UiState.Loading -> CircularProgressIndicator()
-            is PlayerScreenModel.UiState.Error -> Text(
-                (uiState as PlayerScreenModel.UiState.Error).message ?: ""
-            )
-
-            is PlayerScreenModel.UiState.Success -> {
-                MiniPlayer(
-                    player = screenModel.viewPlayer,
-                    playerState = playerState,
-                    video = (uiState as PlayerScreenModel.UiState.Success).data,
-                    togglePlay = { screenModel.togglePlay() },
-                    currentPosition = currentPosition,
-                    dispose = { screenModel.dispose() },
-                    shouldShowMiniPlayer = shouldShowMiniPlayer,
-                    screenModel = screenModel,
-                )
-            }
-        }
+//        when (uiState) {
+//            is PlayerViewModel.UiState.Loading -> CircularProgressIndicator()
+//            is PlayerViewModel.UiState.Error -> Text(
+//                (uiState as PlayerViewModel.UiState.Error).message ?: ""
+//            )
+//
+//            is PlayerViewModel.UiState.Success -> {
+//                MiniPlayer(
+//                    player = screenModel.viewPlayer,
+//                    playerState = playerState,
+//                    video = (uiState as PlayerViewModel.UiState.Success).data,
+//                    togglePlay = { screenModel.togglePlay() },
+//                    currentPosition = currentPosition,
+//                    dispose = { screenModel.dispose() },
+//                    shouldShowMiniPlayer = shouldShowMiniPlayer,
+//                    screenModel = screenModel,
+//                )
+//            }
+//        }
     }
 }
 
 @Composable
 private fun RowScope.MiniPlayer(
-    screenModel: PlayerScreenModel,
+    screenModel: PlayerViewModel,
     player: Player,
     playerState: PlayerState?,
     video: VideoData,

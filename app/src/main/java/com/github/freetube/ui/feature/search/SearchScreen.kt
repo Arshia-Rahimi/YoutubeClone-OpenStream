@@ -16,23 +16,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.ui.designsystem.components.DataItemList
 import com.github.freetube.ui.designsystem.components.LoadingBox
 import com.github.freetube.ui.feature.search.components.SearchField
+import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun SearchScreen(
-    screenModel: SearchScreenModel,
     topBar: (@Composable () -> Unit) -> Unit,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
 ) {
-    val trigger: (SearchAction) -> Unit = { screenModel.onAction(it) }
-    val searchQuery by screenModel.searchQuery
-    val results = screenModel.results
-    val isLoading by screenModel.isLoading.collectAsStateWithLifecycle()
-    val isCorrectedSearch by screenModel.isCorrectedSearch.collectAsStateWithLifecycle()
-    val searchSuggestion by screenModel.searchSuggestion.collectAsStateWithLifecycle()
+    val viewModel = koinViewModel<SearchViewModel>()
+    val trigger: (SearchAction) -> Unit = { viewModel.onAction(it) }
+    val searchQuery by viewModel.searchQuery
+    val results = viewModel.results
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val isCorrectedSearch by viewModel.isCorrectedSearch.collectAsStateWithLifecycle()
+    val searchSuggestion by viewModel.searchSuggestion.collectAsStateWithLifecycle()
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
@@ -41,7 +42,7 @@ fun SearchScreen(
         SearchField(
             searchQuery = searchQuery,
             focusManager = focusManager,
-            setSearchQuery = { screenModel.searchQuery.value = it },
+            setSearchQuery = { viewModel.searchQuery.value = it },
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
             isCorrectedSearch = isCorrectedSearch,

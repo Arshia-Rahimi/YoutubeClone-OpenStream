@@ -2,8 +2,8 @@ package com.github.freetube.ui.feature.search
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.SearchRepository
 import com.github.freetube.core.extractor.model.DataItem
@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SearchScreenModel(
+class SearchViewModel(
     private val searchRepo: SearchRepository,
-) : ScreenModel {
+) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -33,7 +33,7 @@ class SearchScreenModel(
     }
 
     private fun search() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             searchRepo.search(searchQuery.value)
                 .collect {
                     when (it) {
@@ -56,7 +56,7 @@ class SearchScreenModel(
     }
 
     private fun getNextPage() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             if (search.nextPage == null) return@launch
             searchRepo.getNextPage(search).collect {
                 when (it) {

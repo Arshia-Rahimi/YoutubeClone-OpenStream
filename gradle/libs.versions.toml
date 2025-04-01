@@ -21,7 +21,6 @@ coreSplashscreen = "1.0.1"
 uiAndroid = "1.7.8"
 newPipeExtractor = "0.24.5"
 desugaring = "2.1.5"
-voyager = "1.1.0-beta03"
 media3 = "1.6.0"
 
 [libraries]
@@ -73,13 +72,6 @@ newpipe-extractor = { module="com.github.TeamNewPipe:NewPipeExtractor", version.
 desugaring = { module="com.android.tools:desugar_jdk_libs_nio", version.ref="desugaring" }
 ## okhttp
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-## voyager
-voyager = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-bottom-sheet = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tab = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
 ## media3
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3" }
