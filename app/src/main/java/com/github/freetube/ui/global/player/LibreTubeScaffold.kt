@@ -1,6 +1,5 @@
 package com.github.freetube.ui.global.player
 
-//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
@@ -27,13 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.app.navigation.TopLevelDestination
 import org.koin.compose.koinInject
-import kotlin.reflect.KClass
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -75,10 +70,10 @@ fun LibreTubeScaffold(
                 ),
         ) {
             content()
-//            PlayerSheet(
-//                viewModel = viewModel,
-//                toChannelScreen = {},
-//            )
+            PlayerSheet(
+                viewModel = viewModel,
+                toChannelScreen = {},
+            )
         }
     }
 }
@@ -94,7 +89,6 @@ private fun BottomBar(
     ) {
         Tabs.entries.forEach { tab ->
             val selected = currentTab == tab.route.toString()
-            // todo migrate to m3
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),
                 selected = selected,
@@ -120,8 +114,3 @@ private fun BottomBar(
         }
     }
 }
-
-private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
-    this?.hierarchy?.any {
-        it.hasRoute(route)
-    } == true
