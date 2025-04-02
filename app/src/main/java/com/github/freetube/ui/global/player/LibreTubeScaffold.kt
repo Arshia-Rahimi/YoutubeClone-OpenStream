@@ -39,7 +39,7 @@ import kotlin.reflect.KClass
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun LibreTubeScaffold(
-    currentEntry: NavDestination?,
+    currentTab: String,
     navigateToTab: (TopLevelDestination) -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -57,7 +57,7 @@ fun LibreTubeScaffold(
         },
         bottomBar = {
             BottomBar(
-                currentEntry = currentEntry,
+                currentTab = currentTab,
                 navigateToTab = navigateToTab,
             )
         }
@@ -85,7 +85,7 @@ fun LibreTubeScaffold(
 
 @Composable
 private fun BottomBar(
-    currentEntry: NavDestination?,
+    currentTab: String,
     navigateToTab: (TopLevelDestination) -> Unit,
 ) {
     NavigationBar(
@@ -93,7 +93,7 @@ private fun BottomBar(
         containerColor = Color(0xFF1A1A1A),
     ) {
         Tabs.entries.forEach { tab ->
-            val selected = currentEntry.isRouteInHierarchy(tab.route::class)
+            val selected = currentTab == tab.route.toString()
             // todo migrate to m3
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),

@@ -21,12 +21,13 @@ import org.koin.compose.koinInject
 fun Navigation() {
     val rootNavController = rememberNavController()
     val playerViewModel = koinInject<PlayerViewModel>()
+    val currentTab = rootNavController.currentBackStackEntryAsState()
+        .value?.destination?.route?.split(".")?.last() ?: SubscriptionsRoute.toString()
     val topBar: (@Composable () -> Unit) -> Unit = { playerViewModel.topBar.value = it }
     val playVideo: (String) -> Unit = { playerViewModel.start(it) }
-    val currentBackStackEntry = rootNavController.currentBackStackEntryAsState().value?.destination
 
     LibreTubeScaffold(
-        currentEntry = currentBackStackEntry,
+        currentTab = currentTab,
         navigateToTab = {
             rootNavController.navigate(it) {
                 popUpTo(rootNavController.graph.findStartDestination().id) {
