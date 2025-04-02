@@ -70,10 +70,10 @@ fun LibreTubeScaffold(
                 ),
         ) {
             content()
-//            PlayerSheet(
-//                viewModel = viewModel,
-//                toChannelScreen = {},
-//            )
+            PlayerSheet(
+                viewModel = viewModel,
+                toChannelScreen = {},
+            )
         }
     }
 }
