@@ -1,7 +1,9 @@
 package com.github.freetube.ui.global.player
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +11,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,10 +25,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -42,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arshia.freetube.R
 import com.github.freetube.core.common.util.onCondition
 import com.github.freetube.ui.global.player.components.PlayerSheetState
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -54,46 +56,40 @@ fun PlayerSheet(
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val density = LocalDensity.current
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp.dp
+    val screenHeight = config.screenHeightDp.dp
     val scope = rememberCoroutineScope()
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
-            positionalThreshold = { distance: Float -> distance * 0.1f },
-            velocityThreshold = { with(density) { 100f } },
-            snapAnimationSpec = tween(),
-            decayAnimationSpec = exponentialDecay(),
-        ).apply {
-            updateAnchors(
-                DraggableAnchors {
-                    PlayerSheetState.MINI_PLAYER at 0.1f
-                    PlayerSheetState.FULL_SCREEN at 1f
+            anchors = DraggableAnchors {
+                PlayerSheetState.MINI_PLAYER at with(density) {
+                    (screenHeight.value * 0.8f).dp.toPx()
                 }
-            )
-        }
+                PlayerSheetState.FULL_SCREEN at 0f
+            },
+            positionalThreshold = { distance: Float -> distance / 2 },
+            velocityThreshold = { with(density) { 100.dp.toPx() } },
+            decayAnimationSpec = exponentialDecay(),
+            snapAnimationSpec = spring(
+                stiffness = Spring.StiffnessLow
+            ),
+        )
     }
-    var sheetState by remember { mutableStateOf(PlayerSheetState.MINI_PLAYER) }
-    val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp.dp
-    val screenHeight = config.screenHeightDp.dp
-    val slightlyExpandedPlayerWidth = screenWidth * 0.2f
-    var sheetHeight by remember { mutableFloatStateOf(slightlyExpandedPlayerWidth.value) }
-    val playerWidth by remember {
-        derivedStateOf {
-//            when (sheetState.currentValue) {
-//                FlexibleSheetValue.SlightlyExpanded -> slightlyExpandedPlayerWidth
-//                else -> sheetHeight / screenHeight
-//            }
-        }
-    }
-//    val animatedPlayerWidth by animateFloatAsState(playerWidth)
+    var sheetState = dragState.currentValue
+    var sheetHeight by remember { mutableFloatStateOf(0f) }
+    val playerWidth = 0.25f
+    val animatedWidth by animateFloatAsState(playerWidth)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .systemBarsPadding()
             .offset {
                 IntOffset(
-                    y = 0,
-                    x = -dragState.requireOffset().roundToInt(),
+                    x = 0,
+                    y = dragState.requireOffset().roundToInt(),
                 )
             }
             .background(Color.Transparent)
@@ -108,11 +104,14 @@ fun PlayerSheet(
                 .fillMaxWidth()
                 .background(Color.Gray)
                 .onGloballyPositioned {
-                    sheetHeight = it.positionOnScreen().y.also(::println)
+                    sheetHeight = it.positionOnScreen().y.also {
+                        println(it)
+                        with(density) { println(it.dp.toPx()) }
+                    }
                 }
                 .onCondition(sheetState == PlayerSheetState.MINI_PLAYER) {
                     clickable {
-                        sheetState = PlayerSheetState.FULL_SCREEN
+                        scope.launch { dragState.animateTo(PlayerSheetState.FULL_SCREEN) }
                     }
                 },
             horizontalArrangement = Arrangement.Start,
@@ -120,7 +119,7 @@ fun PlayerSheet(
             Box(
                 modifier = Modifier
                     .systemBarsPadding()
-//                        .width(animatedPlayerWidth.dp)
+//                    .width(animatedWidth.dp)
                     .aspectRatio(16 / 9f),
             ) {
                 Icon(

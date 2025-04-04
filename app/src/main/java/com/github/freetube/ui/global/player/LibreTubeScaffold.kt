@@ -56,7 +56,6 @@ fun LibreTubeScaffold(
                 navigateToTab = navigateToTab,
             )
         }
-
     ) { ip ->
         Box(
             modifier = Modifier

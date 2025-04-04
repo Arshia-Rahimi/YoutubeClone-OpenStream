@@ -22,7 +22,6 @@ uiAndroid = "1.7.8"
 newPipeExtractor = "0.24.5"
 desugaring = "2.1.5"
 media3 = "1.6.0"
-flexible = "0.1.5"
 
 [libraries]
 ## android
@@ -83,8 +82,6 @@ media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version
 room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-## flexible bottomSheet
-flexible-m3 = { module = "com.github.skydoves:flexible-bottomsheet-material3", version.ref = "flexible" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

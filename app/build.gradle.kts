@@ -119,6 +119,4 @@ dependencies {
     implementation(libs.room)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
-    // flexible m3
-    implementation(libs.flexible.m3)
 }
