@@ -2,6 +2,10 @@ package com.github.freetube.app.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,11 +27,12 @@ fun Navigation() {
     val playerViewModel = koinInject<PlayerViewModel>()
     val currentTab = rootNavController.currentBackStackEntryAsState()
         .value?.destination?.route?.split(".")?.last() ?: SubscriptionsRoute.toString()
-    val topBar: (@Composable () -> Unit) -> Unit = { playerViewModel.topBar.value = it }
+    var topBar: (@Composable () -> Unit)? by remember { mutableStateOf(null) }
     val playVideo: (String) -> Unit = { playerViewModel.start(it) }
 
     LibreTubeScaffold(
         currentTab = currentTab,
+        topBar = topBar,
         navigateToTab = {
             rootNavController.navigate(it) {
                 popUpTo(rootNavController.graph.findStartDestination().id) {
@@ -45,7 +50,7 @@ fun Navigation() {
         ) {
             composable<SearchRoute> {
                 SearchNavHost(
-                    topBar = topBar,
+                    topBar = { topBar = it },
                     playVideo = playVideo,
                 )
             }

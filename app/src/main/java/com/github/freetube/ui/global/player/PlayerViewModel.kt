@@ -1,6 +1,5 @@
 package com.github.freetube.ui.global.player
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
@@ -21,9 +20,6 @@ class PlayerViewModel(
     private val player: LibreTubeMediaPlayer,
     private val videoRepository: VideoRepository,
 ) : ViewModel() {
-    //    val scrollBehavior     
-    //    @Composable get() = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val topBar: MutableStateFlow<(@Composable () -> Unit)> = MutableStateFlow({})
 
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()

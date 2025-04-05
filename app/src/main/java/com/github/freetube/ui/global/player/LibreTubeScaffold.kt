@@ -22,7 +22,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -30,13 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.app.navigation.TopLevelDestination
 import com.github.freetube.ui.common.ObserveForEvents
 import com.github.freetube.ui.common.snackbar.SnackBarController
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -44,10 +41,9 @@ import org.koin.compose.koinInject
 fun LibreTubeScaffold(
     currentTab: String,
     navigateToTab: (TopLevelDestination) -> Unit,
+    topBar: (@Composable () -> Unit)?,
     content: @Composable () -> Unit,
 ) {
-    val viewModel = koinInject<PlayerViewModel>()
-    val topBar by viewModel.topBar.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -71,7 +67,7 @@ fun LibreTubeScaffold(
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        topBar = { topBar() },
+        topBar = { topBar?.invoke() },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState
@@ -99,7 +95,6 @@ fun LibreTubeScaffold(
         }
     }
     PlayerSheet(
-        viewModel = viewModel,
         toChannelScreen = {},
     )
 }

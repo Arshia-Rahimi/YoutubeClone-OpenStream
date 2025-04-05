@@ -44,14 +44,15 @@ import com.arshia.freetube.R
 import com.github.freetube.core.common.util.onCondition
 import com.github.freetube.ui.global.player.components.PlayerSheetState
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PlayerSheet(
-    viewModel: PlayerViewModel,
     toChannelScreen: (String) -> Unit,
 ) {
+    val viewModel = koinViewModel<PlayerViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
