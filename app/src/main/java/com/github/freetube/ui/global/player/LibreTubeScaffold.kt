@@ -17,9 +17,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -28,6 +33,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.app.navigation.TopLevelDestination
+import com.github.freetube.ui.common.ObserveForEvents
+import com.github.freetube.ui.common.snackbar.SnackBarController
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -40,15 +48,34 @@ fun LibreTubeScaffold(
 ) {
     val viewModel = koinInject<PlayerViewModel>()
     val topBar by viewModel.topBar.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    ObserveForEvents(SnackBarController.events) { event ->
+        scope.launch {
+            if (event.isImmediate) {
+                snackbarHostState.currentSnackbarData?.dismiss()
+            }
+            val result = snackbarHostState.showSnackbar(
+                message = event.message,
+                actionLabel = event.action?.name,
+                duration = event.duration,
+            )
+
+            if (result == SnackbarResult.ActionPerformed) {
+                event.action?.action()
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
         topBar = { topBar() },
         snackbarHost = {
-//                SnackbarHost(
-//                    hostState = snackbarHostState,
-//                )
+            SnackbarHost(
+                hostState = snackbarHostState
+            )
         },
         bottomBar = {
             BottomBar(
