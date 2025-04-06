@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
+const val MINI_PLAYER_WIDTH_RATIO = 0.25f
 const val MINI_PLAYER_HEIGHT_RATIO = 0.8f
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -83,7 +84,7 @@ fun PlayerSheet(
         )
     }
     var sheetHeight by remember { mutableFloatStateOf(0f) }
-    val progress = (-3 / (4 * 2284.8f) * dragState.offset) + 1
+    val progress = (-(1 - MINI_PLAYER_WIDTH_RATIO) / (screenHeight.value * 0.8f) * dragState.offset) + 1
     val playerWidth = progress * screenWidth.value
     val animatedWidth by animateFloatAsState(playerWidth)
 
