@@ -1,4 +1,4 @@
-package com.github.freetube.ui.common
+package com.github.freetube.core.common.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

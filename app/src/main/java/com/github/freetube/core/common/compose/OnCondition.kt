@@ -1,4 +1,4 @@
-package com.github.freetube.core.common.util
+package com.github.freetube.core.common.compose
 
 import androidx.compose.ui.Modifier
 

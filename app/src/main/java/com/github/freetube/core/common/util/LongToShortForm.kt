@@ -1,4 +1,4 @@
-package com.github.freetube.core.common
+package com.github.freetube.core.common.util
 
 import java.util.Locale
 

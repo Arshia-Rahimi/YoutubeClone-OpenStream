@@ -1,4 +1,4 @@
-package com.github.freetube.ui.common.snackbar
+package com.github.freetube.core.common.compose
 
 import androidx.compose.material3.SnackbarDuration
 import kotlinx.coroutines.CoroutineScope
@@ -22,9 +22,7 @@ data class SnackBarEvent(
 object SnackBarController {
     private val _events = Channel<SnackBarEvent>()
     val events = _events.receiveAsFlow()
-
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-
+    
     suspend fun sendEvent(event: SnackBarEvent) {
         _events.send(event)
     }

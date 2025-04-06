@@ -31,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.app.navigation.TopLevelDestination
-import com.github.freetube.ui.common.ObserveForEvents
-import com.github.freetube.ui.common.snackbar.SnackBarController
+import com.github.freetube.core.common.compose.ObserveForEvents
+import com.github.freetube.core.common.compose.SnackBarController
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

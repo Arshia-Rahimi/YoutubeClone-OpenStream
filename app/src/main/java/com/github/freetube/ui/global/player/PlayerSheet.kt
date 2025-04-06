@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arshia.freetube.R
-import com.github.freetube.core.common.util.onCondition
+import com.github.freetube.core.common.compose.onCondition
 import com.github.freetube.ui.global.player.components.PlayerSheetState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

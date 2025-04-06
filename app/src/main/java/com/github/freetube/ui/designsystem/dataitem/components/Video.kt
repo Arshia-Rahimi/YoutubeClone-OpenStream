@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.freetube.R
-import com.github.freetube.core.common.toShortForm
+import com.github.freetube.core.common.util.toShortForm
 import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.StreamType
