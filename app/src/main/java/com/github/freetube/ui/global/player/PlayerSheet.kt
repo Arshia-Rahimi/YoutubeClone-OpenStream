@@ -1,9 +1,6 @@
 package com.github.freetube.ui.global.player
 
-import androidx.collection.mutableIntIntMapOf
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,26 +16,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -50,11 +41,9 @@ import com.github.freetube.core.common.compose.onCondition
 import com.github.freetube.ui.global.player.components.PlayerSheetState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 const val MINI_PLAYER_WIDTH_RATIO = 0.25f
-const val MINI_PLAYER_HEIGHT_RATIO = 0.8f
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -93,9 +82,9 @@ fun PlayerSheet(
             PlayerSheetState.FULL_SCREEN at 0f
         })
     }
-    val progress = (-(1 - MINI_PLAYER_WIDTH_RATIO) / (miniPlayerOffset) * dragState.offset) + 1
-    val playerWidth = progress * screenWidth.value
-    println()
+    val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
+    val playerWidth =
+        ((1 - MINI_PLAYER_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_RATIO) * screenWidth.value
     
     Column(
         modifier = Modifier
@@ -138,14 +127,16 @@ fun PlayerSheet(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .alpha((4/3f) * progress - (1/3f))
-                .background(MaterialTheme.colorScheme.background),
-        ) {
-            // todo body
+        if (sheetDragProgress != 0f) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .alpha(sheetDragProgress)
+                    .background(MaterialTheme.colorScheme.background),
+            ) {
+                // todo body
+            }
         }
     }
 }
