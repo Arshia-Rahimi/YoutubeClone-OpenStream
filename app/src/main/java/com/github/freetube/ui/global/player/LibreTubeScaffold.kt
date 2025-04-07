@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -22,12 +23,19 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.app.navigation.TopLevelDestination
@@ -46,6 +54,7 @@ fun LibreTubeScaffold(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var navBarOffset by remember { mutableFloatStateOf(0f) }
 
     ObserveForEvents(SnackBarController.events) { event ->
         scope.launch {
@@ -59,7 +68,7 @@ fun LibreTubeScaffold(
             )
 
             if (result == SnackbarResult.ActionPerformed) {
-                event.action?.action()
+                event.action?.action?.invoke()
             }
         }
     }
@@ -77,6 +86,7 @@ fun LibreTubeScaffold(
             BottomBar(
                 currentTab = currentTab,
                 navigateToTab = navigateToTab,
+                setNavBarOffset = { navBarOffset = it },
             )
         }
     ) { ip ->
@@ -95,6 +105,7 @@ fun LibreTubeScaffold(
         }
     }
     PlayerSheet(
+        navBarOffset = navBarOffset,
         toChannelScreen = {},
     )
 }
@@ -102,11 +113,15 @@ fun LibreTubeScaffold(
 @Composable
 private fun BottomBar(
     currentTab: String,
+    setNavBarOffset: (Float) -> Unit,
     navigateToTab: (TopLevelDestination) -> Unit,
 ) {
     NavigationBar(
         contentColor = Color(0xFF1A1A1A),
         containerColor = Color(0xFF1A1A1A),
+        modifier = Modifier.onGloballyPositioned {
+            setNavBarOffset(it.boundsInRoot().top)
+        }
     ) {
         Tabs.entries.forEach { tab ->
             val selected = currentTab == tab.route.toString()
