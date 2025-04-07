@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arshia.freetube.R
 import com.github.freetube.core.common.compose.onCondition
 import com.github.freetube.ui.global.player.components.PlayerSheetState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
@@ -58,7 +59,6 @@ fun PlayerSheet(
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
-    val screenHeight = config.screenHeightDp.dp
     val scope = rememberCoroutineScope()
     val miniPlayerOffset = navBarOffset - with(density) { (screenWidth.toPx() * 9 / 64) }
     val dragState = remember {
@@ -85,7 +85,23 @@ fun PlayerSheet(
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
         ((1 - MINI_PLAYER_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_RATIO) * screenWidth.value
-    
+
+    PlayerSheet(
+        dragState = dragState,
+        scope = scope,
+        playerWidth = playerWidth,
+        sheetDragProgress = sheetDragProgress,
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun PlayerSheet(
+    dragState: AnchoredDraggableState<PlayerSheetState>,
+    scope: CoroutineScope,
+    playerWidth: Float,
+    sheetDragProgress: Float,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
