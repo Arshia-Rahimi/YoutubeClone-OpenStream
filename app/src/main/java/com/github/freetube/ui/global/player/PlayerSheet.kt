@@ -105,14 +105,12 @@ private fun PlayerSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .systemBarsPadding()
             .offset {
                 IntOffset(
                     x = 0,
                     y = dragState.requireOffset().roundToInt(),
                 )
             }
-            .background(Color.Transparent)
             .anchoredDraggable(
                 state = dragState,
                 orientation = Orientation.Vertical,

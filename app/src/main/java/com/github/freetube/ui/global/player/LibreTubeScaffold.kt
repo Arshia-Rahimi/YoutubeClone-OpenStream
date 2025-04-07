@@ -2,6 +2,7 @@ package com.github.freetube.ui.global.player
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -32,10 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.app.navigation.TopLevelDestination
@@ -119,9 +117,11 @@ private fun BottomBar(
     NavigationBar(
         contentColor = Color(0xFF1A1A1A),
         containerColor = Color(0xFF1A1A1A),
-        modifier = Modifier.onGloballyPositioned {
-            setNavBarOffset(it.boundsInRoot().top)
-        }
+        modifier = Modifier
+            .background(Color.Cyan)
+            .onGloballyPositioned {
+                setNavBarOffset(it.boundsInRoot().top)
+            }
     ) {
         Tabs.entries.forEach { tab ->
             val selected = currentTab == tab.route.toString()
