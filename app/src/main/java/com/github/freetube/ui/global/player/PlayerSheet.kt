@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
@@ -44,7 +45,8 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
-const val MINI_PLAYER_WIDTH_RATIO = 0.25f
+// miniPlayer width to screen width
+const val MINI_PLAYER_WIDTH_RATIO = 0.3f
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -59,8 +61,8 @@ fun PlayerSheet(
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
-    val scope = rememberCoroutineScope()
-    val miniPlayerOffset = navBarOffset - with(density) { (screenWidth.toPx() * 9 / 64) }
+    val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
+    val miniPlayerOffset = navBarOffset - miniPlayerHeight
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
@@ -76,19 +78,19 @@ fun PlayerSheet(
             ),
         )
     }
+    val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
+    val playerWidth =
+        ((1 - MINI_PLAYER_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_RATIO) * screenWidth.value
+
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
             PlayerSheetState.FULL_SCREEN at 0f
         })
     }
-    val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
-    val playerWidth =
-        ((1 - MINI_PLAYER_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_RATIO) * screenWidth.value
 
     PlayerSheet(
         dragState = dragState,
-        scope = scope,
         playerWidth = playerWidth,
         sheetDragProgress = sheetDragProgress,
     )
@@ -98,9 +100,9 @@ fun PlayerSheet(
 @Composable
 private fun PlayerSheet(
     dragState: AnchoredDraggableState<PlayerSheetState>,
-    scope: CoroutineScope,
     playerWidth: Float,
     sheetDragProgress: Float,
+    scope: CoroutineScope = rememberCoroutineScope(),
 ) {
     Column(
         modifier = Modifier
@@ -119,8 +121,9 @@ private fun PlayerSheet(
     ) {
         Row(
             modifier = Modifier
+                .systemBarsPadding()
                 .fillMaxWidth()
-                .background(Color.Gray)
+                .background(MaterialTheme.colorScheme.tertiaryContainer)
                 .onCondition(dragState.currentValue == PlayerSheetState.MINI_PLAYER) {
                     clickable {
                         scope.launch { dragState.animateTo(PlayerSheetState.FULL_SCREEN) }
@@ -132,7 +135,8 @@ private fun PlayerSheet(
                 modifier = Modifier
                     .systemBarsPadding()
                     .width(playerWidth.dp)
-                    .aspectRatio(16 / 9f),
+                    .aspectRatio(16 / 9f)
+                    .background(Color.Cyan),
             ) {
                 Icon(
                     modifier = Modifier.matchParentSize(),
@@ -147,7 +151,8 @@ private fun PlayerSheet(
                     .fillMaxWidth()
                     .weight(1f)
                     .alpha(sheetDragProgress)
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(MaterialTheme.colorScheme.background)
+                    .navigationBarsPadding(),
             ) {
                 // todo body
             }
