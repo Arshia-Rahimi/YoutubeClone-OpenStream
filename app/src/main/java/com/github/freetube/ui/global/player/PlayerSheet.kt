@@ -58,7 +58,7 @@ import kotlin.math.roundToInt
 
 const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
 const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 0.75f
-const val LINEAR_PROGRESS_INDICATOR_THICKNESS = 2
+const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,7 +76,7 @@ fun PlayerSheet(
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
-    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { LINEAR_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
@@ -172,7 +172,7 @@ private fun PlayerSheet(
                     color = Color(0xFFBBBBBB),
                     progress = { 0.5f },
                     modifier = Modifier
-                        .height(LINEAR_PROGRESS_INDICATOR_THICKNESS.dp)
+                        .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                         .fillMaxWidth()
                         .alpha(miniPlayerContentAlpha),
                 )
