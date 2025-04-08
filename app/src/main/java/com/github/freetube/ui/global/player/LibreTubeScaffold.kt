@@ -45,11 +45,11 @@ import com.github.freetube.core.common.compose.SnackBarController
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun LibreTubeScaffold(
     currentTab: String,
     navigateToTab: (TopLevelDestination) -> Unit,
+    toChannelScreen: (String) -> Unit,
     topBar: (@Composable () -> Unit)?,
     content: @Composable () -> Unit,
 ) {
@@ -107,7 +107,7 @@ fun LibreTubeScaffold(
     }
     PlayerSheet(
         navBarOffset = navBarOffset,
-        toChannelScreen = {},
+        toChannelScreen = toChannelScreen,
     )
 }
 

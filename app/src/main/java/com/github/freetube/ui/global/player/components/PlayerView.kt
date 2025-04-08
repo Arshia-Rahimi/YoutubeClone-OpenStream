@@ -44,17 +44,17 @@ import com.github.freetube.ui.designsystem.components.noRippleClickable
 @OptIn(UnstableApi::class)
 @Composable
 fun PlayerView(
-    currentPosition: Long,
-    length: Long,
+//    currentPosition: Long,
+//    length: Long,
     modifier: Modifier = Modifier,
     player: Player,
-    isInSheet: Boolean = true,
-    playerState: PlayerState,
+//    isInSheet: Boolean = true,
+//    playerState: PlayerState,
 ) {
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
     val lifecycleOwner = LocalLifecycleOwner.current
     var controllerVisible by remember { mutableStateOf(true) }
-
+    
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event -> lifecycle = event }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -67,36 +67,31 @@ fun PlayerView(
 //            controllerVisible = false
 //        }
 //    }
-
-    Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .noRippleClickable { controllerVisible = true }
-    ) {
-        AndroidView(
-            modifier = modifier.aspectRatio(16f / 9f),
-            factory = { context ->
-                PlayerView(context).also {
-                    it.player = player
-                    it.useController = false
-                    it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+    
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
+            PlayerView(context).also {
+                it.player = player
+                it.useController = false
+                it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+            }
+        },
+        update = {
+            when (lifecycle) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    it.onPause()
+                    it.player?.pause()
                 }
-            },
-            update = {
-                when (lifecycle) {
-                    Lifecycle.Event.ON_PAUSE -> {
-                        it.onPause()
-                        it.player?.pause()
-                    }
-
-                    Lifecycle.Event.ON_RESUME -> {
-                        it.onResume()
-                    }
-
-                    else -> Unit
+                
+                Lifecycle.Event.ON_RESUME -> {
+                    it.onResume()
                 }
-            },
-        )
+                
+                else -> Unit
+            }
+        },
+    )
 //        if (isInSheet) {
 //            PlayerController(
 //                controllerVisible = controllerVisible,
@@ -106,7 +101,6 @@ fun PlayerView(
 //                playerState = playerState,
 //            )
 //        }
-    }
 }
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
@@ -121,11 +115,11 @@ private fun BoxScope.PlayerController(
     var isSliderHeld by remember { mutableStateOf(false) }
     var sliderValue by remember { mutableFloatStateOf(0f) }
     var progress by remember { mutableFloatStateOf(0f) }
-
+    
     LaunchedEffect(currentPosition, isSliderHeld) {
         if (!isSliderHeld) progress = currentPosition.toFloat() / length
     }
-
+    
     AnimatedVisibility(
         modifier = Modifier.matchParentSize(),
         visible = controllerVisible,
@@ -151,7 +145,7 @@ private fun BoxScope.PlayerController(
                             .noRippleClickable { player.pause() }
                     )
                 }
-
+                
                 PlayingStatus.PAUSED -> {
                     Icon(
                         painter = painterResource(R.drawable.play),
@@ -160,9 +154,9 @@ private fun BoxScope.PlayerController(
                             .align(Alignment.Center)
                             .noRippleClickable { player.pause() }
                     )
-
+                    
                 }
-
+                
                 else -> Unit
             }
         }
@@ -183,7 +177,7 @@ private fun BoxScope.PlayerController(
                 },
             )
             Row {
-
+            
             }
         }
     }

@@ -96,24 +96,10 @@ private fun RowScope.MiniPlayer(
     togglePlay: () -> Unit,
     dispose: () -> Unit,
 ) {
-    var progress by remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(currentPosition) {
-        progress = currentPosition.toFloat() / video.length.toFloat()
-    }
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-    )
+  
+    
     Column {
-        LinearProgressIndicator(
-            drawStopIndicator = {},
-            gapSize = 0.dp,
-            strokeCap = StrokeCap.Square,
-            trackColor = Color(0xFF5D5D5D),
-            color = Color(0xFFBBBBBB),
-            progress = { animatedProgress },
-            modifier = Modifier.fillMaxWidth(),
-        )
+      
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -121,13 +107,13 @@ private fun RowScope.MiniPlayer(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (shouldShowMiniPlayer) {
-                PlayerView(
-                    currentPosition = currentPosition,
-                    length = video.length,
-                    player = player,
-                    isInSheet = false,
-                    playerState = playerState ?: PlayerState(),
-                )
+//                PlayerView(
+//                    currentPosition = currentPosition,
+//                    length = video.length,
+//                    player = player,
+//                    isInSheet = false,
+//                    playerState = playerState ?: PlayerState(),
+//                )
             } else Box(Modifier.aspectRatio(16 / 9f))
             Column(
                 modifier = Modifier

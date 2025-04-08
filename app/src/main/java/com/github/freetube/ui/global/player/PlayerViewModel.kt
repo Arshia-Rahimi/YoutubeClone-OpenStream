@@ -15,18 +15,19 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.math.truncate
 
 class PlayerViewModel(
     private val player: LibreTubeMediaPlayer,
     private val videoRepository: VideoRepository,
 ) : ViewModel() {
 
-    private val _showMiniPlayer = MutableStateFlow(false)
-    val showMiniPlayer = _showMiniPlayer.asStateFlow()
+    private val _showMiniPlayer = MutableStateFlow(true)
         .apply {
             onEach { if (it) player.init() else player.release() }
                 .launchIn(viewModelScope)
         }
+    val showMiniPlayer = _showMiniPlayer.asStateFlow()
 
     val viewPlayer: Player
         get() = player.player

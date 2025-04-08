@@ -20,7 +20,6 @@ import com.github.freetube.ui.global.player.LibreTubeScaffold
 import com.github.freetube.ui.global.player.PlayerViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Navigation() {
     val rootNavController = rememberNavController()
@@ -43,6 +42,7 @@ fun Navigation() {
                 launchSingleTop = true
             }
         },
+        toChannelScreen = {},
     ) {
         NavHost(
             navController = rootNavController,
