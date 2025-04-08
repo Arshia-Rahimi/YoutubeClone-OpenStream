@@ -15,11 +15,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +63,8 @@ fun PlayerSheet(
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
-    val miniPlayerOffset = navBarOffset - miniPlayerHeight
+    val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
+    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
@@ -106,6 +108,7 @@ private fun PlayerSheet(
 ) {
     Column(
         modifier = Modifier
+            .statusBarsPadding()
             .fillMaxWidth()
             .offset {
                 IntOffset(
@@ -121,7 +124,6 @@ private fun PlayerSheet(
     ) {
         Row(
             modifier = Modifier
-                .systemBarsPadding()
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.tertiaryContainer)
                 .onCondition(dragState.currentValue == PlayerSheetState.MINI_PLAYER) {
@@ -133,7 +135,6 @@ private fun PlayerSheet(
         ) {
             Box(
                 modifier = Modifier
-                    .systemBarsPadding()
                     .width(playerWidth.dp)
                     .aspectRatio(16 / 9f)
                     .background(Color.Cyan),
@@ -152,7 +153,6 @@ private fun PlayerSheet(
                     .weight(1f)
                     .alpha(sheetDragProgress)
                     .background(MaterialTheme.colorScheme.background)
-                    .navigationBarsPadding(),
             ) {
                 // todo body
             }
