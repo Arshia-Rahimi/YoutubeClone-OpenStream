@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun Modifier.onCondition(
     condition: Boolean,
-    action: @Composable Modifier.() -> Modifier
+    onFalse: @Composable Modifier.() -> Modifier = { this },
+    onTrue: @Composable Modifier.() -> Modifier
 ): Modifier =
-    if (condition) action() else this
+    if (condition) onTrue() else onFalse()
