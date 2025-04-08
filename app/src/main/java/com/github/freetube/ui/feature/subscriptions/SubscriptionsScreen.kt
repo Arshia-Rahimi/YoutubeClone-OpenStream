@@ -22,31 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.arshia.freetube.R
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SubscriptionsScreen(
 ) {
-    var progress by remember { mutableFloatStateOf(0f) }
-    val animatedProgress by animateFloatAsState(progress)
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp.value
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceAround,
-    ) {
-        Slider(
-            value = animatedProgress,
-            onValueChange = { progress = it },
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.search),
-                contentDescription = null,
-                modifier = Modifier
-                    .offset(x = (animatedProgress * screenWidth).dp)
-            )
-        }
-    }
 }

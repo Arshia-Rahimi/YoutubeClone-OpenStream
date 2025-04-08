@@ -129,7 +129,6 @@ private fun BottomBar(
         Tabs.entries.forEach { tab ->
             val selected = currentTab == tab.route.toString()
             NavigationBarItem(
-                modifier = Modifier.navigationBarsPadding(),
                 selected = selected,
                 onClick = { navigateToTab(tab.route) },
                 icon = {

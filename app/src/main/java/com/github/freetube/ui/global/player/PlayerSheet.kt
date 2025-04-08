@@ -1,13 +1,11 @@
 package com.github.freetube.ui.global.player
 
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -20,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -29,15 +28,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -58,12 +54,11 @@ import com.github.freetube.ui.global.player.components.PlayerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import kotlin.math.min
 import kotlin.math.roundToInt
 
-// miniPlayer width to screen width
-const val MINI_PLAYER_WIDTH_RATIO = 0.3f
+const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
 const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 0.75f
+const val LINEAR_PROGRESS_INDICATOR_THICKNESS = 2
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -81,7 +76,7 @@ fun PlayerSheet(
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
-    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding
+    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { LINEAR_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
@@ -99,16 +94,16 @@ fun PlayerSheet(
     }
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
-        ((1 - MINI_PLAYER_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_RATIO) * screenWidth.value
-
+        ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * screenWidth.value
+    
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
             PlayerSheetState.FULL_SCREEN at 0f
         })
     }
-
-    if(showMiniPlayer) {
+    
+    if (showMiniPlayer) {
         val player = viewModel.viewPlayer
         PlayerSheet(
             player = player,
@@ -153,11 +148,14 @@ private fun PlayerSheet(
             .anchoredDraggable(
                 state = dragState,
                 orientation = Orientation.Vertical,
-                enabled = dragState.settledValue == PlayerSheetState.FULL_SCREEN,
             ),
     ) {
-        val miniPlayerContentAlpha = (-sheetDragProgress/MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) + 1f
-        if(sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+        val miniPlayerContentAlpha =
+            (-sheetDragProgress / MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) + 1f
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
 //        var progress by remember { mutableFloatStateOf(0f) }
 //        LaunchedEffect(currentPosition) {
 //            progress = currentPosition.toFloat() / video.length.toFloat()
@@ -166,77 +164,84 @@ private fun PlayerSheet(
 //            targetValue = progress,
 //            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
 //        )
-            LinearProgressIndicator(
-                drawStopIndicator = {},
-                gapSize = 0.dp,
-                strokeCap = StrokeCap.Square,
-                trackColor = Color(0xFF5D5D5D),
-                color = Color(0xFFBBBBBB),
-                progress = { 0.5f },
-                modifier = Modifier.fillMaxWidth()
-                    .alpha(miniPlayerContentAlpha),
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .onCondition(sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
-                    background(MaterialTheme.colorScheme.tertiaryContainer.copy(miniPlayerContentAlpha))
-                }
-                .onCondition(dragState.currentValue == PlayerSheetState.MINI_PLAYER) {
-                    clickable {
-                        scope.launch { dragState.animateTo(PlayerSheetState.FULL_SCREEN) }
-                    }
-                },
-            horizontalArrangement = Arrangement.spacedBy(
-                space = 4.dp,
-                alignment = Alignment.Start,
-            ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .width(playerWidth.dp)
-                    .aspectRatio(16 / 9f)
-                    .background(Color.Cyan),
-            ) {
-                PlayerView(
-                    player = player,
-                    modifier = Modifier.matchParentSize(),
+                LinearProgressIndicator(
+                    drawStopIndicator = {},
+                    gapSize = 0.dp,
+                    strokeCap = StrokeCap.Square,
+                    trackColor = Color(0xFF5D5D5D),
+                    color = Color(0xFFBBBBBB),
+                    progress = { 0.5f },
+                    modifier = Modifier
+                        .height(LINEAR_PROGRESS_INDICATOR_THICKNESS.dp)
+                        .fillMaxWidth()
+                        .alpha(miniPlayerContentAlpha),
                 )
             }
-            
-            if(sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
-                Text(
-                    text = "title",
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onCondition(sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+                        background(
+                            MaterialTheme.colorScheme.tertiaryContainer.copy(
+                                miniPlayerContentAlpha
+                            )
+                        )
+                    }
+                    .onCondition(dragState.currentValue == PlayerSheetState.MINI_PLAYER) {
+                        clickable {
+                            scope.launch { dragState.animateTo(PlayerSheetState.FULL_SCREEN) }
+                        }
+                    },
+                horizontalArrangement = Arrangement.spacedBy(
+                    space = 4.dp,
+                    alignment = Alignment.Start,
+                ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
                     modifier = Modifier
-                        .padding(start = 4.dp)
-                        .weight(1f)
-                        .alpha(miniPlayerContentAlpha),
-                )
-                IconButton(
-                    onClick = { togglePlay() },
-                    enabled = sheetDragProgress == 0f,
-                    modifier = Modifier.alpha(miniPlayerContentAlpha),
+                        .width(playerWidth.dp)
+                        .aspectRatio(16 / 9f)
+                        .background(Color.Cyan),
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.play),
-                        contentDescription = "toggle play",
-                        tint = Color.White,
+                    PlayerView(
+                        player = player,
+                        modifier = Modifier.matchParentSize(),
                     )
                 }
-                IconButton(
-                    onClick = { dispose() },
-                    enabled = sheetDragProgress == 0f,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .alpha(miniPlayerContentAlpha),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.cross),
-                        contentDescription = "dispose player",
-                        tint = Color.White,
+                
+                if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+                    Text(
+                        text = "title",
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .weight(1f)
+                            .alpha(miniPlayerContentAlpha),
                     )
+                    IconButton(
+                        onClick = { togglePlay() },
+                        enabled = sheetDragProgress == 0f,
+                        modifier = Modifier.alpha(miniPlayerContentAlpha),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.play),
+                            contentDescription = "toggle play",
+                            tint = Color.White,
+                        )
+                    }
+                    IconButton(
+                        onClick = { dispose() },
+                        enabled = sheetDragProgress == 0f,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .alpha(miniPlayerContentAlpha),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.cross),
+                            contentDescription = "dispose player",
+                            tint = Color.White,
+                        )
+                    }
                 }
             }
         }
