@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,6 +103,7 @@ fun PlayerSheet(
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
             PlayerSheetState.EXPANDED at 0f
         })
+        dragState.snapTo(PlayerSheetState.MINI_PLAYER)
     }
 
     if (showMiniPlayer) {
