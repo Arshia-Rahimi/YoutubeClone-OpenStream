@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -121,7 +120,6 @@ fun PlayerSheet(
             dispose = { viewModel.dispose() },
             togglePlay = { viewModel.togglePlay() },
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
-            screenWidth = screenWidth,
         )
     }
 }
@@ -130,7 +128,6 @@ fun PlayerSheet(
 @Composable
 private fun PlayerSheet(
     player: Player,
-    screenWidth: Dp,
     dragState: AnchoredDraggableState<PlayerSheetState>,
     playerWidth: Float,
     sheetDragProgress: Float,
@@ -199,9 +196,8 @@ private fun PlayerSheet(
                                 isSheetExpanded = isSheetExpanded,
                             )
                         }
-
                         is PlayerViewModel.UiState.Loading -> LinearProgressIndicator()
-                        else -> Unit
+                        is PlayerViewModel.UiState.Error -> {}
                     }
                 }
 
