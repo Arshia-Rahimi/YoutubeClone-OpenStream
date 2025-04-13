@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -119,7 +120,8 @@ fun PlayerSheet(
             playerState = playerState,
             dispose = { viewModel.dispose() },
             togglePlay = { viewModel.togglePlay() },
-            isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED
+            isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
+            screenWidth = screenWidth,
         )
     }
 }
@@ -128,6 +130,7 @@ fun PlayerSheet(
 @Composable
 private fun PlayerSheet(
     player: Player,
+    screenWidth: Dp,
     dragState: AnchoredDraggableState<PlayerSheetState>,
     playerWidth: Float,
     sheetDragProgress: Float,
@@ -185,18 +188,27 @@ private fun PlayerSheet(
                     modifier = Modifier
                         .width(playerWidth.dp)
                         .aspectRatio(16 / 9f)
-                        .background(Color.Cyan),
+                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    PlayerView(
-                        player = player,
-                        modifier = Modifier.matchParentSize(),
-                        isSheetExpanded = isSheetExpanded,
-                    )
+                    when (uiState) {
+                        is PlayerViewModel.UiState.Success -> {
+                            PlayerView(
+                                player = player,
+                                modifier = Modifier.matchParentSize(),
+                                isSheetExpanded = isSheetExpanded,
+                            )
+                        }
+
+                        is PlayerViewModel.UiState.Loading -> LinearProgressIndicator()
+                        else -> Unit
+                    }
                 }
 
                 if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
                     Text(
                         text = "title",
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .padding(start = 4.dp)
                             .weight(1f)
@@ -228,6 +240,8 @@ private fun PlayerSheet(
                     }
                 }
             }
+        }
+        if (uiState is PlayerViewModel.UiState.Success) {
             if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
 //        var progress by remember { mutableFloatStateOf(0f) }
 //        LaunchedEffect(currentPosition) {
