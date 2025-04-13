@@ -76,13 +76,14 @@ fun PlayerSheet(
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
-    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+    val miniPlayerOffset =
+        navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
             anchors = DraggableAnchors {
                 PlayerSheetState.MINI_PLAYER at miniPlayerOffset
-                PlayerSheetState.FULL_SCREEN at 0f
+                PlayerSheetState.EXPANDED at 0f
             },
             positionalThreshold = { distance: Float -> distance * 0.01f },
             velocityThreshold = { 100f },
@@ -95,14 +96,14 @@ fun PlayerSheet(
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
         ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * screenWidth.value
-    
+
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
-            PlayerSheetState.FULL_SCREEN at 0f
+            PlayerSheetState.EXPANDED at 0f
         })
     }
-    
+
     if (showMiniPlayer) {
         val player = viewModel.viewPlayer
         PlayerSheet(
@@ -116,6 +117,7 @@ fun PlayerSheet(
             playerState = playerState,
             dispose = { viewModel.dispose() },
             togglePlay = { viewModel.togglePlay() },
+            isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED
         )
     }
 }
@@ -130,6 +132,7 @@ private fun PlayerSheet(
     currentPosition: Long,
     uiState: PlayerViewModel.UiState,
     playerState: PlayerState,
+    isSheetExpanded: Boolean,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
@@ -155,28 +158,6 @@ private fun PlayerSheet(
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
-//        var progress by remember { mutableFloatStateOf(0f) }
-//        LaunchedEffect(currentPosition) {
-//            progress = currentPosition.toFloat() / video.length.toFloat()
-//        }
-//        val animatedProgress by animateFloatAsState(
-//            targetValue = progress,
-//            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-//        )
-                LinearProgressIndicator(
-                    drawStopIndicator = {},
-                    gapSize = 0.dp,
-                    strokeCap = StrokeCap.Square,
-                    trackColor = Color(0xFF5D5D5D),
-                    color = Color(0xFFBBBBBB),
-                    progress = { 0.5f },
-                    modifier = Modifier
-                        .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
-                        .fillMaxWidth()
-                        .alpha(miniPlayerContentAlpha),
-                )
-            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -189,7 +170,7 @@ private fun PlayerSheet(
                     }
                     .onCondition(dragState.currentValue == PlayerSheetState.MINI_PLAYER) {
                         clickable {
-                            scope.launch { dragState.animateTo(PlayerSheetState.FULL_SCREEN) }
+                            scope.launch { dragState.animateTo(PlayerSheetState.EXPANDED) }
                         }
                     },
                 horizontalArrangement = Arrangement.spacedBy(
@@ -207,9 +188,10 @@ private fun PlayerSheet(
                     PlayerView(
                         player = player,
                         modifier = Modifier.matchParentSize(),
+                        isSheetExpanded = isSheetExpanded,
                     )
                 }
-                
+
                 if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
                     Text(
                         text = "title",
@@ -243,6 +225,28 @@ private fun PlayerSheet(
                         )
                     }
                 }
+            }
+            if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+//        var progress by remember { mutableFloatStateOf(0f) }
+//        LaunchedEffect(currentPosition) {
+//            progress = currentPosition.toFloat() / video.length.toFloat()
+//        }
+//        val animatedProgress by animateFloatAsState(
+//            targetValue = progress,
+//            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+//        )
+                LinearProgressIndicator(
+                    drawStopIndicator = {},
+                    gapSize = 0.dp,
+                    strokeCap = StrokeCap.Square,
+                    trackColor = Color(0xFF5D5D5D),
+                    color = Color(0xFFBBBBBB),
+                    progress = { 0.5f },
+                    modifier = Modifier
+                        .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
+                        .fillMaxWidth()
+                        .alpha(miniPlayerContentAlpha),
+                )
             }
         }
         if (sheetDragProgress != 0f) {

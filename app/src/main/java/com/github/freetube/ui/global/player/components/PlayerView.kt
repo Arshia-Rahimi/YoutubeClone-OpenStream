@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -48,6 +47,7 @@ fun PlayerView(
 //    length: Long,
     modifier: Modifier = Modifier,
     player: Player,
+    isSheetExpanded: Boolean,
 //    isInSheet: Boolean = true,
 //    playerState: PlayerState,
 ) {
@@ -73,7 +73,7 @@ fun PlayerView(
         factory = { context ->
             PlayerView(context).also {
                 it.player = player
-                it.useController = false
+                it.useController = isSheetExpanded
                 it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
             }
         },
