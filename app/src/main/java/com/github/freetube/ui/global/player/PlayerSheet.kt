@@ -77,8 +77,10 @@ fun PlayerSheet(
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
-    val miniPlayerOffset =
-        navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding -
+            if (uiState is PlayerViewModel.UiState.Success)
+                with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+            else 0f
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
@@ -96,7 +98,8 @@ fun PlayerSheet(
     }
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
-        ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * screenWidth.value
+        ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) *
+                screenWidth.value
 
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
@@ -196,6 +199,7 @@ private fun PlayerSheet(
                                 isSheetExpanded = isSheetExpanded,
                             )
                         }
+
                         is PlayerViewModel.UiState.Loading -> LinearProgressIndicator()
                         is PlayerViewModel.UiState.Error -> {}
                     }
