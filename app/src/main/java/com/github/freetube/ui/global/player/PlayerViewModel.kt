@@ -45,6 +45,7 @@ class PlayerViewModel(
 
     fun start(videoUrl: String) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
+        player.pause()
         viewModelScope.launch {
             videoRepository.fetchVideo(videoUrl)
                 .collect { video ->

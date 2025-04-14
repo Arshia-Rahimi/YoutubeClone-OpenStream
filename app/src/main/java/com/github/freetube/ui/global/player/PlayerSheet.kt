@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -88,10 +89,8 @@ fun PlayerSheet(
     val miniPlayerHeight =
         with(density) { (screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
-    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding -
-            if (uiState is PlayerViewModel.UiState.Success)
-                with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
-            else 0f
+    val miniPlayerOffset =
+        navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
     val dragState = remember {
         AnchoredDraggableState(
             initialValue = PlayerSheetState.MINI_PLAYER,
@@ -111,7 +110,7 @@ fun PlayerSheet(
     val playerWidth =
         ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
-    
+
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
@@ -119,7 +118,7 @@ fun PlayerSheet(
         })
         dragState.snapTo(PlayerSheetState.MINI_PLAYER)
     }
-    
+
     if (showMiniPlayer) {
         PlayerSheet(
             player = viewModel.viewPlayer,
@@ -209,12 +208,12 @@ private fun PlayerSheet(
                                 isSheetExpanded = isSheetExpanded,
                             )
                         }
-                        
+
                         is PlayerViewModel.UiState.Loading -> CircularProgressIndicator()
                         is PlayerViewModel.UiState.Error -> {}
                     }
                 }
-                
+
                 if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
                     Column(
                         modifier = Modifier
@@ -266,8 +265,8 @@ private fun PlayerSheet(
                 }
             }
         }
-        if (uiState is PlayerViewModel.UiState.Success) {
-            if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+        if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+            if (uiState is PlayerViewModel.UiState.Success) {
                 var progress by remember { mutableFloatStateOf(0f) }
                 LaunchedEffect(currentPosition) {
                     progress = currentPosition.toFloat() / uiState.data.length.toFloat()
@@ -287,6 +286,13 @@ private fun PlayerSheet(
                         .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                         .fillMaxWidth()
                         .alpha(miniPlayerContentAlpha),
+                )
+            } else {
+                Spacer(
+                    Modifier
+                        .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.tertiaryContainer)
                 )
             }
         }
