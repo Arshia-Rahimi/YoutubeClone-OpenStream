@@ -40,12 +40,9 @@ class LibreTubeMediaPlayer(
     val playerState = _playerState.asStateFlow()
 
     val playerPosition = playerState.transform { state ->
-        if (_player == null) emit(0L)
-        else {
+        if (state.playingStatus == PlayingStatus.PLAYING) {
             while (true) {
-                if (playerState.value.playingStatus == PlayingStatus.PLAYING) {
-                    emit(player.currentPosition / 1000)
-                }
+                emit(_player?.currentPosition?.div(1000) ?: 0L)
                 delay(1000L)
             }
         }

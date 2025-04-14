@@ -73,11 +73,13 @@ fun PlayerView(
         factory = { context ->
             PlayerView(context).also {
                 it.player = player
-                it.useController = isSheetExpanded
+                it.useController = false
                 it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
             }
         },
         update = {
+            it.useController = isSheetExpanded
+            
             when (lifecycle) {
                 Lifecycle.Event.ON_PAUSE -> {
                     it.onPause()
