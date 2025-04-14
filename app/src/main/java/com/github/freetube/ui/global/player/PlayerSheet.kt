@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -52,6 +53,7 @@ import com.github.freetube.core.common.compose.onCondition
 import com.github.freetube.core.media3.PlayerState
 import com.github.freetube.ui.global.player.components.PlayerSheetState
 import com.github.freetube.ui.global.player.components.PlayerView
+import com.github.freetube.ui.global.player.components.SheetBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -273,7 +275,19 @@ private fun PlayerSheet(
                     .alpha(sheetDragProgress)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                // todo body
+                if (uiState is PlayerViewModel.UiState.Success) {
+                    SheetBody(
+                        modifier = Modifier.matchParentSize(),
+                        videoData = uiState.data,
+                        scrollState = rememberScrollState(),
+                        scope = scope,
+                        toChannelScreen = {},
+                        likeVideo = {},
+                        shareVideo = {},
+                        addToWatchLater = {},
+                        addToPlaylist = {},
+                    )
+                }
             }
         }
     }

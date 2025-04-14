@@ -2,6 +2,7 @@ package com.github.freetube.ui.global.player.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -22,7 +23,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,34 +43,32 @@ import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.model.StreamType
 import com.github.freetube.core.extractor.video.VideoData
 import com.github.freetube.ui.designsystem.dataitem.components.Channel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SheetBody(
+    modifier: Modifier,
     videoData: VideoData,
     scrollState: ScrollState,
-    showDescription: Boolean,
+    scope: CoroutineScope,
     toChannelScreen: (String) -> Unit,
     likeVideo: (String) -> Unit,
     shareVideo: (String) -> Unit,
     addToPlaylist: (String) -> Unit,
     addToWatchLater: (String) -> Unit,
-    setShowDescription: (Boolean) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val rowScroll = rememberScrollState()
+    var showDescription by remember { mutableStateOf(false) }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF111111)),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp)
-                .clickable { scope.launch { setShowDescription(!showDescription) } },
+                .clickable { scope.launch { showDescription = !showDescription } },
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
@@ -251,11 +254,11 @@ private fun Preview() {
                 ),
                 scrollState = rememberScrollState(),
                 addToPlaylist = {},
-                showDescription = false,
-                setShowDescription = {},
                 likeVideo = {},
                 shareVideo = {},
                 addToWatchLater = {},
+                modifier = Modifier,
+                scope = rememberCoroutineScope(),
             )
         }
     }
