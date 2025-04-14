@@ -15,9 +15,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.dataitem.DataItem
+import com.github.freetube.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
+import com.github.freetube.ui.global.player.PlayerViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -35,6 +41,8 @@ fun DataItemList(
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
@@ -63,7 +71,7 @@ fun DataItemList(
             )
         }
         item {
-            if (items.isNotEmpty()) Spacer(Modifier.height(80.dp))
+            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
         }
     }
 }

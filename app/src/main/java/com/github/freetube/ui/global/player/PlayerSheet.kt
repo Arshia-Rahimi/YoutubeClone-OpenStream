@@ -1,6 +1,7 @@
 package com.github.freetube.ui.global.player
 
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -26,16 +27,20 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,13 +49,16 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import com.arshia.freetube.R
 import com.github.freetube.core.common.compose.onCondition
+import com.github.freetube.core.common.util.toTime
 import com.github.freetube.core.media3.PlayerState
+import com.github.freetube.core.media3.PlayingStatus
 import com.github.freetube.ui.global.player.components.PlayerSheetState
 import com.github.freetube.ui.global.player.components.PlayerView
 import com.github.freetube.ui.global.player.components.SheetBody
@@ -77,7 +85,8 @@ fun PlayerSheet(
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
-    val miniPlayerHeight = with(density) { (screenWidth * 9 / 64).toPx() }
+    val miniPlayerHeight =
+        with(density) { (screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
     val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding -
             if (uiState is PlayerViewModel.UiState.Success)
@@ -102,7 +111,7 @@ fun PlayerSheet(
     val playerWidth =
         ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
-
+    
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
@@ -110,11 +119,10 @@ fun PlayerSheet(
         })
         dragState.snapTo(PlayerSheetState.MINI_PLAYER)
     }
-
+    
     if (showMiniPlayer) {
-        val player = viewModel.viewPlayer
         PlayerSheet(
-            player = player,
+            player = viewModel.viewPlayer,
             dragState = dragState,
             playerWidth = playerWidth,
             sheetDragProgress = sheetDragProgress,
@@ -201,31 +209,46 @@ private fun PlayerSheet(
                                 isSheetExpanded = isSheetExpanded,
                             )
                         }
-
-                        is PlayerViewModel.UiState.Loading -> LinearProgressIndicator()
+                        
+                        is PlayerViewModel.UiState.Loading -> CircularProgressIndicator()
                         is PlayerViewModel.UiState.Error -> {}
                     }
                 }
-
+                
                 if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
-                    Text(
-                        text = "title",
-                        color = MaterialTheme.colorScheme.onPrimary,
+                    Column(
                         modifier = Modifier
-                            .padding(start = 4.dp)
                             .weight(1f)
+                            .padding(4.dp)
                             .alpha(miniPlayerContentAlpha),
-                    )
-                    IconButton(
-                        onClick = { togglePlay() },
-                        enabled = sheetDragProgress == 0f,
-                        modifier = Modifier.alpha(miniPlayerContentAlpha),
+                        verticalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.play),
-                            contentDescription = "toggle play",
-                            tint = Color.White,
-                        )
+                        if (uiState is PlayerViewModel.UiState.Success) {
+                            Text(
+                                text = uiState.data.name,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                            )
+                            Text(
+                                text = currentPosition.toTime() + " / " + uiState.data.length.toTime(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                    if (uiState is PlayerViewModel.UiState.Success) {
+                        IconButton(
+                            onClick = { togglePlay() },
+                            enabled = sheetDragProgress == 0f,
+                            modifier = Modifier.alpha(miniPlayerContentAlpha),
+                        ) {
+                            Icon(
+                                painter = painterResource(if (playerState.playingStatus == PlayingStatus.PAUSED) R.drawable.play else R.drawable.pause),
+                                contentDescription = "toggle play",
+                                tint = Color.White,
+                            )
+                        }
                     }
                     IconButton(
                         onClick = { dispose() },
@@ -245,21 +268,21 @@ private fun PlayerSheet(
         }
         if (uiState is PlayerViewModel.UiState.Success) {
             if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
-//        var progress by remember { mutableFloatStateOf(0f) }
-//        LaunchedEffect(currentPosition) {
-//            progress = currentPosition.toFloat() / video.length.toFloat()
-//        }
-//        val animatedProgress by animateFloatAsState(
-//            targetValue = progress,
-//            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-//        )
+                var progress by remember { mutableFloatStateOf(0f) }
+                LaunchedEffect(currentPosition) {
+                    progress = currentPosition.toFloat() / uiState.data.length.toFloat()
+                }
+                val animatedProgress by animateFloatAsState(
+                    targetValue = progress,
+                    animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                )
                 LinearProgressIndicator(
                     drawStopIndicator = {},
                     gapSize = 0.dp,
                     strokeCap = StrokeCap.Square,
                     trackColor = Color(0xFF5D5D5D),
                     color = Color(0xFFBBBBBB),
-                    progress = { 0.5f },
+                    progress = { animatedProgress },
                     modifier = Modifier
                         .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                         .fillMaxWidth()
