@@ -43,40 +43,44 @@ enum class Tabs(
     ),
 }
 
-interface TopLevelDestination
+interface Route
+
+interface TopLevelDestination : Route
+
+fun Route.className() = this::class.toString().split(".").last()
 
 @Serializable
 data object SearchRoute : TopLevelDestination {
     @Serializable
-    data object Main
+    data object Main : Route
 
     @Serializable
-    data class Channel(val url: String)
+    data class Channel(val url: String) : Route
 
     @Serializable
-    data class Playlist(val url: String)
+    data class Playlist(val url: String) : Route
 }
 
 @Serializable
 data object LibraryRoute : TopLevelDestination {
     @Serializable
-    data object Main
+    data object Main : Route
 }
 
 @Serializable
 data object SubscriptionsRoute : TopLevelDestination {
     @Serializable
-    data object Main
+    data object Main : Route
 }
 
 @Serializable
 data object DownloadsRoute : TopLevelDestination {
     @Serializable
-    data object Main
+    data object Main : Route
 }
 
 @Serializable
 data object SettingsRoute : TopLevelDestination {
     @Serializable
-    data object Main
+    data object Main : Route
 }
