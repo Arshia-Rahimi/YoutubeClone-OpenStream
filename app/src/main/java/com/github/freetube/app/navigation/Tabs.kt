@@ -69,11 +69,12 @@ sealed class Tabs(
         data object Main
     }
 
-    val entries = arrayOf(
-        Tabs.Search,
-        Tabs.Library,
-        Tabs.Subscriptions,
-        Tabs.Downloads,
-        Tabs.Settings,
-    ) 
 }
+
+val tabsList = arrayOf(
+    Tabs.Search,
+    Tabs.Library,
+    Tabs.Subscriptions,
+    Tabs.Downloads,
+    Tabs.Settings,
+) 

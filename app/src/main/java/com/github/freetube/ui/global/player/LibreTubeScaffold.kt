@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.github.freetube.app.navigation.Tabs
+import com.github.freetube.app.navigation.tabsList
 import com.github.freetube.core.common.compose.ObserveForEvents
 import com.github.freetube.core.common.compose.SnackBarController
 import kotlinx.coroutines.launch
@@ -122,7 +123,7 @@ private fun BottomBar(
                 setNavBarOffset(it.boundsInRoot().top)
             }
     ) {
-        Tabs.entries.forEach { tab ->
+        tabsList.forEach { tab ->
             val selected = currentTab == tab.toString()
             var lastClickTime by remember { mutableLongStateOf(0L) }
             val doubleTapInterval = 300
