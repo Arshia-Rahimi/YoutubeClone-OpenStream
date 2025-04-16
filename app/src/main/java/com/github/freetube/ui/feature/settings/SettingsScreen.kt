@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SettingsScreen(
-    setTabNavAction: ((() -> Unit)?) -> Unit = { null },
+    topBar: (@Composable () -> Unit) -> Unit,
 ) {
     Text("settings", modifier = Modifier.background(Color.Green))
 }

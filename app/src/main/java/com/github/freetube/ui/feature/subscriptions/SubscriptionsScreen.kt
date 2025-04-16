@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun SubscriptionsScreen(
-    setTabNavAction: ((() -> Unit)?) -> Unit = { null },
+    topBar: (@Composable () -> Unit) -> Unit,
 ) {
 
 }

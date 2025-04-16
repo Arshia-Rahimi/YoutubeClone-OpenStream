@@ -5,82 +5,75 @@ import androidx.annotation.StringRes
 import com.arshia.freetube.R
 import kotlinx.serialization.Serializable
 
-enum class Tabs(
+@Serializable
+sealed class Tabs(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
     @DrawableRes val selectedIcon: Int,
-    val route: TopLevelDestination,
+    var navigateToRoot: (() -> Unit)? = null,
+    var doubleClickNavAction: (() -> Unit)? = null,
 ) {
-    Search(
+    @Serializable
+    data object Search : Tabs(
         title = R.string.search,
         icon = R.drawable.search,
         selectedIcon = R.drawable.search_selected,
-        route = SearchRoute,
-    ),
-    Library(
+    ) {
+        @Serializable
+        data object Main
+
+        @Serializable
+        data class Channel(val url: String)
+
+        @Serializable
+        data class Playlist(val url: String)
+    }
+
+    @Serializable
+    data object Library : Tabs(
         title = R.string.library,
         icon = R.drawable.library,
         selectedIcon = R.drawable.library_selected,
-        route = LibraryRoute,
-    ),
-    Subscriptions(
+    ) {
+        @Serializable
+        data object Main
+    }
+
+    @Serializable
+    data object Subscriptions : Tabs(
         title = R.string.subs,
         icon = R.drawable.subs,
         selectedIcon = R.drawable.subs_selected,
-        route = SubscriptionsRoute,
-    ),
-    Downloads(
+    ) {
+        @Serializable
+        data object Main
+    }
+
+    @Serializable
+    data object Downloads : Tabs(
         title = R.string.downloads,
         icon = R.drawable.downloads,
         selectedIcon = R.drawable.downlaods_selected,
-        route = DownloadsRoute,
-    ),
-    Settings(
+    ) {
+        @Serializable
+        data object Main
+    }
+
+    @Serializable
+    data object Settings : Tabs(
         title = R.string.settings,
         icon = R.drawable.settings,
         selectedIcon = R.drawable.settings_selected,
-        route = SettingsRoute,
-    ),
-}
+    ) {
+        @Serializable
+        data object Main
+    }
 
-interface Route
-
-interface TopLevelDestination : Route
-
-fun Route.className() = this::class.toString().split(".").last()
-
-@Serializable
-data object SearchRoute : TopLevelDestination {
-    @Serializable
-    data object Main : Route
-
-    @Serializable
-    data class Channel(val url: String) : Route
-
-    @Serializable
-    data class Playlist(val url: String) : Route
-}
-
-@Serializable
-data object LibraryRoute : TopLevelDestination {
-    @Serializable
-    data object Main : Route
-}
-
-@Serializable
-data object SubscriptionsRoute : TopLevelDestination {
-    @Serializable
-    data object Main : Route
-}
-
-@Serializable
-data object DownloadsRoute : TopLevelDestination {
-    @Serializable
-    data object Main : Route
-}
-
-@Serializable
-data object SettingsRoute : TopLevelDestination {
-    @Serializable
-    data object Main : Route
+    val entries = arrayOf(
+        Tabs.Search,
+        Tabs.Library,
+        Tabs.Subscriptions,
+        Tabs.Downloads,
+        Tabs.Settings,
+    ) 
 }

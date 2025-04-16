@@ -30,15 +30,14 @@ fun Navigation() {
     val rootNavController = rememberNavController()
     val playerViewModel = koinInject<PlayerViewModel>()
     val currentTab = rootNavController.currentBackStackEntryAsState()
-        .value?.destination?.route?.split(".")?.last() ?: SubscriptionsRoute.toString()
+        .value?.destination?.route?.split(".")?.last() ?: Tabs.Subscriptions.toString()
     val playVideo: (String) -> Unit = { playerViewModel.start(it) }
     var topBar by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
-    var tabSpecificNavAction by remember { mutableStateOf<(() -> Unit)?>(null) }
 
-    fun onBottomNavItemClick(destination: TopLevelDestination) {
+    fun onBottomNavItemClick(destination: Tabs) {
         val currentRoute = rootNavController.getCurrentRouteClassName() ?: return
 
-        if (currentRoute == destination.toString()) tabSpecificNavAction?.invoke()
+        if (currentRoute == destination.toString()) destination.navigateToRoot?.invoke()
         else {
             rootNavController.navigate(destination) {
                 popUpTo(rootNavController.graph.findStartDestination().id) {
@@ -59,26 +58,33 @@ fun Navigation() {
     ) {
         NavHost(
             navController = rootNavController,
-            startDestination = SubscriptionsRoute
+            startDestination = Tabs.Subscriptions,
         ) {
-            composableWithTabAnimation<SearchRoute> {
+            composableWithTabAnimation<Tabs.Search> {
                 SearchNavHost(
                     topBar = { topBar = it },
                     playVideo = playVideo,
-                    setTabNavAction = { tabSpecificNavAction = it },
                 )
             }
-            composableWithTabAnimation<LibraryRoute> {
-                LibraryScreen()
+            composableWithTabAnimation<Tabs.Library> {
+                LibraryScreen(
+                    topBar = { topBar = it },
+                )
             }
-            composableWithTabAnimation<SubscriptionsRoute> {
-                SubscriptionsScreen()
+            composableWithTabAnimation<Tabs.Subscriptions> {
+                SubscriptionsScreen(
+                    topBar = { topBar = it },
+                )
             }
-            composableWithTabAnimation<DownloadsRoute> {
-                DownloadsScreen()
+            composableWithTabAnimation<Tabs.Downloads> {
+                DownloadsScreen(
+                    topBar = { topBar = it },
+                )
             }
-            composableWithTabAnimation<SettingsRoute> {
-                SettingsScreen()
+            composableWithTabAnimation<Tabs.Settings> {
+                SettingsScreen(
+                    topBar = { topBar = it },
+                )
             }
         }
     }

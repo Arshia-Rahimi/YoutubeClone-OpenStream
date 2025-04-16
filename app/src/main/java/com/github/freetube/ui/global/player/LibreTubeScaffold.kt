@@ -1,19 +1,17 @@
 package com.github.freetube.ui.global.player
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -25,21 +23,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.github.freetube.app.navigation.Tabs
-import com.github.freetube.app.navigation.TopLevelDestination
 import com.github.freetube.core.common.compose.ObserveForEvents
 import com.github.freetube.core.common.compose.SnackBarController
 import kotlinx.coroutines.launch
@@ -48,7 +43,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LibreTubeScaffold(
     currentTab: String,
-    navigateToTab: (TopLevelDestination) -> Unit,
+    navigateToTab: (Tabs) -> Unit,
     toChannelScreen: (String) -> Unit,
     topBar: (@Composable () -> Unit)?,
     content: @Composable () -> Unit,
@@ -111,11 +106,12 @@ fun LibreTubeScaffold(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomBar(
     currentTab: String,
     setNavBarOffset: (Float) -> Unit,
-    navigateToTab: (TopLevelDestination) -> Unit,
+    navigateToTab: (Tabs) -> Unit,
 ) {
     NavigationBar(
         contentColor = Color(0xFF1A1A1A),
@@ -127,10 +123,18 @@ private fun BottomBar(
             }
     ) {
         Tabs.entries.forEach { tab ->
-            val selected = currentTab == tab.route.toString()
+            val selected = currentTab == tab.toString()
+            var lastClickTime by remember { mutableLongStateOf(0L) }
+            val doubleTapInterval = 300
             NavigationBarItem(
                 selected = selected,
-                onClick = { navigateToTab(tab.route) },
+                onClick = {
+                    val currentTime = System.currentTimeMillis()
+                    val isDoubleClick = (currentTime - lastClickTime) < doubleTapInterval
+                    navigateToTab(tab)
+                    lastClickTime = if (isDoubleClick) 0L else currentTime
+                    if (isDoubleClick) tab.doubleClickNavAction?.invoke()
+                },
                 icon = {
                     Icon(
                         painter = painterResource(

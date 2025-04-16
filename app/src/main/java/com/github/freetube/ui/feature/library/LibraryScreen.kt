@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun LibraryScreen(
-    setTabNavAction: ((() -> Unit)?) -> Unit = { null },
+    topBar: (@Composable () -> Unit) -> Unit,
 ) {
     Text("Playlists")
 }

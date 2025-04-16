@@ -6,9 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.github.freetube.app.navigation.SearchRoute
-import com.github.freetube.app.navigation.className
-import com.github.freetube.core.common.compose.getCurrentRouteClassName
+import com.github.freetube.app.navigation.Tabs
 import com.github.freetube.core.common.compose.popToRoot
 import com.github.freetube.ui.feature.search.SearchScreen
 import com.github.freetube.ui.global.channel.ChannelScreen
@@ -16,46 +14,47 @@ import com.github.freetube.ui.global.playlist.PlaylistScreen
 
 @Composable
 fun SearchNavHost(
-    topBar: (@Composable () -> Unit) -> Unit,
-    setTabNavAction: ((() -> Unit)?) -> Unit = { null },
     playVideo: (String) -> Unit,
+    topBar: (@Composable () -> Unit) -> Unit = {},
 ) {
     val navController = rememberNavController()
     LaunchedEffect(1) {
-        setTabNavAction {
-            if (navController.getCurrentRouteClassName() != SearchRoute.Main.className()) {
-                navController.popToRoot()
-            }
+        Tabs.Search.navigateToRoot = {
+            navController.popToRoot()
+        }
+        Tabs.Search.doubleClickNavAction = {
+            println("doubleClick")
+            // todo
         }
     }
     NavHost(
         navController = navController,
-        startDestination = SearchRoute.Main,
+        startDestination = Tabs.Search.Main,
     ) {
-        composable<SearchRoute.Main>(
+        composable<Tabs.Search.Main>(
         ) {
             SearchScreen(
                 topBar = topBar,
-                toChannelScreen = { navController.navigate(SearchRoute.Channel(it)) },
-                toPlaylistScreen = { navController.navigate(SearchRoute.Playlist(it)) },
+                toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
+                toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
                 playVideo = playVideo,
             )
         }
-        composable<SearchRoute.Channel> {
+        composable<Tabs.Search.Channel> {
             ChannelScreen(
-                url = it.toRoute<SearchRoute.Channel>().url,
+                url = it.toRoute<Tabs.Search.Channel>().url,
                 topBar = topBar,
                 playVideo = playVideo,
                 navigateBack = { navController.popBackStack() },
-                toPlaylistScreen = { navController.navigate(SearchRoute.Playlist(it)) },
+                toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
             )
         }
-        composable<SearchRoute.Playlist> {
+        composable<Tabs.Search.Playlist> {
             PlaylistScreen(
-                url = it.toRoute<SearchRoute.Playlist>().url,
+                url = it.toRoute<Tabs.Search.Playlist>().url,
                 topBar = topBar,
                 playVideo = playVideo,
-                toChannelScreen = { navController.navigate(SearchRoute.Channel(it)) },
+                toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 navigateBack = { navController.popBackStack() },
             )
         }

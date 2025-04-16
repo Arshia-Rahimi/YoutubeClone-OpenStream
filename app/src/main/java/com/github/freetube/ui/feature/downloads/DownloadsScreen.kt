@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun DownloadsScreen(
-    setTabNavAction: ((() -> Unit)?) -> Unit = { null },
+    topBar: (@Composable () -> Unit) -> Unit,
 ) {
     Text("downloads")
 }
