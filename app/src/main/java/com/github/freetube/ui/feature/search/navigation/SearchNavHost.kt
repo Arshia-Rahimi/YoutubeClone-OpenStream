@@ -18,15 +18,16 @@ fun SearchNavHost(
     topBar: (@Composable () -> Unit) -> Unit = {},
 ) {
     val navController = rememberNavController()
-    LaunchedEffect(1) {
-        Tabs.Search.navigateToRoot = {
-            navController.popToRoot()
-        }
-        Tabs.Search.doubleClickNavAction = {
-            println("doubleClick")
-            // todo
+   
+    LaunchedEffect(navController) {
+        Tabs.Search.apply {
+            navigateToRoot = { navController.popToRoot() }
+            doubleClickNavAction = {
+                // todo
+            }
         }
     }
+
     NavHost(
         navController = navController,
         startDestination = Tabs.Search.Main,

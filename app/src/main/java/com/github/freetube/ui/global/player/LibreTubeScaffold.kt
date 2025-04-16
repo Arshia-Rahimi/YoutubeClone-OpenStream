@@ -1,6 +1,5 @@
 package com.github.freetube.ui.global.player
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -40,7 +39,6 @@ import com.github.freetube.core.common.compose.ObserveForEvents
 import com.github.freetube.core.common.compose.SnackBarController
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LibreTubeScaffold(
     currentTab: String,
