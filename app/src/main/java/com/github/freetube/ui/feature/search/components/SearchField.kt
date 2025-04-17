@@ -16,10 +16,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arshia.freetube.R
 import com.github.freetube.ui.designsystem.components.NoRippleIconButton
+import com.github.freetube.ui.feature.search.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,11 +43,16 @@ fun SearchField(
     isSearchFieldFocused: Boolean,
     searchFieldInteractionSource: MutableInteractionSource,
     focusManager: FocusManager,
+    focusRequester: FocusRequester,
     searchSuggestion: String,
     isCorrectedSearch: Boolean,
     setSearchQuery: (String) -> Unit,
     search: () -> Unit,
 ) {
+    LaunchedEffect(SearchViewModel.searchFieldFocusFlow) {
+        focusRequester.requestFocus()
+    }
+
     CenterAlignedTopAppBar(
         title = {
             BasicTextField(
@@ -51,6 +60,7 @@ fun SearchField(
                 modifier = Modifier
                     .padding(vertical = 12.dp)
                     .clip(RoundedCornerShape(95.dp))
+                    .focusRequester(focusRequester)
                     .fillMaxWidth(),
                 maxLines = 1,
                 textStyle = TextStyle(fontSize = 16.sp, color = Color.White),
@@ -129,6 +139,7 @@ private fun SearchPreview() {
                     focusManager = LocalFocusManager.current,
                     searchSuggestion = "",
                     isCorrectedSearch = false,
+                    focusRequester = FocusRequester(),
                 )
             }
         }

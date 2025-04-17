@@ -3,7 +3,14 @@ package com.github.freetube.app.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.arshia.freetube.R
+import com.github.freetube.ui.feature.search.SearchViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+
+val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
 @Serializable
 sealed class Tabs(
@@ -18,6 +25,7 @@ sealed class Tabs(
         title = R.string.search,
         icon = R.drawable.search,
         selectedIcon = R.drawable.search_selected,
+        doubleClickNavAction = { scope.launch { SearchViewModel.searchFieldFocusEvent.send(Unit) } },
     ) {
         @Serializable
         data object Main

@@ -8,13 +8,20 @@ import com.github.freetube.core.common.util.Resource
 import com.github.freetube.core.data.SearchRepository
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.core.extractor.search.SearchUnit
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchRepo: SearchRepository,
 ) : ViewModel() {
+
+    companion object {
+        val searchFieldFocusEvent = Channel<Unit>()
+        val searchFieldFocusFlow = searchFieldFocusEvent.receiveAsFlow()
+    }
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()

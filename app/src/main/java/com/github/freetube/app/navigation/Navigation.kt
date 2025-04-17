@@ -34,26 +34,25 @@ fun Navigation() {
     val playVideo: (String) -> Unit = { playerViewModel.start(it) }
     var topBar by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
 
-    fun onBottomNavItemClick(destination: Tabs) {
-        val currentRoute = rootNavController.getCurrentRouteClassName() ?: return
-
-        if (currentRoute == destination.toString()) destination.navigateToRoot?.invoke()
-        else {
-            rootNavController.navigate(destination) {
-                popUpTo(rootNavController.graph.findStartDestination().id) {
-                    saveState = true
-                    inclusive = false
-                }
-                restoreState = true
-                launchSingleTop = true
-            }
-        }
-    }
-
     LibreTubeScaffold(
         currentTab = currentTab,
         topBar = topBar,
-        navigateToTab = ::onBottomNavItemClick,
+        navigateToTab = { destination ->
+            when (rootNavController.getCurrentRouteClassName()) {
+                null -> Unit
+                destination.toString() -> destination.navigateToRoot?.invoke()
+                else -> {
+                    rootNavController.navigate(destination) {
+                        popUpTo(rootNavController.graph.findStartDestination().id) {
+                            saveState = true
+                            inclusive = false
+                        }
+                        restoreState = true
+                        launchSingleTop = true
+                    }
+                }
+            }
+        },
         toChannelScreen = {},
     ) {
         NavHost(

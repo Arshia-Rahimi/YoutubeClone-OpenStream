@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,7 +38,8 @@ fun SearchScreen(
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
-
+    val focusRequester = remember { FocusRequester() }
+    
     topBar {
         SearchField(
             searchQuery = searchQuery,
@@ -48,6 +50,7 @@ fun SearchScreen(
             isCorrectedSearch = isCorrectedSearch,
             searchSuggestion = searchSuggestion,
             search = { trigger(SearchAction.OnSearch) },
+            focusRequester = focusRequester,
         )
     }
     Box(

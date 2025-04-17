@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.github.freetube.app.navigation.Tabs
+import com.github.freetube.core.common.compose.getCurrentRouteClassName
 import com.github.freetube.core.common.compose.popToRoot
 import com.github.freetube.ui.feature.search.SearchScreen
 import com.github.freetube.ui.global.channel.ChannelScreen
@@ -20,10 +21,9 @@ fun SearchNavHost(
     val navController = rememberNavController()
    
     LaunchedEffect(navController) {
-        Tabs.Search.apply {
-            navigateToRoot = { navController.popToRoot() }
-            doubleClickNavAction = {
-                // todo
+        Tabs.Search.navigateToRoot = {
+            if (navController.getCurrentRouteClassName() != Tabs.Search.Main.toString()) {
+                navController.popToRoot()
             }
         }
     }
