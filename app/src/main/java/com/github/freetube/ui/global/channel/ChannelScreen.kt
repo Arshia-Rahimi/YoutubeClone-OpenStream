@@ -53,6 +53,7 @@ fun ChannelScreen(
     navigateBack: () -> Unit,
     toPlaylistScreen: (String) -> Unit,
 ) {
+    topBar {}
     val viewModel = koinViewModel<ChannelViewModel>(parameters = { parametersOf(url) })
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val tabResults by viewModel.tabResults

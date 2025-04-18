@@ -5,16 +5,14 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.github.freetube.app.navigation.Tabs.Companion.tabsList
 import com.github.freetube.core.common.compose.getCurrentRouteClassName
 import com.github.freetube.ui.feature.downloads.DownloadsScreen
 import com.github.freetube.ui.feature.library.LibraryScreen
@@ -23,25 +21,32 @@ import com.github.freetube.ui.feature.settings.SettingsScreen
 import com.github.freetube.ui.feature.subscriptions.SubscriptionsScreen
 import com.github.freetube.ui.global.player.LibreTubeScaffold
 import com.github.freetube.ui.global.player.PlayerViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.compose.koinInject
+
+private var topBarStateFlow: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
 
 @Composable
 fun Navigation() {
     val rootNavController = rememberNavController()
+    rootNavController.addOnDestinationChangedListener { controller, _, _ ->
+        (controller.getCurrentRouteClassName() ?: "Subscriptions").let { currentTab ->
+            Tabs.currentTab.value = tabsList.first { tab ->
+                currentTab == tab.toString()
+            }
+        }
+    }
+
     val playerViewModel = koinInject<PlayerViewModel>()
-    val currentTab = rootNavController.currentBackStackEntryAsState()
-        .value?.destination?.route?.split(".")?.last() ?: Tabs.Subscriptions.toString()
-    val playVideo: (String) -> Unit = { playerViewModel.start(it) }
-    var topBar by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
+    val currentTab by Tabs.currentTab.collectAsStateWithLifecycle()
+    val topBar by topBarStateFlow.collectAsStateWithLifecycle()
 
     LibreTubeScaffold(
         currentTab = currentTab,
         topBar = topBar,
-        navigateToTab = { destination ->
-            when (rootNavController.getCurrentRouteClassName()) {
-                null -> Unit
-                destination.toString() -> destination.navigateToRoot?.invoke()
-                else -> {
+        navAction = { destination, isDoubleClick ->
+            when {
+                currentTab != destination -> {
                     rootNavController.navigate(destination) {
                         popUpTo(rootNavController.graph.findStartDestination().id) {
                             saveState = true
@@ -51,6 +56,13 @@ fun Navigation() {
                         launchSingleTop = true
                     }
                 }
+
+                destination.isInTabRoot.value -> {
+                    if (isDoubleClick) destination.tabRootDoubleClickAction?.invoke()
+                    else destination.isInTabRootAction?.invoke()
+                }
+
+                else -> destination.navigateToCurrentTabRoot?.invoke()
             }
         },
         toChannelScreen = {},
@@ -61,28 +73,28 @@ fun Navigation() {
         ) {
             composableWithTabAnimation<Tabs.Search> {
                 SearchNavHost(
-                    topBar = { topBar = it },
-                    playVideo = playVideo,
+                    topBar = { topBarStateFlow.value = it },
+                    playVideo = playerViewModel::start,
                 )
             }
             composableWithTabAnimation<Tabs.Library> {
                 LibraryScreen(
-                    topBar = { topBar = it },
+                    topBar = { topBarStateFlow.value = it },
                 )
             }
             composableWithTabAnimation<Tabs.Subscriptions> {
                 SubscriptionsScreen(
-                    topBar = { topBar = it },
+                    topBar = { topBarStateFlow.value = it },
                 )
             }
             composableWithTabAnimation<Tabs.Downloads> {
                 DownloadsScreen(
-                    topBar = { topBar = it },
+                    topBar = { topBarStateFlow.value = it },
                 )
             }
             composableWithTabAnimation<Tabs.Settings> {
                 SettingsScreen(
-                    topBar = { topBar = it },
+                    topBar = { topBarStateFlow.value = it },
                 )
             }
         }

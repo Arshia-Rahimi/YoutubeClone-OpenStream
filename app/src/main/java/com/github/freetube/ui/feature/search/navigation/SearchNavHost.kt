@@ -19,10 +19,16 @@ fun SearchNavHost(
     topBar: (@Composable () -> Unit) -> Unit = {},
 ) {
     val navController = rememberNavController()
+//        .addOnDestinationChangedListener { controller, _, _ ->
+//            when(controller.getCurrentRouteClassName()) {
+//                null -> Unit
+//                Tabs.Search.Main.toString() -> Tabs.Search.Main
+//            }
+//        }
    
     LaunchedEffect(navController) {
-        Tabs.Search.navigateToRoot = {
-            if (navController.getCurrentRouteClassName() != Tabs.Search.Main.toString()) {
+        Tabs.Search.navigateToCurrentTabRoot = {
+            if (navController.getCurrentRouteClassName() != Tabs.Search.Root.toString()) {
                 navController.popToRoot()
             }
         }
@@ -30,9 +36,9 @@ fun SearchNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Tabs.Search.Main,
+        startDestination = Tabs.Search.Root,
     ) {
-        composable<Tabs.Search.Main>(
+        composable<Tabs.Search.Root>(
         ) {
             SearchScreen(
                 topBar = topBar,

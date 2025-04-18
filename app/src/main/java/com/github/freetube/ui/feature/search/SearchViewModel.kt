@@ -11,7 +11,6 @@ import com.github.freetube.core.extractor.search.SearchUnit
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -20,7 +19,7 @@ class SearchViewModel(
 
     companion object {
         val searchFieldFocusEvent = Channel<Unit>()
-        val searchFieldFocusFlow = searchFieldFocusEvent.receiveAsFlow()
+        val scrollToTopEvent = Channel<Unit>()
     }
 
     private val _isLoading = MutableStateFlow(false)

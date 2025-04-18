@@ -10,5 +10,6 @@ import androidx.compose.ui.graphics.Color
 fun SettingsScreen(
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
+    topBar {}
     Text("settings", modifier = Modifier.background(Color.Green))
 }

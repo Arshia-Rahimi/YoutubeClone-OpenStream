@@ -34,15 +34,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.github.freetube.app.navigation.Tabs
-import com.github.freetube.app.navigation.tabsList
+import com.github.freetube.app.navigation.Tabs.Companion.tabsList
 import com.github.freetube.core.common.compose.ObserveForEvents
 import com.github.freetube.core.common.compose.SnackBarController
 import kotlinx.coroutines.launch
 
 @Composable
 fun LibreTubeScaffold(
-    currentTab: String,
-    navigateToTab: (Tabs) -> Unit,
+    currentTab: Tabs,
+    navAction: (Tabs, Boolean) -> Unit,
     toChannelScreen: (String) -> Unit,
     topBar: (@Composable () -> Unit)?,
     content: @Composable () -> Unit,
@@ -80,7 +80,7 @@ fun LibreTubeScaffold(
         bottomBar = {
             BottomBar(
                 currentTab = currentTab,
-                navigateToTab = navigateToTab,
+                navAction = navAction,
                 setNavBarOffset = { navBarOffset = it },
             )
         }
@@ -108,9 +108,9 @@ fun LibreTubeScaffold(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomBar(
-    currentTab: String,
+    currentTab: Tabs,
     setNavBarOffset: (Float) -> Unit,
-    navigateToTab: (Tabs) -> Unit,
+    navAction: (Tabs, Boolean) -> Unit,
 ) {
     NavigationBar(
         contentColor = Color(0xFF1A1A1A),
@@ -122,22 +122,21 @@ private fun BottomBar(
             }
     ) {
         tabsList.forEach { tab ->
-            val selected = currentTab == tab.toString()
+            val isSelected = tab == currentTab
             var lastClickTime by remember { mutableLongStateOf(0L) }
             val doubleTapInterval = 300
             NavigationBarItem(
-                selected = selected,
+                selected = isSelected,
                 onClick = {
                     val currentTime = System.currentTimeMillis()
                     val isDoubleClick = (currentTime - lastClickTime) < doubleTapInterval
-                    navigateToTab(tab)
                     lastClickTime = if (isDoubleClick) 0L else currentTime
-                    if (isDoubleClick) tab.doubleClickNavAction?.invoke()
+                    navAction(tab, isDoubleClick)
                 },
                 icon = {
                     Icon(
                         painter = painterResource(
-                            if (selected) tab.selectedIcon else tab.icon
+                            if (isSelected) tab.selectedIcon else tab.icon
                         ),
                         contentDescription = null,
                         tint = Color.Unspecified,
@@ -148,7 +147,7 @@ private fun BottomBar(
                         text = stringResource(tab.title),
                         maxLines = 1,
                         fontSize = 8.sp,
-                        color = if (selected) Color.White else Color(0xFFBABABA)
+                        color = if (isSelected) Color.White else Color(0xFFBABABA)
                     )
                 },
             )

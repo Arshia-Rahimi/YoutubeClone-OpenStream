@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.arshia.freetube.R
 import com.github.freetube.ui.designsystem.components.NoRippleIconButton
 import com.github.freetube.ui.feature.search.SearchViewModel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,8 +50,13 @@ fun SearchField(
     setSearchQuery: (String) -> Unit,
     search: () -> Unit,
 ) {
-    LaunchedEffect(SearchViewModel.searchFieldFocusFlow) {
-        focusRequester.requestFocus()
+    LaunchedEffect(Unit) {
+        // todo doesn't work before the first composition
+        SearchViewModel.searchFieldFocusEvent
+            .receiveAsFlow()
+            .collect {
+                focusRequester.requestFocus()
+            }
     }
 
     CenterAlignedTopAppBar(

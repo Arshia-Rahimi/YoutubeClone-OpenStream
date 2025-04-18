@@ -7,5 +7,6 @@ import androidx.compose.runtime.Composable
 fun LibraryScreen(
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
+    topBar {}
     Text("Playlists")
 }

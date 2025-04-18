@@ -3,32 +3,43 @@ package com.github.freetube.app.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.arshia.freetube.R
+import com.github.freetube.core.common.util.sendPulse
 import com.github.freetube.ui.feature.search.SearchViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
-
-val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
 @Serializable
 sealed class Tabs(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
     @DrawableRes val selectedIcon: Int,
-    var navigateToRoot: (() -> Unit)? = null,
-    var doubleClickNavAction: (() -> Unit)? = null,
+    val isInTabRoot: MutableStateFlow<Boolean> = MutableStateFlow(true),
+    val tabRootDoubleClickAction: (() -> Unit)? = null,
+    var isInTabRootAction: (() -> Unit)? = null,
+    var navigateToCurrentTabRoot: (() -> Unit)? = null,
 ) {
+    companion object {
+        val currentTab = MutableStateFlow<Tabs>(Subscriptions)
+
+        val tabsList = arrayOf(
+            Search,
+            Library,
+            Subscriptions,
+            Downloads,
+            Settings,
+        )
+    }
+            
     @Serializable
     data object Search : Tabs(
         title = R.string.search,
         icon = R.drawable.search,
         selectedIcon = R.drawable.search_selected,
-        doubleClickNavAction = { scope.launch { SearchViewModel.searchFieldFocusEvent.send(Unit) } },
+        tabRootDoubleClickAction = { SearchViewModel.searchFieldFocusEvent.sendPulse() },
+        isInTabRootAction = { SearchViewModel.scrollToTopEvent.sendPulse() }
     ) {
         @Serializable
-        data object Main
+        data object Root
 
         @Serializable
         data class Channel(val url: String)
@@ -44,7 +55,7 @@ sealed class Tabs(
         selectedIcon = R.drawable.library_selected,
     ) {
         @Serializable
-        data object Main
+        data object Root
     }
 
     @Serializable
@@ -54,7 +65,7 @@ sealed class Tabs(
         selectedIcon = R.drawable.subs_selected,
     ) {
         @Serializable
-        data object Main
+        data object Root
     }
 
     @Serializable
@@ -64,7 +75,7 @@ sealed class Tabs(
         selectedIcon = R.drawable.downlaods_selected,
     ) {
         @Serializable
-        data object Main
+        data object Root
     }
 
     @Serializable
@@ -74,15 +85,8 @@ sealed class Tabs(
         selectedIcon = R.drawable.settings_selected,
     ) {
         @Serializable
-        data object Main
+        data object Root
     }
 
 }
 
-val tabsList = arrayOf(
-    Tabs.Search,
-    Tabs.Library,
-    Tabs.Subscriptions,
-    Tabs.Downloads,
-    Tabs.Settings,
-) 

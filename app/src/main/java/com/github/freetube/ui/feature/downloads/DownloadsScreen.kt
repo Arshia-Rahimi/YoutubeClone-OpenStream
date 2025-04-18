@@ -7,5 +7,6 @@ import androidx.compose.runtime.Composable
 fun DownloadsScreen(
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
+    topBar {}
     Text("downloads")
 }

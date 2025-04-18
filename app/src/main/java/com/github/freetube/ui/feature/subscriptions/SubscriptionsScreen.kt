@@ -6,5 +6,6 @@ import androidx.compose.runtime.Composable
 fun SubscriptionsScreen(
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
+    topBar {}
 
 }
