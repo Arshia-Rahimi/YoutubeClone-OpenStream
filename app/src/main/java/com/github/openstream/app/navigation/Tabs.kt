@@ -2,7 +2,7 @@ package com.github.openstream.app.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.arshia.freetube.R
+import com.arshia.openstream.R
 import com.github.openstream.core.common.util.sendPulse
 import com.github.openstream.ui.feature.search.SearchViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -19,7 +19,7 @@ import com.github.openstream.core.database.entities.VideoEntity
 )
 abstract class OpenStreamDatabase : RoomDatabase() {
     companion object {
-        const val NAME = "LibreTube_DB"
+        const val NAME = "OpenStream_DB"
     }
 
     abstract fun channelDao(): ChannelDao

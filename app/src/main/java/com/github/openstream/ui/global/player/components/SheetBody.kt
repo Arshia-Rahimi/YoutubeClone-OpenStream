@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arshia.freetube.R
+import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.extractor.model.DataItem
 import com.github.openstream.core.extractor.model.StreamType

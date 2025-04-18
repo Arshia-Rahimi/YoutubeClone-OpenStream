@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
-import com.arshia.freetube.R
+import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.extractor.video.VideoData
 import com.github.openstream.core.media3.PlayerState

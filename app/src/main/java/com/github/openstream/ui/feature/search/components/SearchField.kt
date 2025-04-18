@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arshia.freetube.R
+import com.arshia.openstream.R
 import com.github.openstream.ui.designsystem.components.NoRippleIconButton
 import com.github.openstream.ui.feature.search.SearchViewModel
 import kotlinx.coroutines.flow.receiveAsFlow

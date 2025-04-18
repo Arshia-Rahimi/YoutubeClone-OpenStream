@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FreeTube</string>
+    <string name="app_name">OpenStream</string>
     <string name="subs">Subscriptions</string>
     <string name="library">Library</string>
     <string name="settings">Settings</string>

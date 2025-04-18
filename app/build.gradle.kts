@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.arshia.freetube"
+    namespace = "com.arshia.openstream"
     compileSdk = 35
 
     defaultConfig {

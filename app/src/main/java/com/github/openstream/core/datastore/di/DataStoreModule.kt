@@ -15,7 +15,7 @@ val dataStoreModule = module {
     single<DataStore<PlayerConfigDataStoreModel>> {
         DataStoreFactory.create(
             serializer = PlayerConfigDataStoreModelSerializer(),
-            produceFile = { androidContext().dataStoreFile("libreTube_playerConfig.pb") },
+            produceFile = { androidContext().dataStoreFile("openStream_playerConfig.pb") },
             corruptionHandler = ReplaceFileCorruptionHandler { PlayerConfigDataStoreModel() },
         )
     }
