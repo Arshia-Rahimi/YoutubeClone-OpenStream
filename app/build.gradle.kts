@@ -12,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.arshia.freetube"
+        applicationId = "com.arshia.openstream"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

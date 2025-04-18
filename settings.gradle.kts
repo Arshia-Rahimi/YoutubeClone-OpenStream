@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FreeTube"
+rootProject.name = "OpenStream"
 include(":app")
  
