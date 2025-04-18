@@ -29,13 +29,15 @@ private var topBarStateFlow: MutableStateFlow<(@Composable () -> Unit)?> = Mutab
 @Composable
 fun Navigation() {
     val rootNavController = rememberNavController()
-    rootNavController.addOnDestinationChangedListener { controller, _, _ ->
-        (controller.getCurrentRouteClassName() ?: "Subscriptions").let { currentTab ->
-            Tabs.currentTab.value = tabsList.first { tab ->
-                currentTab == tab.toString()
+        .apply {
+            addOnDestinationChangedListener { controller, _, _ ->
+                (controller.getCurrentRouteClassName() ?: "Subscriptions").let { currentTab ->
+                    Tabs.currentTab.value = tabsList.first { tab ->
+                        currentTab == tab.toString()
+                    }
+                }
             }
         }
-    }
 
     val playerViewModel = koinInject<PlayerViewModel>()
     val currentTab by Tabs.currentTab.collectAsStateWithLifecycle()

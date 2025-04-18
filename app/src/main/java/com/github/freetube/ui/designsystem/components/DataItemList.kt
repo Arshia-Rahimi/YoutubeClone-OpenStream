@@ -17,13 +17,11 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.Player
 import com.github.freetube.core.extractor.model.DataItem
 import com.github.freetube.ui.designsystem.dataitem.DataItem
+import com.github.freetube.ui.feature.search.SearchViewModel
 import com.github.freetube.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
-import com.github.freetube.ui.global.player.PlayerViewModel
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -45,6 +43,13 @@ fun DataItemList(
     val screenWidth = config.screenWidthDp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
+    }
+    LaunchedEffect(Unit) {
+        SearchViewModel.scrollToTopEvent
+            .receiveAsFlow()
+            .collect {
+                lazyColumnState.animateScrollToItem(0)
+            }
     }
 
     LazyColumn(

@@ -15,7 +15,7 @@ sealed class Tabs(
     @DrawableRes val selectedIcon: Int,
     val isInTabRoot: MutableStateFlow<Boolean> = MutableStateFlow(true),
     val tabRootDoubleClickAction: (() -> Unit)? = null,
-    var isInTabRootAction: (() -> Unit)? = null,
+    val isInTabRootAction: (() -> Unit)? = null,
     var navigateToCurrentTabRoot: (() -> Unit)? = null,
 ) {
     companion object {
