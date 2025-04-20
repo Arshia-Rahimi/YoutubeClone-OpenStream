@@ -15,6 +15,7 @@ fun DataItem(
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
+    subscribe: (String) -> Unit = {},
 ) {
     when(item) {
         is DataItem.Video -> Video(
@@ -37,6 +38,7 @@ fun DataItem(
             modifier = modifier,
             item = item,
             toChannelScreen = toChannelScreen,
+            subscribe = subscribe,
         )
     }
 }

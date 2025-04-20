@@ -1,5 +1,6 @@
 package com.github.openstream.core.data.imp
 
+import androidx.compose.runtime.mutableStateListOf
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
@@ -8,6 +9,9 @@ import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.extractor.model.DataItem
 import com.github.openstream.core.extractor.playlist.PlaylistUnit
+import com.github.openstream.core.model.playlist.LocalPlaylist
+import com.github.openstream.core.model.playlist.Playlist
+import com.github.openstream.core.model.playlist.YoutubePlaylist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -66,11 +70,18 @@ class OfflineFirstPlaylistRepository(
         emit(Success)
     }.asResult(Dispatchers.IO)
 
-    override suspend fun getPlaylist(url: String): Flow<Resource<PlaylistUnit>> =
-        flow { emit(PlaylistUnit(url)) }
-            .asResult(Dispatchers.IO)
+    // todo
+//    override suspend fun getPlaylist(id: String): Flow<Resource<Playlist>> =
+//        flow {
+//            val playlist = db.playlistDao().searchLocal(id)?.let {  }
+//                ?: db.playlistDao().searchOfflineFirst(id).let {  }
+//                ?: YoutubePlaylist(id)
+//            emit(playlist)
+//        }.asResult(Dispatchers.IO)
 
-    override suspend fun getNextPage(currentPlaylist: PlaylistUnit): Flow<Resource<List<DataItem>?>> =
-        flow { emit(currentPlaylist.fetchNextPage()) }
-            .asResult(Dispatchers.IO)
+    override suspend fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>> =
+        flow {
+            currentPlaylist.getNextPage()
+            emit(Success)
+        }.asResult(Dispatchers.IO)
 }

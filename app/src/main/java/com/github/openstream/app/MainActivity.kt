@@ -12,16 +12,15 @@ import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 
 class MainActivity : ComponentActivity() {
-
-    private val downloader = OkHttpDownloader.init(null)
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = false
         
         loadNewPipeConfig()
-
+        
         setContent {
             KoinAndroidContext {
                 OpenStreamTheme {
@@ -30,8 +29,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun loadNewPipeConfig() =
+    
+    private fun loadNewPipeConfig() {
+        val downloader = OkHttpDownloader.init(null)
         // todo get locale and add it to dataStore
         NewPipe.init(downloader, Localization("en", "US"))
+    }
 }

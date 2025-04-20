@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.playlist.PlaylistResult
+import com.github.openstream.core.extractor.playlist.PlaylistMetadata
 import com.github.openstream.core.extractor.playlist.PlaylistUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +20,7 @@ class PlaylistViewModel(
     sealed interface UiState {
         data object Loading : UiState
         data class Error(val message: String? = null) : UiState
-        data class Success(val playlistResult: PlaylistResult) : UiState
+        data class Success(val playlistMetadata: PlaylistMetadata) : UiState
     }
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)

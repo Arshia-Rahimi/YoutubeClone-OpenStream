@@ -30,12 +30,14 @@ import coil3.compose.AsyncImage
 import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.extractor.model.DataItem
+import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun Channel(
     modifier: Modifier,
     item: DataItem.Channel,
     toChannelScreen: (String) -> Unit,
+    subscribe: (String) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -97,9 +99,7 @@ fun Channel(
             )
         }
         Button(
-            onClick = {
-                // todo
-            },
+            onClick = { item.url?.let { subscribe(it) } },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFCC2849),
             )
@@ -127,6 +127,7 @@ private fun Preview() {
             ),
             toChannelScreen = {},
             modifier = Modifier,
+            subscribe = {},
         )
     }
 }

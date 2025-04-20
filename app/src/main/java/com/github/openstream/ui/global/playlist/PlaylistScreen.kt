@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.playlist.PlaylistResult
+import com.github.openstream.core.extractor.playlist.PlaylistMetadata
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
@@ -38,7 +38,7 @@ fun PlaylistScreen(
 
         is PlaylistViewModel.UiState.Success -> {
             PlaylistScreen(
-                playlist = (uiState as PlaylistViewModel.UiState.Success).playlistResult,
+                playlist = (uiState as PlaylistViewModel.UiState.Success).playlistMetadata,
                 items = viewModel.items,
                 topBar = topBar,
                 playVideo = playVideo,
@@ -51,7 +51,7 @@ fun PlaylistScreen(
 
 @Composable
 private fun PlaylistScreen(
-    playlist: PlaylistResult,
+    playlist: PlaylistMetadata,
     items: SnapshotStateList<DataItem>,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,

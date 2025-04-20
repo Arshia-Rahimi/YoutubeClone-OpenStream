@@ -6,17 +6,16 @@ import com.github.openstream.core.extractor.model.toList
 import org.schabi.newpipe.extractor.Page
 
 class PlaylistUnit(
-    private val url: String,
+    url: String,
 ) {
     private val extractor = YtService.getPlaylistExtractor(url)
     var nextPage: Page?
-    val firstPage: PlaylistResult
+    val firstPage: PlaylistMetadata
 
     init {
         extractor.fetchPage()
-        firstPage = PlaylistResult(
+        firstPage = PlaylistMetadata(
             name = extractor.name,
-            items = extractor.initialPage.items.toList(),
             channelName = extractor.uploaderName,
             channelUrl = extractor.uploaderUrl,
             isChannelVerified = extractor.isUploaderVerified,
