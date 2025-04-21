@@ -25,13 +25,14 @@ class SearchViewModel(
         val scrollToTopEvent = Channel<Unit>()
     }
     
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Success())
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Empty)
     val uiState = _uiState.asStateFlow()
     
     sealed interface UiState {
+        data object Empty: UiState
         data object Loading : UiState
         data class Error(val message: String?) : UiState
-        data class Success(val searchResult: SearchResult? = null) : UiState
+        data class Success(val searchResult: SearchResult) : UiState
     }
     
     val results = mutableStateListOf<DataItem>()
@@ -58,7 +59,7 @@ class SearchViewModel(
     private fun getNextPage() {
         viewModelScope.launch {
             if (_uiState.value !is UiState.Success) return@launch
-            (_uiState.value as UiState.Success).searchResult?.let {
+            (_uiState.value as UiState.Success).searchResult.let {
                 searchRepo.getNextPage(it).collect {
                     // todo
                 }

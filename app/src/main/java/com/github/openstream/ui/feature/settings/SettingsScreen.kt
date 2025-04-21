@@ -1,6 +1,8 @@
 package com.github.openstream.ui.feature.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,5 +13,5 @@ fun SettingsScreen(
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
     topBar {}
-    Text("settings", modifier = Modifier.background(Color.Green))
+    Box(Modifier.fillMaxSize().background(Color.White))
 }

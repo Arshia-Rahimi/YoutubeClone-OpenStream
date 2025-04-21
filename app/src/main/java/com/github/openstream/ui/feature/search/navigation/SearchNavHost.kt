@@ -38,8 +38,7 @@ fun SearchNavHost(
         navController = navController,
         startDestination = Tabs.Search.Root,
     ) {
-        composable<Tabs.Search.Root>(
-        ) {
+        composable<Tabs.Search.Root> {
             SearchScreen(
                 topBar = topBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },

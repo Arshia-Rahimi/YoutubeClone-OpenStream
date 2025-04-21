@@ -1,15 +1,19 @@
 package com.github.openstream.app.navigation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.openstream.app.navigation.Tabs.Companion.tabsList
@@ -26,18 +30,19 @@ import org.koin.compose.koinInject
 
 private var topBarStateFlow: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Navigation() {
-    val rootNavController = rememberNavController()
-        .apply {
-            addOnDestinationChangedListener { controller, _, _ ->
-                (controller.getCurrentRouteClassName() ?: "Subscriptions").let { currentTab ->
-                    Tabs.currentTab.value = tabsList.first { tab ->
-                        currentTab == tab.toString()
-                    }
-                }
-            }
-        }
+//    val rootNavController = rememberNavController()
+//        .apply {
+//            addOnDestinationChangedListener { controller, _, _ ->
+//                (controller.getCurrentRouteClassName() ?: "Subscriptions").let { currentTab ->
+//                    Tabs.currentTab.value = tabsList.first { tab ->
+//                        currentTab == tab.toString()
+//                    }
+//                }
+//            }
+//        }
 
     val playerViewModel = koinInject<PlayerViewModel>()
     val currentTab by Tabs.currentTab.collectAsStateWithLifecycle()
@@ -49,14 +54,15 @@ fun Navigation() {
         navAction = { destination, isDoubleClick ->
             when {
                 currentTab != destination -> {
-                    rootNavController.navigate(destination) {
-                        popUpTo(rootNavController.graph.findStartDestination().id) {
-                            saveState = true
-                            inclusive = false
-                        }
-                        restoreState = true
-                        launchSingleTop = true
-                    }
+//                    rootNavController.navigate(destination) {
+//                        popUpTo(rootNavController.graph.findStartDestination().id) {
+//                            saveState = true
+//                            inclusive = false
+//                        }
+//                        restoreState = true
+//                        launchSingleTop = true
+//                    }
+                    Tabs.currentTab.value = destination
                 }
 
                 destination.isInTabRoot.value -> {
@@ -69,33 +75,61 @@ fun Navigation() {
         },
         toChannelScreen = {},
     ) {
-        NavHost(
-            navController = rootNavController,
-            startDestination = Tabs.Subscriptions,
+//        NavHost(
+//            navController = rootNavController,
+//            startDestination = Tabs.Subscriptions,
+//        ) {
+//            composableWithTabAnimation<Tabs.Search> {
+//                SearchNavHost(
+//                    topBar = { topBarStateFlow.value = it },
+//                    playVideo = playerViewModel::start,
+//                )
+//            }
+//            composableWithTabAnimation<Tabs.Library> {
+//                LibraryScreen(
+//                    topBar = { topBarStateFlow.value = it },
+//                )
+//            }
+//            composableWithTabAnimation<Tabs.Subscriptions> {
+//                SubscriptionsScreen(
+//                    topBar = { topBarStateFlow.value = it },
+//                )
+//            }
+//            composableWithTabAnimation<Tabs.Downloads> {
+//                DownloadsScreen(
+//                    topBar = { topBarStateFlow.value = it },
+//                )
+//            }
+//            composableWithTabAnimation<Tabs.Settings> {
+//                SettingsScreen(
+//                    topBar = { topBarStateFlow.value = it },
+//                )
+//            }
+//        }
+        AnimatedContent(
+            targetState = currentTab,
+            transitionSpec = {
+                slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(300),
+                ) togetherWith fadeOut(tween(300))
+            }
         ) {
-            composableWithTabAnimation<Tabs.Search> {
-                SearchNavHost(
+            when(it) {
+                Tabs.Search -> SearchNavHost(
                     topBar = { topBarStateFlow.value = it },
                     playVideo = playerViewModel::start,
                 )
-            }
-            composableWithTabAnimation<Tabs.Library> {
-                LibraryScreen(
+                Tabs.Library -> LibraryScreen(
                     topBar = { topBarStateFlow.value = it },
                 )
-            }
-            composableWithTabAnimation<Tabs.Subscriptions> {
-                SubscriptionsScreen(
+                Tabs.Subscriptions -> SubscriptionsScreen(
                     topBar = { topBarStateFlow.value = it },
                 )
-            }
-            composableWithTabAnimation<Tabs.Downloads> {
-                DownloadsScreen(
+                Tabs.Downloads -> DownloadsScreen(
                     topBar = { topBarStateFlow.value = it },
                 )
-            }
-            composableWithTabAnimation<Tabs.Settings> {
-                SettingsScreen(
+                Tabs.Settings -> SettingsScreen(
                     topBar = { topBarStateFlow.value = it },
                 )
             }

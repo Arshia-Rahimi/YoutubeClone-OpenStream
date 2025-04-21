@@ -40,7 +40,6 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     
-    // todo update screen based on new UiState
     topBar {
         SearchField(
             searchQuery = searchQuery,
@@ -65,6 +64,7 @@ fun SearchScreen(
             },
     ) {
         when (uiState) {
+            SearchViewModel.UiState.Empty -> {}
             SearchViewModel.UiState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
             is SearchViewModel.UiState.Error -> Text(
                 text = (uiState as SearchViewModel.UiState.Error).message ?: "",
