@@ -29,17 +29,16 @@ fun SearchScreen(
     playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val trigger: (SearchAction) -> Unit = { viewModel.onAction(it) }
     val searchQuery by viewModel.searchQuery
     val results = viewModel.results
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val isCorrectedSearch by viewModel.isCorrectedSearch.collectAsStateWithLifecycle()
-    val searchSuggestion by viewModel.searchSuggestion.collectAsStateWithLifecycle()
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     
+    // todo update screen based on new UiState
     topBar {
         SearchField(
             searchQuery = searchQuery,
@@ -47,7 +46,7 @@ fun SearchScreen(
             setSearchQuery = { viewModel.searchQuery.value = it },
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
-            isCorrectedSearch = isCorrectedSearch,
+            isCorrectedSearch = if(uiState is SearchViewModel.UiState) uiState,
             searchSuggestion = searchSuggestion,
             search = { trigger(SearchAction.OnSearch) },
             focusRequester = focusRequester,

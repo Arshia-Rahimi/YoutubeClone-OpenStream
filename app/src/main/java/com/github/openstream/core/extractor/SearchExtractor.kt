@@ -1,34 +1,37 @@
 package com.github.openstream.core.extractor
 
+import androidx.compose.runtime.toMutableStateList
 import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.core.model.extractordata.InitialSearchResult
+import com.github.openstream.core.model.extractordata.SearchResult
 import com.github.openstream.core.model.extractordata.toList
 import org.schabi.newpipe.extractor.Page
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 
-class SearchExtractor(
-    query: String,
-    contentFilter: List<String>,
-    sortFilter: String?,
-) {
-    var nextPage: Page?
-    private val extractor = YtService.getSearchExtractor(query, contentFilter, sortFilter)
-    val firstPage: InitialSearchResult
+object SearchExtractor {
     
-    init {
+    fun fetchSearchResult(
+        query: String,
+        contentFilter: List<String>,
+        sortFilter: String?,
+    ): SearchResult {
+        val extractor = YtService.getSearchExtractor(query, contentFilter, sortFilter) as YoutubeSearchExtractor
         extractor.fetchPage()
-        firstPage = InitialSearchResult(
+        return SearchResult(
+            extractor = extractor,
             searchSuggestion = extractor.searchSuggestion,
             isCorrectedSearch = extractor.isCorrectedSearch,
-            firstPage = extractor.initialPage.items.toList(),
+            items = extractor.initialPage.items.toList().toMutableStateList(),
+            nextPage = extractor.initialPage.nextPage,
         )
-        nextPage = extractor.initialPage.nextPage
     }
-
-    fun fetchNextPage(): List<DataItem>? =
-        nextPage?.let {
-            val currentPage = extractor.getPage(nextPage)
-            nextPage = currentPage.nextPage
-            return currentPage.items.toList()
+    
+    fun fetchNextPage(search: SearchResult) {
+        search.nextPage?.let {
+            val currentPage = search.extractor.getPage(it)
+            search.nextPage = currentPage.nextPage
+            search.items.addAll(currentPage.items.toList())
         }
+    }
 }

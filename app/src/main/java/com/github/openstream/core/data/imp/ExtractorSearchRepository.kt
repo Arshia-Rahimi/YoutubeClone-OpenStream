@@ -1,25 +1,28 @@
 package com.github.openstream.core.data.imp
 
 import com.github.openstream.core.common.util.Resource
+import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.SearchRepository
-import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.extractor.SearchExtractor
+import com.github.openstream.core.model.extractordata.SearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ExtractorSearchRepository : SearchRepository {
-
+    
     override suspend fun search(
         query: String,
         contentFilter: List<String>,
         sortFilter: String?,
-    ): Flow<Resource<SearchExtractor>> = flow {
-        emit(SearchExtractor(query, contentFilter, sortFilter))
+    ): Flow<Resource<SearchResult>> = flow {
+        emit(SearchExtractor.fetchSearchResult(query, contentFilter, sortFilter))
     }.asResult(Dispatchers.IO)
-
-    override suspend fun getNextPage(currentSearch: SearchExtractor): Flow<Resource<List<DataItem>?>> =
-        flow { emit(currentSearch.fetchNextPage()) }
-            .asResult(Dispatchers.IO)
+    
+    override suspend fun getNextPage(currentSearch: SearchResult): Flow<Resource<Success>> =
+        flow {
+            SearchExtractor.fetchNextPage(currentSearch)
+            emit(Success)
+        }.asResult(Dispatchers.IO)
 }
