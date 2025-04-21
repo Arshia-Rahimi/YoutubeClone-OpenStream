@@ -45,8 +45,8 @@ fun SearchField(
     searchFieldInteractionSource: MutableInteractionSource,
     focusManager: FocusManager,
     focusRequester: FocusRequester,
-    searchSuggestion: String,
-    isCorrectedSearch: Boolean,
+//    searchSuggestion: String,
+//    isCorrectedSearch: Boolean,
     setSearchQuery: (String) -> Unit,
     search: () -> Unit,
 ) {
@@ -143,8 +143,6 @@ private fun SearchPreview() {
                     searchFieldInteractionSource = MutableInteractionSource(),
                     search = {},
                     focusManager = LocalFocusManager.current,
-                    searchSuggestion = "",
-                    isCorrectedSearch = false,
                     focusRequester = FocusRequester(),
                 )
             }

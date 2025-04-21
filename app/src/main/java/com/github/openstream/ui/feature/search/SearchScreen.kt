@@ -5,17 +5,19 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.ui.designsystem.components.DataItemList
-import com.github.openstream.ui.designsystem.components.LoadingBox
 import com.github.openstream.ui.feature.search.components.SearchField
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
@@ -46,12 +48,11 @@ fun SearchScreen(
             setSearchQuery = { viewModel.searchQuery.value = it },
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
-            isCorrectedSearch = if(uiState is SearchViewModel.UiState) uiState,
-            searchSuggestion = searchSuggestion,
             search = { trigger(SearchAction.OnSearch) },
             focusRequester = focusRequester,
         )
     }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,13 +64,20 @@ fun SearchScreen(
                 )
             },
     ) {
-        DataItemList(
-            items = results,
-            toPlaylistScreen = toPlaylistScreen,
-            toChannelScreen = toChannelScreen,
-            playVideo = playVideo,
-            loadNextPage = { trigger(SearchAction.OnNextPage) },
-        ) 
-        if (isLoading) LoadingBox()
+        when (uiState) {
+            SearchViewModel.UiState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+            is SearchViewModel.UiState.Error -> Text(
+                text = (uiState as SearchViewModel.UiState.Error).message ?: "",
+                modifier = Modifier.align(Alignment.Center)
+            )
+            
+            is SearchViewModel.UiState.Success -> DataItemList(
+                items = results,
+                toPlaylistScreen = toPlaylistScreen,
+                toChannelScreen = toChannelScreen,
+                playVideo = playVideo,
+                loadNextPage = { trigger(SearchAction.OnNextPage) },
+            )
+        }
     }
 }
