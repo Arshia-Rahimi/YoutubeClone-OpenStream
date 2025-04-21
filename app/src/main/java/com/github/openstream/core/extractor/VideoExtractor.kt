@@ -5,12 +5,12 @@ import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.extractordata.VideoData
 import org.schabi.newpipe.extractor.stream.StreamType
 import java.time.format.DateTimeFormatter
+import kotlin.text.format
 
-class VideoExtractor(url: String) {
-    private val extractor = YtService.getStreamExtractor(url)
-    val item: MediaItem
-
-    init {
+object VideoExtractor {
+    
+    fun fetchVideo(url: String): MediaItem {
+        val extractor = YtService.getStreamExtractor(url)
         extractor.fetchPage()
         val data = VideoData(
             name = extractor.name,
@@ -37,7 +37,7 @@ class VideoExtractor(url: String) {
             },
         )
         val url = data.videoStreams.first().content
-        item = MediaItem.Builder()
+        return MediaItem.Builder()
             .setTag(data)
             .setUri(url)
             .build()

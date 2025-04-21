@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.flow
 class ExtractorVideoRepository : VideoRepository {
     override suspend fun fetchVideo(url: String): Flow<Resource<MediaItem>> =
         flow {
-            val video = VideoExtractor(url)
-            emit(video.item)
+            emit(VideoExtractor.fetchVideo(url))
         }.asResult(Dispatchers.IO)
 }
