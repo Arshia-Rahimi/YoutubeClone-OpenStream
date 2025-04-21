@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.openstream.R
-import com.github.openstream.core.extractor.model.DataItem
+import com.github.openstream.core.model.extractordata.DataItem
 
 @Composable
 fun Playlist(

@@ -29,7 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.extractor.video.VideoData
+import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.media3.PlayerState
 import com.github.openstream.core.media3.PlayingStatus
 

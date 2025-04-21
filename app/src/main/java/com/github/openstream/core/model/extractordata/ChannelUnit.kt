@@ -1,14 +1,10 @@
-package com.github.openstream.core.extractor.channel
+package com.github.openstream.core.model.extractordata
 
-import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.model.toList
+import com.github.openstream.core.extractor.util.YtService
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelTabLinkHandlerFactory
-
-// terrible code but it works don't touch it newPipeExtractor is a nightmare
 
 class ChannelUnit(
     val url: String,

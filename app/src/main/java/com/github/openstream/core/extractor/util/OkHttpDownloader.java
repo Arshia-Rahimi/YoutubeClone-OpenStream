@@ -1,4 +1,4 @@
-package com.github.openstream.core.extractor;
+package com.github.openstream.core.extractor.util;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

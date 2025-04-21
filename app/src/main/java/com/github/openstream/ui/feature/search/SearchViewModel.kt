@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.SearchRepository
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.search.SearchUnit
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.extractor.SearchExtractor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +29,7 @@ class SearchViewModel(
     private val _isCorrectedSearch = MutableStateFlow(false)
     val isCorrectedSearch = _isCorrectedSearch.asStateFlow()
 
-    private lateinit var search: SearchUnit
+    private lateinit var search: SearchExtractor
     val results = mutableStateListOf<DataItem>()
     var searchQuery = mutableStateOf("")
 

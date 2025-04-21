@@ -1,4 +1,4 @@
-package com.github.openstream.core.extractor.channel
+package com.github.openstream.core.model.extractordata
 
 data class ChannelInfo(
     val name: String,

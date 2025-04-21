@@ -17,7 +17,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.github.openstream.core.extractor.model.DataItem
+import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.dataitem.DataItem
 import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO

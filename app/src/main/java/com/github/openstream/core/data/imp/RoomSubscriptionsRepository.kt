@@ -6,7 +6,7 @@ import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.SubscriptionsRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.ChannelEntity
-import com.github.openstream.core.extractor.model.DataItem
+import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

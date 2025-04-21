@@ -2,7 +2,7 @@ package com.github.openstream.core.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.github.openstream.core.extractor.model.StreamType
+import com.github.openstream.core.model.extractordata.StreamType
 
 @Entity("videos")
 data class VideoEntity(

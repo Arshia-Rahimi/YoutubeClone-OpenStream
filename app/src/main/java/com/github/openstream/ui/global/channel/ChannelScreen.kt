@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.openstream.core.extractor.channel.ChannelInfo
-import com.github.openstream.core.extractor.channel.ChannelTab
-import com.github.openstream.core.extractor.model.DataItem
+import com.github.openstream.core.model.extractordata.ChannelInfo
+import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox

@@ -1,11 +1,12 @@
-package com.github.openstream.core.extractor.search
+package com.github.openstream.core.extractor
 
-import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.model.toList
+import com.github.openstream.core.extractor.util.YtService
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.InitialSearchResult
+import com.github.openstream.core.model.extractordata.toList
 import org.schabi.newpipe.extractor.Page
 
-class SearchUnit(
+class SearchExtractor(
     query: String,
     contentFilter: List<String>,
     sortFilter: String?,

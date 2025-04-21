@@ -1,8 +1,8 @@
 package com.github.openstream.core.data
 
 import com.github.openstream.core.common.util.Resource
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.search.SearchUnit
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.extractor.SearchExtractor
 import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
@@ -11,7 +11,7 @@ interface SearchRepository {
         query: String,
         contentFilter: List<String> = emptyList(),
         sortFilter: String? = null,
-    ): Flow<Resource<SearchUnit>>
+    ): Flow<Resource<SearchExtractor>>
 
-    suspend fun getNextPage(currentSearch: SearchUnit): Flow<Resource<List<DataItem>?>>
+    suspend fun getNextPage(currentSearch: SearchExtractor): Flow<Resource<List<DataItem>?>>
 }

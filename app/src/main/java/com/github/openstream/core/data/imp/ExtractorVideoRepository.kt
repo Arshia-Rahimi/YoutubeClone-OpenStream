@@ -4,7 +4,7 @@ import androidx.media3.common.MediaItem
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.extractor.video.VideoUnit
+import com.github.openstream.core.extractor.VideoExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 class ExtractorVideoRepository : VideoRepository {
     override suspend fun fetchVideo(url: String): Flow<Resource<MediaItem>> =
         flow {
-            val video = VideoUnit(url)
+            val video = VideoExtractor(url)
             emit(video.item)
         }.asResult(Dispatchers.IO)
 }

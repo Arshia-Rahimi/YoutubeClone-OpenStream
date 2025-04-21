@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.playlist.PlaylistMetadata
-import com.github.openstream.core.extractor.playlist.PlaylistUnit
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.playlist.Playlist
+import com.github.openstream.core.model.playlist.YoutubePlaylist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ class PlaylistViewModel(
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private lateinit var playlist: PlaylistUnit
+    private lateinit var playlist: Playlist
     val items = mutableStateListOf<DataItem>()
 
     init {
@@ -38,8 +39,8 @@ class PlaylistViewModel(
                         is Resource.Error -> UiState.Error(it.message)
                         is Resource.Success -> {
                             playlist = it.data
-                            items += it.data.firstPage.items
-                            UiState.Success(it.data.firstPage)
+                            items += it.data.items
+                            UiState.Success(it.data.metadata)
                         }
                     }
                 }
@@ -49,16 +50,10 @@ class PlaylistViewModel(
 
     fun getNextPage() {
         viewModelScope.launch {
-            if (playlist.nextPage == null) return@launch
-            playlistRepository.getNextPage(playlist)
+            if (playlist !is YoutubePlaylist) return@launch
+            playlistRepository.getNextPage(playlist as YoutubePlaylist)
                 .collect {
-                    when (it) {
-                        is Resource.Loading -> {}
-                        is Resource.Error -> {}
-                        is Resource.Success -> {
-                            it.data?.let { items += it }
-                        }
-                    }
+                    // todo not sure i need to do anything here
                 }
         }
     }

@@ -1,13 +1,11 @@
 package com.github.openstream.core.model.playlist
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.playlist.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistMetadata
 
-class LocalPlaylist(
-    override val id: String,
+open class LocalPlaylist(
+    val id: Int,
     override val items: SnapshotStateList<DataItem>,
     override val metadata: PlaylistMetadata,
-): Playlist {
-    override fun getNextPage() {}
-}
+): Playlist

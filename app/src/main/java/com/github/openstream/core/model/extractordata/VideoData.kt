@@ -1,6 +1,5 @@
-package com.github.openstream.core.extractor.video
+package com.github.openstream.core.model.extractordata
 
-import com.github.openstream.core.extractor.model.StreamType
 import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.SubtitlesStream
 import org.schabi.newpipe.extractor.stream.VideoStream

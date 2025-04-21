@@ -1,6 +1,4 @@
-package com.github.openstream.core.extractor.search
-
-import com.github.openstream.core.extractor.model.DataItem
+package com.github.openstream.core.model.extractordata
 
 data class InitialSearchResult(
     val searchSuggestion: String,

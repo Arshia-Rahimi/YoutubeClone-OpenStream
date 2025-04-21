@@ -9,10 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
-import com.github.openstream.core.extractor.channel.ChannelInfo
-import com.github.openstream.core.extractor.channel.ChannelTab
-import com.github.openstream.core.extractor.channel.ChannelUnit
-import com.github.openstream.core.extractor.model.DataItem
+import com.github.openstream.core.model.extractordata.ChannelInfo
+import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.model.extractordata.ChannelUnit
+import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

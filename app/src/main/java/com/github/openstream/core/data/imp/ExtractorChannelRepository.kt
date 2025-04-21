@@ -3,9 +3,9 @@ package com.github.openstream.core.data.imp
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.ChannelRepository
-import com.github.openstream.core.extractor.channel.ChannelTab
-import com.github.openstream.core.extractor.channel.ChannelUnit
-import com.github.openstream.core.extractor.model.DataItem
+import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.model.extractordata.ChannelUnit
+import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

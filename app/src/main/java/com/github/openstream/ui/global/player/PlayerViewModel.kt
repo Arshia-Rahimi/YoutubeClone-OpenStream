@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.extractor.video.VideoData
+import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.PlayingStatus
 import kotlinx.coroutines.flow.MutableStateFlow

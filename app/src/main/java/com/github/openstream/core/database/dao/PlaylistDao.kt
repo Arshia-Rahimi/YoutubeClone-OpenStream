@@ -22,9 +22,6 @@ interface PlaylistDao {
     @Delete
     suspend fun delete(vararg playlistEntities: PlaylistEntity)
     
-    @Query("SELECT * FROM $TABLE_NAME WHERE url is null AND name = :title")
-    suspend fun searchLocal(title: String): PlaylistEntity?
-    
-    @Query("SELECT * FROM $TABLE_NAME WHERE url = :url")
-    suspend fun searchOfflineFirst(url: String): PlaylistEntity?
+    @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
+    suspend fun search(id: Int): PlaylistEntity?
 }

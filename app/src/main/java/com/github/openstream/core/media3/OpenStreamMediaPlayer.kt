@@ -11,6 +11,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
 import com.github.openstream.core.datastore.proto.playerconfig.PlayerConfigDataStore
 import com.github.openstream.core.datastore.proto.playerconfig.PlayerConfigDataStoreModel
+import com.github.openstream.core.shared.exceptions.PlayerNotInitializedException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

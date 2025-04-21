@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.model.StreamType
-import com.github.openstream.core.extractor.video.VideoData
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.StreamType
+import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.ui.designsystem.dataitem.components.Channel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -135,6 +135,7 @@ fun SheetBody(
         Channel(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
+            subscribe = {},
             item = DataItem.Channel(
                 url = videoData.channelUrl,
                 thumbnail = videoData.channelAvatar,

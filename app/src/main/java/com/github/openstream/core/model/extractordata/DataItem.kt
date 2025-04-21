@@ -1,12 +1,9 @@
-package com.github.openstream.core.extractor.model
+package com.github.openstream.core.model.extractordata
 
 import com.github.openstream.core.database.Entityable
 import com.github.openstream.core.database.entities.ChannelEntity
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.VideoEntity
-import com.github.openstream.core.extractor.model.DataItem.Channel
-import com.github.openstream.core.extractor.model.DataItem.Playlist
-import com.github.openstream.core.extractor.model.DataItem.Video
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
@@ -101,7 +98,7 @@ fun List<InfoItem>.toList(): List<DataItem> =
 private fun InfoItem.toDataItem(): DataItem? =
     when (this) {
         is PlaylistInfoItem ->
-            Playlist(
+            DataItem.Playlist(
                 url = url,
                 name = name,
                 thumbnail = thumbnails.first().url,
@@ -112,7 +109,7 @@ private fun InfoItem.toDataItem(): DataItem? =
             )
 
         is ChannelInfoItem ->
-            Channel(
+            DataItem.Channel(
                 url = url,
                 name = name,
                 thumbnail = thumbnails.first().url,
@@ -122,7 +119,7 @@ private fun InfoItem.toDataItem(): DataItem? =
             )
 
         is StreamInfoItem ->
-            Video(
+            DataItem.Video(
                 url = url,
                 name = name,
                 thumbnail = thumbnails.first().url,
@@ -146,3 +143,7 @@ private fun InfoItem.toDataItem(): DataItem? =
 
         else -> null
     }
+
+enum class StreamType {
+    NORMAL, LIVE_STREAM, POST_LIVE_STREAM
+}

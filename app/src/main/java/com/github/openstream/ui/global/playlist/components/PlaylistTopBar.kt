@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.openstream.core.extractor.playlist.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.PlaylistMetadata
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,12 +40,14 @@ fun PlaylistTopBar(
                         text = playlist.name,
                         fontSize = 20.sp,
                     )
-                    Text(
-                        text = playlist.channelName,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onTertiary,
-                        modifier = Modifier.clickable { toChannelScreen(playlist.channelUrl) },
-                    )
+                    playlist.channelName?.let {
+                        Text(
+                            text = it,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onTertiary,
+                            modifier = Modifier.clickable { toChannelScreen(it) },
+                        )
+                    }
                 }
                 Spacer(Modifier.weight(1f))
                 Text(

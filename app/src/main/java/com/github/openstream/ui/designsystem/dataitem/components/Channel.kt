@@ -29,8 +29,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.extractor.model.DataItem
-import kotlin.coroutines.suspendCoroutine
+import com.github.openstream.core.model.extractordata.DataItem
 
 @Composable
 fun Channel(

@@ -36,8 +36,8 @@ import coil3.compose.AsyncImage
 import com.arshia.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.extractor.model.DataItem
-import com.github.openstream.core.extractor.model.StreamType
+import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.StreamType
 
 @Composable
 fun Video(

@@ -1,11 +1,12 @@
-package com.github.openstream.core.extractor.video
+package com.github.openstream.core.extractor
 
 import androidx.media3.common.MediaItem
-import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.extractor.model.StreamType
+import com.github.openstream.core.extractor.util.YtService
+import com.github.openstream.core.model.extractordata.VideoData
+import org.schabi.newpipe.extractor.stream.StreamType
 import java.time.format.DateTimeFormatter
 
-class VideoUnit(url: String) {
+class VideoExtractor(url: String) {
     private val extractor = YtService.getStreamExtractor(url)
     val item: MediaItem
 
@@ -30,9 +31,9 @@ class VideoUnit(url: String) {
             likeCount = extractor.likeCount,
             channelAvatar = extractor.uploaderAvatars.first().url,
             streamType = when (extractor.streamType) {
-                org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.LIVE_STREAM
-                org.schabi.newpipe.extractor.stream.StreamType.POST_LIVE_STREAM -> StreamType.POST_LIVE_STREAM
-                else -> StreamType.NORMAL
+                StreamType.LIVE_STREAM -> com.github.openstream.core.model.extractordata.StreamType.LIVE_STREAM
+                StreamType.POST_LIVE_STREAM -> com.github.openstream.core.model.extractordata.StreamType.POST_LIVE_STREAM
+                else -> com.github.openstream.core.model.extractordata.StreamType.NORMAL
             },
         )
         val url = data.videoStreams.first().content
