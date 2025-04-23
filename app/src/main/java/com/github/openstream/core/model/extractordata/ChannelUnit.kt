@@ -63,7 +63,7 @@ class ChannelUnit(
                     extractor.second.initialPage.nextPage
                 else null
             )
-        return extractor.second.initialPage.items.toList()
+        return extractor.second.initialPage.items.toListOfDataItem()
     }
 
     fun fetchNextPage(tab: ChannelTab): List<DataItem>? {
@@ -72,7 +72,7 @@ class ChannelUnit(
             val currentPage = tab.second.getPage(it)
             val index = tabExtractors.indexOfFirst { it.first == tab.first }
             tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
-            currentPage.items.toList()
+            currentPage.items.toListOfDataItem()
         }
     }
 }

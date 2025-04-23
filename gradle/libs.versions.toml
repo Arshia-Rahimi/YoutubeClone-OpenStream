@@ -1,6 +1,6 @@
 [versions]
-agp = "8.9.1"
-coil = "3.0.4"
+agp = "8.9.2"
+coil = "3.1.0"
 dataStore = "1.1.4"
 kotlin = "2.1.20"
 coreKtx = "1.16.0"
@@ -9,19 +9,20 @@ junitVersion = "1.2.1"
 navigationCompose = "2.8.9"
 espressoCore = "3.6.1"
 room = "2.7.0"
-ktor = "3.0.1"
+ktor = "3.1.2"
 lifecycleRuntimeKtx = "2.8.7"
 composeBom = "2025.04.00"
 activityCompose = "1.10.1"
 ksp = "2.1.20-2.0.0"
 okhttp = "4.12.0"
-serialization-json = "1.7.3"
+serialization-json = "1.8.1"
 koin = "4.0.3"
 coreSplashscreen = "1.0.1"
 uiAndroid = "1.7.8"
 newPipeExtractor = "0.24.5"
 desugaring = "2.1.5"
 media3 = "1.6.1"
+pods4k = "0.7.0"
 
 [libraries]
 ## android
@@ -82,6 +83,8 @@ media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version
 room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+## pods4k
+pods = { module = "com.danrusu.pods4k:pods4k", version.ref = "pods4k" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

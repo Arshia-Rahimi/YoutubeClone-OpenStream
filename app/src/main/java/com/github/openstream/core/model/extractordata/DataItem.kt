@@ -1,5 +1,9 @@
 package com.github.openstream.core.model.extractordata
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import com.danrusu.pods4k.immutableArrays.ImmutableArray
+import com.danrusu.pods4k.immutableArrays.buildImmutableArray
 import com.github.openstream.core.database.Entityable
 import com.github.openstream.core.database.entities.ChannelEntity
 import com.github.openstream.core.database.entities.PlaylistEntity
@@ -92,8 +96,14 @@ sealed class DataItem(
     }
 }
 
-fun List<InfoItem>.toList(): List<DataItem> =
-    buildList { this@toList.forEach { it.toDataItem()?.let(::add) } }
+fun List<InfoItem>.toImmutableArrayOfDataItem(): ImmutableArray<DataItem> =
+    buildImmutableArray { this@toImmutableArrayOfDataItem.forEach { it.toDataItem()?.let(::add) } }
+
+fun List<InfoItem>.toListOfDataItem(): List<DataItem> =
+    buildList { this@toListOfDataItem.forEach { it.toDataItem()?.let(::add) } }
+
+fun List<InfoItem>.toMutableStateListOfDataItem(): SnapshotStateList<DataItem> =
+    toListOfDataItem().toMutableStateList()
 
 private fun InfoItem.toDataItem(): DataItem? =
     when (this) {

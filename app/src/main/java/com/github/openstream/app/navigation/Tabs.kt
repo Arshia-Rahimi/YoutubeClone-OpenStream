@@ -3,6 +3,7 @@ package com.github.openstream.app.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.arshia.openstream.R
+import com.danrusu.pods4k.immutableArrays.immutableArrayOf
 import com.github.openstream.core.common.util.sendPulse
 import com.github.openstream.ui.feature.search.SearchViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ sealed class Tabs(
     companion object {
         val currentTab = MutableStateFlow<Tabs>(Subscriptions)
 
-        val tabsList = arrayOf(
+        val tabsList = immutableArrayOf(
             Search,
             Library,
             Subscriptions,
@@ -89,4 +90,3 @@ sealed class Tabs(
     }
 
 }
-

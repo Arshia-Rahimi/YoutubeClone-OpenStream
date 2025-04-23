@@ -1,9 +1,9 @@
 package com.github.openstream.core.extractor
 
-import androidx.compose.runtime.toMutableStateList
 import com.github.openstream.core.extractor.util.YtService
-import com.github.openstream.core.model.extractordata.toList
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.toListOfDataItem
+import com.github.openstream.core.model.extractordata.toMutableStateListOfDataItem
 import com.github.openstream.core.model.playlist.OnlinePlaylist
 import com.github.openstream.core.model.playlist.YoutubePlaylist
 import com.github.openstream.core.shared.exceptions.OfflineFirstPlaylistNotFetchedException
@@ -20,11 +20,11 @@ object PlaylistExtractor {
             isChannelVerified = extractor.isUploaderVerified,
             count = extractor.streamCount,
         )
-        val items = extractor.initialPage.items.toList()
+        val items = extractor.initialPage.items.toMutableStateListOfDataItem()
         val nextPage = extractor.initialPage.nextPage
         return OnlinePlaylist(
             extractor = extractor,
-            items = items.toMutableStateList(),
+            items = items,
             metadata = metadata,
             nextPage = nextPage,
             url = url,
@@ -36,7 +36,7 @@ object PlaylistExtractor {
         playlist.nextPage?.let {
             val currentPage = playlist.extractor!!.getPage(it)
             playlist.nextPage = currentPage.nextPage
-            playlist.items.addAll(currentPage.items.toList())
+            playlist.items.addAll(currentPage.items.toListOfDataItem())
         }
     }
     

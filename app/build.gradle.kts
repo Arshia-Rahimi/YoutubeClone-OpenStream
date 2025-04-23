@@ -119,4 +119,6 @@ dependencies {
     implementation(libs.room)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    // pods4k
+    implementation(libs.pods)
 }
