@@ -1,9 +1,6 @@
 package com.github.openstream.ui.global.player
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -91,29 +88,12 @@ fun PlayerSheet(
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
     val miniPlayerOffset =
         navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
-    val dragState = remember {
-        AnchoredDraggableState(
-            initialValue = PlayerSheetState.MINI_PLAYER,
-            anchors = DraggableAnchors {
-                PlayerSheetState.MINI_PLAYER at miniPlayerOffset
-                PlayerSheetState.EXPANDED at 0f
-            },
-            positionalThreshold = { distance: Float -> distance * 0.01f },
-            velocityThreshold = { 100f },
-            decayAnimationSpec = exponentialDecay(),
-            snapAnimationSpec = spring(
-                stiffness = Spring.StiffnessLow
-            ),
-        )
-    }
+    val dragState = viewModel.dragState
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
         ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
 
-    LaunchedEffect(dragState.targetValue) {
-        viewModel
-    }
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset

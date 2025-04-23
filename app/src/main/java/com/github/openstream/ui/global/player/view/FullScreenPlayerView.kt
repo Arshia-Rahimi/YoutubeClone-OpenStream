@@ -1,15 +1,20 @@
+@file:kotlin.OptIn(ExperimentalFoundationApi::class)
+
 package com.github.openstream.ui.global.player.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import androidx.annotation.OptIn
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -19,15 +24,18 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.github.openstream.ui.global.player.PlayerViewModel
+import com.github.openstream.ui.global.player.components.PlayerSheetState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(UnstableApi::class, ExperimentalFoundationApi::class)
 @SuppressLint("SourceLockedOrientationActivity")
-@OptIn(UnstableApi::class)
 @Composable
 fun FullScreenPlayerView() {
     val viewModel = koinViewModel<PlayerViewModel>()
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
     val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event -> lifecycle = event }
@@ -46,6 +54,10 @@ fun FullScreenPlayerView() {
                 it.setFullscreenButtonClickListener {
                     (context as Activity).requestedOrientation =
                         ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    context.requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    // todo this line causes orientation bug
+                    scope.launch { viewModel.dragState.snapTo(PlayerSheetState.EXPANDED) }
                 }
             }
         },

@@ -55,7 +55,6 @@ fun PlayerView(
 ) {
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
     val lifecycleOwner = LocalLifecycleOwner.current
-    var controllerVisible by remember { mutableStateOf(true) }
     
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event -> lifecycle = event }
@@ -81,6 +80,8 @@ fun PlayerView(
                 it.setFullscreenButtonClickListener {
                     (context as Activity).requestedOrientation =
                         ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    context.requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 }
             }
         },

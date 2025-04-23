@@ -34,7 +34,6 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val trigger: (SearchAction) -> Unit = { viewModel.onAction(it) }
     val searchQuery by viewModel.searchQuery
-    val results = viewModel.results
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
@@ -64,15 +63,15 @@ fun SearchScreen(
             },
     ) {
         when (uiState) {
-            SearchViewModel.UiState.Empty -> {}
-            SearchViewModel.UiState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+            is SearchViewModel.UiState.Empty -> {}
+            is SearchViewModel.UiState.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
             is SearchViewModel.UiState.Error -> Text(
                 text = (uiState as SearchViewModel.UiState.Error).message ?: "",
                 modifier = Modifier.align(Alignment.Center)
             )
 
             is SearchViewModel.UiState.Success -> DataItemList(
-                items = results,
+                items = (uiState as SearchViewModel.UiState.Success).searchResult.items,
                 toPlaylistScreen = toPlaylistScreen,
                 toChannelScreen = toChannelScreen,
                 playVideo = playVideo,

@@ -50,8 +50,7 @@ fun Channel(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.4f)
-                .padding(end = 4.dp)
-                .padding(vertical = 8.dp),
+                .padding(end = 4.dp),
             contentAlignment = Alignment.Center,
         ) {
             AsyncImage(
