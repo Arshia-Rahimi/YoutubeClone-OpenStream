@@ -61,15 +61,15 @@ import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.PlayerState
 import com.github.openstream.core.media3.PlayingStatus
 import com.github.openstream.ui.global.player.components.PlayerSheetState
-import com.github.openstream.ui.global.player.components.PlayerView
 import com.github.openstream.ui.global.player.components.SheetBody
+import com.github.openstream.ui.global.player.view.PlayerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
-const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 0.75f
+const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 1f
 const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -111,6 +111,9 @@ fun PlayerSheet(
         ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
 
+    LaunchedEffect(dragState.targetValue) {
+        viewModel
+    }
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset

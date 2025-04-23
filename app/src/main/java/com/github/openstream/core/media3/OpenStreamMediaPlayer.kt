@@ -30,7 +30,7 @@ class OpenStreamMediaPlayer(
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val config = configDataStore.data
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000L), PlayerConfigDataStoreModel())
+        .stateIn(scope, SharingStarted.Eagerly, PlayerConfigDataStoreModel())
 
     private var _player: ExoPlayer? = null
     val player: ExoPlayer

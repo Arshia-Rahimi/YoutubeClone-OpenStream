@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.player
+package com.github.openstream.ui.global
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -37,6 +37,7 @@ import com.github.openstream.app.navigation.Tabs
 import com.github.openstream.app.navigation.Tabs.Companion.tabsList
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.SnackBarController
+import com.github.openstream.ui.global.player.PlayerSheet
 import kotlinx.coroutines.launch
 
 @Composable

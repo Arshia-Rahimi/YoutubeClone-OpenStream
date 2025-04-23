@@ -1,5 +1,7 @@
-package com.github.openstream.ui.global.player.components
+package com.github.openstream.ui.global.player.view
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -75,6 +77,11 @@ fun PlayerView(
                 it.player = player
                 it.useController = false
                 it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+                it.setFullscreenButtonState(false)
+                it.setFullscreenButtonClickListener {
+                    (context as Activity).requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }
             }
         },
         update = {

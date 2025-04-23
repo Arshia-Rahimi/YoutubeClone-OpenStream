@@ -2,11 +2,8 @@ package com.github.openstream.core.extractor
 
 import androidx.compose.runtime.toMutableStateList
 import com.github.openstream.core.extractor.util.YtService
-import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.SearchResult
 import com.github.openstream.core.model.extractordata.toList
-import org.schabi.newpipe.extractor.Page
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 
 object SearchExtractor {
@@ -20,8 +17,8 @@ object SearchExtractor {
         extractor.fetchPage()
         return SearchResult(
             extractor = extractor,
-            searchSuggestion = extractor.searchSuggestion,
-            isCorrectedSearch = extractor.isCorrectedSearch,
+//            searchSuggestion = extractor.searchSuggestion,
+//            isCorrectedSearch = extractor.isCorrectedSearch,
             items = extractor.initialPage.items.toList().toMutableStateList(),
             nextPage = extractor.initialPage.nextPage,
         )

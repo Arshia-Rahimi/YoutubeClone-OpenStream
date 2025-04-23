@@ -3,14 +3,17 @@ package com.github.openstream.ui.global.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
+import com.github.openstream.app.MainActivity
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.PlayingStatus
+import com.github.openstream.core.model.extractordata.VideoData
+import com.github.openstream.ui.global.player.components.PlayerSheetState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -27,6 +30,16 @@ class PlayerViewModel(
                 .launchIn(viewModelScope)
         }
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
+    val sheetState = MutableStateFlow(PlayerSheetState.MINI_PLAYER)
+    val isInLandscape = MainActivity.isInLandScape.asStateFlow()
+    val shouldShowFullscreenPlayer =
+        combine(
+            showMiniPlayer,
+            sheetState,
+            isInLandscape
+        ) { showMiniPlayer, sheetState, isInLandscape ->
+            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && isInLandscape
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     val viewPlayer: Player
         get() = player.player

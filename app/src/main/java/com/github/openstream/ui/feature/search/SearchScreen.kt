@@ -39,7 +39,7 @@ fun SearchScreen(
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    
+
     topBar {
         SearchField(
             searchQuery = searchQuery,
@@ -51,7 +51,7 @@ fun SearchScreen(
             focusRequester = focusRequester,
         )
     }
-    
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +70,7 @@ fun SearchScreen(
                 text = (uiState as SearchViewModel.UiState.Error).message ?: "",
                 modifier = Modifier.align(Alignment.Center)
             )
-            
+
             is SearchViewModel.UiState.Success -> DataItemList(
                 items = results,
                 toPlaylistScreen = toPlaylistScreen,
