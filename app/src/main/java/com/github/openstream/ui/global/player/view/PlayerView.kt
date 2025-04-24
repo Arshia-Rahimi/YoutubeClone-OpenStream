@@ -80,8 +80,6 @@ fun PlayerView(
                 it.setFullscreenButtonClickListener {
                     (context as Activity).requestedOrientation =
                         ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                    context.requestedOrientation =
-                        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 }
             }
         },

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -248,37 +247,28 @@ private fun PlayerSheet(
                 }
             }
         }
-        if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
-            if (uiState is PlayerViewModel.UiState.Success) {
-                var progress by remember { mutableFloatStateOf(0f) }
-                LaunchedEffect(currentPosition) {
-                    progress = currentPosition.toFloat() / uiState.data.length.toFloat()
-                }
-                val animatedProgress by animateFloatAsState(
-                    targetValue = progress,
-                    animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-                )
-                LinearProgressIndicator(
-                    drawStopIndicator = {},
-                    gapSize = 0.dp,
-                    strokeCap = StrokeCap.Square,
-                    trackColor = Color(0xFF5D5D5D),
-                    color = Color(0xFFBBBBBB),
-                    progress = { animatedProgress },
-                    modifier = Modifier
-                        .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
-                        .fillMaxWidth()
-                        .alpha(miniPlayerContentAlpha),
-                )
-            } else {
-                Spacer(
-                    Modifier
-                        .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
-                )
-            }
+        var progress by remember { mutableFloatStateOf(0f) }
+        val animatedProgress by animateFloatAsState(
+            targetValue = progress,
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        )
+        LaunchedEffect(currentPosition) {
+            progress = if (uiState is PlayerViewModel.UiState.Success) {
+                currentPosition.toFloat() / uiState.data.length.toFloat()
+            } else 0f
         }
+
+        LinearProgressIndicator(
+            drawStopIndicator = {},
+            gapSize = 0.dp,
+            strokeCap = StrokeCap.Square,
+            trackColor = Color(0xFF5D5D5D),
+            color = Color(0xFFBBBBBB),
+            progress = { animatedProgress },
+            modifier = Modifier
+                .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
+                .fillMaxWidth(),
+        )
         if (sheetDragProgress != 0f) {
             Box(
                 modifier = Modifier
@@ -293,7 +283,7 @@ private fun PlayerSheet(
                         videoData = uiState.data,
                         scrollState = rememberScrollState(),
                         scope = scope,
-                        toChannelScreen = {},
+                        toChannelScreen = toChannelScreen,
                         likeVideo = {},
                         shareVideo = {},
                         addToWatchLater = {},
