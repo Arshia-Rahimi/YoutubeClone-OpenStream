@@ -1,6 +1,7 @@
 package com.github.openstream.core.data.imp
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import org.schabi.newpipe.extractor.timeago.patterns.vi
 
 class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
@@ -51,7 +53,7 @@ class OfflineFirstPlaylistRepository(
     
     override suspend fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
         flow {
-            db.playlistDao().delete(playlist.toEntity(null) as PlaylistEntity)
+            db.playlistDao().delete(playlist.toEntity(null, null) as PlaylistEntity)
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -74,17 +76,36 @@ class OfflineFirstPlaylistRepository(
     
     override suspend fun getPlaylist(id: Int): Flow<Resource<Playlist>> =
         flow {
-            // todo add videos to db and get count and items from
-            db.playlistDao().search(id)?.let {
+            // todo fix this
+            db.playlistDao().getPlaylistWithVideos(id)?.let {
                 LocalPlaylist(
-                    id = it.id,
-                    items = mutableStateListOf(),
+                    id = it.playlist.id,
+                    items = it.videos
+                        .map { video ->
+                            DataItem.Video(
+                                url = video.url,
+                                name = video.name,
+                                thumbnail = video.thumbnail,
+                                streamType = video.streamType,
+                                channelUrl = video.channelUrl ?: "",
+                                channelName = video.channelName,
+                                shortDescription = "",
+                                uploadDate = video.uploadDate,
+                                uploadOffset = video.uploadDate,
+                                viewCount = video.viewCount,
+                                isShort = false,
+                                duration = video.duration,
+                                channelAvatars = "",
+                                channelVerified = video.isChannelVerified,
+                                
+                                )
+                        }.toMutableStateList(),
                     metadata = PlaylistMetadata(
-                        name = it.name,
-                        channelUrl = it.channelUrl,
-                        isChannelVerified = it.isChannelVerified,
-                        count = it.count ?: 0L,
-                        channelName = it.channelName,
+                        name = it.playlist.name,
+                        channelUrl = it.playlist.channelUrl,
+                        isChannelVerified = it.playlist.isChannelVerified,
+                        count = it.playlist.count ?: it.videos.size.toLong(),
+                        channelName = it.playlist.channelName,
                     )
                 )
             }?.let { emit(it) } ?: throw LocalPlaylistNotFoundException()

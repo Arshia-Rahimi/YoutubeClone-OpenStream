@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.github.openstream.core.database.entities.PlaylistEntity
+import com.github.openstream.core.database.relationships.PlaylistWithVideos
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,5 +24,5 @@ interface PlaylistDao {
     suspend fun delete(vararg playlistEntities: PlaylistEntity)
     
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
-    suspend fun search(id: Int): PlaylistEntity?
+    suspend fun getPlaylistWithVideos(id: Int): PlaylistWithVideos?
 }

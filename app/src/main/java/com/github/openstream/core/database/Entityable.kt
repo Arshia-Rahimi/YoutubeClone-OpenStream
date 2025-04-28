@@ -1,5 +1,5 @@
 package com.github.openstream.core.database
 
 interface Entityable {
-    fun toEntity(parentId: Int?): Any
+    fun toEntity(channelId: Int?, playlistId: Int?): Any
 }

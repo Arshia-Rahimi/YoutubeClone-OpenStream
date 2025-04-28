@@ -35,12 +35,13 @@ sealed class DataItem(
         val isShort: Boolean,
         val channelAvatars: String?,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(parentId: Int?): Any {
-            require(parentId != null)
+        // todo check channelId and playlistId
+        override fun toEntity(channelId: Int?, playlistId: Int?): Any {
+            require(playlistId != null || channelId != null)
             return VideoEntity(
-                playlistId = parentId,
+                playlistId = playlistId,
                 name = name,
-                url = url,
+                url = url ?: "",
                 thumbnail = thumbnail ?: "",
                 streamType = streamType,
                 uploadDate = uploadDate,
@@ -49,6 +50,7 @@ sealed class DataItem(
                 channelUrl = channelUrl,
                 channelName = channelName,
                 isChannelVerified = channelVerified,
+                channelId = channelId,
             )
         }
     }
@@ -62,7 +64,7 @@ sealed class DataItem(
         val channelVerified: Boolean?,
         val count: Long,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(parentId: Int?): Any =
+        override fun toEntity(channelId: Int?, playlistId: Int?): Any =
             PlaylistEntity(
                 name = name,
                 channelUrl = channelUrl,
@@ -82,7 +84,7 @@ sealed class DataItem(
         val subscriberCount: Long,
         val verified: Boolean,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(parentId: Int?): Any =
+        override fun toEntity(channelId: Int?, playlistId: Int?): Any =
             ChannelEntity(
                 name = name,
                 url = url,

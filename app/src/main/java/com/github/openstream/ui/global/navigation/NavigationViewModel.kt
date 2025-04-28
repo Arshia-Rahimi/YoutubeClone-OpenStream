@@ -22,7 +22,6 @@ class NavigationViewModel: ViewModel() {
         )
     }
     
-    
     private val _currentTab = MutableStateFlow<Tabs>(Subscriptions)
     val currentTab = _currentTab.asStateFlow()
     
