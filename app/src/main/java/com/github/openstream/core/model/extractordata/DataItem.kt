@@ -5,6 +5,7 @@ import androidx.compose.runtime.toMutableStateList
 import com.danrusu.pods4k.immutableArrays.ImmutableArray
 import com.danrusu.pods4k.immutableArrays.buildImmutableArray
 import com.github.openstream.core.database.Entityable
+import com.github.openstream.core.database.OpenStreamEntity
 import com.github.openstream.core.database.entities.ChannelEntity
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.VideoEntity
@@ -36,7 +37,7 @@ sealed class DataItem(
         val channelAvatars: String?,
     ) : DataItem(url, name, thumbnail), Entityable {
         // todo check channelId and playlistId
-        override fun toEntity(channelId: Int?, playlistId: Int?): Any {
+        override fun toEntity(channelId: Int?, playlistId: Int?): OpenStreamEntity {
             require(playlistId != null || channelId != null)
             return VideoEntity(
                 playlistId = playlistId,
@@ -64,7 +65,7 @@ sealed class DataItem(
         val channelVerified: Boolean?,
         val count: Long,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(channelId: Int?, playlistId: Int?): Any =
+        override fun toEntity(channelId: Int?, playlistId: Int?): OpenStreamEntity =
             PlaylistEntity(
                 name = name,
                 channelUrl = channelUrl,
@@ -84,7 +85,7 @@ sealed class DataItem(
         val subscriberCount: Long,
         val verified: Boolean,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(channelId: Int?, playlistId: Int?): Any =
+        override fun toEntity(channelId: Int?, playlistId: Int?): OpenStreamEntity =
             ChannelEntity(
                 name = name,
                 url = url,

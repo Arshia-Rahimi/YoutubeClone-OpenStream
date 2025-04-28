@@ -8,6 +8,7 @@ import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
+import com.github.openstream.core.database.entities.VideoEntity
 import com.github.openstream.core.extractor.PlaylistExtractor
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
@@ -28,14 +29,13 @@ class OfflineFirstPlaylistRepository(
     
     override val localPlaylists = db.playlistDao().index().map {
         it.map {
-            // todo get count from videos table
             DataItem.Playlist(
                 name = it.name,
                 url = it.url,
                 thumbnail = it.thumbnail,
                 channelUrl = it.channelUrl,
                 channelName = it.channelName,
-                count = it.count ?: 0L,
+                count = it.count,
                 channelVerified = it.isChannelVerified,
             )
         }
@@ -43,11 +43,10 @@ class OfflineFirstPlaylistRepository(
     
     override suspend fun createPlaylist(playlistName: String): Flow<Resource<Success>> =
         flow {
-            if (db.playlistDao().index().first().any { it.name == playlistName }) {
+            if (db.playlistDao().index().first().any { it.name == playlistName })
                 throw Exception("a playlist with the name provided exists")
-            }
             
-            db.playlistDao().upsert(PlaylistEntity(name = playlistName))
+            db.playlistDao().upsert(PlaylistEntity(name = playlistName, count = 0L))
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -62,7 +61,7 @@ class OfflineFirstPlaylistRepository(
         playlistId: Int,
     ): Flow<Resource<Success>> =
         flow {
-            // todo
+            db.videoDao().upsert(*videos.map { it.toEntity(playlistId = playlistId, channelId = null) as VideoEntity }.toTypedArray())
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -70,7 +69,7 @@ class OfflineFirstPlaylistRepository(
         videos: List<DataItem.Video>,
         playlistId: Int,
     ): Flow<Resource<Success>> = flow {
-        // todo
+        db.videoDao().delete(*videos.map { it.toEntity(playlistId = playlistId, channelId = null) as VideoEntity }.toTypedArray())
         emit(Success)
     }.asResult(Dispatchers.IO)
     
@@ -97,14 +96,13 @@ class OfflineFirstPlaylistRepository(
                                 duration = video.duration,
                                 channelAvatars = "",
                                 channelVerified = video.isChannelVerified,
-                                
-                                )
+                            )
                         }.toMutableStateList(),
                     metadata = PlaylistMetadata(
                         name = it.playlist.name,
                         channelUrl = it.playlist.channelUrl,
                         isChannelVerified = it.playlist.isChannelVerified,
-                        count = it.playlist.count ?: it.videos.size.toLong(),
+                        count = it.playlist.count,
                         channelName = it.playlist.channelName,
                     )
                 )

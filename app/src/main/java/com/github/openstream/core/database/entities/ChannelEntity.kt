@@ -3,6 +3,7 @@ package com.github.openstream.core.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.github.openstream.core.database.OpenStreamEntity
 
 @Entity("channels")
 data class ChannelEntity(
@@ -14,4 +15,4 @@ data class ChannelEntity(
     val isVerified: Boolean,
     val banner: String,
     val description: String,
-)
+): OpenStreamEntity
