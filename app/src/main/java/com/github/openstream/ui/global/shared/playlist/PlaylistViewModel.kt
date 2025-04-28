@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.playlist
+package com.github.openstream.ui.global.shared.playlist
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel

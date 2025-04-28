@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.channel.components
+package com.github.openstream.ui.global.shared.channel.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

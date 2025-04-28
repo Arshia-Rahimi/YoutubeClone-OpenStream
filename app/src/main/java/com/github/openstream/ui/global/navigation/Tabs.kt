@@ -1,4 +1,4 @@
-package com.github.openstream.app.navigation
+package com.github.openstream.ui.global.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -18,18 +18,6 @@ sealed class Tabs(
     val isInTabRootAction: (() -> Unit)? = null,
     var navigateToCurrentTabRoot: (() -> Unit)? = null,
 ) {
-    companion object {
-        val currentTab = MutableStateFlow<Tabs>(Subscriptions)
-
-        val tabsList = arrayOf(
-            Search,
-            Library,
-            Subscriptions,
-            Downloads,
-            Settings,
-        )
-    }
-
     @Serializable
     data object Search : Tabs(
         title = R.string.search,

@@ -33,10 +33,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import com.github.openstream.app.navigation.Tabs
-import com.github.openstream.app.navigation.Tabs.Companion.tabsList
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.SnackBarController
+import com.github.openstream.ui.global.navigation.NavigationViewModel.Companion.tabsList
+import com.github.openstream.ui.global.navigation.Tabs
 import com.github.openstream.ui.global.player.PlayerSheet
 import kotlinx.coroutines.launch
 

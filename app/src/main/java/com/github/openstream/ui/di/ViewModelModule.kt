@@ -5,9 +5,10 @@ import com.github.openstream.ui.feature.library.LibraryViewModel
 import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.feature.settings.SettingsViewModel
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsViewModel
-import com.github.openstream.ui.global.channel.ChannelViewModel
+import com.github.openstream.ui.global.shared.channel.ChannelViewModel
 import com.github.openstream.ui.global.player.PlayerViewModel
-import com.github.openstream.ui.global.playlist.PlaylistViewModel
+import com.github.openstream.ui.global.shared.playlist.PlaylistViewModel
+import com.github.openstream.ui.global.navigation.NavigationViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -20,5 +21,6 @@ val viewModelModule = module {
     viewModelOf(::SearchViewModel)
     viewModelOf(::ChannelViewModel)
     viewModelOf(::PlaylistViewModel)
+    viewModelOf(::NavigationViewModel)
     singleOf(::PlayerViewModel)
 }

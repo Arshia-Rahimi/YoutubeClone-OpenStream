@@ -1,4 +1,4 @@
-package com.github.openstream.app.navigation
+package com.github.openstream.ui.global.navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
@@ -22,10 +22,9 @@ import com.github.openstream.ui.feature.subscriptions.SubscriptionsScreen
 import com.github.openstream.ui.global.OpenStreamScaffold
 import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.player.view.FullScreenPlayerView
-import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-private var topBarStateFlow: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -40,12 +39,13 @@ fun Navigation() {
 //                }
 //            }
 //        }
-
+    
+    val navigationViewModel = koinViewModel<NavigationViewModel>()
     val playerViewModel = koinInject<PlayerViewModel>()
-    val currentTab by Tabs.currentTab.collectAsStateWithLifecycle()
-    val topBar by topBarStateFlow.collectAsStateWithLifecycle()
+    val currentTab by navigationViewModel.currentTab.collectAsStateWithLifecycle()
+    val topBar by navigationViewModel.topBar.collectAsStateWithLifecycle()
     val shouldShowFullscreenPlayer by playerViewModel.shouldShowFullscreenPlayer.collectAsStateWithLifecycle()
-
+    
     if (shouldShowFullscreenPlayer) FullScreenPlayerView()
     else {
         OpenStreamScaffold(
@@ -62,14 +62,14 @@ fun Navigation() {
 //                        restoreState = true
 //                        launchSingleTop = true
 //                    }
-                        Tabs.currentTab.value = destination
+                        navigationViewModel.setCurrentTab(destination)
                     }
-
+                    
                     destination.isInTabRoot.value -> {
                         if (isDoubleClick) destination.tabRootDoubleClickAction?.invoke()
                         else destination.isInTabRootAction?.invoke()
                     }
-
+                    
                     else -> destination.navigateToCurrentTabRoot?.invoke()
                 }
             },
@@ -117,24 +117,24 @@ fun Navigation() {
             ) {
                 when (it) {
                     Tabs.Search -> SearchNavHost(
-                        topBar = { topBarStateFlow.value = it },
+                        topBar = navigationViewModel::setTopBar,
                         playVideo = playerViewModel::start,
                     )
-
+                    
                     Tabs.Library -> LibraryScreen(
-                        topBar = { topBarStateFlow.value = it },
+                        topBar = navigationViewModel::setTopBar,
                     )
-
+                    
                     Tabs.Subscriptions -> SubscriptionsScreen(
-                        topBar = { topBarStateFlow.value = it },
+                        topBar = navigationViewModel::setTopBar,
                     )
-
+                    
                     Tabs.Downloads -> DownloadsScreen(
-                        topBar = { topBarStateFlow.value = it },
+                        topBar = navigationViewModel::setTopBar,
                     )
-
+                    
                     Tabs.Settings -> SettingsScreen(
-                        topBar = { topBarStateFlow.value = it },
+                        topBar = navigationViewModel::setTopBar,
                     )
                 }
             }
