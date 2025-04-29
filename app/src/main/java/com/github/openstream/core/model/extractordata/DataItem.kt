@@ -5,6 +5,7 @@ import com.github.openstream.core.database.OpenStreamEntity
 import com.github.openstream.core.database.entities.ChannelEntity
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.VideoEntity
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
 sealed class DataItem {
@@ -44,6 +45,7 @@ sealed class DataItem {
         }
     }
     
+    @Serializable
     sealed class Playlist(
         val name: String,
         val thumbnail: String?,
@@ -66,7 +68,6 @@ sealed class DataItem {
             count: Long,
             val channelName: String,
             val channelUrl: String,
-            val channelAvatar: String?,
             val isChannelVerified: Boolean,
             val url: String,
         ) : Playlist(
