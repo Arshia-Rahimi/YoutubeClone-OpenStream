@@ -1,5 +1,6 @@
 package com.github.openstream.ui.designsystem.dataitem.components
 
+import android.provider.ContactsContract
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +42,7 @@ fun Playlist(
     modifier: Modifier,
     item: DataItem.Playlist,
     toChannelScreen: (String) -> Unit,
-    toPlaylistScreen: (String) -> Unit,
+    toPlaylistScreen: (DataItem.Playlist) -> Unit,
     shouldViewChannel: Boolean,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
@@ -49,7 +50,7 @@ fun Playlist(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { toPlaylistScreen(item.url ?: "") }
+            .clickable { toPlaylistScreen(item) }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
@@ -106,14 +107,32 @@ fun Playlist(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SubText(text = item.channelName ?: "")
-                if (item.channelVerified == true) {
-                    Icon(
-                        modifier = Modifier.padding(start = 4.dp, end = 8.dp),
-                        painter = painterResource(R.drawable.verified),
-                        contentDescription = "verified",
-                        tint = Color(0xFFAAAAAA)
-                    )
+                // todo refactor this
+                when (item) {
+                    is DataItem.Playlist.LocalPlaylist -> Unit
+                    is DataItem.Playlist.OnlinePlaylist -> {
+                        SubText(text = item.channelName)
+                        if (item.isChannelVerified == true) {
+                            Icon(
+                                modifier = Modifier.padding(start = 4.dp, end = 8.dp),
+                                painter = painterResource(R.drawable.verified),
+                                contentDescription = "verified",
+                                tint = Color(0xFFAAAAAA)
+                            )
+                        }
+                    }
+                    
+                    is DataItem.Playlist.OfflineFirstPlaylist -> {
+                        SubText(text = item.channelName)
+                        if (item.isChannelVerified == true) {
+                            Icon(
+                                modifier = Modifier.padding(start = 4.dp, end = 8.dp),
+                                painter = painterResource(R.drawable.verified),
+                                contentDescription = "verified",
+                                tint = Color(0xFFAAAAAA)
+                            )
+                        }
+                    }
                 }
             }
             SubText("")
@@ -138,14 +157,30 @@ fun Playlist(
                 onDismissRequest = { isDropDownExpanded = false },
                 tonalElevation = 4.dp,
             ) {
-                if (shouldViewChannel) {
-                    DropdownMenuItem(
-                        text = { Text("viewChannel") },
-                        onClick = {
-                            isDropDownExpanded = false
-                            toChannelScreen(item.channelUrl ?: "")
-                        },
-                    )
+                when (item) {
+                    is DataItem.Playlist.OnlinePlaylist -> {
+                        if (shouldViewChannel) {
+                            DropdownMenuItem(
+                                text = { Text("viewChannel") },
+                                onClick = {
+                                    isDropDownExpanded = false
+                                    toChannelScreen(item.channelUrl)
+                                },
+                            )
+                        }
+                    }
+                    is DataItem.Playlist.OfflineFirstPlaylist -> {
+                        if (shouldViewChannel) {
+                            DropdownMenuItem(
+                                text = { Text("viewChannel") },
+                                onClick = {
+                                    isDropDownExpanded = false
+                                    toChannelScreen(item.channelUrl)
+                                },
+                            )
+                        }
+                    }
+                    is DataItem.Playlist.LocalPlaylist -> Unit
                 }
             }
         }
@@ -157,14 +192,15 @@ fun Playlist(
 private fun Preview() {
     MaterialTheme {
         Playlist(
-            item = DataItem.Playlist(
+            item = DataItem.Playlist.OnlinePlaylist(
                 name = "name",
                 channelUrl = "",
                 channelName = "channel",
-                channelVerified = true,
+                isChannelVerified = true,
                 url = "",
                 thumbnail = "",
                 count = 25L,
+                channelAvatar = null,
             ),
             toChannelScreen = {},
             toPlaylistScreen = {},

@@ -51,7 +51,7 @@ fun ChannelScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
-    toPlaylistScreen: (String) -> Unit,
+    toPlaylistScreen: (DataItem.Playlist) -> Unit,
 ) {
     topBar {}
     val viewModel = koinViewModel<ChannelViewModel>(parameters = { parametersOf(url) })
@@ -94,7 +94,7 @@ private fun ChannelScreen(
     trigger: (ChannelAction) -> Unit,
     navigateBack: () -> Unit,
     playVideo: (String) -> Unit,
-    toPlaylistScreen: (String) -> Unit,
+    toPlaylistScreen: (DataItem.Playlist) -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
     val pagerState = rememberPagerState { channelInfo.tabs.size }

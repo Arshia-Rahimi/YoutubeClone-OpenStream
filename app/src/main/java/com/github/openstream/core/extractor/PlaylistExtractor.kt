@@ -4,8 +4,8 @@ import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
 import com.github.openstream.core.model.extractordata.toListOfDataItem
 import com.github.openstream.core.model.extractordata.toMutableStateListOfDataItem
-import com.github.openstream.core.model.playlist.OnlinePlaylist
-import com.github.openstream.core.model.playlist.YoutubePlaylist
+import com.github.openstream.core.model.OnlinePlaylist
+import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.shared.exceptions.OfflineFirstPlaylistNotFetchedException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 

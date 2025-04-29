@@ -57,7 +57,7 @@ fun SearchNavHost(
         }
         composable<Tabs.Search.Playlist> {
             PlaylistScreen(
-                url = it.toRoute<Tabs.Search.Playlist>().url,
+                playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
                 topBar = topBar,
                 playVideo = playVideo,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },

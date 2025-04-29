@@ -22,6 +22,7 @@ import com.github.openstream.ui.designsystem.dataitem.DataItem
 import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import kotlinx.coroutines.flow.receiveAsFlow
+import org.koin.core.component.getScopeName
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -31,7 +32,7 @@ fun DataItemList(
     items: SnapshotStateList<DataItem>,
     shouldViewChannel: Boolean = true,
     toChannelScreen: (String) -> Unit = {},
-    toPlaylistScreen: (String) -> Unit = {},
+    toPlaylistScreen: (DataItem.Playlist) -> Unit = {},
     playVideo: (String) -> Unit = {},
     loadNextPage: () -> Unit = {},
 ) {
@@ -40,6 +41,7 @@ fun DataItemList(
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
     val config = LocalConfiguration.current
+    // todo check the error
     val screenWidth = config.screenWidthDp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
@@ -60,7 +62,7 @@ fun DataItemList(
     ) {
         items(
             items,
-            key = { it.url + "-" + Uuid.random() },
+            key = { it.key },
             contentType = { it }
         ) {
             DataItem(

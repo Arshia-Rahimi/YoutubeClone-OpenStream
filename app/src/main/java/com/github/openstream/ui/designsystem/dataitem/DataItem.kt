@@ -1,5 +1,6 @@
 package com.github.openstream.ui.designsystem.dataitem
 
+import android.provider.ContactsContract
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.github.openstream.core.model.extractordata.DataItem
@@ -13,7 +14,7 @@ fun DataItem(
     item: DataItem,
     shouldViewChannel: Boolean = true,
     toChannelScreen: (String) -> Unit,
-    toPlaylistScreen: (String) -> Unit,
+    toPlaylistScreen: (DataItem.Playlist) -> Unit,
     playVideo: (String) -> Unit,
     subscribe: (String) -> Unit = {},
 ) {

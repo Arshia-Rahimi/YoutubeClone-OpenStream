@@ -10,7 +10,7 @@ data class ChannelEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 1,
     val name: String,
     val url: String? = null,
-    val avatar: String,
+    val avatar: String? = null,
     @ColumnInfo(name = "subscriber_count") val subscriberCount: Long,
     val isVerified: Boolean,
     val banner: String,

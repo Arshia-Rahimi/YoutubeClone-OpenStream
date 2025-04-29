@@ -1,4 +1,4 @@
-package com.github.openstream.core.model.playlist
+package com.github.openstream.core.model
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.github.openstream.core.model.extractordata.DataItem
@@ -6,11 +6,22 @@ import com.github.openstream.core.model.extractordata.PlaylistMetadata
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-sealed interface YoutubePlaylist: Playlist {
-   val url: String
-   var nextPage: Page?
-   var extractor: YoutubePlaylistExtractor?
+sealed interface Playlist {
+    val items: SnapshotStateList<DataItem>
+    val metadata: PlaylistMetadata
 }
+
+sealed interface YoutubePlaylist : Playlist {
+    val url: String
+    var nextPage: Page?
+    var extractor: YoutubePlaylistExtractor?
+}
+
+open class LocalPlaylist(
+    val id: Int,
+    override val items: SnapshotStateList<DataItem>,
+    override val metadata: PlaylistMetadata,
+) : Playlist
 
 class OnlinePlaylist(
     override val url: String,
@@ -18,7 +29,7 @@ class OnlinePlaylist(
     override val metadata: PlaylistMetadata,
     override var extractor: YoutubePlaylistExtractor?,
     override var nextPage: Page?
-): YoutubePlaylist
+) : YoutubePlaylist
 
 class OfflineFirstPlaylist(
     override val url: String,
@@ -27,7 +38,7 @@ class OfflineFirstPlaylist(
     id: Int,
     items: SnapshotStateList<DataItem>,
     metadata: PlaylistMetadata,
-): LocalPlaylist(
+) : LocalPlaylist(
     id = id,
     items = items,
     metadata = metadata,

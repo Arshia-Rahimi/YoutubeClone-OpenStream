@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.arshia.openstream.R
 import com.github.openstream.core.common.util.sendPulse
+import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.feature.search.SearchViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
@@ -33,7 +34,7 @@ sealed class Tabs(
         data class Channel(val url: String)
 
         @Serializable
-        data class Playlist(val url: String)
+        data class Playlist(val playlist: DataItem.Playlist)
     }
 
     @Serializable

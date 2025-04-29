@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.feature.search.components.SearchField
 import org.koin.androidx.compose.koinViewModel
@@ -27,7 +28,7 @@ import kotlin.uuid.ExperimentalUuidApi
 fun SearchScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     toChannelScreen: (String) -> Unit,
-    toPlaylistScreen: (String) -> Unit,
+    toPlaylistScreen: (DataItem.Playlist) -> Unit,
     playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SearchViewModel>()

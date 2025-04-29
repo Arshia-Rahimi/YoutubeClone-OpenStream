@@ -10,7 +10,7 @@ data class VideoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 1,
     val name: String,
     val url: String,
-    val thumbnail: String,
+    val thumbnail: String?,
     val viewCount: Long,
     val uploadDate: String,
     val playlistId: Int?,

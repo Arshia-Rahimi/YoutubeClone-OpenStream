@@ -2,10 +2,12 @@ package com.github.openstream.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.relationships.PlaylistWithVideos
+import com.github.openstream.core.model.Playlist
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,6 +19,9 @@ interface PlaylistDao {
     @Query("SELECT * FROM $TABLE_NAME ORDER BY name")
     fun index(): Flow<List<PlaylistEntity>>
 
+    @Insert
+    suspend fun insert(vararg playlistEntities: PlaylistEntity): List<Long>
+    
     @Upsert
     suspend fun upsert(vararg playlistEntities: PlaylistEntity)
 
