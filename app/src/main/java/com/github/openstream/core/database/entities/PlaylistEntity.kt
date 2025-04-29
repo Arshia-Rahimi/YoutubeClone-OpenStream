@@ -8,10 +8,10 @@ import com.github.openstream.core.database.OpenStreamEntity
 data class PlaylistEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 1,
     val name: String,
+    val count: Long,
     val channelName: String? = null,
     val channelUrl: String? = null,
     val isChannelVerified: Boolean? = null,
-    val count: Long,
     val thumbnail: String? = null,
     val url: String? = null,
 ): OpenStreamEntity

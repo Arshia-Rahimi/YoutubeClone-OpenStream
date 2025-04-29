@@ -35,10 +35,10 @@ sealed class DataItem(
         val channelVerified: Boolean,
         val isShort: Boolean,
         val channelAvatars: String?,
+        val playlistId: Int? = null,
+        val channelId: Int? = null,
     ) : DataItem(url, name, thumbnail), Entityable {
-        // todo check channelId and playlistId
-        override fun toEntity(channelId: Int?, playlistId: Int?): OpenStreamEntity {
-            require(playlistId != null || channelId != null)
+        override fun toEntity(): OpenStreamEntity {
             return VideoEntity(
                 playlistId = playlistId,
                 name = name,
@@ -65,7 +65,7 @@ sealed class DataItem(
         val channelVerified: Boolean?,
         val count: Long,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(channelId: Int?, playlistId: Int?): OpenStreamEntity =
+        override fun toEntity(): OpenStreamEntity =
             PlaylistEntity(
                 name = name,
                 channelUrl = channelUrl,
@@ -85,7 +85,7 @@ sealed class DataItem(
         val subscriberCount: Long,
         val verified: Boolean,
     ) : DataItem(url, name, thumbnail), Entityable {
-        override fun toEntity(channelId: Int?, playlistId: Int?): OpenStreamEntity =
+        override fun toEntity(): OpenStreamEntity =
             ChannelEntity(
                 name = name,
                 url = url,
@@ -95,7 +95,6 @@ sealed class DataItem(
                 avatar = thumbnail ?: "",
                 banner = "",
             )
-
     }
 }
 

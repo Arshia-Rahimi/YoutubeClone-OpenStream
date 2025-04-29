@@ -25,4 +25,10 @@ interface PlaylistDao {
     
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
     suspend fun getPlaylistWithVideos(id: Int): PlaylistWithVideos?
+    
+    @Query("UPDATE playlists SET count = count + 1 WHERE id = :playlistId")
+    suspend fun incrementPlaylistCount(playlistId: Int)
+    
+    @Query("UPDATE playlists SET count = count - 1 WHERE id = :playlistId")
+    suspend fun decrementPlaylistCount(playlistId: Int)
 }

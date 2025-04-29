@@ -1,6 +1,5 @@
 package com.github.openstream.core.data.imp
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import org.schabi.newpipe.extractor.timeago.patterns.vi
 
 class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
@@ -52,7 +50,7 @@ class OfflineFirstPlaylistRepository(
     
     override suspend fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
         flow {
-            db.playlistDao().delete(playlist.toEntity(null, null) as PlaylistEntity)
+            db.playlistDao().delete(playlist.toEntity() as PlaylistEntity)
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -61,7 +59,8 @@ class OfflineFirstPlaylistRepository(
         playlistId: Int,
     ): Flow<Resource<Success>> =
         flow {
-            db.videoDao().upsert(*videos.map { it.toEntity(playlistId = playlistId, channelId = null) as VideoEntity }.toTypedArray())
+            db.videoDao().upsert(*videos.map { it.toEntity() as VideoEntity }.toTypedArray())
+            db.playlistDao().incrementPlaylistCount(playlistId)
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -69,13 +68,13 @@ class OfflineFirstPlaylistRepository(
         videos: List<DataItem.Video>,
         playlistId: Int,
     ): Flow<Resource<Success>> = flow {
-        db.videoDao().delete(*videos.map { it.toEntity(playlistId = playlistId, channelId = null) as VideoEntity }.toTypedArray())
+        db.videoDao().delete(*videos.map { it.toEntity() as VideoEntity }.toTypedArray())
+        db.playlistDao().decrementPlaylistCount(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
     
     override suspend fun getPlaylist(id: Int): Flow<Resource<Playlist>> =
         flow {
-            // todo fix this
             db.playlistDao().getPlaylistWithVideos(id)?.let {
                 LocalPlaylist(
                     id = it.playlist.id,
@@ -96,6 +95,7 @@ class OfflineFirstPlaylistRepository(
                                 duration = video.duration,
                                 channelAvatars = "",
                                 channelVerified = video.isChannelVerified,
+                                playlistId = id,
                             )
                         }.toMutableStateList(),
                     metadata = PlaylistMetadata(
@@ -119,4 +119,5 @@ class OfflineFirstPlaylistRepository(
             PlaylistExtractor.fetchNextPage(currentPlaylist)
             emit(Success)
         }.asResult(Dispatchers.IO)
+    
 }
