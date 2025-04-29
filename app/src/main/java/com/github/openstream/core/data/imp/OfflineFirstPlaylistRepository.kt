@@ -64,7 +64,7 @@ class OfflineFirstPlaylistRepository(
     
     override suspend fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
         flow {
-            db.playlistDao().delete(playlist.toEntity() as PlaylistEntity)
+            db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -73,7 +73,7 @@ class OfflineFirstPlaylistRepository(
         playlistId: Int,
     ): Flow<Resource<Success>> =
         flow {
-            db.videoDao().upsert(*videos.map { it.toEntity() as VideoEntity }.toTypedArray())
+            db.videoDao().upsert(*videos.map { it.toEntity() }.toTypedArray())
             db.playlistDao().incrementPlaylistCount(playlistId)
             emit(Success)
         }.asResult(Dispatchers.IO)
@@ -82,7 +82,7 @@ class OfflineFirstPlaylistRepository(
         videos: List<DataItem.Video>,
         playlistId: Int,
     ): Flow<Resource<Success>> = flow {
-        db.videoDao().delete(*videos.map { it.toEntity() as VideoEntity }.toTypedArray())
+        db.videoDao().delete(*videos.map { it.toEntity() }.toTypedArray())
         db.playlistDao().decrementPlaylistCount(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
@@ -104,6 +104,10 @@ class OfflineFirstPlaylistRepository(
             when (playlist) {
                 is DataItem.Playlist.LocalPlaylist -> {
                     db.playlistDao().getPlaylistWithVideos(playlist.id)?.let {
+                        val correctedCount: Long = it.videos.size.toLong()
+                        if(it.playlist.count != correctedCount) {
+                            db.playlistDao().upsert(it.playlist.copy(count = correctedCount))
+                        }
                         LocalPlaylist(
                             id = it.playlist.id,
                             items = it.videos
@@ -130,7 +134,7 @@ class OfflineFirstPlaylistRepository(
                                 name = it.playlist.name,
                                 channelUrl = it.playlist.channelUrl,
                                 isChannelVerified = it.playlist.isChannelVerified,
-                                count = it.playlist.count,
+                                count = correctedCount,
                                 channelName = it.playlist.channelName,
                             )
                         )

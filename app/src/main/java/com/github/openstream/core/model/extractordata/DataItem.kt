@@ -27,7 +27,7 @@ sealed class DataItem {
         val playlistId: Int? = null,
         val channelId: Int? = null,
     ) : DataItem(), Entityable {
-        override fun toEntity(): OpenStreamEntity {
+        override fun toEntity(): VideoEntity {
             return VideoEntity(
                 playlistId = playlistId,
                 name = name,
@@ -51,6 +51,7 @@ sealed class DataItem {
         val thumbnail: String?,
         val count: Long,
     ) : DataItem(), Entityable {
+        
         class LocalPlaylist(
             name: String,
             thumbnail: String?,
@@ -91,7 +92,7 @@ sealed class DataItem {
             count = count,
         )
         
-        override fun toEntity(): OpenStreamEntity = when (this) {
+        override fun toEntity(): PlaylistEntity = when (this) {
             is LocalPlaylist -> PlaylistEntity(
                 name = name,
                 count = count,
@@ -130,7 +131,7 @@ sealed class DataItem {
         val subscriberCount: Long,
         val verified: Boolean,
     ) : DataItem(), Entityable {
-        override fun toEntity(): OpenStreamEntity = ChannelEntity(
+        override fun toEntity(): ChannelEntity = ChannelEntity(
             name = name,
             url = url,
             isVerified = verified,
