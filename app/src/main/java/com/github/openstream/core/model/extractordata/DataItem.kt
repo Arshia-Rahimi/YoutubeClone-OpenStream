@@ -1,7 +1,6 @@
 package com.github.openstream.core.model.extractordata
 
 import com.github.openstream.core.database.Entityable
-import com.github.openstream.core.database.OpenStreamEntity
 import com.github.openstream.core.database.entities.ChannelEntity
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.VideoEntity

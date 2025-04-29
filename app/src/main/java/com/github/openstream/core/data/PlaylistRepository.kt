@@ -2,10 +2,11 @@ package com.github.openstream.core.data
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.YoutubePlaylist
+import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
@@ -30,4 +31,6 @@ interface PlaylistRepository {
     suspend fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>>
     
     suspend fun savePlaylist(playlist: OnlinePlaylist): Flow<Resource<Success>>
+    
+    suspend fun syncPlaylist(playlist: OfflineFirstPlaylist): Flow<Resource<OfflineFirstPlaylist>>
 }
