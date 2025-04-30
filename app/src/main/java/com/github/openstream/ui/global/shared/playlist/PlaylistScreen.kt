@@ -6,7 +6,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.core.model.extractordata.PlaylistMetadata
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
@@ -25,6 +24,7 @@ fun PlaylistScreen(
     topBar {}
     val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parameterSetOf(playlist) })
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     when (uiState) {
         is PlaylistViewModel.UiState.Loading -> {
@@ -42,8 +42,11 @@ fun PlaylistScreen(
                 playlist = (uiState as PlaylistViewModel.UiState.Success).playlist,
                 topBar = topBar,
                 playVideo = playVideo,
+                items = viewModel.items,
                 toChannelScreen = toChannelScreen,
-                loadNextPage = { viewModel.getNextPage() }
+                loadNextPage = { viewModel.getNextPage() },
+                onRefresh = { viewModel.syncPlaylist() },
+                isRefreshing = isRefreshing,
             )
         }
     }
@@ -52,6 +55,9 @@ fun PlaylistScreen(
 @Composable
 private fun PlaylistScreen(
     playlist: Playlist,
+    items: SnapshotStateList<DataItem>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
@@ -60,7 +66,9 @@ private fun PlaylistScreen(
     topBar { PlaylistTopBar(playlist.metadata, toChannelScreen) }
 
     DataItemList(
-        items = playlist.items,
+        onRefresh = onRefresh,
+        isRefreshing = isRefreshing,
+        items = items,
         toChannelScreen = { toChannelScreen(it) },
         playVideo = { playVideo(it) },
         loadNextPage = loadNextPage,

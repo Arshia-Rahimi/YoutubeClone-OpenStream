@@ -9,13 +9,15 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.extractordata.DataItem
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
-    private val playlistDataItem: DataItem.Playlist,
+    playlistDataItem: DataItem.Playlist,
     private val playlistRepository: PlaylistRepository,
 ) : ViewModel() {
 
@@ -26,6 +28,10 @@ class PlaylistViewModel(
     }
 
     val items = mutableStateListOf<DataItem>()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+            
     val uiState = playlistRepository.getPlaylist(playlistDataItem)
         .map {
             when (it) {
@@ -47,9 +53,13 @@ class PlaylistViewModel(
             if (uiState.value !is UiState.Success) return@launch
             playlistRepository.syncPlaylist((uiState.value as UiState.Success).playlist)
                 .collect {
+                    if (it == (uiState.value as UiState.Success).playlist) return@collect
+
+                    _isRefreshing.value = true
                     Snapshot.withMutableSnapshot {
                         // todo sort and add items
                     }
+                    _isRefreshing.value = false
                 }
         }
     }
