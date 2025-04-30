@@ -10,7 +10,6 @@ import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.extractor.PlaylistExtractor
 import com.github.openstream.core.model.OfflineFirstPlaylist
-import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
@@ -69,13 +68,13 @@ class OfflineFirstPlaylistRepository(
             if (currentPlaylist is YoutubePlaylist) PlaylistExtractor.fetchNextPage(currentPlaylist)
             emit(Success)
         }.asResult(Dispatchers.IO)
-    
-    override suspend fun savePlaylist(playlist: OnlinePlaylist): Flow<Resource<Success>> = flow {
+
+    override suspend fun savePlaylist(playlist: Playlist): Flow<Resource<Success>> = flow {
         // todo check before adding
         emit(Success)
     }.asResult(Dispatchers.IO)
-    
-    override suspend fun getPlaylist(playlist: DataItem.Playlist): Flow<Resource<Playlist>> =
+
+    override fun getPlaylist(playlist: DataItem.Playlist): Flow<Resource<Playlist>> =
         flow<Playlist> {
             when (playlist) {
                 is DataItem.Playlist.LocalPlaylist -> {
@@ -111,8 +110,13 @@ class OfflineFirstPlaylistRepository(
             }
         }.asResult(Dispatchers.IO)
 
-    override suspend fun syncPlaylist(playlist: OfflineFirstPlaylist): Flow<Resource<Playlist>> =
+    override suspend fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>> =
         flow {
+            if (playlist !is OfflineFirstPlaylist) {
+                emit(playlist)
+                return@flow
+            }
+            
             coroutineScope {
                 val updatedPlaylist = PlaylistExtractor.fetchPlaylist(playlist.url)
                     .toOfflineFirstPlaylist(playlist.id)

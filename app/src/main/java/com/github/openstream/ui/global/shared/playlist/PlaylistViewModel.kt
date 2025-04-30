@@ -1,6 +1,7 @@
 package com.github.openstream.ui.global.shared.playlist
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.danrusu.pods4k.immutableArrays.toList
@@ -8,8 +9,9 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.extractordata.DataItem
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
@@ -23,22 +25,30 @@ class PlaylistViewModel(
         data class Success(val playlist: Playlist) : UiState
     }
 
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
     val items = mutableStateListOf<DataItem>()
+    val uiState = playlistRepository.getPlaylist(playlistDataItem)
+        .map {
+            when (it) {
+                is Resource.Loading -> UiState.Loading
+                is Resource.Error -> UiState.Error(it.message)
+                is Resource.Success -> {
+                    items.addAll(it.data.items.toList())
+                    UiState.Success(it.data)
+                }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = UiState.Loading,
+        )
 
-    init {
+    fun syncPlaylist() {
         viewModelScope.launch {
-            playlistRepository.getPlaylist(this@PlaylistViewModel.playlistDataItem)
+            if (uiState.value !is UiState.Success) return@launch
+            playlistRepository.syncPlaylist((uiState.value as UiState.Success).playlist)
                 .collect {
-                    _uiState.value = when (it) {
-                        is Resource.Loading -> UiState.Loading
-                        is Resource.Error -> UiState.Error(it.message)
-                        is Resource.Success -> {
-                            items.addAll(it.data.items.toList())
-                            UiState.Success(it.data)
-                        }
+                    Snapshot.withMutableSnapshot {
+                        // todo sort and add items
                     }
                 }
         }
@@ -46,11 +56,14 @@ class PlaylistViewModel(
 
     fun getNextPage() {
         viewModelScope.launch {
-            if (_uiState.value !is UiState.Success) return@launch
-            playlistRepository.getNextPage(_uiState.value as Playlist)
+            if (uiState.value !is UiState.Success) return@launch
+            playlistRepository.getNextPage((uiState.value as UiState.Success).playlist)
                 .collect {
                     if (it is Resource.Success) {
                         // todo sort and add items
+                        Snapshot.withMutableSnapshot {
+                            items
+                        }
                     }
                 }
         }
