@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.relationships.PlaylistWithVideos
-import com.github.openstream.core.model.Playlist
 import kotlinx.coroutines.flow.Flow
 
 @Dao

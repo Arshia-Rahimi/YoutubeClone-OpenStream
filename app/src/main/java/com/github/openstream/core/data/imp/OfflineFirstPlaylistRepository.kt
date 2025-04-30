@@ -1,5 +1,7 @@
 package com.github.openstream.core.data.imp
 
+import com.danrusu.pods4k.immutableArrays.multiplicativeSpecializations.map
+import com.danrusu.pods4k.immutableArrays.toTypedMutableArray
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
@@ -61,10 +63,10 @@ class OfflineFirstPlaylistRepository(
         db.playlistDao().decrementPlaylistCount(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
-    
-    override suspend fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>> =
+
+    override suspend fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>> =
         flow {
-            PlaylistExtractor.fetchNextPage(currentPlaylist)
+            if (currentPlaylist is YoutubePlaylist) PlaylistExtractor.fetchNextPage(currentPlaylist)
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -108,8 +110,8 @@ class OfflineFirstPlaylistRepository(
                 }
             }
         }.asResult(Dispatchers.IO)
-    
-    override suspend fun syncPlaylist(playlist: OfflineFirstPlaylist): Flow<Resource<OfflineFirstPlaylist>> =
+
+    override suspend fun syncPlaylist(playlist: OfflineFirstPlaylist): Flow<Resource<Playlist>> =
         flow {
             coroutineScope {
                 val updatedPlaylist = PlaylistExtractor.fetchPlaylist(playlist.url)
@@ -119,13 +121,15 @@ class OfflineFirstPlaylistRepository(
                     async { db.playlistDao().upsert(updatedPlaylist.toEntity()) }
                 val updateVideosDeferred = async {
                     db.videoDao()
-                        .upsert(*updatedPlaylist.items.map { it.toEntity() }.toTypedArray())
+                        .upsert(*updatedPlaylist.items.map { it.toEntity() }.toTypedMutableArray())
                 }
                 
                 updatePlaylistDeferred.await()
                 updateVideosDeferred.await()
-                
-                emit(updatedPlaylist)
+
+                db.playlistDao().getPlaylistWithVideos(playlist.id)?.toPlaylistObject().let {
+                    emit(it ?: playlist)
+                }
             }
         }.asResult(Dispatchers.IO)
     
