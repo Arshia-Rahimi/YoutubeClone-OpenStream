@@ -7,14 +7,14 @@ import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.Flow
 
 interface ChannelRepository {
-    suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>>
+    fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>>
 
-    suspend fun getTab(
+    fun getTab(
         tab: ChannelTab,
         currentChannel: ChannelUnit
     ): Flow<Resource<List<DataItem>?>>
 
-    suspend fun getTabNextPage(
+    fun getTabNextPage(
         tab: ChannelTab,
         currentChannel: ChannelUnit
     ): Flow<Resource<List<DataItem>?>>

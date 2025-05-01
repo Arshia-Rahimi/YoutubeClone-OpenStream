@@ -1,9 +1,12 @@
 package com.github.openstream.ui.global.player
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -81,6 +84,7 @@ fun PlayerSheet(
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val density = LocalDensity.current
     val config = LocalConfiguration.current
+    // todo
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight =
         with(density) { (screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
@@ -147,6 +151,11 @@ private fun PlayerSheet(
             .anchoredDraggable(
                 state = dragState,
                 orientation = Orientation.Vertical,
+                flingBehavior = AnchoredDraggableDefaults.flingBehavior(
+                    positionalThreshold = { distance: Float -> distance * 0.01f },
+                    animationSpec = spring(Spring.StiffnessLow),
+                    state = dragState,
+                )
             ),
     ) {
         val miniPlayerContentAlpha =

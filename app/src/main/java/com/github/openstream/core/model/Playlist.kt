@@ -14,12 +14,6 @@ sealed interface Playlist {
     fun toEntity(): PlaylistEntity
 }
 
-sealed interface YoutubePlaylist : Playlist {
-    val url: String
-    var nextPage: Page?
-    var extractor: YoutubePlaylistExtractor?
-}
-
 open class LocalPlaylist(
     val id: Int,
     override var items: ImmutableArray<DataItem.Video>,
@@ -33,6 +27,12 @@ open class LocalPlaylist(
         channelName = metadata.channelName,
         isChannelVerified = metadata.isChannelVerified,
     )
+}
+
+sealed interface YoutubePlaylist : Playlist {
+    val url: String
+    var nextPage: Page?
+    var extractor: YoutubePlaylistExtractor?
 }
 
 class OnlinePlaylist(

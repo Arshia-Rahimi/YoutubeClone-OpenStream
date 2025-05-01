@@ -30,18 +30,18 @@ class OfflineFirstPlaylistRepository(
     override val localPlaylists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
 
-    override suspend fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
+    override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
         db.playlistDao().upsert(PlaylistEntity(name = playlistName, count = 0L))
         emit(Success)
     }.asResult(Dispatchers.IO)
 
-    override suspend fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
+    override fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
         flow {
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
 
-    override suspend fun addToPlaylist(
+    override fun addToPlaylist(
         videos: List<DataItem.Video>,
         playlistId: Int,
     ): Flow<Resource<Success>> = flow {
@@ -50,7 +50,7 @@ class OfflineFirstPlaylistRepository(
         emit(Success)
     }.asResult(Dispatchers.IO)
 
-    override suspend fun removeFromPlaylist(
+    override fun removeFromPlaylist(
         videos: List<DataItem.Video>,
         playlistId: Int,
     ): Flow<Resource<Success>> = flow {
@@ -59,25 +59,26 @@ class OfflineFirstPlaylistRepository(
         emit(Success)
     }.asResult(Dispatchers.IO)
 
-    override suspend fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>> =
+    override fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>> =
         flow {
             if (currentPlaylist is YoutubePlaylist) PlaylistExtractor.fetchNextPage(currentPlaylist)
             emit(Success)
         }.asResult(Dispatchers.IO)
 
-    override suspend fun savePlaylist(playlist: Playlist): Flow<Resource<Success>> = flow {
-        if (playlist is OnlinePlaylist) {
-            if (db.playlistDao().index().any { it.url == playlist.url }) {
-                throw Exception("This playlist already exist in your library")
-            }
-            val playlistId = db.playlistDao().insert(playlist.toEntity()).first().toInt()
+    override fun savePlaylist(playlist: Playlist): Flow<Resource<Success>> = flow {
+        if (playlist !is OnlinePlaylist) emit(Success)
+        playlist as OnlinePlaylist
 
-            db.videoDao().upsert(
-                *playlist.items
-                    .map { it.copy(playlistId = playlistId).toEntity() }
-                    .toTypedMutableArray()
-            )
+        if (db.playlistDao().index().any { it.url == playlist.url }) {
+            throw Exception("This playlist already exist in your library")
         }
+
+        val playlistId = db.playlistDao().insert(playlist.toEntity()).first().toInt()
+        db.videoDao().upsert(
+            *playlist.items
+                .map { it.copy(playlistId = playlistId).toEntity() }
+                .toTypedMutableArray()
+        )
 
         emit(Success)
     }.asResult(Dispatchers.IO)
@@ -118,7 +119,7 @@ class OfflineFirstPlaylistRepository(
             }
         }.asResult(Dispatchers.IO)
 
-    override suspend fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>> =
+    override fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>> =
         flow {
             if (playlist !is OfflineFirstPlaylist) {
                 emit(playlist)

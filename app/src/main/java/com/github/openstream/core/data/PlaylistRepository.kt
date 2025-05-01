@@ -9,25 +9,25 @@ import kotlinx.coroutines.flow.Flow
 interface PlaylistRepository {
     val localPlaylists: Flow<List<DataItem>>
 
-    suspend fun createPlaylist(playlistName: String): Flow<Resource<Success>>
+    fun createPlaylist(playlistName: String): Flow<Resource<Success>>
 
-    suspend fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>>
+    fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>>
 
-    suspend fun addToPlaylist(
+    fun addToPlaylist(
         videos: List<DataItem.Video>,
         playlistId: Int
     ): Flow<Resource<Success>>
 
-    suspend fun removeFromPlaylist(
+    fun removeFromPlaylist(
         videos: List<DataItem.Video>,
         playlistId: Int
     ): Flow<Resource<Success>>
 
     fun getPlaylist(playlist: DataItem.Playlist): Flow<Resource<Playlist>>
 
-    suspend fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>>
+    fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>>
 
-    suspend fun savePlaylist(playlist: Playlist): Flow<Resource<Success>>
+    fun savePlaylist(playlist: Playlist): Flow<Resource<Success>>
 
-    suspend fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>>
+    fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>>
 }

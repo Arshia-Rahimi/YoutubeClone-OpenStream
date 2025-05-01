@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ExtractorVideoRepository : VideoRepository {
-    override suspend fun fetchVideo(url: String): Flow<Resource<MediaItem>> =
+    override fun fetchVideo(url: String): Flow<Resource<MediaItem>> =
         flow {
             emit(VideoExtractor.fetchVideo(url))
         }.asResult(Dispatchers.IO)

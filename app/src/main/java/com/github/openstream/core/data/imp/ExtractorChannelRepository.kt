@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.flow
 
 class ExtractorChannelRepository : ChannelRepository {
 
-    override suspend fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>> =
+    override fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>> =
         flow { emit(ChannelUnit(channelUrl)) }.asResult(Dispatchers.IO)
 
-    override suspend fun getTab(
+    override fun getTab(
         tab: ChannelTab,
         currentChannel: ChannelUnit,
     ): Flow<Resource<List<DataItem>?>> =
@@ -23,7 +23,7 @@ class ExtractorChannelRepository : ChannelRepository {
             emit(currentChannel.fetchTab(tab))
         }.asResult(Dispatchers.IO)
 
-    override suspend fun getTabNextPage(
+    override fun getTabNextPage(
         tab: ChannelTab,
         currentChannel: ChannelUnit,
     ): Flow<Resource<List<DataItem>?>> =

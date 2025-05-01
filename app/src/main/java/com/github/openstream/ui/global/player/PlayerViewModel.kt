@@ -1,11 +1,7 @@
 package com.github.openstream.ui.global.player
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,18 +34,21 @@ class PlayerViewModel(
         data class Success(val data: VideoData) : UiState
     }
 
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    val uiState = _uiState.asStateFlow()
+
     val dragState = AnchoredDraggableState(
         initialValue = PlayerSheetState.MINI_PLAYER,
-        anchors = DraggableAnchors {
-            PlayerSheetState.MINI_PLAYER at 1f
-            PlayerSheetState.EXPANDED at 0f
-        },
-        positionalThreshold = { distance: Float -> distance * 0.01f },
-        velocityThreshold = { 100f },
-        decayAnimationSpec = exponentialDecay(),
-        snapAnimationSpec = spring(
-            stiffness = Spring.StiffnessLow
-        ),
+//        anchors = DraggableAnchors {
+//            PlayerSheetState.MINI_PLAYER at 1f
+//            PlayerSheetState.EXPANDED at 0f
+//        },
+//        positionalThreshold = { distance: Float -> distance * 0.01f },
+//        velocityThreshold = { 100f },
+//        decayAnimationSpec = exponentialDecay(),
+//        snapAnimationSpec = spring(
+//            stiffness = Spring.StiffnessLow
+//        ),
     )
 
     private val _showMiniPlayer = MutableStateFlow(false)
@@ -75,9 +74,6 @@ class PlayerViewModel(
     val playerState = player.playerState
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
-
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
 
     fun start(videoUrl: String) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
@@ -111,4 +107,5 @@ class PlayerViewModel(
     fun dispose() {
         _showMiniPlayer.value = false
     }
+
 }

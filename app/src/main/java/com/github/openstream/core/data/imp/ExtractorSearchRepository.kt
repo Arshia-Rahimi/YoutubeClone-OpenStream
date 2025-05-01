@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ExtractorSearchRepository : SearchRepository {
-    
-    override suspend fun search(
+
+    override fun search(
         query: String,
         contentFilter: List<String>,
         sortFilter: String?,
     ): Flow<Resource<SearchResult>> = flow {
         emit(SearchExtractor.fetchSearchResult(query, contentFilter, sortFilter))
     }.asResult(Dispatchers.IO)
-    
-    override suspend fun getNextPage(currentSearch: SearchResult): Flow<Resource<Success>> =
+
+    override fun getNextPage(currentSearch: SearchResult): Flow<Resource<Success>> =
         flow {
             SearchExtractor.fetchNextPage(currentSearch)
             emit(Success)
