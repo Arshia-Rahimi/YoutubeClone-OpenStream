@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 sealed class DataItem {
+
     data class Video(
         val name: String,
         val thumbnail: String?,
