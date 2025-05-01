@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.shared.channel
+package com.github.openstream.ui.global.reusable.channel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +37,7 @@ import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
-import com.github.openstream.ui.global.shared.channel.components.ChannelTopBar
+import com.github.openstream.ui.global.reusable.channel.components.ChannelTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

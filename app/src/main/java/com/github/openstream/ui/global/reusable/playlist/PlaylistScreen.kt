@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.shared.playlist
+package com.github.openstream.ui.global.reusable.playlist
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,7 +9,7 @@ import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
-import com.github.openstream.ui.global.shared.playlist.components.PlaylistTopBar
+import com.github.openstream.ui.global.reusable.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parameterSetOf
 

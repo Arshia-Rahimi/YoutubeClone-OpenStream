@@ -9,7 +9,6 @@ import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import java.time.format.DateTimeFormatter
-import kotlin.collections.forEach
 
 fun List<InfoItem>.toImmutableArrayOfDataItem(): ImmutableArray<DataItem> =
     buildImmutableArray { this@toImmutableArrayOfDataItem.forEach { it.toDataItem()?.let(::add) } }
@@ -29,7 +28,6 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         channelUrl = url,
         isChannelVerified = isUploaderVerified,
         count = streamCount,
-        channelAvatar = null,
     )
     
     is ChannelInfoItem -> DataItem.Channel(

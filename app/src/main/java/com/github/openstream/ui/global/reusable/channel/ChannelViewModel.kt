@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.shared.channel
+package com.github.openstream.ui.global.reusable.channel
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.MutableState

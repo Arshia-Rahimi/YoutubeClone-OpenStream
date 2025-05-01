@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.shared.playlist
+package com.github.openstream.ui.global.reusable.playlist
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.Snapshot

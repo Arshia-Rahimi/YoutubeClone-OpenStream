@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.shared.playlist.components
+package com.github.openstream.ui.global.reusable.playlist.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

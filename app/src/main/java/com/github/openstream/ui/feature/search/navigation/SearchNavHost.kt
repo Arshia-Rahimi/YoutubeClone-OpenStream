@@ -6,12 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.github.openstream.ui.global.navigation.Tabs
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.ui.feature.search.SearchScreen
-import com.github.openstream.ui.global.shared.channel.ChannelScreen
-import com.github.openstream.ui.global.shared.playlist.PlaylistScreen
+import com.github.openstream.ui.global.navigation.Tabs
+import com.github.openstream.ui.global.reusable.channel.ChannelScreen
+import com.github.openstream.ui.global.reusable.playlist.PlaylistScreen
 
 @Composable
 fun SearchNavHost(
