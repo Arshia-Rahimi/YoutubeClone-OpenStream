@@ -46,51 +46,42 @@ sealed class DataItem {
     }
     
     @Serializable
-    sealed class Playlist(
-        val name: String,
-        val thumbnail: String?,
-        val count: Long,
-    ) : DataItem(), Entityable {
-        
+    sealed class Playlist : DataItem(), Entityable {
+
+        abstract val name: String
+        abstract val thumbnail: String?
+        abstract val count: Long
+
+        @Serializable
         class LocalPlaylist(
-            name: String,
-            thumbnail: String?,
-            count: Long,
+            override val name: String,
+            override val thumbnail: String?,
+            override val count: Long,
             val id: Int,
-        ) : Playlist(
-            name = name,
-            thumbnail = thumbnail,
-            count = count,
-        )
-        
+        ) : Playlist()
+
+        @Serializable
         class OnlinePlaylist(
-            name: String,
-            thumbnail: String?,
-            count: Long,
+            override val name: String,
+            override val thumbnail: String?,
+            override val count: Long,
             val channelName: String,
             val channelUrl: String,
             val isChannelVerified: Boolean,
             val url: String,
-        ) : Playlist(
-            name = name,
-            thumbnail = thumbnail,
-            count = count,
-        )
-        
+        ) : Playlist()
+
+        @Serializable
         class OfflineFirstPlaylist(
-            name: String,
-            thumbnail: String?,
-            count: Long,
+            override val name: String,
+            override val thumbnail: String?,
+            override val count: Long,
             val channelName: String,
             val channelUrl: String,
             val isChannelVerified: Boolean,
             val url: String,
             val id: Int,
-        ) : Playlist(
-            name = name,
-            thumbnail = thumbnail,
-            count = count,
-        )
+        ) : Playlist()
         
         override fun toEntity(): PlaylistEntity = when (this) {
             is LocalPlaylist -> PlaylistEntity(

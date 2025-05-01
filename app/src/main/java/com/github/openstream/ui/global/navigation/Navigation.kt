@@ -15,7 +15,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.github.openstream.ui.feature.downloads.DownloadsScreen
-import com.github.openstream.ui.feature.library.LibraryScreen
+import com.github.openstream.ui.feature.library.navigation.LibraryNavHost
 import com.github.openstream.ui.feature.search.navigation.SearchNavHost
 import com.github.openstream.ui.feature.settings.SettingsScreen
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsScreen
@@ -23,7 +23,6 @@ import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.player.view.FullScreenPlayerView
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -119,9 +118,10 @@ fun Navigation() {
                         topBar = navigationViewModel::setTopBar,
                         playVideo = playerViewModel::start,
                     )
-                    
-                    Tabs.Library -> LibraryScreen(
+
+                    Tabs.Library -> LibraryNavHost(
                         topBar = navigationViewModel::setTopBar,
+                        playVideo = playerViewModel::start,
                     )
                     
                     Tabs.Subscriptions -> SubscriptionsScreen(
