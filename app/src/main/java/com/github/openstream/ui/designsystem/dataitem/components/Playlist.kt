@@ -1,6 +1,5 @@
 package com.github.openstream.ui.designsystem.dataitem.components
 
-import android.provider.ContactsContract
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -200,7 +199,6 @@ private fun Preview() {
                 url = "",
                 thumbnail = "",
                 count = 25L,
-                channelAvatar = null,
             ),
             toChannelScreen = {},
             toPlaylistScreen = {},

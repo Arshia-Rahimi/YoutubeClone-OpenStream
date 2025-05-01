@@ -1,7 +1,5 @@
 package com.github.openstream.core.data.imp
 
-import com.danrusu.pods4k.immutableArrays.multiplicativeSpecializations.map
-import com.danrusu.pods4k.immutableArrays.toTypedMutableArray
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
@@ -77,7 +75,7 @@ class OfflineFirstPlaylistRepository(
         db.videoDao().upsert(
             *playlist.items
                 .map { it.copy(playlistId = playlistId).toEntity() }
-                .toTypedMutableArray()
+                .toTypedArray()
         )
 
         emit(Success)
@@ -134,7 +132,7 @@ class OfflineFirstPlaylistRepository(
                     async { db.playlistDao().upsert(updatedPlaylist.toEntity()) }
                 val updateVideosDeferred = async {
                     db.videoDao()
-                        .upsert(*updatedPlaylist.items.map { it.toEntity() }.toTypedMutableArray())
+                        .upsert(*updatedPlaylist.items.map { it.toEntity() }.toTypedArray())
                 }
 
                 updatePlaylistDeferred.await()

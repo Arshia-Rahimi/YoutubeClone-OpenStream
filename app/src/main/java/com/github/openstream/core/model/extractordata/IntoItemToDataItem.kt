@@ -2,16 +2,14 @@ package com.github.openstream.core.model.extractordata
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import com.danrusu.pods4k.immutableArrays.ImmutableArray
-import com.danrusu.pods4k.immutableArrays.buildImmutableArray
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import java.time.format.DateTimeFormatter
 
-fun List<InfoItem>.toImmutableArrayOfDataItem(): ImmutableArray<DataItem> =
-    buildImmutableArray { this@toImmutableArrayOfDataItem.forEach { it.toDataItem()?.let(::add) } }
+fun List<InfoItem>.toArrayOfDataItem(): Array<DataItem> =
+    buildList { this@toArrayOfDataItem.forEach { it.toDataItem()?.let(::add) } }.toTypedArray()
 
 fun List<InfoItem>.toListOfDataItem(): List<DataItem> =
     buildList { this@toListOfDataItem.forEach { it.toDataItem()?.let(::add) } }

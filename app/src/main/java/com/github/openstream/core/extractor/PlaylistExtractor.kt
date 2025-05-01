@@ -1,14 +1,12 @@
 package com.github.openstream.core.extractor
 
-import com.danrusu.pods4k.immutableArrays.ImmutableArray
-import com.danrusu.pods4k.immutableArrays.buildImmutableArray
 import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
-import com.github.openstream.core.model.extractordata.toImmutableArrayOfDataItem
+import com.github.openstream.core.model.extractordata.toArrayOfDataItem
 import com.github.openstream.core.shared.exceptions.OfflineFirstPlaylistNotFetchedException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
@@ -25,7 +23,7 @@ object PlaylistExtractor {
             count = extractor.streamCount,
         )
         val items =
-            extractor.initialPage.items.toImmutableArrayOfDataItem() as ImmutableArray<DataItem.Video>
+            extractor.initialPage.items.toArrayOfDataItem() as Array<DataItem.Video>
         val nextPage = extractor.initialPage.nextPage
         return OnlinePlaylist(
             extractor = extractor,
@@ -43,17 +41,17 @@ object PlaylistExtractor {
         playlist.nextPage = currentPage.nextPage
 
         playlist.items =
-            buildImmutableArray {
+            buildList {
                 when (playlist) {
                     is OnlinePlaylist -> {
                         addAll(playlist.items)
-                        addAll(currentPage.items.toImmutableArrayOfDataItem() as ImmutableArray<DataItem.Video>)
+                        addAll(currentPage.items.toArrayOfDataItem() as Array<DataItem.Video>)
                     }
 
                     is OfflineFirstPlaylist -> {
                         // todo sort items
                         val newItems =
-                            currentPage.items.toImmutableArrayOfDataItem() as ImmutableArray<DataItem.Video>
+                            currentPage.items.toArrayOfDataItem() as Array<DataItem.Video>
                         addAll(newItems)
                         playlist.items.forEach { previousItem ->
                             if (newItems.none { it.url == previousItem.url }) {
@@ -62,7 +60,7 @@ object PlaylistExtractor {
                         }
                     }
                 }
-            }
+            }.toTypedArray()
 
     }
 }

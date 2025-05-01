@@ -20,6 +20,4 @@ val dataModule = module {
     factoryOf(::ExtractorVideoRepository) { bind<VideoRepository>() }
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
-
-    factoryOf(::RoomSubscriptionsRepository) { bind<SubscriptionsRepository>() }
 }

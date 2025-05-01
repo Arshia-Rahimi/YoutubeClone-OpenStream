@@ -1,9 +1,7 @@
 package com.github.openstream.core.database.relationships
 
-import androidx.compose.runtime.toMutableStateList
 import androidx.room.Embedded
 import androidx.room.Relation
-import androidx.room.util.convertByteToUUID
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.VideoEntity
 import com.github.openstream.core.model.LocalPlaylist
@@ -23,7 +21,8 @@ data class PlaylistWithVideos(
     fun toPlaylistObject(): Playlist =
         when {
             playlist.url == null -> LocalPlaylist(
-                id = playlist.id, items = videos.map { video ->
+                id = playlist.id,
+                items = videos.map { video ->
                     DataItem.Video(
                         url = video.url,
                         name = video.name,
@@ -41,7 +40,8 @@ data class PlaylistWithVideos(
                         channelVerified = video.isChannelVerified,
                         playlistId = playlist.id,
                     )
-                }.toMutableStateList(), metadata = PlaylistMetadata(
+                }.toTypedArray(),
+                metadata = PlaylistMetadata(
                     name = playlist.name,
                     channelUrl = playlist.channelUrl,
                     isChannelVerified = playlist.isChannelVerified,
@@ -49,7 +49,7 @@ data class PlaylistWithVideos(
                     channelName = playlist.channelName,
                 )
             )
-            
+
             else -> OfflineFirstPlaylist(
                 id = playlist.id,
                 items = videos.map { video ->
@@ -70,7 +70,7 @@ data class PlaylistWithVideos(
                         channelVerified = video.isChannelVerified,
                         playlistId = playlist.id,
                     )
-                }.toMutableStateList(),
+                }.toTypedArray(),
                 metadata = PlaylistMetadata(
                     name = playlist.name,
                     channelUrl = playlist.channelUrl,

@@ -21,7 +21,7 @@ coreSplashscreen = "1.0.1"
 newPipeExtractor = "0.24.5"
 desugaring = "2.1.5"
 media3 = "1.6.1"
-pods4k = "0.7.0"
+#pods4k = "0.7.0"
 
 [libraries]
 ## android
@@ -83,7 +83,7 @@ room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 ## pods4k
-pods = { module = "com.danrusu.pods4k:pods4k", version.ref = "pods4k" }
+#pods = { module = "com.danrusu.pods4k:pods4k", version.ref = "pods4k" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

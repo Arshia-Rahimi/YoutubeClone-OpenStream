@@ -7,9 +7,8 @@ import com.github.openstream.core.model.extractordata.StreamType
 
 @Entity("videos")
 data class VideoEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 1,
-    val name: String,
     @PrimaryKey val url: String,
+    val name: String,
     val thumbnail: String?,
     val viewCount: Long,
     val uploadDate: String,
