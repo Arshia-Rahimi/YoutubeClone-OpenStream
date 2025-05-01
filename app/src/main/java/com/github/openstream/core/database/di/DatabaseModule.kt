@@ -21,7 +21,7 @@ val databaseModule = module {
             .also {
                 val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
                 scope.launch {
-                    if (it.playlistDao().index().first().none { it.name == "watch later" }) {
+                    if (it.playlistDao().indexFlow().first().none { it.name == "watch later" }) {
                         it.playlistDao().upsert(
                             PlaylistEntity(
                                 name = "watch later",

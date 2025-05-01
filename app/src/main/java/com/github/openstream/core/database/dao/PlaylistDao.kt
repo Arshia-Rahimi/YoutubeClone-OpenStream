@@ -16,7 +16,10 @@ interface PlaylistDao {
     }
 
     @Query("SELECT * FROM $TABLE_NAME ORDER BY name")
-    fun index(): Flow<List<PlaylistEntity>>
+    fun indexFlow(): Flow<List<PlaylistEntity>>
+
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY name")
+    fun index(): List<PlaylistEntity>
 
     @Insert
     suspend fun insert(vararg playlistEntities: PlaylistEntity): List<Long>

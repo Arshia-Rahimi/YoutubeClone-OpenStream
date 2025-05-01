@@ -10,6 +10,8 @@ import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistE
 sealed interface Playlist {
     var items: ImmutableArray<DataItem.Video>
     val metadata: PlaylistMetadata
+
+    fun toEntity(): PlaylistEntity
 }
 
 sealed interface YoutubePlaylist : Playlist {
@@ -23,7 +25,7 @@ open class LocalPlaylist(
     override var items: ImmutableArray<DataItem.Video>,
     override val metadata: PlaylistMetadata,
 ) : Playlist {
-    fun toEntity(): PlaylistEntity = PlaylistEntity(
+    override fun toEntity(): PlaylistEntity = PlaylistEntity(
         id = id,
         name = metadata.name,
         count = metadata.count,
@@ -39,7 +41,16 @@ class OnlinePlaylist(
     override val metadata: PlaylistMetadata,
     override var extractor: YoutubePlaylistExtractor?,
     override var nextPage: Page?
-) : YoutubePlaylist
+) : YoutubePlaylist {
+    override fun toEntity(): PlaylistEntity = PlaylistEntity(
+        url = url,
+        name = metadata.name,
+        count = metadata.count,
+        channelUrl = metadata.channelUrl,
+        channelName = metadata.channelName,
+        isChannelVerified = metadata.isChannelVerified,
+    )
+}
 
 class OfflineFirstPlaylist(
     override val url: String,
@@ -52,7 +63,17 @@ class OfflineFirstPlaylist(
     id = id,
     items = items,
     metadata = metadata,
-), YoutubePlaylist
+), YoutubePlaylist {
+    override fun toEntity(): PlaylistEntity = PlaylistEntity(
+        url = url,
+        id = id,
+        name = metadata.name,
+        count = metadata.count,
+        channelUrl = metadata.channelUrl,
+        channelName = metadata.channelName,
+        isChannelVerified = metadata.isChannelVerified,
+    )
+}
 
 fun OnlinePlaylist.toOfflineFirstPlaylist(id: Int) = OfflineFirstPlaylist(
     url = url,
