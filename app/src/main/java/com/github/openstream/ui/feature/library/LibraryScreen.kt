@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arshia.openstream.R
-import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import org.koin.androidx.compose.koinViewModel
@@ -104,7 +105,7 @@ fun LibraryScreen(
                 color = Color.White,
             )
             Icon(
-                painter = painterResource(sortType.icon),
+                imageVector = Icons.Default.Menu,
                 contentDescription = stringResource(sortType.string),
                 tint = Color.White,
             )
@@ -116,11 +117,6 @@ fun LibraryScreen(
             playVideo = playVideo,
             savePlaylist = { viewModel.savePlaylist(it) },
             deletePlaylist = { viewModel.deletePlaylist(it) },
-            addToWatchLater = { viewModel },
-            addToPlaylist = {
-                // todo make dialog to add
-            },
-            removeFromWatchLater = {},
         )
     }
 }

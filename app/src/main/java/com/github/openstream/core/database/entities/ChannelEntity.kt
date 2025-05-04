@@ -7,12 +7,12 @@ import com.github.openstream.core.database.OpenStreamEntity
 
 @Entity("channels")
 data class ChannelEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 1,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo("channel_id") val channelId: Long = 0,
     val name: String,
     val url: String? = null,
     val avatar: String? = null,
     @ColumnInfo(name = "subscriber_count") val subscriberCount: Long,
-    val isVerified: Boolean,
+    @ColumnInfo("is_verified") val isVerified: Boolean,
     val banner: String,
     val description: String,
 ): OpenStreamEntity

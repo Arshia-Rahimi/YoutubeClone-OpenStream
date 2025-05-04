@@ -1,5 +1,6 @@
 package com.github.openstream.core.database.entities
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.github.openstream.core.database.OpenStreamEntity
@@ -7,12 +8,12 @@ import com.github.openstream.core.model.extractordata.DataItem
 
 @Entity("playlists")
 data class PlaylistEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val playlistId: Long = 0,
     val name: String,
     val count: Long,
-    val channelName: String? = null,
-    val channelUrl: String? = null,
-    val isChannelVerified: Boolean? = null,
+    @ColumnInfo("channel_name") val channelName: String? = null,
+    @ColumnInfo("channel_url") val channelUrl: String? = null,
+    @ColumnInfo("is_channel_verified") val isChannelVerified: Boolean? = null,
     val thumbnail: String? = null,
     val url: String? = null,
 ) : OpenStreamEntity {
@@ -22,7 +23,7 @@ data class PlaylistEntity(
                 name = name,
                 thumbnail = thumbnail,
                 count = count,
-                id = id,
+                id = playlistId,
             )
             
             else -> DataItem.Playlist.OfflineFirstPlaylist(
@@ -33,7 +34,7 @@ data class PlaylistEntity(
                 channelName = channelName ?: "",
                 count = count,
                 isChannelVerified = isChannelVerified == true,
-                id = id,
+                id = playlistId,
             )
         }
 }

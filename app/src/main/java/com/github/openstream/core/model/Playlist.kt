@@ -19,7 +19,7 @@ open class LocalPlaylist(
     override val metadata: PlaylistMetadata,
 ) : Playlist {
     override fun toEntity(): PlaylistEntity = PlaylistEntity(
-        id = id,
+        playlistId = id,
         name = metadata.name,
         count = metadata.count,
         channelUrl = metadata.channelUrl,
@@ -65,7 +65,7 @@ class OfflineFirstPlaylist(
 ), YoutubePlaylist {
     override fun toEntity(): PlaylistEntity = PlaylistEntity(
         url = url,
-        id = id,
+        playlistId = id,
         name = metadata.name,
         count = metadata.count,
         channelUrl = metadata.channelUrl,

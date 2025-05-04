@@ -29,7 +29,7 @@ val databaseModule = module {
                                 isChannelVerified = false,
                                 count = 0,
                                 channelName = "",
-                                id = 0,
+                                playlistId = 0,
                             )
                         )
                     }

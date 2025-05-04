@@ -56,7 +56,7 @@ class OfflineFirstPlaylistRepository(
         playlistId: Long,
     ): Flow<Resource<Success>> = flow {
         val ids = db.videoDao().insert(*videos.map { it.toEntity() }.toTypedArray())
-        db.playlistDao()
+        db.m2mDao()
             .addToPlaylist(*ids.map { PlaylistVideoCrossRef(playlistId, it) }.toTypedArray())
         emit(Success)
     }.asResult(Dispatchers.IO)
@@ -98,7 +98,7 @@ class OfflineFirstPlaylistRepository(
                 .toTypedArray()
         )
 
-        db.playlistDao().addToPlaylist(
+        db.m2mDao().addToPlaylist(
             *videoIds
                 .map { PlaylistVideoCrossRef(playlistId, it) }
                 .toTypedArray()
@@ -125,7 +125,7 @@ class OfflineFirstPlaylistRepository(
         flow<Playlist> {
             when (playlist) {
                 is DataItem.Playlist.LocalPlaylist -> {
-                    db.playlistDao().getPlaylistWithVideos(playlist.id)?.let {
+                    db.m2mDao().getPlaylistWithVideos(playlist.id)?.let {
                         val correctedCount: Long = it.videos.size.toLong()
                         if (it.playlist.count != correctedCount) {
                             db.playlistDao().upsert(it.playlist.copy(count = correctedCount))
@@ -141,7 +141,7 @@ class OfflineFirstPlaylistRepository(
                 is DataItem.Playlist.OfflineFirstPlaylist -> {
                     coroutineScope {
                         // todo handle error
-                        val localData = db.playlistDao().getPlaylistWithVideos(playlist.id)?.let {
+                        val localData = db.m2mDao().getPlaylistWithVideos(playlist.id)?.let {
                             val correctedCount: Long = it.videos.size.toLong()
                             if (it.playlist.count != correctedCount) {
                                 db.playlistDao()
@@ -178,7 +178,7 @@ class OfflineFirstPlaylistRepository(
                 updatePlaylistDeferred.await()
                 updateVideosDeferred.await()
 
-                db.playlistDao().getPlaylistWithVideos(playlist.id)?.toPlaylistObject().let {
+                db.m2mDao().getPlaylistWithVideos(playlist.id)?.toPlaylistObject().let {
                     emit(it ?: playlist)
                 }
             }

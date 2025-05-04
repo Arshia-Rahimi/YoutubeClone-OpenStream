@@ -1,14 +1,18 @@
 package com.github.openstream.core.database.entities.relationships
 
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
+import com.github.openstream.core.database.entities.PlaylistEntity
+import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.database.entities.VideoEntity
 
 data class VideoWithPlaylists(
     @Embedded val video: VideoEntity,
     @Relation(
-        parentColumn = "id",
+        parentColumn = "videoId",
         entityColumn = "playlistId",
+        associateBy = Junction(PlaylistVideoCrossRef::class),
     )
-    val videos: List<VideoEntity>,
+    val playlists: List<PlaylistEntity>,
 )

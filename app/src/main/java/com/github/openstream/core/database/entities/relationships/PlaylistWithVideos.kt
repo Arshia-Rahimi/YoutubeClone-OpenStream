@@ -1,8 +1,10 @@
 package com.github.openstream.core.database.entities.relationships
 
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
 import com.github.openstream.core.database.entities.PlaylistEntity
+import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.database.entities.VideoEntity
 import com.github.openstream.core.model.LocalPlaylist
 import com.github.openstream.core.model.OfflineFirstPlaylist
@@ -14,14 +16,15 @@ data class PlaylistWithVideos(
     @Embedded val playlist: PlaylistEntity,
     @Relation(
         parentColumn = "playlistId",
-        entityColumn = "id",
+        entityColumn = "videoId",
+        associateBy = Junction(PlaylistVideoCrossRef::class),
     )
     val videos: List<VideoEntity>,
 ) {
     fun toPlaylistObject(): Playlist =
         when {
             playlist.url == null -> LocalPlaylist(
-                id = playlist.id,
+                id = playlist.playlistId,
                 items = videos.map { video ->
                     DataItem.Video(
                         url = video.url,
@@ -38,6 +41,7 @@ data class PlaylistWithVideos(
                         duration = video.duration,
                         channelAvatars = "",
                         channelVerified = video.isChannelVerified,
+                        id = playlist.playlistId,
                     )
                 }.toTypedArray(),
                 metadata = PlaylistMetadata(
@@ -50,7 +54,7 @@ data class PlaylistWithVideos(
             )
 
             else -> OfflineFirstPlaylist(
-                id = playlist.id,
+                id = playlist.playlistId,
                 items = videos.map { video ->
                     DataItem.Video(
                         url = video.url,
@@ -67,6 +71,7 @@ data class PlaylistWithVideos(
                         duration = video.duration,
                         channelAvatars = "",
                         channelVerified = video.isChannelVerified,
+                        id = playlist.playlistId,
                     )
                 }.toTypedArray(),
                 metadata = PlaylistMetadata(
