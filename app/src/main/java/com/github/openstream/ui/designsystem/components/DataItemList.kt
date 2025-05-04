@@ -37,6 +37,8 @@ fun DataItemList(
     toPlaylistScreen: (DataItem.Playlist) -> Unit = {},
     playVideo: (String) -> Unit = {},
     loadNextPage: () -> Unit = {},
+    savePlaylist: (DataItem.Playlist) -> Unit = {},
+    deletePlaylist: (DataItem.Playlist) -> Unit = {},
 ) {
     val lazyColumnState = rememberLazyListState()
     val shouldLoadNextPage by remember {
@@ -82,6 +84,8 @@ fun DataItemList(
                     toChannelScreen = toChannelScreen,
                     toPlaylistScreen = toPlaylistScreen,
                     playVideo = playVideo,
+                    savePlaylist = savePlaylist,
+                    deletePlaylist = deletePlaylist,
                 )
             }
             item {
@@ -100,6 +104,8 @@ fun DataItemList(
     toPlaylistScreen: (DataItem.Playlist) -> Unit = {},
     playVideo: (String) -> Unit = {},
     loadNextPage: () -> Unit = {},
+    savePlaylist: (DataItem.Playlist) -> Unit = {},
+    deletePlaylist: (DataItem.Playlist) -> Unit = {},
 ) {
     val lazyColumnState = rememberLazyListState()
     val shouldLoadNextPage by remember {
@@ -140,6 +146,8 @@ fun DataItemList(
                 toChannelScreen = toChannelScreen,
                 toPlaylistScreen = toPlaylistScreen,
                 playVideo = playVideo,
+                savePlaylist = savePlaylist,
+                deletePlaylist = deletePlaylist,
             )
         }
         item {

@@ -135,14 +135,14 @@ sealed class DataItem {
     
     val key: String
         get() = when (this) {
-            is Playlist -> when(this) {
+            is Playlist -> "playlist-" + when(this) {
                 is Playlist.LocalPlaylist -> id.toString()
                 is Playlist.OnlinePlaylist -> url
-                is Playlist.OfflineFirstPlaylist -> url
+                is Playlist.OfflineFirstPlaylist -> "$url-$id"
             }
-            is Channel -> url
-            is Video -> url
-        } + UUID.randomUUID()
+            is Channel -> "channel$url"
+            is Video -> "video-$url"
+        }
 }
 
 enum class StreamType {

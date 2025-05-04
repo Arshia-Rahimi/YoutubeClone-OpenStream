@@ -12,6 +12,8 @@ interface PlaylistRepository {
     fun createPlaylist(playlistName: String): Flow<Resource<Success>>
 
     fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>>
+    
+    fun deletePlaylist(playlist: Playlist): Flow<Resource<Success>>
 
     fun addToPlaylist(
         videos: List<DataItem.Video>,
@@ -28,6 +30,8 @@ interface PlaylistRepository {
     fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>>
 
     fun savePlaylist(playlist: Playlist): Flow<Resource<Success>>
+    
+    fun savePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>>
 
     fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>>
 }

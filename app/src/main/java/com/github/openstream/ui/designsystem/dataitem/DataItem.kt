@@ -17,7 +17,9 @@ fun DataItem(
     toPlaylistScreen: (DataItem.Playlist) -> Unit,
     playVideo: (String) -> Unit,
     subscribe: (String) -> Unit = {},
-) {
+    savePlaylist: (DataItem.Playlist) -> Unit = {},
+    deletePlaylist: (DataItem.Playlist) -> Unit = {},
+    ) {
     when(item) {
         is DataItem.Video -> Video(
             modifier = modifier,
@@ -33,6 +35,8 @@ fun DataItem(
             toPlaylistScreen = toPlaylistScreen,
             toChannelScreen = toChannelScreen,
             shouldViewChannel = shouldViewChannel,
+            savePlaylist = savePlaylist,
+            deletePlaylist = deletePlaylist,
         )
 
         is DataItem.Channel -> Channel(

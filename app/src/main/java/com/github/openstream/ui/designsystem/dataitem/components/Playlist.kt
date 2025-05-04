@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,8 @@ fun Playlist(
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (DataItem.Playlist) -> Unit,
     shouldViewChannel: Boolean,
+    deletePlaylist: (DataItem.Playlist) -> Unit,
+    savePlaylist: (DataItem.Playlist) -> Unit,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
@@ -160,26 +163,50 @@ fun Playlist(
                     is DataItem.Playlist.OnlinePlaylist -> {
                         if (shouldViewChannel) {
                             DropdownMenuItem(
-                                text = { Text("viewChannel") },
+                                text = { Text(stringResource(R.string.view_channel)) },
                                 onClick = {
                                     isDropDownExpanded = false
                                     toChannelScreen(item.channelUrl)
                                 },
                             )
                         }
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.save_playlist)) },
+                            onClick = {
+                                isDropDownExpanded = false
+                                savePlaylist(item)
+                            }
+                        )
                     }
+                    
                     is DataItem.Playlist.OfflineFirstPlaylist -> {
                         if (shouldViewChannel) {
                             DropdownMenuItem(
-                                text = { Text("viewChannel") },
+                                text = { Text(stringResource(R.string.view_channel)) },
                                 onClick = {
                                     isDropDownExpanded = false
                                     toChannelScreen(item.channelUrl)
                                 },
                             )
                         }
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.delete_playlist)) },
+                            onClick = {
+                                isDropDownExpanded = false
+                                deletePlaylist(item)
+                            }
+                        )
                     }
-                    is DataItem.Playlist.LocalPlaylist -> Unit
+                    
+                    is DataItem.Playlist.LocalPlaylist -> {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.delete_playlist)) },
+                            onClick = {
+                                isDropDownExpanded = false
+                                deletePlaylist(item)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -204,6 +231,8 @@ private fun Preview() {
             toPlaylistScreen = {},
             shouldViewChannel = true,
             modifier = Modifier,
+            savePlaylist = {},
+            deletePlaylist = {},
         )
     }
 }
