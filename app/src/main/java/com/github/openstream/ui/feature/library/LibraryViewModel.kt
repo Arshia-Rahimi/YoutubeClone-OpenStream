@@ -4,30 +4,53 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.Resource
+import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.model.Playlist
+import com.github.openstream.core.data.PreferencesRepository
+import com.github.openstream.core.data.imp.PDPreferencesRepository
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.ui.feature.library.components.SortType
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.schabi.newpipe.extractor.timeago.patterns.vi
 
 class LibraryViewModel(
     private val playlistRepo: PlaylistRepository,
+    private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
 
+    val sortType = preferencesRepo.librarySortType
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SortType.CREATED_AT_ASC)
+    
     val playlists = mutableStateListOf<DataItem>()
     private val playlistFlow = playlistRepo.localPlaylists
-        .onEach { newPlaylists ->
+        .combine(sortType) { newPlaylists, sortType ->
+            val sortedPlaylists = when(sortType) {
+                SortType.CREATED_AT_ASC -> newPlaylists
+                SortType.CREATED_AT_DESC -> newPlaylists.reversed()
+                SortType.NAME_ASC -> newPlaylists.sortedBy { (it as DataItem.Playlist).name }
+                SortType.NAME_DESC -> newPlaylists.sortedByDescending { (it as DataItem.Playlist).name }
+                SortType.SIZE_ASC -> newPlaylists.sortedBy { (it as DataItem.Playlist).count }
+                SortType.SIZE_DESC -> newPlaylists.sortedByDescending { (it as DataItem.Playlist).count }
+            }
+            
             playlists.clear()
-            playlists.addAll(newPlaylists)
+            playlists.addAll(sortedPlaylists)
         }.launchIn(viewModelScope)
     
     private val playlistActionChannel = Channel<Pair<String, String>>()
     val playlistActionErrorEvent = playlistActionChannel.receiveAsFlow()
+    
+    fun toggleSortType() {
+        viewModelScope.launch {
+            preferencesRepo.setLibrarySortType(sortType.value.next())
+        }
+    }
 
     fun createPlaylist(title: String) {
         viewModelScope.launch {
@@ -71,4 +94,5 @@ class LibraryViewModel(
                 }
         }
     }
+    
 }

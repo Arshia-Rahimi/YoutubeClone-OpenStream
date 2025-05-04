@@ -1,9 +1,11 @@
 package com.github.openstream.ui.feature.library
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,12 +36,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.room.util.TableInfo
 import com.arshia.openstream.R
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
+import io.ktor.util.caseInsensitiveMap
 import org.koin.androidx.compose.koinViewModel
 import org.schabi.newpipe.extractor.timeago.patterns.vi
+import java.nio.file.WatchEvent
+import kotlin.contracts.contract
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +62,7 @@ fun LibraryScreen(
     var newPlaylistTitle by remember { mutableStateOf("") }
     var showCreatePlaylistDialog by remember { mutableStateOf(false) }
     var playlistCreationError by remember { mutableStateOf<Pair<String, String>?>(null) }
+    val sortType by viewModel.sortType.collectAsStateWithLifecycle()
     
     ObserveForEvents(viewModel.playlistActionErrorEvent) {
         playlistCreationError = it
@@ -95,14 +105,37 @@ fun LibraryScreen(
         )
     }
 
-    DataItemList(
-        items = playlists,
-        toChannelScreen = toChannelScreen,
-        toPlaylistScreen = toPlaylistScreen,
-        playVideo = playVideo,
-        savePlaylist = { viewModel.savePlaylist(it) },
-        deletePlaylist = { viewModel.deletePlaylist(it) },
-    )
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.End,
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .padding(end = 16.dp)
+                .clickable { viewModel.toggleSortType() },
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = stringResource(sortType.string),
+                fontSize = 12.sp,
+                color = Color.White,
+            )
+            Icon(
+                painter = painterResource(sortType.icon),
+                contentDescription = stringResource(sortType.string),
+                tint = Color.White,
+            )
+        }
+        DataItemList(
+            items = playlists,
+            toChannelScreen = toChannelScreen,
+            toPlaylistScreen = toPlaylistScreen,
+            playVideo = playVideo,
+            savePlaylist = { viewModel.savePlaylist(it) },
+            deletePlaylist = { viewModel.deletePlaylist(it) },
+        )
+    }
 }
 
 @Preview

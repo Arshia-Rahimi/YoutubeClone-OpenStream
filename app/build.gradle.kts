@@ -92,8 +92,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     // navigation compose
     implementation(libs.androidx.navigation.compose)
-    // protoDataStore
-    implementation(libs.androidx.datastore)
+    // dataStore
+    implementation(libs.datastore)
     //ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)

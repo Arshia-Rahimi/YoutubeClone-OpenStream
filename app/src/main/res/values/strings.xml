@@ -11,4 +11,10 @@
     <string name="save_playlist">save playlist</string>
     <string name="delete_playlist">delete playlist</string>
     <string name="view_channel">view channel</string>
+    <string name="sort_by_created_at_asc">oldest</string>
+    <string name="sort_by_created_at_desc">newest</string>
+    <string name="sort_by_name_asc">alphabetical</string>
+    <string name="sort_by_name_desc">reverse alphabetical</string>
+    <string name="sort_by_size_asc">largest</string>
+    <string name="sort_by_size_desc">smallest</string>
 </resources>

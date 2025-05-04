@@ -9,8 +9,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
-import com.github.openstream.core.datastore.proto.playerconfig.PlayerConfigDataStore
-import com.github.openstream.core.datastore.proto.playerconfig.PlayerConfigDataStoreModel
 import com.github.openstream.core.shared.exceptions.PlayerNotInitializedException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,11 +24,11 @@ import kotlinx.coroutines.flow.transform
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
     private val context: Context,
-    configDataStore: PlayerConfigDataStore,
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val config = configDataStore.data
-        .stateIn(scope, SharingStarted.Eagerly, PlayerConfigDataStoreModel())
+    // todo
+//    private val config = configDataStore.data
+//        .stateIn(scope, SharingStarted.Eagerly, PlayerConfigDataStoreModel())
 
     private var _player: ExoPlayer? = null
     val player: ExoPlayer
@@ -77,7 +75,7 @@ class OpenStreamMediaPlayer(
     }
 
     fun init() {
-        val seekIncrement = config.value.seekIncrement
+        val seekIncrement = 5000L
         _player = ExoPlayer.Builder(context)
             .setSeekParameters(SeekParameters(seekIncrement, seekIncrement))
             .build()
