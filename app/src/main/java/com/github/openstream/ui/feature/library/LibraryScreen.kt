@@ -118,7 +118,7 @@ fun LibraryScreen(
         ) {
             Text(
                 text = stringResource(sortType.string),
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 color = Color.White,
             )
             Icon(

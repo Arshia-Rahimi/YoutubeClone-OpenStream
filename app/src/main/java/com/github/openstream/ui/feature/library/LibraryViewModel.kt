@@ -23,20 +23,20 @@ class LibraryViewModel(
     private val playlistRepo: PlaylistRepository,
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
-
+    
     val sortType = preferencesRepo.librarySortType
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SortType.CREATED_AT_ASC)
     
     val playlists = mutableStateListOf<DataItem>()
     private val playlistFlow = playlistRepo.localPlaylists
         .combine(sortType) { newPlaylists, sortType ->
-            val sortedPlaylists = when(sortType) {
+            val sortedPlaylists = when (sortType) {
                 SortType.CREATED_AT_ASC -> newPlaylists
                 SortType.CREATED_AT_DESC -> newPlaylists.reversed()
-                SortType.NAME_ASC -> newPlaylists.sortedBy { (it as DataItem.Playlist).name }
-                SortType.NAME_DESC -> newPlaylists.sortedByDescending { (it as DataItem.Playlist).name }
-                SortType.SIZE_ASC -> newPlaylists.sortedBy { (it as DataItem.Playlist).count }
-                SortType.SIZE_DESC -> newPlaylists.sortedByDescending { (it as DataItem.Playlist).count }
+                SortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
+                SortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
+                SortType.SIZE_ASC -> newPlaylists.sortedBy { it.count }
+                SortType.SIZE_DESC -> newPlaylists.sortedByDescending { it.count }
             }
             
             playlists.clear()
@@ -51,15 +51,17 @@ class LibraryViewModel(
             preferencesRepo.setLibrarySortType(sortType.value.next())
         }
     }
-
+    
     fun createPlaylist(title: String) {
         viewModelScope.launch {
             playlistRepo.createPlaylist(title).collect {
-                when(it) {
+                when (it) {
                     is Resource.Error -> {
                         delay(1000L)
-                        playlistActionChannel.send("failed to create playlist: $title" to it.message.toString())
+                        playlistActionChannel
+                            .send("failed to create playlist: $title" to it.message.toString())
                     }
+                    
                     else -> Unit
                 }
             }
@@ -69,11 +71,13 @@ class LibraryViewModel(
     fun deletePlaylist(playlist: DataItem.Playlist) {
         viewModelScope.launch {
             playlistRepo.deletePlaylist(playlist).collect {
-                when(it) {
+                when (it) {
                     is Resource.Error -> {
                         delay(1000L)
-                        playlistActionChannel.send("failed to delete playlist: ${playlist.name}" to it.message.toString())
+                        playlistActionChannel
+                            .send("failed to delete playlist: ${playlist.name}" to it.message.toString())
                     }
+                    
                     else -> Unit
                 }
             }
@@ -84,11 +88,13 @@ class LibraryViewModel(
         viewModelScope.launch {
             playlistRepo.savePlaylist(playlist)
                 .collect {
-                    when(it) {
+                    when (it) {
                         is Resource.Error -> {
                             delay(1000L)
-                            playlistActionChannel.send("failed to save playlist: ${playlist.name}" to it.message.toString())
+                            playlistActionChannel
+                                .send("failed to save playlist: ${playlist.name}" to it.message.toString())
                         }
+                        
                         else -> Unit
                     }
                 }
