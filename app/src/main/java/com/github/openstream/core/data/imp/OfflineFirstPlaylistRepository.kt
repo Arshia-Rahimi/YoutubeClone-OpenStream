@@ -6,6 +6,7 @@ import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
+import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.extractor.PlaylistExtractor
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
@@ -14,6 +15,7 @@ import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.toOfflineFirstPlaylist
 import com.github.openstream.core.shared.exceptions.LocalPlaylistNotFoundException
+import io.ktor.util.reflect.instanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -52,22 +54,30 @@ class OfflineFirstPlaylistRepository(
     
     override fun addToPlaylist(
         videos: List<DataItem.Video>,
-        playlistId: Int,
+        playlistId: Long,
     ): Flow<Resource<Success>> = flow {
-        db.videoDao().upsert(*videos.map { it.toEntity() }.toTypedArray())
-        db.playlistDao().incrementPlaylistCount(playlistId)
+        val ids = db.videoDao().insert(*videos.map { it.toEntity() }.toTypedArray())
+        db.playlistDao().addToPlaylist(*ids.map { PlaylistVideoCrossRef(playlistId, it) }.toTypedArray())
         emit(Success)
     }.asResult(Dispatchers.IO)
 
     override fun removeFromPlaylist(
         videos: List<DataItem.Video>,
-        playlistId: Int,
+        playlistId: Long,
     ): Flow<Resource<Success>> = flow {
         db.videoDao().delete(*videos.map { it.toEntity() }.toTypedArray())
-        db.playlistDao().decrementPlaylistCount(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
-
+    
+    override fun addToWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>> =
+        flow {
+        
+        }.asResult(Dispatchers.IO)
+    
+    override fun removeFromWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>> {
+        TODO("Not yet implemented")
+    }
+    
     override fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>> =
         flow {
             if (currentPlaylist is YoutubePlaylist) PlaylistExtractor.fetchNextPage(currentPlaylist)
@@ -87,7 +97,7 @@ class OfflineFirstPlaylistRepository(
         val playlistId = db.playlistDao().insert(playlist.toEntity()).first().toInt()
         db.videoDao().upsert(
             *playlist.items
-                .map { it.copy(playlistId = playlistId).toEntity() }
+                .map { it.toEntity() }
                 .toTypedArray()
         )
 

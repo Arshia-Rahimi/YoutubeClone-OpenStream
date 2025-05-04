@@ -14,7 +14,7 @@ sealed interface Playlist {
 }
 
 open class LocalPlaylist(
-    val id: Int,
+    val id: Long,
     override var items: Array<DataItem.Video>,
     override val metadata: PlaylistMetadata,
 ) : Playlist {
@@ -55,7 +55,7 @@ class OfflineFirstPlaylist(
     override val url: String,
     override var nextPage: Page? = null,
     override var extractor: YoutubePlaylistExtractor? = null,
-    id: Int,
+    id: Long,
     items: Array<DataItem.Video>,
     metadata: PlaylistMetadata,
 ) : LocalPlaylist(
@@ -74,7 +74,7 @@ class OfflineFirstPlaylist(
     )
 }
 
-fun OnlinePlaylist.toOfflineFirstPlaylist(id: Int) = OfflineFirstPlaylist(
+fun OnlinePlaylist.toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylist(
     url = url,
     items = items,
     metadata = metadata,

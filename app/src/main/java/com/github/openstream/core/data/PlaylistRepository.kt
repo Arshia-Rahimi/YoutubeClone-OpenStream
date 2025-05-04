@@ -17,14 +17,18 @@ interface PlaylistRepository {
 
     fun addToPlaylist(
         videos: List<DataItem.Video>,
-        playlistId: Int
+        playlistId: Long
     ): Flow<Resource<Success>>
 
     fun removeFromPlaylist(
         videos: List<DataItem.Video>,
-        playlistId: Int
+        playlistId: Long
     ): Flow<Resource<Success>>
-
+    
+    fun addToWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>>
+    
+    fun removeFromWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>>
+    
     fun getPlaylist(playlist: DataItem.Playlist): Flow<Resource<Playlist>>
 
     fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>>

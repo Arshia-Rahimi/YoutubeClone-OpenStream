@@ -7,7 +7,7 @@ import com.github.openstream.core.database.OpenStreamEntity
 
 @Entity("channels")
 data class ChannelEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 1,
+    @PrimaryKey(autoGenerate = true) val id: Long = 1,
     val name: String,
     val url: String? = null,
     val avatar: String? = null,

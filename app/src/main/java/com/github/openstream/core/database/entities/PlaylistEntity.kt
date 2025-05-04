@@ -7,7 +7,7 @@ import com.github.openstream.core.model.extractordata.DataItem
 
 @Entity("playlists")
 data class PlaylistEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val count: Long,
     val channelName: String? = null,

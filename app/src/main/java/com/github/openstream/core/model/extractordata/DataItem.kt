@@ -24,12 +24,10 @@ sealed class DataItem {
         val channelVerified: Boolean,
         val isShort: Boolean,
         val channelAvatars: String?,
-        val playlistId: Int? = null,
-        val channelId: Int? = null,
+        val id: Long,
     ) : DataItem(), Entityable {
         override fun toEntity(): VideoEntity {
             return VideoEntity(
-                playlistId = playlistId,
                 name = name,
                 url = url,
                 thumbnail = thumbnail,
@@ -40,7 +38,7 @@ sealed class DataItem {
                 channelUrl = channelUrl,
                 channelName = channelName,
                 isChannelVerified = channelVerified,
-                channelId = channelId,
+                id = id,
             )
         }
     }
@@ -57,7 +55,7 @@ sealed class DataItem {
             override val name: String,
             override val thumbnail: String?,
             override val count: Long,
-            val id: Int,
+            val id: Long,
         ) : Playlist()
 
         @Serializable
@@ -80,7 +78,7 @@ sealed class DataItem {
             val channelUrl: String,
             val isChannelVerified: Boolean,
             val url: String,
-            val id: Int,
+            val id: Long,
         ) : Playlist()
         
         override fun toEntity(): PlaylistEntity = when (this) {

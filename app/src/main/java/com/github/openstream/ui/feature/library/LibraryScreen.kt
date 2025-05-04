@@ -22,7 +22,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,16 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.room.util.TableInfo
 import com.arshia.openstream.R
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
-import io.ktor.util.caseInsensitiveMap
 import org.koin.androidx.compose.koinViewModel
-import org.schabi.newpipe.extractor.timeago.patterns.vi
-import java.nio.file.WatchEvent
-import kotlin.contracts.contract
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,12 +55,7 @@ fun LibraryScreen(
     val playlists = viewModel.playlists
     var newPlaylistTitle by remember { mutableStateOf("") }
     var showCreatePlaylistDialog by remember { mutableStateOf(false) }
-    var playlistCreationError by remember { mutableStateOf<Pair<String, String>?>(null) }
     val sortType by viewModel.sortType.collectAsStateWithLifecycle()
-    
-    ObserveForEvents(viewModel.playlistActionErrorEvent) {
-        playlistCreationError = it
-    }
 
     topBar {
         TopAppBar(
@@ -98,13 +87,6 @@ fun LibraryScreen(
         )
     }
     
-    playlistCreationError?.let {
-        PlaylistActionErrorDialog(
-            dismiss = { playlistCreationError = null },
-            error = it,
-        )
-    }
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.End,
@@ -134,6 +116,11 @@ fun LibraryScreen(
             playVideo = playVideo,
             savePlaylist = { viewModel.savePlaylist(it) },
             deletePlaylist = { viewModel.deletePlaylist(it) },
+            addToWatchLater = { viewModel },
+            addToPlaylist = {
+                // todo make dialog to add
+            },
+            removeFromWatchLater = {},
         )
     }
 }
@@ -195,35 +182,6 @@ private fun CreatePlaylistDialog(
                     },
                 ) {
                     Text(stringResource(R.string.create))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun PlaylistActionErrorDialog(
-    error: Pair<String, String>,
-    dismiss: () -> Unit,
-) {
-    Dialog(
-        dismiss = dismiss,
-    ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceAround,
-        ) {
-            Text(
-                text = error.first,
-            )
-            // todo show error message
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                Button(
-                    onClick = dismiss,
-                ) {
-                    Text(stringResource(R.string.dismiss))
                 }
             }
         }

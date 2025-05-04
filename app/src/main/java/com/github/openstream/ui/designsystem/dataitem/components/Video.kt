@@ -44,9 +44,12 @@ import com.github.openstream.core.model.extractordata.StreamType
 fun Video(
     modifier: Modifier,
     item: DataItem.Video,
+    shouldViewChannel: Boolean,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
-    shouldViewChannel: Boolean,
+    addToPlaylist: (DataItem.Video) -> Unit = {},
+    saveToWatchLater: ((DataItem.Video) -> Unit)? = null,
+    removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
 ) {
     val timeString = "${item.viewCount.toShortForm()} views • " + when (item.streamType) {
         StreamType.NORMAL -> ""
@@ -58,7 +61,7 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { playVideo(item.url ?: "") }
+            .clickable { playVideo(item.url) }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
@@ -151,6 +154,31 @@ fun Video(
                         },
                     )
                 }
+                saveToWatchLater?.let {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.add_to_watch_later)) },
+                        onClick = {
+                            isDropDownExpanded = false
+                            it.invoke(item)
+                        },
+                    )
+                }
+                removeFromWatchLater?.let {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.remove_from_watch_later)) },
+                        onClick = {
+                            isDropDownExpanded = false
+                            it.invoke(item)
+                        },
+                    )
+                }
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.add_to_playlist)) },
+                    onClick = {
+                        isDropDownExpanded = false
+                        addToPlaylist(item)
+                    },
+                )
             }
         }
     }

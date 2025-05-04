@@ -1,4 +1,4 @@
-package com.github.openstream.core.database.relationships
+package com.github.openstream.core.database.entities.relationships
 
 import androidx.room.Embedded
 import androidx.room.Relation
@@ -13,8 +13,8 @@ import com.github.openstream.core.model.extractordata.PlaylistMetadata
 data class PlaylistWithVideos(
     @Embedded val playlist: PlaylistEntity,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "playlistId",
+        parentColumn = "playlistId",
+        entityColumn = "id",
     )
     val videos: List<VideoEntity>,
 ) {
@@ -38,7 +38,6 @@ data class PlaylistWithVideos(
                         duration = video.duration,
                         channelAvatars = "",
                         channelVerified = video.isChannelVerified,
-                        playlistId = playlist.id,
                     )
                 }.toTypedArray(),
                 metadata = PlaylistMetadata(
@@ -68,7 +67,6 @@ data class PlaylistWithVideos(
                         duration = video.duration,
                         channelAvatars = "",
                         channelVerified = video.isChannelVerified,
-                        playlistId = playlist.id,
                     )
                 }.toTypedArray(),
                 metadata = PlaylistMetadata(

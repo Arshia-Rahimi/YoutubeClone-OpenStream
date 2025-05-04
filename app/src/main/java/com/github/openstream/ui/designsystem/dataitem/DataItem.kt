@@ -1,6 +1,5 @@
 package com.github.openstream.ui.designsystem.dataitem
 
-import android.provider.ContactsContract
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.github.openstream.core.model.extractordata.DataItem
@@ -19,7 +18,10 @@ fun DataItem(
     subscribe: (String) -> Unit = {},
     savePlaylist: (DataItem.Playlist) -> Unit = {},
     deletePlaylist: (DataItem.Playlist) -> Unit = {},
-    ) {
+    addToPlaylist: (DataItem.Video) -> Unit = {},
+    addToWatchLater: ((DataItem.Video) -> Unit)? = null,
+    removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
+) {
     when(item) {
         is DataItem.Video -> Video(
             modifier = modifier,
@@ -27,6 +29,9 @@ fun DataItem(
             toChannelScreen = toChannelScreen,
             playVideo = playVideo,
             shouldViewChannel = shouldViewChannel,
+            addToPlaylist = addToPlaylist,
+            saveToWatchLater = addToWatchLater,
+            removeFromWatchLater = removeFromWatchLater,
         )
 
         is DataItem.Playlist -> Playlist(

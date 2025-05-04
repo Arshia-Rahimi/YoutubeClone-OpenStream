@@ -3,6 +3,10 @@ package com.github.openstream.ui.feature.library
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.util.Logger
+import com.github.openstream.core.common.compose.SnackBarAction
+import com.github.openstream.core.common.compose.SnackBarController
+import com.github.openstream.core.common.compose.SnackBarEvent
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.PlaylistRepository
@@ -43,9 +47,6 @@ class LibraryViewModel(
             playlists.addAll(sortedPlaylists)
         }.launchIn(viewModelScope)
     
-    private val playlistActionChannel = Channel<Pair<String, String>>()
-    val playlistActionErrorEvent = playlistActionChannel.receiveAsFlow()
-    
     fun toggleSortType() {
         viewModelScope.launch {
             preferencesRepo.setLibrarySortType(sortType.value.next())
@@ -56,12 +57,7 @@ class LibraryViewModel(
         viewModelScope.launch {
             playlistRepo.createPlaylist(title).collect {
                 when (it) {
-                    is Resource.Error -> {
-                        delay(1000L)
-                        playlistActionChannel
-                            .send("failed to create playlist: $title" to it.message.toString())
-                    }
-                    
+                    is Resource.Error -> SnackBarController.sendEvent("failed to create playlist: $title")
                     else -> Unit
                 }
             }
@@ -72,12 +68,8 @@ class LibraryViewModel(
         viewModelScope.launch {
             playlistRepo.deletePlaylist(playlist).collect {
                 when (it) {
-                    is Resource.Error -> {
-                        delay(1000L)
-                        playlistActionChannel
-                            .send("failed to delete playlist: ${playlist.name}" to it.message.toString())
-                    }
-                    
+                    // todo add log
+                    is Resource.Error -> SnackBarController.sendEvent("failed to delete playlist: ${playlist.name}")
                     else -> Unit
                 }
             }
@@ -89,16 +81,10 @@ class LibraryViewModel(
             playlistRepo.savePlaylist(playlist)
                 .collect {
                     when (it) {
-                        is Resource.Error -> {
-                            delay(1000L)
-                            playlistActionChannel
-                                .send("failed to save playlist: ${playlist.name}" to it.message.toString())
-                        }
-                        
+                        is Resource.Error -> SnackBarController.sendEvent("failed to save playlist: ${playlist.name}")
                         else -> Unit
                     }
                 }
         }
     }
-    
 }

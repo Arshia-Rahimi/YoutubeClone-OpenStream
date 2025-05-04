@@ -17,4 +17,7 @@
     <string name="sort_by_name_desc">z-a</string>
     <string name="sort_by_size_asc">largest</string>
     <string name="sort_by_size_desc">smallest</string>
+    <string name="add_to_watch_later">add to watch later</string>
+    <string name="remove_from_watch_later">remove from watch later</string>
+    <string name="add_to_playlist">add to playlist</string>
 </resources>

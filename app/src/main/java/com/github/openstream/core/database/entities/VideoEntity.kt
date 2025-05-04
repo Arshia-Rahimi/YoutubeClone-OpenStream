@@ -7,13 +7,12 @@ import com.github.openstream.core.model.extractordata.StreamType
 
 @Entity("videos")
 data class VideoEntity(
-    @PrimaryKey val url: String,
+    val id: Long,
+    val url: String,
     val name: String,
     val thumbnail: String?,
     val viewCount: Long,
     val uploadDate: String,
-    val playlistId: Int?,
-    val channelId: Int?,
     val streamType: StreamType,
     val duration: Long,
     val channelName: String,
