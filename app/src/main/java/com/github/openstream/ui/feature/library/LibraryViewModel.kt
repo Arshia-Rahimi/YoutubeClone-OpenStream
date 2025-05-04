@@ -22,10 +22,8 @@ class LibraryViewModel(
     val playlists = mutableStateListOf<DataItem>()
     private val playlistFlow = playlistRepo.localPlaylists
         .onEach { newPlaylists ->
-            // todo sort
-            println(newPlaylists.map { it.key })
-            val currentKeys = playlists.map { it.key }
-            playlists.addAll(newPlaylists.filter { it.key !in currentKeys })
+            playlists.clear()
+            playlists.addAll(newPlaylists)
         }.launchIn(viewModelScope)
     
     private val playlistActionChannel = Channel<Pair<String, String>>()

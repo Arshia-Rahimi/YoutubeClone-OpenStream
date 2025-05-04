@@ -29,7 +29,7 @@ class OfflineFirstPlaylistRepository(
         .map { it.map { playlist -> playlist.toDataItem() } }
 
     override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
-        db.playlistDao().upsert(PlaylistEntity(name = playlistName, count = 0L))
+        db.playlistDao().insert(PlaylistEntity(name = playlistName, count = 0L))
         emit(Success)
     }.asResult(Dispatchers.IO)
 

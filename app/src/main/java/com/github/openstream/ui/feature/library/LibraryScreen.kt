@@ -178,11 +178,11 @@ fun PlaylistActionErrorDialog(
     ) {
         Column(
             verticalArrangement = Arrangement.SpaceAround,
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = error.first,
             )
+            // todo show error message
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,

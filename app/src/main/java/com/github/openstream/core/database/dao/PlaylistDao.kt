@@ -15,10 +15,10 @@ interface PlaylistDao {
         const val TABLE_NAME = "playlists"
     }
 
-    @Query("SELECT * FROM $TABLE_NAME ORDER BY name")
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY id")
     fun indexFlow(): Flow<List<PlaylistEntity>>
 
-    @Query("SELECT * FROM $TABLE_NAME ORDER BY name")
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY id")
     fun index(): List<PlaylistEntity>
 
     @Insert
