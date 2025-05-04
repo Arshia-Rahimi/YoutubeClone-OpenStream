@@ -7,8 +7,8 @@ import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
-    val localPlaylists: Flow<List<DataItem.Playlist>>
-
+    val playlists: Flow<List<DataItem.Playlist>>
+    
     fun createPlaylist(playlistName: String): Flow<Resource<Success>>
 
     fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>>

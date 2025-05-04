@@ -33,7 +33,6 @@ fun SearchScreen(
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val trigger: (SearchAction) -> Unit = { viewModel.onAction(it) }
     val searchQuery by viewModel.searchQuery
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
@@ -47,7 +46,7 @@ fun SearchScreen(
             setSearchQuery = { viewModel.searchQuery.value = it },
             isSearchFieldFocused = isSearchFieldFocused,
             searchFieldInteractionSource = searchFieldInteractionSource,
-            search = { trigger(SearchAction.OnSearch) },
+            search = { viewModel.search() },
             focusRequester = focusRequester,
         )
     }
@@ -76,7 +75,8 @@ fun SearchScreen(
                 toPlaylistScreen = toPlaylistScreen,
                 toChannelScreen = toChannelScreen,
                 playVideo = playVideo,
-                loadNextPage = { trigger(SearchAction.OnNextPage) },
+                loadNextPage = { viewModel.getNextPage() },
+                addToPlaylist = {},
             )
         }
     }

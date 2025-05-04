@@ -8,6 +8,7 @@ import com.github.openstream.ui.feature.subscriptions.SubscriptionsViewModel
 import com.github.openstream.ui.global.navigation.NavigationViewModel
 import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.reusable.channel.ChannelViewModel
+import com.github.openstream.ui.global.reusable.dialogs.addtoplaylist.AddToPlaylistViewModel
 import com.github.openstream.ui.global.reusable.playlist.PlaylistViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -22,5 +23,6 @@ val viewModelModule = module {
     viewModelOf(::ChannelViewModel)
     viewModelOf(::PlaylistViewModel)
     viewModelOf(::NavigationViewModel)
+    viewModelOf(::AddToPlaylistViewModel)
     singleOf(::PlayerViewModel)
 }

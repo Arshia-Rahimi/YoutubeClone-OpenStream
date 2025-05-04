@@ -26,7 +26,7 @@ class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
 ) : PlaylistRepository {
 
-    override val localPlaylists = db.playlistDao().indexFlow()
+    override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
 
     override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {

@@ -11,7 +11,7 @@ import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
 import com.github.openstream.ui.global.reusable.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parameterSetOf
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun PlaylistScreen(
@@ -22,7 +22,7 @@ fun PlaylistScreen(
     toChannelScreen: (String) -> Unit,
 ) {
     topBar {}
-    val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parameterSetOf(playlist) })
+    val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parametersOf(playlist) })
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 

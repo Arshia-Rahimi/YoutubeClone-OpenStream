@@ -29,7 +29,7 @@ class LibraryViewModel(
         )
     val playlists = mutableStateListOf<DataItem>()
         .apply {
-            playlistRepo.localPlaylists
+            playlistRepo.playlists
                 .combine(sortType) { newPlaylists, sortType ->
                     val sortedPlaylists = when (sortType) {
                         SortType.CREATED_AT_ASC -> newPlaylists
@@ -56,6 +56,8 @@ class LibraryViewModel(
                 when (it) {
                     is Resource.Error -> SnackBarController
                         .sendEvent("failed to create playlist: $title")
+                    is Resource.Success -> SnackBarController
+                        .sendEvent("created playlist: $title")
                     else -> Unit
                 }
             }
@@ -69,6 +71,8 @@ class LibraryViewModel(
                     // todo add log
                     is Resource.Error -> SnackBarController
                         .sendEvent("failed to delete playlist: ${playlist.name}")
+                    is Resource.Success -> SnackBarController
+                        .sendEvent("deleted playlist: ${playlist.name}")
                     else -> Unit
                 }
             }
@@ -82,6 +86,8 @@ class LibraryViewModel(
                     when (it) {
                         is Resource.Error -> SnackBarController
                             .sendEvent("failed to save playlist: ${playlist.name}")
+                        is Resource.Success -> SnackBarController
+                            .sendEvent("saved playlist: ${playlist.name}")
                         else -> Unit
                     }
                 }

@@ -8,6 +8,7 @@
     <string name="cd_plus_icon">create a new playlist</string>
     <string name="dismiss">dismiss</string>
     <string name="create">create</string>
+    <string name="done">done</string>
     <string name="save_playlist">save playlist</string>
     <string name="delete_playlist">delete playlist</string>
     <string name="view_channel">view channel</string>
@@ -20,4 +21,6 @@
     <string name="add_to_watch_later">add to watch later</string>
     <string name="remove_from_watch_later">remove from watch later</string>
     <string name="add_to_playlist">add to playlist</string>
+    <string name="added_to_watch_later">added to watch later</string>
+    <string name="added_to_playlist">added to playlist</string>
 </resources>
