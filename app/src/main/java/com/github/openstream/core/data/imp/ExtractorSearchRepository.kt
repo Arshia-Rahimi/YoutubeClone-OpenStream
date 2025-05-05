@@ -31,6 +31,7 @@ class ExtractorSearchRepository(
                     when (item) {
                         is DataItem.Playlist -> {
                             // todo
+                            firstPage += item
                         }
                         
                         is DataItem.Video -> {
@@ -68,6 +69,7 @@ class ExtractorSearchRepository(
                         when (item) {
                             is DataItem.Playlist -> {
                                 // todo
+                                nextPage += item
                             }
                             
                             is DataItem.Video -> {
