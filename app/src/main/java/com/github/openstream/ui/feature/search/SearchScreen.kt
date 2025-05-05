@@ -21,6 +21,7 @@ import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.feature.search.components.SearchField
 import org.koin.androidx.compose.koinViewModel
+import org.schabi.newpipe.extractor.timeago.patterns.vi
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
@@ -38,6 +39,7 @@ fun SearchScreen(
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+    val items = viewModel.items
 
     topBar {
         SearchField(
@@ -71,7 +73,7 @@ fun SearchScreen(
             )
 
             is SearchViewModel.UiState.Success -> DataItemList(
-                items = (uiState as SearchViewModel.UiState.Success).searchResult.items,
+                items = items,
                 toPlaylistScreen = toPlaylistScreen,
                 toChannelScreen = toChannelScreen,
                 playVideo = playVideo,

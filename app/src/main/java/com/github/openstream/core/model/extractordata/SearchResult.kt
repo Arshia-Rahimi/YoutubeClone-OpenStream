@@ -1,6 +1,5 @@
 package com.github.openstream.core.model.extractordata
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 

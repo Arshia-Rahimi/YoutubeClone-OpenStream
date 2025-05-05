@@ -1,5 +1,6 @@
 package com.github.openstream.ui.feature.search
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,24 +20,25 @@ class SearchViewModel(
     private val searchRepo: SearchRepository,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-
+    
     companion object {
         val searchFieldFocusEvent = Channel<Unit>()
         val scrollToTopEvent = Channel<Unit>()
     }
-
+    
     sealed interface UiState {
         data object Empty : UiState
         data object Loading : UiState
         data class Error(val message: String?) : UiState
         data class Success(val searchResult: SearchResult) : UiState
     }
-
+    
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Empty)
     val uiState = _uiState.asStateFlow()
-
+    val items = mutableStateListOf<DataItem>()
+    
     var searchQuery = mutableStateOf("")
-
+    
     fun search() {
         viewModelScope.launch {
             searchRepo.search(searchQuery.value)
@@ -44,23 +46,30 @@ class SearchViewModel(
                     _uiState.value = when (it) {
                         is Resource.Loading -> UiState.Loading
                         is Resource.Error -> UiState.Error(it.message)
-                        is Resource.Success -> UiState.Success(it.data)
+                        is Resource.Success -> {
+                            items.clear()
+                            items.addAll(it.data.items)
+                            UiState.Success(it.data)
+                        }
                     }
                 }
         }
     }
-
+    
     fun getNextPage() {
         viewModelScope.launch {
             if (_uiState.value !is UiState.Success) return@launch
             (_uiState.value as UiState.Success).searchResult.let {
                 searchRepo.getNextPage(it).collect {
-                    // todo
+                    when (it) {
+                        is Resource.Success -> items.addAll(it.data)
+                        else -> {}
+                    }
                 }
             }
         }
     }
-
+    
     fun addToWatchLater(video: DataItem.Video) {
         viewModelScope.launch {
             playlistRepo.addToWatchLater(listOf(video))
@@ -68,7 +77,7 @@ class SearchViewModel(
                     when (it) {
                         is Resource.Success -> SnackBarController
                             .sendEvent(R.string.added_to_watch_later)
-
+                        
                         else -> {}
                     }
                 }
