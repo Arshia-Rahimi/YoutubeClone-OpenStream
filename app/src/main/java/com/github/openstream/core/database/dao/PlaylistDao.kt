@@ -19,6 +19,9 @@ interface PlaylistDao {
 
     @Query("SELECT * FROM $TABLE_NAME ORDER BY playlistId")
     fun index(): List<PlaylistEntity>
+    
+    @Query("SELECT * FROM $TABLE_NAME WHERE playlistId = :playlistId")
+    fun get(playlistId: Long): PlaylistEntity?
 
     @Insert
     suspend fun insert(vararg playlistEntities: PlaylistEntity): List<Long>

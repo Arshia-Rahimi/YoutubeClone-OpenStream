@@ -9,6 +9,6 @@ data class SearchResult(
     // todo
 //    val searchSuggestion: String,
 //    val isCorrectedSearch: Boolean,
-    val items: SnapshotStateList<DataItem>,
+    val items: List<DataItem>,
     var nextPage: Page?
 )

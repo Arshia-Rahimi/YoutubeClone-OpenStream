@@ -1,6 +1,8 @@
 package com.github.openstream.core.extractor
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.github.openstream.core.extractor.util.YtService
+import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.SearchResult
 import com.github.openstream.core.model.extractordata.toListOfDataItem
 import com.github.openstream.core.model.extractordata.toMutableStateListOfDataItem
@@ -19,16 +21,15 @@ object SearchExtractor {
             extractor = extractor,
 //            searchSuggestion = extractor.searchSuggestion,
 //            isCorrectedSearch = extractor.isCorrectedSearch,
-            items = extractor.initialPage.items.toMutableStateListOfDataItem(),
+            items = extractor.initialPage.items.toListOfDataItem(),
             nextPage = extractor.initialPage.nextPage,
         )
     }
     
-    fun fetchNextPage(search: SearchResult) {
+    fun fetchNextPage(search: SearchResult): List<DataItem> =
         search.nextPage?.let {
             val currentPage = search.extractor.getPage(it)
             search.nextPage = currentPage.nextPage
-            search.items.addAll(currentPage.items.toListOfDataItem())
-        }
-    }
+            currentPage.items.toListOfDataItem()
+        } ?: emptyList()
 }

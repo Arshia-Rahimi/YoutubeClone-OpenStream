@@ -38,4 +38,6 @@ interface PlaylistRepository {
     fun savePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>>
 
     fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>>
+    
+    fun syncVideoPlaylists(video: DataItem.Video, playlistsMap: Map<DataItem.Playlist.LocalPlaylist, Boolean>): Flow<Resource<Success>>
 }

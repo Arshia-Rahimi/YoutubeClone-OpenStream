@@ -10,6 +10,8 @@ import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.core.component.getScopeName
+import org.schabi.newpipe.extractor.timeago.patterns.vi
 
 class AddToPlaylistViewModel(
     private val video: DataItem.Video,
@@ -36,7 +38,14 @@ class AddToPlaylistViewModel(
 
     fun syncVideoInPlaylists() {
         viewModelScope.launch {
-            // todo
+            playlistRepo.syncVideoPlaylists(video, localPlaylists)
+                .collect {
+                    when(it) {
+                        is Resource.Error -> SnackBarController.sendEvent(it.message ?: "failed to save to playlist")
+                        is Resource.Success -> SnackBarController.sendEvent("saved to playlists")
+                        else -> Unit
+                    }
+                }
         }
     }
 

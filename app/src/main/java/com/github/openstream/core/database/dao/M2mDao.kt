@@ -1,6 +1,7 @@
 package com.github.openstream.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
@@ -12,7 +13,10 @@ import com.github.openstream.core.database.entities.relationships.VideoWithPlayl
 interface M2mDao {
     @Insert
     suspend fun addToPlaylist(vararg playlistVideoCrossRef: PlaylistVideoCrossRef)
-
+    
+    @Delete
+    suspend fun removeFromPlaylist(vararg playlistVideoCrossRef: PlaylistVideoCrossRef)
+    
     @Transaction
     @Query("SELECT * FROM videos WHERE videoId = :id")
     suspend fun getVideoWithPlaylists(id: Long): VideoWithPlaylists?
