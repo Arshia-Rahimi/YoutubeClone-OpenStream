@@ -20,8 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.DataItemList
 import com.github.openstream.ui.feature.search.components.SearchField
+import com.github.openstream.ui.global.reusable.dialogs.DialogController
 import org.koin.androidx.compose.koinViewModel
-import org.schabi.newpipe.extractor.timeago.patterns.vi
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
@@ -78,7 +78,8 @@ fun SearchScreen(
                 toChannelScreen = toChannelScreen,
                 playVideo = playVideo,
                 loadNextPage = { viewModel.getNextPage() },
-                addToPlaylist = {},
+                addToPlaylist = { DialogController.openAddToPlaylistDialog(it) },
+                addToWatchLater = { viewModel.addToWatchLater(it) },
             )
         }
     }

@@ -33,10 +33,13 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.ui.global.navigation.NavigationViewModel.Companion.tabsList
 import com.github.openstream.ui.global.player.PlayerSheet
+import com.github.openstream.ui.global.reusable.dialogs.DialogController
+import com.github.openstream.ui.global.reusable.dialogs.addtoplaylist.AddToPlaylistDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,6 +53,7 @@ fun OpenStreamScaffold(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var navBarOffset by remember { mutableFloatStateOf(0f) }
+    val addToPlaylistDialog by DialogController.addToPlaylistEvent.collectAsStateWithLifecycle()
 
     ObserveForEvents(SnackBarController.events) { event ->
         scope.launch {
@@ -66,6 +70,13 @@ fun OpenStreamScaffold(
                 event.action?.action?.invoke()
             }
         }
+    }
+    
+    addToPlaylistDialog?.let {
+        AddToPlaylistDialog(
+            dismiss = DialogController::dismissAddToPlaylistDialog,
+            video = it,
+        )
     }
 
     Scaffold(
