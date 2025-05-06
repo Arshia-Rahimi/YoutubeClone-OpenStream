@@ -10,10 +10,10 @@ import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.feature.library.LibraryScreen
-import com.github.openstream.ui.global.navigation.OpenStreamNavTypes
-import com.github.openstream.ui.global.navigation.Tabs
-import com.github.openstream.ui.global.reusable.channel.ChannelScreen
-import com.github.openstream.ui.global.reusable.playlist.PlaylistScreen
+import com.github.openstream.ui.global.reusablescreens.channel.ChannelScreen
+import com.github.openstream.ui.global.reusablescreens.playlist.PlaylistScreen
+import com.github.openstream.ui.navigation.OpenStreamNavTypes
+import com.github.openstream.ui.navigation.Tabs
 import kotlin.reflect.typeOf
 
 @Composable

@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arshia.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.ui.designsystem.components.CreatePlaylistDialog
-import com.github.openstream.ui.designsystem.components.DataItemList
+import com.github.openstream.ui.designsystem.dataitem.DataItemList
+import com.github.openstream.ui.global.components.createplaylistdialog.CreatePlaylistDialog
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

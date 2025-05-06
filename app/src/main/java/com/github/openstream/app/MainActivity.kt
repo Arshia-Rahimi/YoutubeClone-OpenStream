@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import com.github.openstream.ui.global.navigation.Navigation
 import com.github.openstream.core.extractor.util.OkHttpDownloader
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
+import com.github.openstream.ui.navigation.Navigation
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.KoinAndroidContext
 import org.schabi.newpipe.extractor.NewPipe

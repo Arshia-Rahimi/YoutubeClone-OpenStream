@@ -5,24 +5,33 @@ import com.github.openstream.ui.feature.library.LibraryViewModel
 import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.feature.settings.SettingsViewModel
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsViewModel
-import com.github.openstream.ui.global.navigation.NavigationViewModel
-import com.github.openstream.ui.global.player.PlayerViewModel
-import com.github.openstream.ui.global.reusable.channel.ChannelViewModel
-import com.github.openstream.ui.global.reusable.dialogs.addtoplaylist.AddToPlaylistViewModel
-import com.github.openstream.ui.global.reusable.playlist.PlaylistViewModel
+import com.github.openstream.ui.global.components.addtoplaylistmodal.AddToPlaylistViewModel
+import com.github.openstream.ui.global.components.createplaylistdialog.CreatePlaylistViewModel
+import com.github.openstream.ui.global.components.player.PlayerViewModel
+import com.github.openstream.ui.global.reusablescreens.channel.ChannelViewModel
+import com.github.openstream.ui.global.reusablescreens.playlist.PlaylistViewModel
+import com.github.openstream.ui.navigation.NavigationViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelModule = module {
+    // tabs
     viewModelOf(::SubscriptionsViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::DownloadsViewModel)
     viewModelOf(::LibraryViewModel)
     viewModelOf(::SearchViewModel)
+
+    // reusable
     viewModelOf(::ChannelViewModel)
     viewModelOf(::PlaylistViewModel)
+
+    // global
     viewModelOf(::NavigationViewModel)
-    viewModelOf(::AddToPlaylistViewModel)
     singleOf(::PlayerViewModel)
+
+    // components
+    viewModelOf(::AddToPlaylistViewModel)
+    viewModelOf(::CreatePlaylistViewModel)
 }
