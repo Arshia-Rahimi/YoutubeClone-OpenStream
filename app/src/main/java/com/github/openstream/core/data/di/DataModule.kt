@@ -10,6 +10,9 @@ import com.github.openstream.core.data.imp.ExtractorSearchRepository
 import com.github.openstream.core.data.imp.ExtractorVideoRepository
 import com.github.openstream.core.data.imp.OfflineFirstPlaylistRepository
 import com.github.openstream.core.data.imp.PDPreferencesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -24,4 +27,8 @@ val dataModule = module {
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
     
     factoryOf(::PDPreferencesRepository) { bind<PreferencesRepository>() }
+
+    factory {
+        CoroutineScope(Dispatchers.IO + SupervisorJob())
+    }
 }

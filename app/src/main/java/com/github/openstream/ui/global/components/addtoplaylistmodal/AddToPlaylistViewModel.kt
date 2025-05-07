@@ -18,22 +18,21 @@ class AddToPlaylistViewModel(
 ) : ViewModel() {
 
     val localPlaylists = mutableStateMapOf<DataItem.Playlist.LocalPlaylist, Boolean>()
-
-    init {
-        playlistRepo.playlists
-            .onEach {
-                it.filter { it is DataItem.Playlist.LocalPlaylist }
-                    .map { it as DataItem.Playlist.LocalPlaylist }
-                    .forEach { playlist ->
-                        if (playlist !in localPlaylists.keys) {
-                            localPlaylists.put(playlist, false)
+        .apply {
+            playlistRepo.playlists
+                .onEach {
+                    it.filter { it is DataItem.Playlist.LocalPlaylist }
+                        .map { it as DataItem.Playlist.LocalPlaylist }
+                        .forEach { playlist ->
+                            if (playlist !in keys) {
+                                put(playlist, false)
+                            }
                         }
-                    }
-                val playlists = localPlaylists.toMap()
-                localPlaylists.clear()
-                localPlaylists.putAll(playlists)
-            }.launchIn(viewModelScope)
-    }
+                    val playlists = toMap()
+                    clear()
+                    putAll(playlists)
+                }.launchIn(viewModelScope)
+        }
 
     fun syncVideoInPlaylists() {
         viewModelScope.launch {

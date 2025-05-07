@@ -16,7 +16,6 @@ import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.toOfflineFirstPlaylist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -28,14 +27,14 @@ import kotlinx.coroutines.flow.shareIn
 
 class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope: CoroutineScope,
 ) : PlaylistRepository {
     
     override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
         .shareIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(5000L),
+            started = SharingStarted.Lazily,
             replay = 1,
         )
     
