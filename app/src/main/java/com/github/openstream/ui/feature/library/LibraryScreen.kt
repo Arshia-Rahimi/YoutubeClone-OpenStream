@@ -58,7 +58,7 @@ fun LibraryScreen(
             }
         )
     }
-    
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.End,
@@ -86,8 +86,19 @@ fun LibraryScreen(
             toChannelScreen = toChannelScreen,
             toPlaylistScreen = toPlaylistScreen,
             playVideo = playVideo,
-            savePlaylist = { viewModel.savePlaylist(it) },
-            deletePlaylist = { viewModel.deletePlaylist(it) },
+            savePlaylist = {
+                when (it) {
+                    is DataItem.Playlist.OnlinePlaylist -> viewModel.savePlaylist(it)
+                    else -> Unit
+                }
+            },
+            deletePlaylist = {
+                when (it) {
+                    is DataItem.Playlist.LocalPlaylist -> viewModel.deletePlaylist(it)
+                    is DataItem.Playlist.OfflineFirstPlaylist -> viewModel.deletePlaylist(it)
+                    else -> Unit
+                }
+            },
         )
     }
 }

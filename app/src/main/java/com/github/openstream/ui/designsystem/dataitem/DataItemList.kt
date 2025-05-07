@@ -38,7 +38,6 @@ fun DataItemList(
     loadNextPage: () -> Unit = {},
     savePlaylist: (DataItem.Playlist) -> Unit = {},
     deletePlaylist: (DataItem.Playlist) -> Unit = {},
-    addToPlaylist: (DataItem.Video) -> Unit = {},
     addToWatchLater: ((DataItem.Video) -> Unit)? = null,
     removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
 ) {

@@ -27,6 +27,7 @@ class LibraryViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = SortType.CREATED_AT_ASC,
         )
+
     val playlists = mutableStateListOf<DataItem>()
         .apply {
             playlistRepo.playlists
@@ -50,44 +51,51 @@ class LibraryViewModel(
         }
     }
 
-    fun createPlaylist(title: String) {
+    fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist) {
         viewModelScope.launch {
-            playlistRepo.createPlaylist(title).collect {
-                when (it) {
-                    is Resource.Error -> SnackBarController
-                        .sendEvent("failed to create playlist: $title")
-                    is Resource.Success -> SnackBarController
-                        .sendEvent("created playlist: $title")
-                    else -> Unit
+            playlistRepo.deletePlaylist(playlist)
+                .collect {
+                    when (it) {
+                        is Resource.Error -> SnackBarController
+                            .sendEvent("failed to delete playlist: ${playlist.name}")
+
+                        is Resource.Success -> SnackBarController
+                            .sendEvent("deleted playlist: ${playlist.name}")
+
+                        else -> Unit
+                    }
                 }
-            }
         }
     }
 
-    fun deletePlaylist(playlist: DataItem.Playlist) {
+    fun deletePlaylist(playlist: DataItem.Playlist.OfflineFirstPlaylist) {
         viewModelScope.launch {
-            playlistRepo.deletePlaylist(playlist).collect {
-                when (it) {
-                    // todo add log
-                    is Resource.Error -> SnackBarController
-                        .sendEvent("failed to delete playlist: ${playlist.name}")
-                    is Resource.Success -> SnackBarController
-                        .sendEvent("deleted playlist: ${playlist.name}")
-                    else -> Unit
+            playlistRepo.deletePlaylist(playlist)
+                .collect {
+                    when (it) {
+                        is Resource.Error -> SnackBarController
+                            .sendEvent("failed to delete playlist: ${playlist.name}")
+
+                        is Resource.Success -> SnackBarController
+                            .sendEvent("deleted playlist: ${playlist.name}")
+
+                        else -> Unit
+                    }
                 }
-            }
         }
     }
 
-    fun savePlaylist(playlist: DataItem.Playlist) {
+    fun savePlaylist(playlist: DataItem.Playlist.OnlinePlaylist) {
         viewModelScope.launch {
             playlistRepo.savePlaylist(playlist)
                 .collect {
                     when (it) {
                         is Resource.Error -> SnackBarController
                             .sendEvent("failed to save playlist: ${playlist.name}")
+
                         is Resource.Success -> SnackBarController
                             .sendEvent("saved playlist: ${playlist.name}")
+
                         else -> Unit
                     }
                 }

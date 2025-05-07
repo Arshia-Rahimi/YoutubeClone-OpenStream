@@ -8,6 +8,7 @@ import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.extractor.PlaylistExtractor
+import com.github.openstream.core.model.LocalPlaylist
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.Playlist
@@ -42,20 +43,21 @@ class OfflineFirstPlaylistRepository(
         db.playlistDao().insert(PlaylistEntity(name = playlistName, count = 0L))
         emit(Success)
     }.asResult(Dispatchers.IO)
-    
-    override fun deletePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
+
+    override fun deletePlaylist(playlist: DataItem.Playlist.OfflineFirstPlaylist): Flow<Resource<Success>> =
         flow {
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
-    
-    override fun deletePlaylist(playlist: Playlist): Flow<Resource<Success>> =
+
+    override fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist): Flow<Resource<Success>> =
         flow {
-            if (playlist is YoutubePlaylist) {
-                emit(Success)
-                return@flow
-            }
-            
+            db.playlistDao().delete(playlist.toEntity())
+            emit(Success)
+        }.asResult(Dispatchers.IO)
+
+    override fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>> =
+        flow {
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
@@ -87,20 +89,14 @@ class OfflineFirstPlaylistRepository(
     
     override fun removeFromWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>> =
         removeFromPlaylist(videos, 0L)
-    
-    override fun getNextPage(currentPlaylist: Playlist): Flow<Resource<Success>> =
+
+    override fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>> =
         flow {
-            if (currentPlaylist is YoutubePlaylist) PlaylistExtractor.fetchNextPage(currentPlaylist)
+            PlaylistExtractor.fetchNextPage(currentPlaylist)
             emit(Success)
         }.asResult(Dispatchers.IO)
-    
-    override fun savePlaylist(playlist: Playlist): Flow<Resource<Success>> = flow {
-        if (playlist !is OnlinePlaylist) throw Exception("playlist is already saved")
-        
-        if (db.playlistDao().index().any { it.url == playlist.url }) {
-            throw Exception("This playlist already exist in your library")
-        }
-        
+
+    override fun savePlaylist(playlist: OnlinePlaylist): Flow<Resource<Success>> = flow {
         val playlistId = db.playlistDao().insert(playlist.toEntity()).first()
         val videoIds = db.videoDao().insert(
             *playlist.items
@@ -116,11 +112,9 @@ class OfflineFirstPlaylistRepository(
         
         emit(Success)
     }.asResult(Dispatchers.IO)
-    
-    override fun savePlaylist(playlist: DataItem.Playlist): Flow<Resource<Success>> =
+
+    override fun savePlaylist(playlist: DataItem.Playlist.OnlinePlaylist): Flow<Resource<Success>> =
         flow {
-            if (playlist !is DataItem.Playlist.OnlinePlaylist) throw Exception("playlist is already saved")
-            
             if (db.playlistDao().index().any { it.url == playlist.url })
                 throw Exception("This playlist already exist in your library")
             
@@ -158,11 +152,9 @@ class OfflineFirstPlaylistRepository(
                 }
             }
         }.asResult(Dispatchers.IO)
-    
-    override fun syncPlaylist(playlist: Playlist): Flow<Resource<Playlist>> =
+
+    override fun syncPlaylist(playlist: OfflineFirstPlaylist): Flow<Resource<Playlist>> =
         flow {
-            if (playlist !is OfflineFirstPlaylist) throw Exception("can only sync youtube playlists that are saved")
-            
             coroutineScope {
                 val updatedPlaylist = PlaylistExtractor.fetchPlaylist(playlist.url)
                     .toOfflineFirstPlaylist(playlist.id)
