@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
-import com.github.openstream.core.common.util.sendPulse
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.global.components.PopupController
@@ -42,12 +41,15 @@ class AddToPlaylistViewModel(
                 .collect {
                     when(it) {
                         is Resource.Error -> SnackBarController.sendEvent(it.message ?: "failed to save to playlist")
-                        is Resource.Success -> SnackBarController.sendEvent("saved to playlists")
+                        is Resource.Success -> {
+                            SnackBarController.sendEvent("saved to playlist")
+                            PopupController.dismissAddToPlaylistDialog()
+                        }
                         else -> Unit
                     }
                 }
         }
     }
 
-    fun showCreatePlaylistDialog() = PopupController.createPlaylistDialogEvent.sendPulse()
+    fun showCreatePlaylistDialog() = PopupController.openCreatePlaylistDialog()
 }

@@ -88,7 +88,6 @@ fun DataItemList(
                     playVideo = playVideo,
                     savePlaylist = savePlaylist,
                     deletePlaylist = deletePlaylist,
-                    addToPlaylist = addToPlaylist,
                     removeFromWatchLater = removeFromWatchLater,
                     addToWatchLater = addToWatchLater,
                 )
@@ -156,7 +155,6 @@ fun DataItemList(
                 playVideo = playVideo,
                 savePlaylist = savePlaylist,
                 deletePlaylist = deletePlaylist,
-                addToPlaylist = addToPlaylist,
                 removeFromWatchLater = removeFromWatchLater,
                 addToWatchLater = addToWatchLater,
             )

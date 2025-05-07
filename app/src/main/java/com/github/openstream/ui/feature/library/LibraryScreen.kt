@@ -15,9 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arshia.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.dataitem.DataItemList
-import com.github.openstream.ui.global.components.createplaylistdialog.CreatePlaylistDialog
+import com.github.openstream.ui.global.components.PopupController
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,8 +39,6 @@ fun LibraryScreen(
 ) {
     val viewModel = koinViewModel<LibraryViewModel>()
     val playlists = viewModel.playlists
-    var newPlaylistTitle by remember { mutableStateOf("") }
-    var showCreatePlaylistDialog by remember { mutableStateOf(false) }
     val sortType by viewModel.sortType.collectAsStateWithLifecycle()
 
     topBar {
@@ -53,7 +48,7 @@ fun LibraryScreen(
             },
             actions = {
                 IconButton(
-                    onClick = { showCreatePlaylistDialog = true },
+                    onClick = { PopupController.openCreatePlaylistDialog() },
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.plus),
@@ -61,18 +56,6 @@ fun LibraryScreen(
                     )
                 }
             }
-        )
-    }
-
-    if (showCreatePlaylistDialog) {
-        CreatePlaylistDialog(
-            dismiss = {
-                showCreatePlaylistDialog = false
-                newPlaylistTitle = ""
-            },
-            newPlaylistTitle = newPlaylistTitle,
-            setNewPlaylistName = { newPlaylistTitle = it },
-            createPlaylist = { viewModel.createPlaylist(newPlaylistTitle) },
         )
     }
     

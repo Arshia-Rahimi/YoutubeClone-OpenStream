@@ -14,21 +14,30 @@ import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.toOfflineFirstPlaylist
-import com.github.openstream.core.shared.exceptions.LocalPlaylistNotFoundException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 
 class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 ) : PlaylistRepository {
     
     override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
+        .shareIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            replay = 1,
+        )
     
     override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
         db.playlistDao().insert(PlaylistEntity(name = playlistName, count = 0L))

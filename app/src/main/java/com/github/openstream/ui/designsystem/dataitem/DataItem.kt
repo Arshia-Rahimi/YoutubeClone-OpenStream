@@ -18,7 +18,6 @@ fun DataItem(
     subscribe: (String) -> Unit = {},
     savePlaylist: (DataItem.Playlist) -> Unit = {},
     deletePlaylist: (DataItem.Playlist) -> Unit = {},
-    addToPlaylist: (DataItem.Video) -> Unit = {},
     addToWatchLater: ((DataItem.Video) -> Unit)? = null,
     removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
 ) {
@@ -29,7 +28,6 @@ fun DataItem(
             toChannelScreen = toChannelScreen,
             playVideo = playVideo,
             shouldViewChannel = shouldViewChannel,
-            addToPlaylist = addToPlaylist,
             saveToWatchLater = addToWatchLater,
             removeFromWatchLater = removeFromWatchLater,
         )

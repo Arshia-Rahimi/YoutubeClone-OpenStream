@@ -39,6 +39,7 @@ import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.StreamType
+import com.github.openstream.ui.global.components.PopupController
 
 @Composable
 fun Video(
@@ -47,7 +48,6 @@ fun Video(
     shouldViewChannel: Boolean,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
-    addToPlaylist: (DataItem.Video) -> Unit = {},
     saveToWatchLater: ((DataItem.Video) -> Unit)? = null,
     removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
 ) {
@@ -176,7 +176,7 @@ fun Video(
                     text = { Text(stringResource(R.string.add_to_playlist)) },
                     onClick = {
                         isDropDownExpanded = false
-                        addToPlaylist(item)
+                        PopupController.openAddToPlaylistDialog(item)
                     },
                 )
             }

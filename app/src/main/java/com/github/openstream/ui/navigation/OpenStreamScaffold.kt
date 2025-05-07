@@ -38,6 +38,7 @@ import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.ui.global.components.PopupController
 import com.github.openstream.ui.global.components.addtoplaylistmodal.AddToPlaylistModal
+import com.github.openstream.ui.global.components.createplaylistdialog.CreatePlaylistDialog
 import com.github.openstream.ui.global.components.player.PlayerSheet
 import com.github.openstream.ui.navigation.NavigationViewModel.Companion.tabsList
 import kotlinx.coroutines.launch
@@ -53,7 +54,8 @@ fun OpenStreamScaffold(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var navBarOffset by remember { mutableFloatStateOf(0f) }
-    val addToPlaylistDialog by PopupController.addToPlaylistEvent.collectAsStateWithLifecycle()
+    val showAddToPlaylistModal by PopupController.showAddToPlaylistModal.collectAsStateWithLifecycle()
+    val showCreatePlaylistDialog by PopupController.showCreatePlaylistDialog.collectAsStateWithLifecycle()
 
     ObserveForEvents(SnackBarController.events) { event ->
         scope.launch {
@@ -71,12 +73,16 @@ fun OpenStreamScaffold(
             }
         }
     }
-    
-    addToPlaylistDialog?.let {
+
+    showAddToPlaylistModal?.let {
         AddToPlaylistModal(
             dismiss = PopupController::dismissAddToPlaylistDialog,
             video = it,
         )
+    }
+
+    if (showCreatePlaylistDialog) {
+        CreatePlaylistDialog()
     }
 
     Scaffold(

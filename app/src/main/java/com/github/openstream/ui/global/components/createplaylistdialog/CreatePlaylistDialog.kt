@@ -27,19 +27,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arshia.openstream.R
 import com.github.openstream.ui.designsystem.components.OpenStreamDialog
+import com.github.openstream.ui.global.components.PopupController
 import org.koin.androidx.compose.koinViewModel
 
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePlaylistDialog(
-    dismiss: () -> Unit = {},
-) {
+fun CreatePlaylistDialog() {
     val viewModel = koinViewModel<CreatePlaylistViewModel>()
     var newPlaylistTitle by remember { mutableStateOf("") }
     
     OpenStreamDialog(
-        dismiss = dismiss,
+        dismiss = { PopupController.dismissCreatePlaylistDialog() },
     ) {
         Column(
             modifier = Modifier,
@@ -57,7 +56,7 @@ fun CreatePlaylistDialog(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         viewModel.createPlaylist(newPlaylistTitle)
-                        dismiss()
+                        PopupController.dismissCreatePlaylistDialog()
                     }
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -75,14 +74,13 @@ fun CreatePlaylistDialog(
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
                 Button(
-                    onClick = dismiss,
+                    onClick = { PopupController.dismissCreatePlaylistDialog() },
                 ) {
                     Text(stringResource(R.string.dismiss))
                 }
                 Button(
                     onClick = {
                         viewModel.createPlaylist(newPlaylistTitle)
-                        dismiss()
                     },
                 ) {
                     Text(stringResource(R.string.create))

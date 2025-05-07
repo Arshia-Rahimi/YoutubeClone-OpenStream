@@ -5,9 +5,10 @@ import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface PlaylistRepository {
-    val playlists: Flow<List<DataItem.Playlist>>
+    val playlists: SharedFlow<List<DataItem.Playlist>>
     
     fun createPlaylist(playlistName: String): Flow<Resource<Success>>
 

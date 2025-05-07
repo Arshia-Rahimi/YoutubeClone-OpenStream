@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
+import com.github.openstream.ui.global.components.PopupController
 import kotlinx.coroutines.launch
 
 class CreatePlaylistViewModel(
@@ -17,8 +18,11 @@ class CreatePlaylistViewModel(
                     is Resource.Error -> SnackBarController
                         .sendEvent("failed to create playlist: $title")
 
-                    is Resource.Success -> SnackBarController
-                        .sendEvent("created playlist: $title")
+                    is Resource.Success -> {
+                        SnackBarController
+                            .sendEvent("created playlist: $title")
+                        PopupController.dismissCreatePlaylistDialog()
+                    }
 
                     else -> Unit
                 }
