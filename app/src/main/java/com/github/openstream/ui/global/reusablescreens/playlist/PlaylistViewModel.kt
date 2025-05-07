@@ -1,7 +1,6 @@
 package com.github.openstream.ui.global.reusablescreens.playlist
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
@@ -40,6 +39,8 @@ class PlaylistViewModel(
                 is Resource.Loading -> UiState.Loading
                 is Resource.Error -> UiState.Error(it.message)
                 is Resource.Success -> {
+                    // todo add date to videos and sort based on sort options
+                    items.clear()
                     items.addAll(it.data.items.toList())
                     UiState.Success(it.data)
                 }
@@ -83,11 +84,13 @@ class PlaylistViewModel(
 
             playlistRepository.getNextPage(playlist)
                 .collect {
-                    if (it is Resource.Success) {
-                        // todo sort and add items
-                        Snapshot.withMutableSnapshot {
-                            items
+                    when (it) {
+                        is Resource.Success -> {
+                            items.clear()
+                            items.addAll(playlist.items)
                         }
+
+                        else -> Unit
                     }
                 }
         }

@@ -49,7 +49,6 @@ object PlaylistExtractor {
                     }
 
                     is OfflineFirstPlaylist -> {
-                        // todo sort items
                         val newItems =
                             currentPage.items.toArrayOfDataItem() as Array<DataItem.Video>
                         addAll(newItems)
