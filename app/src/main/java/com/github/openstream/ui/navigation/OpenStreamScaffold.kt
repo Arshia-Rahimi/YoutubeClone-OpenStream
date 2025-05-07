@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.ui.global.components.PopupController
-import com.github.openstream.ui.global.components.addtoplaylistmodal.AddToPlaylistModal
+import com.github.openstream.ui.global.components.addtoplaylistmodal.SaveVideoToPlaylistsModal
 import com.github.openstream.ui.global.components.createplaylistdialog.CreatePlaylistDialog
 import com.github.openstream.ui.global.components.player.PlayerSheet
 import com.github.openstream.ui.navigation.NavigationViewModel.Companion.tabsList
@@ -54,7 +54,7 @@ fun OpenStreamScaffold(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var navBarOffset by remember { mutableFloatStateOf(0f) }
-    val showAddToPlaylistModal by PopupController.showAddToPlaylistModal.collectAsStateWithLifecycle()
+    val showSaveVideoToPlaylistsModal by PopupController.showSaveVideoToPlaylistsModal.collectAsStateWithLifecycle()
     val showCreatePlaylistDialog by PopupController.showCreatePlaylistDialog.collectAsStateWithLifecycle()
 
     ObserveForEvents(SnackBarController.events) { event ->
@@ -74,8 +74,8 @@ fun OpenStreamScaffold(
         }
     }
 
-    showAddToPlaylistModal?.let {
-        AddToPlaylistModal(
+    showSaveVideoToPlaylistsModal?.let {
+        SaveVideoToPlaylistsModal(
             dismiss = PopupController::dismissAddToPlaylistDialog,
             video = it,
         )

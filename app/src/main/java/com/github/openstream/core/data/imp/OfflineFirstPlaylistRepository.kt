@@ -174,8 +174,8 @@ class OfflineFirstPlaylistRepository(
                 }
             }
         }.asResult(Dispatchers.IO)
-    
-    override fun syncVideoPlaylists(
+
+    override fun saveVideoToPlaylists(
         video: DataItem.Video,
         playlistsMap: Map<DataItem.Playlist.LocalPlaylist, Boolean>
     ): Flow<Resource<Success>> = flow {

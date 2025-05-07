@@ -4,9 +4,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
+import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.Playlist
+import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,15 +53,23 @@ class PlaylistViewModel(
     fun syncPlaylist() {
         viewModelScope.launch {
             if (uiState.value !is UiState.Success) return@launch
-            playlistRepository.syncPlaylist((uiState.value as UiState.Success).playlist)
-                .collect {
-                    if (it == (uiState.value as UiState.Success).playlist) return@collect
 
-                    _isRefreshing.value = true
-                    Snapshot.withMutableSnapshot {
-                        // todo sort and add items
+            val playlist = (uiState.value as UiState.Success).playlist
+            if (playlist !is OfflineFirstPlaylist) return@launch
+
+            playlistRepository.syncPlaylist(playlist)
+                .collect {
+                    when (it) {
+                        is Resource.Loading -> _isRefreshing.value = true
+                        is Resource.Error -> {
+                            _isRefreshing.value = false
+                            SnackBarController.sendEvent("failed to sync")
+                        }
+
+                        is Resource.Success -> {
+                            _isRefreshing.value = false
+                        }
                     }
-                    _isRefreshing.value = false
                 }
         }
     }
@@ -66,7 +77,11 @@ class PlaylistViewModel(
     fun getNextPage() {
         viewModelScope.launch {
             if (uiState.value !is UiState.Success) return@launch
-            playlistRepository.getNextPage((uiState.value as UiState.Success).playlist)
+
+            val playlist = (uiState.value as UiState.Success).playlist
+            if (playlist !is YoutubePlaylist) return@launch
+
+            playlistRepository.getNextPage(playlist)
                 .collect {
                     if (it is Resource.Success) {
                         // todo sort and add items

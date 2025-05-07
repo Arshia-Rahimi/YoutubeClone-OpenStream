@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class AddToPlaylistViewModel(
+class SaveVideoToPlaylistsViewModel(
     private val video: DataItem.Video,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
@@ -34,9 +34,9 @@ class AddToPlaylistViewModel(
                 }.launchIn(viewModelScope)
         }
 
-    fun syncVideoInPlaylists() {
+    fun saveVideoToPlaylists() {
         viewModelScope.launch {
-            playlistRepo.syncVideoPlaylists(video, localPlaylists)
+            playlistRepo.saveVideoToPlaylists(video, localPlaylists)
                 .collect {
                     when(it) {
                         is Resource.Error -> SnackBarController.sendEvent(it.message ?: "failed to save to playlist")

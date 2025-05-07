@@ -109,7 +109,6 @@ fun Playlist(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // todo refactor this
                 when (item) {
                     is DataItem.Playlist.LocalPlaylist -> Unit
                     is DataItem.Playlist.OnlinePlaylist -> {

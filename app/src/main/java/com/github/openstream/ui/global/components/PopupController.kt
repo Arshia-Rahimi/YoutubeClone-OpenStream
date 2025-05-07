@@ -5,15 +5,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 object PopupController {
-    private val _showAddToPlaylistModal: MutableStateFlow<DataItem.Video?> = MutableStateFlow(null)
-    val showAddToPlaylistModal = _showAddToPlaylistModal.asStateFlow()
+    private val _showSaveVideoToPlaylistsModal: MutableStateFlow<DataItem.Video?> =
+        MutableStateFlow(null)
+    val showSaveVideoToPlaylistsModal = _showSaveVideoToPlaylistsModal.asStateFlow()
 
     fun openAddToPlaylistDialog(video: DataItem.Video) {
-        _showAddToPlaylistModal.value = video
+        _showSaveVideoToPlaylistsModal.value = video
     }
     
     fun dismissAddToPlaylistDialog() {
-        _showAddToPlaylistModal.value = null
+        _showSaveVideoToPlaylistsModal.value = null
     }
 
     private val _showCreatePlaylistDialog = MutableStateFlow(false)

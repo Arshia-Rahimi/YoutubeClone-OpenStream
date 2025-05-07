@@ -5,7 +5,7 @@ import com.github.openstream.ui.feature.library.LibraryViewModel
 import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.feature.settings.SettingsViewModel
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsViewModel
-import com.github.openstream.ui.global.components.addtoplaylistmodal.AddToPlaylistViewModel
+import com.github.openstream.ui.global.components.addtoplaylistmodal.SaveVideoToPlaylistsViewModel
 import com.github.openstream.ui.global.components.createplaylistdialog.CreatePlaylistViewModel
 import com.github.openstream.ui.global.components.player.PlayerViewModel
 import com.github.openstream.ui.global.reusablescreens.channel.ChannelViewModel
@@ -32,6 +32,6 @@ val viewModelModule = module {
     singleOf(::PlayerViewModel)
 
     // components
-    viewModelOf(::AddToPlaylistViewModel)
+    viewModelOf(::SaveVideoToPlaylistsViewModel)
     viewModelOf(::CreatePlaylistViewModel)
 }

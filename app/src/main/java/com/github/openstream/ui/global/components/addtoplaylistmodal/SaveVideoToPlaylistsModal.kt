@@ -26,11 +26,12 @@ import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToPlaylistModal(
+fun SaveVideoToPlaylistsModal(
     video: DataItem.Video,
     dismiss: () -> Unit,
 ) {
-    val viewModel = koinViewModel<AddToPlaylistViewModel>(parameters = { parametersOf(video) })
+    val viewModel =
+        koinViewModel<SaveVideoToPlaylistsViewModel>(parameters = { parametersOf(video) })
 
     ModalBottomSheet(
         onDismissRequest = dismiss,
@@ -79,7 +80,7 @@ fun AddToPlaylistModal(
                 ) {
                     Button(
                         onClick = {
-                            viewModel.syncVideoInPlaylists()
+                            viewModel.saveVideoToPlaylists()
                             dismiss()
                         }
                     ) {
