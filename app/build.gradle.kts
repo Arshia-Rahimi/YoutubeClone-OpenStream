@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.arshia.openstream"
+    namespace = "com.github.openstream"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.arshia.openstream"
+        applicationId = "com.github.openstream"
         minSdk = 21
         targetSdk = 35
         versionCode = 1
