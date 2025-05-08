@@ -17,14 +17,14 @@ class SaveVideoToPlaylistsViewModel(
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
 
-    val localPlaylists = mutableStateMapOf<DataItem.Playlist.LocalPlaylist, Boolean>()
+    val localPlaylists = mutableStateMapOf<DataItem.Playlist.LocalOnlyPlaylist, Boolean>()
         .apply {
             playlistRepo.playlists
                 .onEach {
                     val currentPlaylists = mapKeys { it.key.id }
                     clear()
-                    it.filter { it is DataItem.Playlist.LocalPlaylist }
-                        .map { it as DataItem.Playlist.LocalPlaylist }
+                    it.filter { it is DataItem.Playlist.LocalOnlyPlaylist }
+                        .map { it as DataItem.Playlist.LocalOnlyPlaylist }
                         .sortedBy { it.id }
                         .forEach { playlist ->
                             put(playlist, currentPlaylists[playlist.id] == true)

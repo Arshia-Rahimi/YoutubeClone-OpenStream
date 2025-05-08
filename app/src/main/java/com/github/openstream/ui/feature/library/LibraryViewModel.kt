@@ -53,7 +53,7 @@ class LibraryViewModel(
         }
     }
 
-    fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist) {
+    fun deletePlaylist(playlist: DataItem.Playlist.LocalOnlyPlaylist) {
         viewModelScope.launch {
             playlistRepo.deletePlaylist(playlist)
                 .collect {

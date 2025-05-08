@@ -2,7 +2,7 @@ package com.github.openstream.core.data
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
-import com.github.openstream.core.model.LocalPlaylist
+import com.github.openstream.core.model.LocalOnlyPlaylist
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.Playlist
@@ -16,11 +16,11 @@ interface PlaylistRepository {
     
     fun createPlaylist(playlistName: String): Flow<Resource<Success>>
 
-    fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist): Flow<Resource<Success>>
+    fun deletePlaylist(playlist: DataItem.Playlist.LocalOnlyPlaylist): Flow<Resource<Success>>
 
     fun deletePlaylist(playlist: DataItem.Playlist.OfflineFirstPlaylist): Flow<Resource<Success>>
 
-    fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>>
+    fun deletePlaylist(playlist: LocalOnlyPlaylist): Flow<Resource<Success>>
 
     fun addToPlaylist(
         videos: List<DataItem.Video>,
@@ -44,6 +44,6 @@ interface PlaylistRepository {
 
     fun saveVideoToPlaylists(
         video: DataItem.Video,
-        playlistsMap: Map<DataItem.Playlist.LocalPlaylist, Boolean>
+        playlistsMap: Map<DataItem.Playlist.LocalOnlyPlaylist, Boolean>
     ): Flow<Resource<Success>>
 }

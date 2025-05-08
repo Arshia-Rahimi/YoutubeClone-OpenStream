@@ -19,7 +19,7 @@ data class PlaylistEntity(
 ) : OpenStreamEntity {
     fun toDataItem(): DataItem.Playlist =
         when {
-            url == null -> DataItem.Playlist.LocalPlaylist(
+            url == null -> DataItem.Playlist.LocalOnlyPlaylist(
                 name = name,
                 thumbnail = thumbnail,
                 count = count,

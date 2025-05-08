@@ -111,7 +111,7 @@ fun Playlist(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 when (item) {
-                    is DataItem.Playlist.LocalPlaylist -> Unit
+                    is DataItem.Playlist.LocalOnlyPlaylist -> Unit
                     is DataItem.Playlist.OnlinePlaylist -> {
                         SubText(text = item.channelName)
                         if (item.isChannelVerified == true) {
@@ -199,8 +199,8 @@ fun Playlist(
                             )
                         }
                     }
-                    
-                    is DataItem.Playlist.LocalPlaylist -> {
+
+                    is DataItem.Playlist.LocalOnlyPlaylist -> {
                         if (item.id != WATCH_LATER_ID) {
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.delete_playlist)) },

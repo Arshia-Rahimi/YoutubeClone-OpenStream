@@ -94,7 +94,7 @@ fun LibraryScreen(
             },
             deletePlaylist = {
                 when (it) {
-                    is DataItem.Playlist.LocalPlaylist -> viewModel.deletePlaylist(it)
+                    is DataItem.Playlist.LocalOnlyPlaylist -> viewModel.deletePlaylist(it)
                     is DataItem.Playlist.OfflineFirstPlaylist -> viewModel.deletePlaylist(it)
                     else -> Unit
                 }

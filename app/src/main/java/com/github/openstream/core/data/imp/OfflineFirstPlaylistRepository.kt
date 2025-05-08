@@ -8,7 +8,7 @@ import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.extractor.PlaylistExtractor
-import com.github.openstream.core.model.LocalPlaylist
+import com.github.openstream.core.model.LocalOnlyPlaylist
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.Playlist
@@ -51,14 +51,14 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }.asResult(Dispatchers.IO)
 
-    override fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist): Flow<Resource<Success>> =
+    override fun deletePlaylist(playlist: DataItem.Playlist.LocalOnlyPlaylist): Flow<Resource<Success>> =
         flow {
             require(playlist.id != WATCH_LATER_ID)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
 
-    override fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>> =
+    override fun deletePlaylist(playlist: LocalOnlyPlaylist): Flow<Resource<Success>> =
         flow {
             require(playlist.id != WATCH_LATER_ID)
             db.playlistDao().delete(playlist.toEntity())
@@ -127,7 +127,7 @@ class OfflineFirstPlaylistRepository(
     override fun getPlaylist(playlist: DataItem.Playlist): Flow<Resource<Playlist>> =
         flow<Playlist> {
             when (playlist) {
-                is DataItem.Playlist.LocalPlaylist -> {
+                is DataItem.Playlist.LocalOnlyPlaylist -> {
                     db.m2mDao().getPlaylistWithVideos(playlist.id)?.let {
                         val updatedPlaylist = it.copy(playlist = it.playlist.copy(count = it.videos.size.toLong()))
                         db.playlistDao().upsert(updatedPlaylist.playlist)
@@ -179,7 +179,7 @@ class OfflineFirstPlaylistRepository(
 
     override fun saveVideoToPlaylists(
         video: DataItem.Video,
-        playlistsMap: Map<DataItem.Playlist.LocalPlaylist, Boolean>
+        playlistsMap: Map<DataItem.Playlist.LocalOnlyPlaylist, Boolean>
     ): Flow<Resource<Success>> = flow {
         val videoId = video.id ?: db.videoDao().insert(video.toEntity()).first()
         val currentPlaylists =

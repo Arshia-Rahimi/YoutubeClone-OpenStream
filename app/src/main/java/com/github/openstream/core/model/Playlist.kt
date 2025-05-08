@@ -13,12 +13,16 @@ sealed interface Playlist {
     fun toEntity(): PlaylistEntity
 }
 
-open class LocalPlaylist(
-    val id: Long,
+sealed interface LocalPlaylist : Playlist {
+    val id: Long
+}
+
+class LocalOnlyPlaylist(
+    override val id: Long,
     override var items: Array<DataItem.Video>,
     override val metadata: PlaylistMetadata,
-) : Playlist {
-    override fun toEntity(): PlaylistEntity = PlaylistEntity(
+) : LocalPlaylist {
+    override fun toEntity() = PlaylistEntity(
         playlistId = id,
         name = metadata.name,
         count = metadata.count,
@@ -41,7 +45,7 @@ class OnlinePlaylist(
     override var extractor: YoutubePlaylistExtractor?,
     override var nextPage: Page?
 ) : YoutubePlaylist {
-    override fun toEntity(): PlaylistEntity = PlaylistEntity(
+    override fun toEntity() = PlaylistEntity(
         url = url,
         name = metadata.name,
         count = metadata.count,
@@ -55,15 +59,11 @@ class OfflineFirstPlaylist(
     override val url: String,
     override var nextPage: Page? = null,
     override var extractor: YoutubePlaylistExtractor? = null,
-    id: Long,
-    items: Array<DataItem.Video>,
-    metadata: PlaylistMetadata,
-) : LocalPlaylist(
-    id = id,
-    items = items,
-    metadata = metadata,
-), YoutubePlaylist {
-    override fun toEntity(): PlaylistEntity = PlaylistEntity(
+    override val id: Long,
+    override var items: Array<DataItem.Video>,
+    override val metadata: PlaylistMetadata,
+) : LocalPlaylist, YoutubePlaylist {
+    override fun toEntity() = PlaylistEntity(
         url = url,
         playlistId = id,
         name = metadata.name,
