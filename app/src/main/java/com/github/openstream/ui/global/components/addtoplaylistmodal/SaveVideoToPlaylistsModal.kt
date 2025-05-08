@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -19,8 +20,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arshia.openstream.R
+import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.ui.global.components.PopupController
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -28,15 +30,15 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun SaveVideoToPlaylistsModal(
     video: DataItem.Video,
-    dismiss: () -> Unit,
 ) {
     val viewModel =
         koinViewModel<SaveVideoToPlaylistsViewModel>(parameters = { parametersOf(video) })
 
     ModalBottomSheet(
-        onDismissRequest = dismiss,
+        onDismissRequest = { PopupController.dismissSaveVideoToPlaylistModal() },
     ) {
         LazyColumn(
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             item {
@@ -81,7 +83,6 @@ fun SaveVideoToPlaylistsModal(
                     Button(
                         onClick = {
                             viewModel.saveVideoToPlaylists()
-                            dismiss()
                         }
                     ) {
                         Text(stringResource(R.string.done), fontSize = 12.sp)

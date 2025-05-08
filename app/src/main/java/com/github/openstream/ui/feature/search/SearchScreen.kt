@@ -78,7 +78,7 @@ fun SearchScreen(
                 toChannelScreen = toChannelScreen,
                 playVideo = playVideo,
                 loadNextPage = { viewModel.getNextPage() },
-                addToPlaylist = { PopupController.openAddToPlaylistDialog(it) },
+                addToPlaylist = { PopupController.openSaveVideoToPlaylistModal(it) },
                 addToWatchLater = { viewModel.addToWatchLater(it) },
             )
         }

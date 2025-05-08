@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.arshia.openstream.R
+import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.dataitem.DataItemList
 import com.github.openstream.ui.global.components.PopupController

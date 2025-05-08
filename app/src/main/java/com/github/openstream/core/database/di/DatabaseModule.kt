@@ -1,13 +1,9 @@
 package com.github.openstream.core.database.di
 
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.github.openstream.core.database.OpenStreamDatabase
-import com.github.openstream.core.database.entities.PlaylistEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -17,23 +13,13 @@ val databaseModule = module {
             androidContext(),
             OpenStreamDatabase::class.java,
             OpenStreamDatabase.NAME,
-        ).build()
-            .also {
-                val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-                scope.launch {
-                    if (it.playlistDao().indexFlow().first().none { it.name == "watch later" }) {
-                        it.playlistDao().upsert(
-                            PlaylistEntity(
-                                name = "watch later",
-                                channelUrl = "",
-                                isChannelVerified = false,
-                                count = 0,
-                                channelName = "",
-                                playlistId = 0,
-                            )
-                        )
-                    }
-                }
+        ).addCallback(object : RoomDatabase.Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+                db.execSQL(
+                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name) VALUES (0, 'watch later', '', false, 0, '')"
+                )
             }
+        }).build()
     }
 }

@@ -52,12 +52,14 @@ class OfflineFirstPlaylistRepository(
 
     override fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist): Flow<Resource<Success>> =
         flow {
+            require(playlist.id != 0L)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
 
     override fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>> =
         flow {
+            require(playlist.id != 0L)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)

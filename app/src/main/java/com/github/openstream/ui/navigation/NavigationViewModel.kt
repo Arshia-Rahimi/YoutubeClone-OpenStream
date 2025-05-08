@@ -21,16 +21,11 @@ class NavigationViewModel: ViewModel() {
             Settings,
         )
     }
-    
-    private val _currentTab = MutableStateFlow<Tabs>(Subscriptions)
-    val currentTab = _currentTab.asStateFlow()
+
+    val currentTab = MutableStateFlow<Tabs>(Subscriptions)
     
     private val _topBar: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
     val topBar = _topBar.asStateFlow()
-    
-    fun setCurrentTab(newTab: Tabs) {
-        _currentTab.value = newTab
-    }
     
     fun setTopBar(newTopBar: @Composable () -> Unit) {
         _topBar.value = newTopBar

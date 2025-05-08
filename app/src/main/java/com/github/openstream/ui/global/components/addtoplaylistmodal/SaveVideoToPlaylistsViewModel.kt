@@ -21,16 +21,14 @@ class SaveVideoToPlaylistsViewModel(
         .apply {
             playlistRepo.playlists
                 .onEach {
+                    val currentPlaylists = mapKeys { it.key.id }
+                    clear()
                     it.filter { it is DataItem.Playlist.LocalPlaylist }
                         .map { it as DataItem.Playlist.LocalPlaylist }
+                        .sortedBy { it.id }
                         .forEach { playlist ->
-                            if (playlist !in keys) {
-                                put(playlist, false)
-                            }
+                            put(playlist, currentPlaylists[playlist.id] == true)
                         }
-                    val playlists = toMap()
-                    clear()
-                    putAll(playlists)
                 }.launchIn(viewModelScope)
         }
 
@@ -38,12 +36,16 @@ class SaveVideoToPlaylistsViewModel(
         viewModelScope.launch {
             playlistRepo.saveVideoToPlaylists(video, localPlaylists)
                 .collect {
-                    when(it) {
-                        is Resource.Error -> SnackBarController.sendEvent(it.message ?: "failed to save to playlist")
+                    when (it) {
+                        is Resource.Error -> SnackBarController.sendEvent(
+                            it.message ?: "failed to save to playlist"
+                        )
+
                         is Resource.Success -> {
                             SnackBarController.sendEvent("saved to playlist")
-                            PopupController.dismissAddToPlaylistDialog()
+                            PopupController.dismissSaveVideoToPlaylistModal()
                         }
+
                         else -> Unit
                     }
                 }

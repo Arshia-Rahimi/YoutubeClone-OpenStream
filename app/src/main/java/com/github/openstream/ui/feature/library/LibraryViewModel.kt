@@ -37,8 +37,8 @@ class LibraryViewModel(
                         SortType.CREATED_AT_DESC -> newPlaylists.reversed()
                         SortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
                         SortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
-                        SortType.SIZE_ASC -> newPlaylists.sortedBy { it.count }
-                        SortType.SIZE_DESC -> newPlaylists.sortedByDescending { it.count }
+                        SortType.SIZE_ASC -> newPlaylists.sortedByDescending { it.count }
+                        SortType.SIZE_DESC -> newPlaylists.sortedBy { it.count }
                     }
                     clear()
                     addAll(sortedPlaylists)

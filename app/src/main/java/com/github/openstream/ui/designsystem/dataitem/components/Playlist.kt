@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.arshia.openstream.R
+import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
 
 @Composable
@@ -188,23 +188,29 @@ fun Playlist(
                                 },
                             )
                         }
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.delete_playlist)) },
-                            onClick = {
-                                isDropDownExpanded = false
-                                deletePlaylist(item)
-                            }
-                        )
+                        // can't delete watch later
+                        if (item.id != 0L) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.delete_playlist)) },
+                                onClick = {
+                                    isDropDownExpanded = false
+                                    deletePlaylist(item)
+                                }
+                            )
+                        }
                     }
                     
                     is DataItem.Playlist.LocalPlaylist -> {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.delete_playlist)) },
-                            onClick = {
-                                isDropDownExpanded = false
-                                deletePlaylist(item)
-                            }
-                        )
+                        // can't delete watch later
+                        if (item.id != 0L) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.delete_playlist)) },
+                                onClick = {
+                                    isDropDownExpanded = false
+                                    deletePlaylist(item)
+                                }
+                            )
+                        }
                     }
                 }
             }

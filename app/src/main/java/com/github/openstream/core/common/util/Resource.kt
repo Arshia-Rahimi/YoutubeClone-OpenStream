@@ -1,7 +1,7 @@
 package com.github.openstream.core.common.util
 
 import android.util.Log
-import com.arshia.openstream.BuildConfig
+import com.github.openstream.BuildConfig
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

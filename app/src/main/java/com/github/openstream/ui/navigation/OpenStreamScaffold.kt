@@ -76,7 +76,6 @@ fun OpenStreamScaffold(
 
     showSaveVideoToPlaylistsModal?.let {
         SaveVideoToPlaylistsModal(
-            dismiss = PopupController::dismissAddToPlaylistDialog,
             video = it,
         )
     }

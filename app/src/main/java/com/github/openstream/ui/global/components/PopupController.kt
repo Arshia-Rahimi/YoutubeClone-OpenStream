@@ -9,11 +9,11 @@ object PopupController {
         MutableStateFlow(null)
     val showSaveVideoToPlaylistsModal = _showSaveVideoToPlaylistsModal.asStateFlow()
 
-    fun openAddToPlaylistDialog(video: DataItem.Video) {
+    fun openSaveVideoToPlaylistModal(video: DataItem.Video) {
         _showSaveVideoToPlaylistsModal.value = video
     }
-    
-    fun dismissAddToPlaylistDialog() {
+
+    fun dismissSaveVideoToPlaylistModal() {
         _showSaveVideoToPlaylistsModal.value = null
     }
 

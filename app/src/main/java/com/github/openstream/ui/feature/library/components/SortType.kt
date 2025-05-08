@@ -1,7 +1,7 @@
 package com.github.openstream.ui.feature.library.components
 
 import androidx.annotation.StringRes
-import com.arshia.openstream.R
+import com.github.openstream.R
 
 enum class SortType(
     @StringRes val string: Int,

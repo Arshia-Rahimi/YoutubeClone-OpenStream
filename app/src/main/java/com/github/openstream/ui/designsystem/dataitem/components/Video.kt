@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.arshia.openstream.R
+import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.model.extractordata.DataItem
@@ -176,7 +176,7 @@ fun Video(
                     text = { Text(stringResource(R.string.add_to_playlist)) },
                     onClick = {
                         isDropDownExpanded = false
-                        PopupController.openAddToPlaylistDialog(item)
+                        PopupController.openSaveVideoToPlaylistModal(item)
                     },
                 )
             }
