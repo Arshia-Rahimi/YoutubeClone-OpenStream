@@ -76,6 +76,8 @@ class OfflineFirstPlaylistRepository(
         val ids = db.videoDao().insert(*videos.map { it.toEntity() }.toTypedArray())
         db.m2mDao()
             .addToPlaylist(*ids.map { PlaylistVideoCrossRef(playlistId, it) }.toTypedArray())
+
+        updatePlaylistThumbnail(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
     
@@ -84,6 +86,7 @@ class OfflineFirstPlaylistRepository(
         playlistId: Long,
     ): Flow<Resource<Success>> = flow {
         db.videoDao().delete(*videos.map { it.toEntity() }.toTypedArray())
+        updatePlaylistThumbnail(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
     
@@ -106,7 +109,8 @@ class OfflineFirstPlaylistRepository(
                 .map { PlaylistVideoCrossRef(playlistId, it) }
                 .toTypedArray()
         )
-        
+
+        updatePlaylistThumbnail(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
 
@@ -114,8 +118,9 @@ class OfflineFirstPlaylistRepository(
         flow {
             if (db.playlistDao().index().any { it.url == playlist.url })
                 throw Exception("This playlist already exist in your library")
-            
-            db.playlistDao().insert(playlist.toEntity())
+
+            val id = db.playlistDao().insert(playlist.toEntity()).first()
+            updatePlaylistThumbnail(id)
             emit(Success)
         }.asResult(Dispatchers.IO)
     
@@ -192,10 +197,18 @@ class OfflineFirstPlaylistRepository(
                             db.m2mDao()
                                 .removeFromPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
                     }
+                    updatePlaylistThumbnail(playlist.id)
                 }
             }.awaitAll()
             emit(Success)
         }
     }.asResult(Dispatchers.IO)
+   
+    private suspend fun updatePlaylistThumbnail(playlistId: Long) {
+        val latestVideoThumbnail = db.m2mDao().getPlaylistWithVideos(playlistId)
+            ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOf { it.thumbnail } ?: return
+
+        db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
+    }
     
 }
