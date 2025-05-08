@@ -6,7 +6,6 @@ import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
 import com.github.openstream.core.model.extractordata.toListOfVideos
-import com.github.openstream.core.shared.exceptions.OfflineFirstPlaylistNotFetchedException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 @Suppress("UNCHECKED_CAST")
@@ -33,7 +32,7 @@ object PlaylistExtractor {
     }
 
     fun fetchNextPage(playlist: YoutubePlaylist) {
-        if (playlist.extractor == null) throw OfflineFirstPlaylistNotFetchedException()
+        if (playlist.extractor == null) throw Exception("fetch the playlist first to sync it with youtube")
         if (playlist.nextPage == null) return
         val currentPage = playlist.extractor!!.getPage(playlist.nextPage)
         playlist.nextPage = currentPage.nextPage

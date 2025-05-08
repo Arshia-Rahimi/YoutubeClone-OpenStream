@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.feature.search.SearchViewModel
-import com.github.openstream.ui.global.components.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
+import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.uuid.ExperimentalUuidApi
 

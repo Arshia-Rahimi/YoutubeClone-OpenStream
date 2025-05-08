@@ -39,7 +39,7 @@ import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.StreamType
-import com.github.openstream.ui.global.components.PopupController
+import com.github.openstream.ui.global.popups.PopupController
 
 @Composable
 fun Video(

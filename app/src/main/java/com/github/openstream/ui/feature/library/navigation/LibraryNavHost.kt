@@ -6,14 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.github.openstream.app.navigation.routes.OpenStreamNavTypes
+import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.feature.library.LibraryScreen
-import com.github.openstream.ui.global.reusablescreens.channel.ChannelScreen
-import com.github.openstream.ui.global.reusablescreens.playlist.PlaylistScreen
-import com.github.openstream.ui.navigation.OpenStreamNavTypes
-import com.github.openstream.ui.navigation.Tabs
+import com.github.openstream.ui.global.screens.channel.ChannelScreen
+import com.github.openstream.ui.global.screens.playlist.PlaylistScreen
 import kotlin.reflect.typeOf
 
 @Composable
