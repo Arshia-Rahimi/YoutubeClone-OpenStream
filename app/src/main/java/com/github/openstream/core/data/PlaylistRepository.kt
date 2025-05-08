@@ -32,10 +32,6 @@ interface PlaylistRepository {
         playlistId: Long,
     ): Flow<Resource<Success>>
     
-    fun addToWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>>
-    
-    fun removeFromWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>>
-    
     fun getPlaylist(playlist: DataItem.Playlist): Flow<Resource<Playlist>>
 
     fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>>

@@ -4,9 +4,8 @@ import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.OnlinePlaylist
 import com.github.openstream.core.model.YoutubePlaylist
-import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
-import com.github.openstream.core.model.extractordata.toArrayOfDataItem
+import com.github.openstream.core.model.extractordata.toListOfVideos
 import com.github.openstream.core.shared.exceptions.OfflineFirstPlaylistNotFetchedException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
@@ -22,8 +21,7 @@ object PlaylistExtractor {
             isChannelVerified = extractor.isUploaderVerified,
             count = extractor.streamCount,
         )
-        val items =
-            extractor.initialPage.items.toArrayOfDataItem() as Array<DataItem.Video>
+        val items = extractor.initialPage.items.toListOfVideos().toTypedArray()
         val nextPage = extractor.initialPage.nextPage
         return OnlinePlaylist(
             extractor = extractor,
@@ -45,12 +43,12 @@ object PlaylistExtractor {
                 when (playlist) {
                     is OnlinePlaylist -> {
                         addAll(playlist.items)
-                        addAll(currentPage.items.toArrayOfDataItem() as Array<DataItem.Video>)
+                        addAll(currentPage.items.toListOfVideos().toTypedArray())
                     }
 
                     is OfflineFirstPlaylist -> {
                         val newItems =
-                            currentPage.items.toArrayOfDataItem() as Array<DataItem.Video>
+                            currentPage.items.toListOfVideos()
                         addAll(newItems)
                         playlist.items.forEach { previousItem ->
                             if (newItems.none { it.url == previousItem.url }) {

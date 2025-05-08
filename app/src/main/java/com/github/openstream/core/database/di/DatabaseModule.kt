@@ -4,6 +4,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.github.openstream.core.database.OpenStreamDatabase
+import com.github.openstream.core.shared.WATCH_LATER_ID
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -17,7 +18,7 @@ val databaseModule = module {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 db.execSQL(
-                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name) VALUES (0, 'watch later', '', false, 0, '')"
+                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name) VALUES ($WATCH_LATER_ID, 'watch later', '', false, 0, '')"
                 )
             }
         }).build()

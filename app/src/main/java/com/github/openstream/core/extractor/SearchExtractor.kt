@@ -1,11 +1,9 @@
 package com.github.openstream.core.extractor
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.SearchResult
 import com.github.openstream.core.model.extractordata.toListOfDataItem
-import com.github.openstream.core.model.extractordata.toMutableStateListOfDataItem
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 
 object SearchExtractor {

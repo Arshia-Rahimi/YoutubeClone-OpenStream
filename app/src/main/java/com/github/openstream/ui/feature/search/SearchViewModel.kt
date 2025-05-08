@@ -11,6 +11,7 @@ import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.SearchResult
+import com.github.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,11 +73,12 @@ class SearchViewModel(
     
     fun addToWatchLater(video: DataItem.Video) {
         viewModelScope.launch {
-            playlistRepo.addToWatchLater(listOf(video))
+            playlistRepo.addToPlaylist(listOf(video), WATCH_LATER_ID)
                 .collect {
                     when (it) {
-                        is Resource.Success -> SnackBarController
-                            .sendEvent(R.string.added_to_watch_later)
+                        is Resource.Success -> {
+                            SnackBarController.sendEvent(R.string.added_to_watch_later)
+                        }
                         
                         else -> {}
                     }

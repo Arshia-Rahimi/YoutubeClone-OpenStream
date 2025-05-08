@@ -1,21 +1,22 @@
 package com.github.openstream.core.model.extractordata
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import java.time.format.DateTimeFormatter
 
-fun List<InfoItem>.toArrayOfDataItem(): Array<DataItem> =
-    buildList { this@toArrayOfDataItem.forEach { it.toDataItem()?.let(::add) } }.toTypedArray()
-
 fun List<InfoItem>.toListOfDataItem(): List<DataItem> =
     buildList { this@toListOfDataItem.forEach { it.toDataItem()?.let(::add) } }
 
-fun List<InfoItem>.toMutableStateListOfDataItem(): SnapshotStateList<DataItem> =
-    toListOfDataItem().toMutableStateList()
+fun List<InfoItem>.toListOfVideos(): List<DataItem.Video> =
+    buildList {
+        this@toListOfVideos
+            .filter { it is StreamInfoItem }
+            .forEach {
+                it.toDataItem()?.let { add(it as DataItem.Video) }
+            }
+    }
 
 private fun InfoItem.toDataItem(): DataItem? = when (this) {
     is PlaylistInfoItem -> DataItem.Playlist.OnlinePlaylist(
@@ -27,7 +28,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         isChannelVerified = isUploaderVerified,
         count = streamCount,
     )
-    
+
     is ChannelInfoItem -> DataItem.Channel(
         url = url,
         name = name,
@@ -36,7 +37,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         subscriberCount = subscriberCount,
         verified = isVerified,
     )
-    
+
     is StreamInfoItem -> DataItem.Video(
         url = url,
         name = name,
@@ -58,7 +59,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
             else -> StreamType.NORMAL
         },
     )
-    
+
     else -> null
 }
 

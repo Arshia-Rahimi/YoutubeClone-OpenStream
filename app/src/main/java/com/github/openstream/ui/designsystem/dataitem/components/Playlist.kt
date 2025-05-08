@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.shared.WATCH_LATER_ID
 
 @Composable
 fun Playlist(
@@ -188,8 +189,7 @@ fun Playlist(
                                 },
                             )
                         }
-                        // can't delete watch later
-                        if (item.id != 0L) {
+                        if (item.id != WATCH_LATER_ID) {
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.delete_playlist)) },
                                 onClick = {
@@ -201,8 +201,7 @@ fun Playlist(
                     }
                     
                     is DataItem.Playlist.LocalPlaylist -> {
-                        // can't delete watch later
-                        if (item.id != 0L) {
+                        if (item.id != WATCH_LATER_ID) {
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.delete_playlist)) },
                                 onClick = {

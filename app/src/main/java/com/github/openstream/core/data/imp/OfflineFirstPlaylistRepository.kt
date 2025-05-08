@@ -15,6 +15,7 @@ import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.toOfflineFirstPlaylist
+import com.github.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -52,14 +53,14 @@ class OfflineFirstPlaylistRepository(
 
     override fun deletePlaylist(playlist: DataItem.Playlist.LocalPlaylist): Flow<Resource<Success>> =
         flow {
-            require(playlist.id != 0L)
+            require(playlist.id != WATCH_LATER_ID)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
 
     override fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>> =
         flow {
-            require(playlist.id != 0L)
+            require(playlist.id != WATCH_LATER_ID)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
@@ -86,12 +87,6 @@ class OfflineFirstPlaylistRepository(
         emit(Success)
     }.asResult(Dispatchers.IO)
     
-    override fun addToWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>> =
-        addToPlaylist(videos, 0L)
-    
-    override fun removeFromWatchLater(videos: List<DataItem.Video>): Flow<Resource<Success>> =
-        removeFromPlaylist(videos, 0L)
-
     override fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>> =
         flow {
             PlaylistExtractor.fetchNextPage(currentPlaylist)

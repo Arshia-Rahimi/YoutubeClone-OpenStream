@@ -20,7 +20,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.dataitem.DataItemList
 import com.github.openstream.ui.feature.search.components.SearchField
-import com.github.openstream.ui.global.components.PopupController
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -78,7 +77,6 @@ fun SearchScreen(
                 toChannelScreen = toChannelScreen,
                 playVideo = playVideo,
                 loadNextPage = { viewModel.getNextPage() },
-                addToPlaylist = { PopupController.openSaveVideoToPlaylistModal(it) },
                 addToWatchLater = { viewModel.addToWatchLater(it) },
             )
         }
