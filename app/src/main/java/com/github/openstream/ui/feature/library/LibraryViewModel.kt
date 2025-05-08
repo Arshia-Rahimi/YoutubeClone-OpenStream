@@ -7,12 +7,13 @@ import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.data.PreferencesRepository
+import com.github.openstream.core.data.imp.PreferencesRepository
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.feature.library.components.SortType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -21,7 +22,8 @@ class LibraryViewModel(
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
 
-    val sortType = preferencesRepo.librarySortType
+    val sortType = preferencesRepo.preferences
+        .map { it.librarySortType }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

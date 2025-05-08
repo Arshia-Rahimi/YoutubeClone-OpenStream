@@ -2,7 +2,6 @@ package com.github.openstream.core.datastore
 
 import android.util.Log
 import androidx.datastore.core.Serializer
-import com.github.openstream.core.media3.PlayerRepeatMode
 import com.github.openstream.ui.feature.library.components.SortType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -11,10 +10,6 @@ import java.io.OutputStream
 
 @Serializable
 data class PreferencesModel(
-    val seekIncrement: Long = 10000L,
-    val playerRepeatMode: PlayerRepeatMode = PlayerRepeatMode.OFF,
-    val isPlaylistShuffleEnabled: Boolean = false,
-    val playbackSpeed: Float = 1F,
     val librarySortType: SortType = SortType.CREATED_AT_ASC,
 )
 
@@ -39,3 +34,4 @@ class PreferencesSerializer: Serializer<PreferencesModel> {
             ).encodeToByteArray()
         )
 }
+

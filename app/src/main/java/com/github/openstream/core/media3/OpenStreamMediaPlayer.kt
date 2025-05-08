@@ -9,23 +9,29 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
+import com.github.openstream.core.data.imp.PreferencesRepository
+import com.github.openstream.core.datastore.PlayerConfigModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
     private val context: Context,
+    private val playerConfigRepo: PreferencesRepository,
+    private val scope: CoroutineScope,
 ) {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    // todo
-//    private val config = configDataStore.data
-//        .stateIn(scope, SharingStarted.Eagerly, PlayerConfigDataStoreModel())
+    private val playerConfig = playerConfigRepo.playerConfig
+        .stateIn(
+            scope = scope,
+            initialValue = PlayerConfigModel(),
+            started = SharingStarted.WhileSubscribed(5000),
+        )
 
     private var _player: ExoPlayer? = null
     val player: ExoPlayer

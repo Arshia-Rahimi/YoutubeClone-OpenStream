@@ -15,4 +15,12 @@ val dataStoreModule = module {
             corruptionHandler = ReplaceFileCorruptionHandler { PreferencesModel() },
         )
     }
+
+    single<DataStore<PlayerConfigModel>> {
+        DataStoreFactory.create(
+            serializer = PlayerConfigSerializer(),
+            produceFile = { androidContext().dataStoreFile("open_stream_preferences.pb") },
+            corruptionHandler = ReplaceFileCorruptionHandler { PlayerConfigModel() },
+        )
+    }
 }
