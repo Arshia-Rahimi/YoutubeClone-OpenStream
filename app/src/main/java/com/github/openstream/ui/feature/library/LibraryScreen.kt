@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.ui.designsystem.dataitem.DataItemList
+import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.global.popups.PopupController
 import org.koin.androidx.compose.koinViewModel
 

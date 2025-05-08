@@ -1,4 +1,4 @@
-package com.github.openstream.app.navigation
+package com.github.openstream.ui.global
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

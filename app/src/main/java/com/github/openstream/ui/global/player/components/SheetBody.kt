@@ -40,7 +40,7 @@ import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.StreamType
 import com.github.openstream.core.model.extractordata.VideoData
-import com.github.openstream.ui.designsystem.dataitem.components.Channel
+import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

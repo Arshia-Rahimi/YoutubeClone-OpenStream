@@ -18,7 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.ui.designsystem.dataitem.DataItemList
+import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.feature.search.components.SearchField
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi

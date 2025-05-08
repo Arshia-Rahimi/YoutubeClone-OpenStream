@@ -1,4 +1,4 @@
-package com.github.openstream.ui.designsystem.dataitem.components
+package com.github.openstream.ui.designsystem.components.dataitem.components
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable

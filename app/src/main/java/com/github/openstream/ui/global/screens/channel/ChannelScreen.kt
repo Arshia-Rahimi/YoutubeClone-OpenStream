@@ -36,7 +36,7 @@ import com.github.openstream.core.model.extractordata.ChannelTab
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
-import com.github.openstream.ui.designsystem.dataitem.DataItemList
+import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.global.screens.channel.components.ChannelTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

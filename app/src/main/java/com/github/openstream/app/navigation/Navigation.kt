@@ -21,6 +21,7 @@ import com.github.openstream.ui.feature.library.navigation.LibraryNavHost
 import com.github.openstream.ui.feature.search.navigation.SearchNavHost
 import com.github.openstream.ui.feature.settings.SettingsScreen
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsScreen
+import com.github.openstream.ui.global.OpenStreamScaffold
 import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.player.view.FullScreenPlayerView
 import org.koin.androidx.compose.koinViewModel

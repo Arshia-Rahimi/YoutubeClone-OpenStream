@@ -1,4 +1,4 @@
-package com.github.openstream.ui.designsystem.dataitem
+package com.github.openstream.ui.designsystem.components.dataitem
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer

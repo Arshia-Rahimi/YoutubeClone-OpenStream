@@ -1,11 +1,11 @@
-package com.github.openstream.ui.designsystem.dataitem
+package com.github.openstream.ui.designsystem.components.dataitem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.ui.designsystem.dataitem.components.Channel
-import com.github.openstream.ui.designsystem.dataitem.components.Playlist
-import com.github.openstream.ui.designsystem.dataitem.components.Video
+import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
+import com.github.openstream.ui.designsystem.components.dataitem.components.Playlist
+import com.github.openstream.ui.designsystem.components.dataitem.components.Video
 
 @Composable
 fun DataItem(
