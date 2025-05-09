@@ -1,13 +1,13 @@
 package com.github.openstream.core.model
 
 import com.github.openstream.core.database.entities.PlaylistEntity
-import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.VideoItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 sealed interface Playlist {
-    var items: Array<DataItem.Video>
+    var items: Array<VideoItem>
     val metadata: PlaylistMetadata
 
     fun toEntity(): PlaylistEntity
@@ -19,7 +19,7 @@ sealed interface LocalPlaylist : Playlist {
 
 class LocalOnlyPlaylist(
     override val id: Long,
-    override var items: Array<DataItem.Video>,
+    override var items: Array<VideoItem>,
     override val metadata: PlaylistMetadata,
 ) : LocalPlaylist {
     override fun toEntity() = PlaylistEntity(
@@ -40,7 +40,7 @@ sealed interface YoutubePlaylist : Playlist {
 
 class OnlinePlaylist(
     override val url: String,
-    override var items: Array<DataItem.Video>,
+    override var items: Array<VideoItem>,
     override val metadata: PlaylistMetadata,
     override var extractor: YoutubePlaylistExtractor?,
     override var nextPage: Page?
@@ -60,7 +60,7 @@ class OfflineFirstPlaylist(
     override var nextPage: Page? = null,
     override var extractor: YoutubePlaylistExtractor? = null,
     override val id: Long,
-    override var items: Array<DataItem.Video>,
+    override var items: Array<VideoItem>,
     override val metadata: PlaylistMetadata,
 ) : LocalPlaylist, YoutubePlaylist {
     override fun toEntity() = PlaylistEntity(

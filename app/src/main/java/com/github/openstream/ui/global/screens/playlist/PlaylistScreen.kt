@@ -6,6 +6,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
@@ -15,7 +16,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun PlaylistScreen(
-    playlist: DataItem.Playlist,
+    playlist: PlaylistItem,
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
@@ -44,8 +45,8 @@ fun PlaylistScreen(
                 playVideo = playVideo,
                 items = viewModel.items,
                 toChannelScreen = toChannelScreen,
-                loadNextPage = { viewModel.getNextPage() },
-                onRefresh = { viewModel.syncPlaylist() },
+                loadNextPage = viewModel::getNextPage,
+                onRefresh = viewModel::syncPlaylist,
                 isRefreshing = isRefreshing,
             )
         }
@@ -69,8 +70,8 @@ private fun PlaylistScreen(
         onRefresh = onRefresh,
         isRefreshing = isRefreshing,
         items = items,
-        toChannelScreen = { toChannelScreen(it) },
-        playVideo = { playVideo(it) },
+        toChannelScreen = toChannelScreen,
+        playVideo = playVideo,
         loadNextPage = loadNextPage,
     )
 }

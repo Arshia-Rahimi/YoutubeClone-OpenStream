@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
+import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -33,13 +35,13 @@ fun DataItemList(
     onRefresh: () -> Unit = {},
     isRefreshing: Boolean,
     toChannelScreen: (String) -> Unit = {},
-    toPlaylistScreen: (DataItem.Playlist) -> Unit = {},
+    toPlaylistScreen: (PlaylistItem) -> Unit = {},
     playVideo: (String) -> Unit = {},
     loadNextPage: () -> Unit = {},
-    savePlaylist: (DataItem.Playlist) -> Unit = {},
-    deletePlaylist: (DataItem.Playlist) -> Unit = {},
-    addToWatchLater: ((DataItem.Video) -> Unit)? = null,
-    removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
+    savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
+    deletePlaylist: (PlaylistItem.LocalPlaylistItem) -> Unit = {},
+    addToWatchLater: ((VideoItem) -> Unit)? = null,
+    removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
     val lazyColumnState = rememberLazyListState()
     val shouldLoadNextPage by remember {
@@ -105,13 +107,13 @@ fun DataItemList(
     items: SnapshotStateList<DataItem>,
     shouldViewChannel: Boolean = true,
     toChannelScreen: (String) -> Unit = {},
-    toPlaylistScreen: (DataItem.Playlist) -> Unit = {},
+    toPlaylistScreen: (PlaylistItem) -> Unit = {},
     playVideo: (String) -> Unit = {},
     loadNextPage: () -> Unit = {},
-    savePlaylist: (DataItem.Playlist) -> Unit = {},
-    deletePlaylist: (DataItem.Playlist) -> Unit = {},
-    addToWatchLater: ((DataItem.Video) -> Unit)? = null,
-    removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
+    savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
+    deletePlaylist: (PlaylistItem.LocalPlaylistItem) -> Unit = {},
+    addToWatchLater: ((VideoItem) -> Unit)? = null,
+    removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
     val lazyColumnState = rememberLazyListState()
     val shouldLoadNextPage by remember {

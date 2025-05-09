@@ -34,6 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.extractordata.ChannelInfo
 import com.github.openstream.core.model.extractordata.ChannelTab
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.designsystem.components.ErrorPage
 import com.github.openstream.ui.designsystem.components.LoadingBox
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
@@ -51,7 +52,7 @@ fun ChannelScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
-    toPlaylistScreen: (DataItem.Playlist) -> Unit,
+    toPlaylistScreen: (PlaylistItem) -> Unit,
 ) {
     topBar {}
     val viewModel = koinViewModel<ChannelViewModel>(parameters = { parametersOf(url) })
@@ -72,7 +73,7 @@ fun ChannelScreen(
 
         is ChannelViewModel.UiState.Success -> ChannelScreen(
             (uiState as ChannelViewModel.UiState.Success).channelInfo,
-            trigger = { viewModel.onAction(it) },
+            trigger = viewModel::onAction,
             topBar = topBar,
             tabResults = tabResults,
             scope = scope,
@@ -94,7 +95,7 @@ private fun ChannelScreen(
     trigger: (ChannelAction) -> Unit,
     navigateBack: () -> Unit,
     playVideo: (String) -> Unit,
-    toPlaylistScreen: (DataItem.Playlist) -> Unit,
+    toPlaylistScreen: (PlaylistItem) -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
     val pagerState = rememberPagerState { channelInfo.tabs.size }

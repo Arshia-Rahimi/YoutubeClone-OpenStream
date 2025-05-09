@@ -35,18 +35,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.R
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.shared.WATCH_LATER_ID
 
 @Composable
 fun Playlist(
     modifier: Modifier,
-    item: DataItem.Playlist,
+    item: PlaylistItem,
     toChannelScreen: (String) -> Unit,
-    toPlaylistScreen: (DataItem.Playlist) -> Unit,
+    toPlaylistScreen: (PlaylistItem) -> Unit,
     shouldViewChannel: Boolean,
-    deletePlaylist: (DataItem.Playlist) -> Unit,
-    savePlaylist: (DataItem.Playlist) -> Unit,
+    deletePlaylist: (PlaylistItem.LocalPlaylistItem) -> Unit,
+    savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
@@ -110,30 +110,15 @@ fun Playlist(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                when (item) {
-                    is DataItem.Playlist.LocalOnlyPlaylist -> Unit
-                    is DataItem.Playlist.OnlinePlaylist -> {
-                        SubText(text = item.channelName)
-                        if (item.isChannelVerified == true) {
-                            Icon(
-                                modifier = Modifier.padding(start = 4.dp, end = 8.dp),
-                                painter = painterResource(R.drawable.verified),
-                                contentDescription = "verified",
-                                tint = Color(0xFFAAAAAA)
-                            )
-                        }
-                    }
-                    
-                    is DataItem.Playlist.OfflineFirstPlaylist -> {
-                        SubText(text = item.channelName)
-                        if (item.isChannelVerified == true) {
-                            Icon(
-                                modifier = Modifier.padding(start = 4.dp, end = 8.dp),
-                                painter = painterResource(R.drawable.verified),
-                                contentDescription = "verified",
-                                tint = Color(0xFFAAAAAA)
-                            )
-                        }
+                if (item is PlaylistItem.YoutubePlaylistItem) {
+                    SubText(text = item.channelName)
+                    if (item.isChannelVerified == true) {
+                        Icon(
+                            modifier = Modifier.padding(start = 4.dp, end = 8.dp),
+                            painter = painterResource(R.drawable.verified),
+                            contentDescription = "verified",
+                            tint = Color(0xFFAAAAAA)
+                        )
                     }
                 }
             }
@@ -159,58 +144,36 @@ fun Playlist(
                 onDismissRequest = { isDropDownExpanded = false },
                 tonalElevation = 4.dp,
             ) {
-                when (item) {
-                    is DataItem.Playlist.OnlinePlaylist -> {
-                        if (shouldViewChannel) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.view_channel)) },
-                                onClick = {
-                                    isDropDownExpanded = false
-                                    toChannelScreen(item.channelUrl)
-                                },
-                            )
-                        }
+                if (item is PlaylistItem.LocalPlaylistItem) {
+                    if (item.id != WATCH_LATER_ID) {
                         DropdownMenuItem(
-                            text = { Text(stringResource(R.string.save_playlist)) },
+                            text = { Text(stringResource(R.string.delete_playlist)) },
                             onClick = {
                                 isDropDownExpanded = false
-                                savePlaylist(item)
+                                deletePlaylist(item)
                             }
                         )
                     }
-                    
-                    is DataItem.Playlist.OfflineFirstPlaylist -> {
-                        if (shouldViewChannel) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.view_channel)) },
-                                onClick = {
-                                    isDropDownExpanded = false
-                                    toChannelScreen(item.channelUrl)
-                                },
-                            )
-                        }
-                        if (item.id != WATCH_LATER_ID) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.delete_playlist)) },
-                                onClick = {
-                                    isDropDownExpanded = false
-                                    deletePlaylist(item)
-                                }
-                            )
-                        }
+                }
+                if (item is PlaylistItem.YoutubePlaylistItem) {
+                    if (shouldViewChannel) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.view_channel)) },
+                            onClick = {
+                                isDropDownExpanded = false
+                                toChannelScreen(item.channelUrl)
+                            },
+                        )
                     }
-
-                    is DataItem.Playlist.LocalOnlyPlaylist -> {
-                        if (item.id != WATCH_LATER_ID) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.delete_playlist)) },
-                                onClick = {
-                                    isDropDownExpanded = false
-                                    deletePlaylist(item)
-                                }
-                            )
+                }
+                if (item is PlaylistItem.OnlinePlaylistItem) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.save_playlist)) },
+                        onClick = {
+                            isDropDownExpanded = false
+                            savePlaylist(item)
                         }
-                    }
+                    )
                 }
             }
         }
@@ -222,7 +185,7 @@ fun Playlist(
 private fun Preview() {
     MaterialTheme {
         Playlist(
-            item = DataItem.Playlist.OnlinePlaylist(
+            item = PlaylistItem.OnlinePlaylistItem(
                 name = "name",
                 channelUrl = "",
                 channelName = "channel",

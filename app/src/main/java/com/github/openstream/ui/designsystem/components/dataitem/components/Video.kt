@@ -37,19 +37,19 @@ import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.StreamType
+import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.ui.global.popups.PopupController
 
 @Composable
 fun Video(
     modifier: Modifier,
-    item: DataItem.Video,
+    item: VideoItem,
     shouldViewChannel: Boolean,
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
-    saveToWatchLater: ((DataItem.Video) -> Unit)? = null,
-    removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
+    saveToWatchLater: ((VideoItem) -> Unit)? = null,
+    removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
     val timeString = "${item.viewCount.toShortForm()} views • " + when (item.streamType) {
         StreamType.NORMAL -> ""
@@ -202,7 +202,7 @@ fun SubText(
 private fun Preview() {
     MaterialTheme {
         Video(
-            item = DataItem.Video(
+            item = VideoItem(
                 name = "name",
                 channelUrl = "",
                 isShort = false,

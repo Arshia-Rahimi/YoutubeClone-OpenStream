@@ -29,12 +29,12 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.ChannelItem
 
 @Composable
 fun Channel(
     modifier: Modifier,
-    item: DataItem.Channel,
+    item: ChannelItem,
     toChannelScreen: (String) -> Unit,
     subscribe: (String) -> Unit,
 ) {
@@ -115,7 +115,7 @@ fun Channel(
 private fun Preview() {
     MaterialTheme {
         Channel(
-            item = DataItem.Channel(
+            item = ChannelItem(
                 url = "",
                 name = "channel name",
                 description = "description",

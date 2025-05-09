@@ -9,6 +9,7 @@ import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.imp.PreferencesRepository
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.feature.library.components.SortType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -53,7 +54,7 @@ class LibraryViewModel(
         }
     }
 
-    fun deletePlaylist(playlist: DataItem.Playlist.LocalOnlyPlaylist) {
+    fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem) {
         viewModelScope.launch {
             playlistRepo.deletePlaylist(playlist)
                 .collect {
@@ -70,24 +71,7 @@ class LibraryViewModel(
         }
     }
 
-    fun deletePlaylist(playlist: DataItem.Playlist.OfflineFirstPlaylist) {
-        viewModelScope.launch {
-            playlistRepo.deletePlaylist(playlist)
-                .collect {
-                    when (it) {
-                        is Resource.Error -> SnackBarController
-                            .sendEvent("failed to delete playlist: ${playlist.name}")
-
-                        is Resource.Success -> SnackBarController
-                            .sendEvent("deleted playlist: ${playlist.name}")
-
-                        else -> Unit
-                    }
-                }
-        }
-    }
-
-    fun savePlaylist(playlist: DataItem.Playlist.OnlinePlaylist) {
+    fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem) {
         viewModelScope.launch {
             playlistRepo.savePlaylist(playlist)
                 .collect {

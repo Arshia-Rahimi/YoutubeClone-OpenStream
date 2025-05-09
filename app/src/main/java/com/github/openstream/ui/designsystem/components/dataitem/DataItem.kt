@@ -2,7 +2,10 @@ package com.github.openstream.ui.designsystem.components.dataitem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
+import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.designsystem.components.dataitem.components.Playlist
 import com.github.openstream.ui.designsystem.components.dataitem.components.Video
@@ -13,16 +16,16 @@ fun DataItem(
     item: DataItem,
     shouldViewChannel: Boolean = true,
     toChannelScreen: (String) -> Unit,
-    toPlaylistScreen: (DataItem.Playlist) -> Unit,
+    toPlaylistScreen: (PlaylistItem) -> Unit,
     playVideo: (String) -> Unit,
     subscribe: (String) -> Unit = {},
-    savePlaylist: (DataItem.Playlist) -> Unit = {},
-    deletePlaylist: (DataItem.Playlist) -> Unit = {},
-    addToWatchLater: ((DataItem.Video) -> Unit)? = null,
-    removeFromWatchLater: ((DataItem.Video) -> Unit)? = null,
+    savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
+    deletePlaylist: (PlaylistItem.LocalPlaylistItem) -> Unit = {},
+    addToWatchLater: ((VideoItem) -> Unit)? = null,
+    removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
     when(item) {
-        is DataItem.Video -> Video(
+        is VideoItem -> Video(
             modifier = modifier,
             item = item,
             toChannelScreen = toChannelScreen,
@@ -32,7 +35,7 @@ fun DataItem(
             removeFromWatchLater = removeFromWatchLater,
         )
 
-        is DataItem.Playlist -> Playlist(
+        is PlaylistItem -> Playlist(
             modifier = modifier,
             item = item,
             toPlaylistScreen = toPlaylistScreen,
@@ -42,7 +45,7 @@ fun DataItem(
             deletePlaylist = deletePlaylist,
         )
 
-        is DataItem.Channel -> Channel(
+        is ChannelItem -> Channel(
             modifier = modifier,
             item = item,
             toChannelScreen = toChannelScreen,

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.global.popups.PopupController
 import org.koin.androidx.compose.koinViewModel
@@ -34,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LibraryScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     toChannelScreen: (String) -> Unit,
-    toPlaylistScreen: (DataItem.Playlist) -> Unit,
+    toPlaylistScreen: (PlaylistItem) -> Unit,
     playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<LibraryViewModel>()
@@ -86,19 +86,8 @@ fun LibraryScreen(
             toChannelScreen = toChannelScreen,
             toPlaylistScreen = toPlaylistScreen,
             playVideo = playVideo,
-            savePlaylist = {
-                when (it) {
-                    is DataItem.Playlist.OnlinePlaylist -> viewModel.savePlaylist(it)
-                    else -> Unit
-                }
-            },
-            deletePlaylist = {
-                when (it) {
-                    is DataItem.Playlist.LocalOnlyPlaylist -> viewModel.deletePlaylist(it)
-                    is DataItem.Playlist.OfflineFirstPlaylist -> viewModel.deletePlaylist(it)
-                    else -> Unit
-                }
-            },
+            savePlaylist = viewModel::savePlaylist,
+            deletePlaylist = viewModel::deletePlaylist,
         )
     }
 }

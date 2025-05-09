@@ -11,6 +11,7 @@ import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.SearchResult
+import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,8 +71,8 @@ class SearchViewModel(
             }
         }
     }
-    
-    fun addToWatchLater(video: DataItem.Video) {
+
+    fun addToWatchLater(video: VideoItem) {
         viewModelScope.launch {
             playlistRepo.addToPlaylist(listOf(video), WATCH_LATER_ID)
                 .collect {

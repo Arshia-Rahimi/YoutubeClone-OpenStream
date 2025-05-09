@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.github.openstream.core.database.OpenStreamEntity
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 
 @Entity("playlists")
 data class PlaylistEntity(
@@ -17,16 +17,16 @@ data class PlaylistEntity(
     val thumbnail: String? = null,
     val url: String? = null,
 ) : OpenStreamEntity {
-    fun toDataItem(): DataItem.Playlist =
+    fun toDataItem(): PlaylistItem =
         when {
-            url == null -> DataItem.Playlist.LocalOnlyPlaylist(
+            url == null -> PlaylistItem.LocalOnlyPlaylistItem(
                 name = name,
                 thumbnail = thumbnail,
                 count = count,
                 id = playlistId,
             )
-            
-            else -> DataItem.Playlist.OfflineFirstPlaylist(
+
+            else -> PlaylistItem.OfflineFirstPlaylistItem(
                 name = name,
                 url = url,
                 thumbnail = thumbnail,

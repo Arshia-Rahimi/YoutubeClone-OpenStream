@@ -15,7 +15,7 @@ enum class StreamType {
     NORMAL, LIVE_STREAM, POST_LIVE_STREAM
 }
 
-data class Video(
+data class VideoItem(
     override val name: String,
     val thumbnail: String?,
     val url: String,
@@ -32,7 +32,7 @@ data class Video(
     val channelAvatars: String?,
     val id: Long? = null,
 ) : DataItem {
-    override fun toEntity() = VideoEntity(
+    override fun toEntity(): VideoEntity = VideoEntity(
         name = name,
         url = url,
         thumbnail = thumbnail,
@@ -50,13 +50,15 @@ data class Video(
 }
 
 @Serializable
-sealed interface Playlist : DataItem {
+sealed interface PlaylistItem : DataItem {
 
     val thumbnail: String?
     val count: Long
 
+    override fun toEntity(): PlaylistEntity
+
     @Serializable
-    sealed interface LocalPlaylist : Playlist {
+    sealed interface LocalPlaylistItem : PlaylistItem {
         override val name: String
         override val thumbnail: String?
         override val count: Long
@@ -66,12 +68,20 @@ sealed interface Playlist : DataItem {
     }
 
     @Serializable
-    class LocalOnlyPlaylist(
+    sealed interface YoutubePlaylistItem : PlaylistItem {
+        val channelName: String
+        val channelUrl: String
+        val isChannelVerified: Boolean
+        val url: String
+    }
+
+    @Serializable
+    class LocalOnlyPlaylistItem(
         override val name: String,
         override val thumbnail: String?,
         override val count: Long,
         override val id: Long,
-    ) : LocalPlaylist {
+    ) : LocalPlaylistItem {
         override fun toEntity() =
             PlaylistEntity(
                 name = name,
@@ -82,16 +92,16 @@ sealed interface Playlist : DataItem {
     }
 
     @Serializable
-    class OfflineFirstPlaylist(
+    class OfflineFirstPlaylistItem(
         override val name: String,
         override val thumbnail: String?,
         override val count: Long,
         override val id: Long,
-        val channelName: String,
-        val channelUrl: String,
-        val isChannelVerified: Boolean,
-        val url: String,
-    ) : LocalPlaylist {
+        override val channelName: String,
+        override val channelUrl: String,
+        override val isChannelVerified: Boolean,
+        override val url: String,
+    ) : LocalPlaylistItem, YoutubePlaylistItem {
         override fun toEntity() = PlaylistEntity(
             name = name,
             channelUrl = channelUrl,
@@ -105,15 +115,15 @@ sealed interface Playlist : DataItem {
     }
 
     @Serializable
-    data class OnlinePlaylist(
+    data class OnlinePlaylistItem(
         override val name: String,
         override val thumbnail: String?,
         override val count: Long,
-        val channelName: String,
-        val channelUrl: String,
-        val isChannelVerified: Boolean,
-        val url: String,
-    ) : Playlist {
+        override val channelName: String,
+        override val channelUrl: String,
+        override val isChannelVerified: Boolean,
+        override val url: String,
+    ) : YoutubePlaylistItem {
         override val key: String
             get() = "playlist-$url"
 
@@ -130,7 +140,7 @@ sealed interface Playlist : DataItem {
     }
 }
 
-data class Channel(
+data class ChannelItem(
     override val name: String,
     val url: String,
     val thumbnail: String?,
@@ -141,7 +151,7 @@ data class Channel(
     override val key: String
         get() = "channel-$url"
 
-    override fun toEntity() = ChannelEntity(
+    override fun toEntity(): ChannelEntity = ChannelEntity(
         name = name,
         url = url,
         isVerified = verified,
