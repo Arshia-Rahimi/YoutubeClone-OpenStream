@@ -36,8 +36,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
+import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.StreamType
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
@@ -110,7 +111,7 @@ fun SheetBody(
                     tint = MaterialTheme.colorScheme.onTertiary,
                 )
                 Text(
-                    text = videoData.uploadDate,
+                    text = videoData.uploadDate?.timeAgo() ?: "",
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onTertiary,
                 )
@@ -136,7 +137,7 @@ fun SheetBody(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
             subscribe = {},
-            item = DataItem.Channel(
+            item = ChannelItem(
                 url = videoData.channelUrl,
                 thumbnail = videoData.channelAvatar,
                 name = videoData.channelName,
@@ -249,7 +250,7 @@ private fun Preview() {
                     subtitles = emptyList(),
                     subscriberCount = 454321L,
                     likeCount = 3234L,
-                    uploadDate = "",
+                    uploadDate = null,
                 ),
                 scrollState = rememberScrollState(),
                 addToPlaylist = {},

@@ -11,7 +11,7 @@ data class VideoData(
     val channelUrl: String,
     val channelName: String,
     val viewCount: Long,
-    val uploadDate: String,
+    val uploadDate: Long?,
     val length: Long,
     val likeCount: Long,
     val isChannelVerified: Boolean,

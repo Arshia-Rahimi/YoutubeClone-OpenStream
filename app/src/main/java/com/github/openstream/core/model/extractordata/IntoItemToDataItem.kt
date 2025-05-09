@@ -4,22 +4,22 @@ import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
-import java.time.format.DateTimeFormatter
 
 fun List<InfoItem>.toListOfDataItem(): List<DataItem> =
     buildList { this@toListOfDataItem.forEach { it.toDataItem()?.let(::add) } }
 
-fun List<InfoItem>.toListOfVideos(): List<DataItem.Video> =
+fun List<InfoItem>.toListOfVideos(): List<VideoItem> =
     buildList {
         this@toListOfVideos
             .filter { it is StreamInfoItem }
             .forEach {
-                it.toDataItem()?.let { add(it as DataItem.Video) }
+                it.toDataItem()?.let { add(it as VideoItem) }
             }
     }
 
 private fun InfoItem.toDataItem(): DataItem? = when (this) {
-    is PlaylistInfoItem -> DataItem.Playlist.OnlinePlaylist(
+    // todo get saved playlists
+    is PlaylistInfoItem -> PlaylistItem.OnlinePlaylistItem(
         url = url,
         name = name,
         thumbnail = thumbnails.first().url,
@@ -29,7 +29,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         count = streamCount,
     )
 
-    is ChannelInfoItem -> DataItem.Channel(
+    is ChannelInfoItem -> ChannelItem(
         url = url,
         name = name,
         thumbnail = thumbnails.first().url,
@@ -38,21 +38,19 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         verified = isVerified,
     )
 
-    is StreamInfoItem -> DataItem.Video(
+    is StreamInfoItem -> VideoItem(
         url = url,
         name = name,
         thumbnail = thumbnails.first().url,
         channelUrl = uploaderUrl,
         viewCount = viewCount,
-        uploadOffset = textualUploadDate ?: "",
         shortDescription = shortDescription,
         duration = duration,
         channelVerified = isUploaderVerified,
         isShort = isShortFormContent,
         channelAvatars = uploaderAvatars.firstOrNull()?.url,
         channelName = uploaderName,
-        uploadDate = uploadDate?.offsetDateTime()?.toLocalDateTime()
-            ?.format(DateTimeFormatter.ofPattern("d MMM uuuu")) ?: "",
+        uploadDate = uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli(),
         streamType = when (streamType) {
             org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.LIVE_STREAM
             org.schabi.newpipe.extractor.stream.StreamType.POST_LIVE_STREAM -> StreamType.POST_LIVE_STREAM

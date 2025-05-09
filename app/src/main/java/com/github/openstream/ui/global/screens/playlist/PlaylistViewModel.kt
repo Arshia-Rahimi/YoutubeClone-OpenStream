@@ -10,6 +10,7 @@ import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.Playlist
 import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
-    playlistDataItem: DataItem.Playlist,
+    playlistDataItem: PlaylistItem,
     private val playlistRepository: PlaylistRepository,
 ) : ViewModel() {
 

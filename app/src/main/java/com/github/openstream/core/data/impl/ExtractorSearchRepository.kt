@@ -1,12 +1,15 @@
-package com.github.openstream.core.data.imp
+package com.github.openstream.core.data.impl
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.extractor.SearchExtractor
+import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.model.extractordata.SearchResult
+import com.github.openstream.core.model.extractordata.VideoItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -29,12 +32,12 @@ class ExtractorSearchRepository(
             searchResult.items.map { item ->
                 async {
                     when (item) {
-                        is DataItem.Playlist -> {
+                        is PlaylistItem -> {
                             // todo
                             firstPage += item
                         }
-                        
-                        is DataItem.Video -> {
+
+                        is VideoItem -> {
                             val videoId = db.videoDao().get(item.url)?.videoId
                             
                             if (videoId == null) {
@@ -46,9 +49,8 @@ class ExtractorSearchRepository(
                             db.videoDao().upsert(updatedVideo.toEntity())
                             firstPage += updatedVideo
                         }
-                        
-                        is DataItem.Channel -> {
-                            // todo sync
+
+                        is ChannelItem -> {
                             firstPage += item
                         }
                     }
@@ -67,12 +69,11 @@ class ExtractorSearchRepository(
                 result.map { item ->
                     async {
                         when (item) {
-                            is DataItem.Playlist -> {
-                                // todo
+                            is PlaylistItem -> {
                                 nextPage += item
                             }
-                            
-                            is DataItem.Video -> {
+
+                            is VideoItem -> {
                                 val videoId = db.videoDao().get(item.url)?.videoId
                                 
                                 if (videoId == null) {
@@ -84,9 +85,8 @@ class ExtractorSearchRepository(
                                 db.videoDao().upsert(updatedVideo.toEntity())
                                 nextPage += updatedVideo
                             }
-                            
-                            is DataItem.Channel -> {
-                                // todo sync
+
+                            is ChannelItem -> {
                                 nextPage += item
                             }
                         }

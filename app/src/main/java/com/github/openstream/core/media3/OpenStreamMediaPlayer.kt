@@ -9,7 +9,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
-import com.github.openstream.core.data.imp.PreferencesRepository
+import com.github.openstream.core.data.PlayerConfigRepository
 import com.github.openstream.core.datastore.PlayerConfigModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -23,8 +23,8 @@ import kotlinx.coroutines.flow.transform
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
     private val context: Context,
-    private val playerConfigRepo: PreferencesRepository,
     private val scope: CoroutineScope,
+    playerConfigRepo: PlayerConfigRepository,
 ) {
     private val playerConfig = playerConfigRepo.playerConfig
         .stateIn(

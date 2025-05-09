@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.R
+import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.model.extractordata.StreamType
@@ -51,11 +52,6 @@ fun Video(
     saveToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
-    val timeString = "${item.viewCount.toShortForm()} views • " + when (item.streamType) {
-        StreamType.NORMAL -> ""
-        StreamType.LIVE_STREAM -> "started streaming"
-        StreamType.POST_LIVE_STREAM -> "streamed "
-    } + item.uploadOffset
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = modifier
@@ -122,7 +118,7 @@ fun Video(
                 }
             }
             SubText(
-                text = timeString
+                text = timeString(item)
             )
         }
         Box(
@@ -196,6 +192,14 @@ fun SubText(
     )
 }
 
+private fun timeString(item: VideoItem) =
+    item.uploadDate?.let {
+        "${item.viewCount.toShortForm()} views • " + when (item.streamType) {
+            StreamType.NORMAL -> ""
+            StreamType.LIVE_STREAM -> "started streaming"
+            StreamType.POST_LIVE_STREAM -> "streamed "
+        } + it.timeAgo()
+    } ?: ""
 
 @Preview
 @Composable
@@ -214,9 +218,8 @@ private fun Preview() {
                 channelAvatars = "",
                 url = "",
                 thumbnail = "",
-                uploadDate = "5 days ago",
+                uploadDate = null,
                 duration = 14533L,
-                uploadOffset = "",
             ),
             toChannelScreen = {},
             playVideo = {},

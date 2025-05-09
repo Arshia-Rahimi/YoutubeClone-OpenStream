@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.ui.global.popups.PopupController
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -29,7 +29,7 @@ import org.koin.core.parameter.parametersOf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SaveVideoToPlaylistsModal(
-    video: DataItem.Video,
+    video: VideoItem,
 ) {
     val viewModel =
         koinViewModel<SaveVideoToPlaylistsViewModel>(parameters = { parametersOf(video) })

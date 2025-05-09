@@ -1,4 +1,4 @@
-package com.github.openstream.core.data.imp
+package com.github.openstream.core.data.impl
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.asResult

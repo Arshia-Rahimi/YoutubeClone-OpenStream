@@ -13,7 +13,7 @@ data class VideoEntity(
     val name: String,
     val thumbnail: String?,
     @ColumnInfo("view_count") val viewCount: Long,
-    @ColumnInfo("upload_date") val uploadDate: String,
+    @ColumnInfo("upload_date") val uploadDate: Long?,
     @ColumnInfo("stream_type") val streamType: StreamType,
     val duration: Long,
     @ColumnInfo("channel_name") val channelName: String,

@@ -9,8 +9,8 @@ import com.github.openstream.core.database.entities.VideoEntity
 import com.github.openstream.core.model.LocalOnlyPlaylist
 import com.github.openstream.core.model.OfflineFirstPlaylist
 import com.github.openstream.core.model.Playlist
-import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.VideoItem
 
 data class PlaylistWithVideos(
     @Embedded val playlist: PlaylistEntity,
@@ -26,7 +26,7 @@ data class PlaylistWithVideos(
             playlist.url == null -> LocalOnlyPlaylist(
                 id = playlist.playlistId,
                 items = videos.map { video ->
-                    DataItem.Video(
+                    VideoItem(
                         url = video.url,
                         name = video.name,
                         thumbnail = video.thumbnail,
@@ -35,7 +35,6 @@ data class PlaylistWithVideos(
                         channelName = video.channelName,
                         shortDescription = "",
                         uploadDate = video.uploadDate,
-                        uploadOffset = video.uploadDate,
                         viewCount = video.viewCount,
                         isShort = false,
                         duration = video.duration,
@@ -56,7 +55,7 @@ data class PlaylistWithVideos(
             else -> OfflineFirstPlaylist(
                 id = playlist.playlistId,
                 items = videos.map { video ->
-                    DataItem.Video(
+                    VideoItem(
                         url = video.url,
                         name = video.name,
                         thumbnail = video.thumbnail,
@@ -65,7 +64,6 @@ data class PlaylistWithVideos(
                         channelName = video.channelName,
                         shortDescription = "",
                         uploadDate = video.uploadDate,
-                        uploadOffset = video.uploadDate,
                         viewCount = video.viewCount,
                         isShort = false,
                         duration = video.duration,

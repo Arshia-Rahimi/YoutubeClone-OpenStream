@@ -7,7 +7,7 @@ import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.data.imp.PreferencesRepository
+import com.github.openstream.core.data.impl.PreferencesRepository
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.feature.library.components.SortType

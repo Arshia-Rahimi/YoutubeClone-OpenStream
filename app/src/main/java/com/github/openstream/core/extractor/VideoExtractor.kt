@@ -4,8 +4,6 @@ import androidx.media3.common.MediaItem
 import com.github.openstream.core.extractor.util.YtService
 import com.github.openstream.core.model.extractordata.VideoData
 import org.schabi.newpipe.extractor.stream.StreamType
-import java.time.format.DateTimeFormatter
-import kotlin.text.format
 
 object VideoExtractor {
     
@@ -21,8 +19,7 @@ object VideoExtractor {
             subscriberCount = extractor.uploaderSubscriberCount,
             isChannelVerified = extractor.isUploaderVerified,
             length = extractor.length,
-            uploadDate = extractor.uploadDate?.offsetDateTime()?.toLocalDateTime()
-                ?.format(DateTimeFormatter.ofPattern("d MMM uuuu")) ?: "",
+            uploadDate = extractor.uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli(),
             viewCount = extractor.viewCount,
             videoStreams = extractor.videoStreams,
             audioStreams = extractor.audioStreams,

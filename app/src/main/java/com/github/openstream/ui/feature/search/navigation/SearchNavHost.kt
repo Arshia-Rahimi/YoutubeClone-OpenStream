@@ -10,7 +10,7 @@ import com.github.openstream.app.navigation.routes.OpenStreamNavTypes
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.core.common.compose.popToRoot
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.feature.search.SearchScreen
 import com.github.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.screens.playlist.PlaylistScreen
@@ -60,7 +60,7 @@ fun SearchNavHost(
         }
         composable<Tabs.Search.Playlist>(
             typeMap = mapOf(
-                typeOf<DataItem.Playlist>() to OpenStreamNavTypes.playlistType,
+                typeOf<PlaylistItem>() to OpenStreamNavTypes.playlistType,
             ),
         ) {
             PlaylistScreen(

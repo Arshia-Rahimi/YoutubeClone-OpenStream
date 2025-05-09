@@ -1,4 +1,4 @@
-package com.github.openstream.core.data.imp
+package com.github.openstream.core.data.impl
 
 import androidx.media3.common.MediaItem
 import com.github.openstream.core.common.util.Resource

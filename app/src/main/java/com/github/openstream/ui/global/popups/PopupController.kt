@@ -1,15 +1,15 @@
 package com.github.openstream.ui.global.popups
 
-import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.VideoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 object PopupController {
-    private val _showSaveVideoToPlaylistsModal: MutableStateFlow<DataItem.Video?> =
+    private val _showSaveVideoToPlaylistsModal: MutableStateFlow<VideoItem?> =
         MutableStateFlow(null)
     val showSaveVideoToPlaylistsModal = _showSaveVideoToPlaylistsModal.asStateFlow()
 
-    fun openSaveVideoToPlaylistModal(video: DataItem.Video) {
+    fun openSaveVideoToPlaylistModal(video: VideoItem) {
         _showSaveVideoToPlaylistsModal.value = video
     }
 
