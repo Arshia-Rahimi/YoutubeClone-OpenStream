@@ -51,7 +51,8 @@ fun SearchScreen(
             focusRequester = focusRequester,
         )
     }
-
+    
+    // todo show search suggestion
     Box(
         modifier = Modifier
             .fillMaxSize()

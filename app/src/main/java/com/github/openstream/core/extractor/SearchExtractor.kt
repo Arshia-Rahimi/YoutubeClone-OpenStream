@@ -17,8 +17,8 @@ object SearchExtractor {
         extractor.fetchPage()
         return SearchResult(
             extractor = extractor,
-//            searchSuggestion = extractor.searchSuggestion,
-//            isCorrectedSearch = extractor.isCorrectedSearch,
+            searchSuggestion = extractor.searchSuggestion,
+            isCorrectedSearch = extractor.isCorrectedSearch,
             items = extractor.initialPage.items.toListOfDataItem(),
             nextPage = extractor.initialPage.nextPage,
         )

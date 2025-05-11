@@ -31,7 +31,7 @@ interface PlaylistRepository {
         playlistId: Long,
     ): Flow<Resource<Success>>
     
-    suspend fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>>
+    fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>>
 
     fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>>
 

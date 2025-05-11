@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.supervisorScope
 
 class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
@@ -119,7 +120,7 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }.asResult(Dispatchers.IO)
     
-    override suspend fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>> =
+    override fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>> =
         flow<Playlist> {
             when (playlist) {
                 is PlaylistItem.LocalOnlyPlaylistItem -> {
@@ -136,7 +137,7 @@ class OfflineFirstPlaylistRepository(
                 }
                 
                 is PlaylistItem.OfflineFirstPlaylistItem -> {
-                    coroutineScope {
+                    supervisorScope {
                         val localDataD = async { db.m2mDao().getPlaylistWithVideos(playlist.id) }
                         val onlineDataD = async {
                             try {
