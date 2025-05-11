@@ -108,7 +108,7 @@ fun Video(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 SubText(text = item.channelName)
-                if (item.channelVerified) {
+                if (item.isChannelVerified) {
                     Icon(
                         modifier = Modifier.padding(start = 8.dp),
                         painter = painterResource(R.drawable.verified),
@@ -212,7 +212,7 @@ private fun Preview() {
                 isShort = false,
                 channelName = "channel",
                 viewCount = 545664L,
-                channelVerified = true,
+                isChannelVerified = true,
                 shortDescription = "description",
                 streamType = StreamType.NORMAL,
                 channelAvatars = "",

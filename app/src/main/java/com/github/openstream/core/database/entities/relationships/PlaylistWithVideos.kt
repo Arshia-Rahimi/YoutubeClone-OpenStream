@@ -39,7 +39,7 @@ data class PlaylistWithVideos(
                         isShort = false,
                         duration = video.duration,
                         channelAvatars = "",
-                        channelVerified = video.isChannelVerified,
+                        isChannelVerified = video.isChannelVerified,
                         id = playlist.playlistId,
                     )
                 }.toTypedArray(),
@@ -68,7 +68,7 @@ data class PlaylistWithVideos(
                         isShort = false,
                         duration = video.duration,
                         channelAvatars = "",
-                        channelVerified = video.isChannelVerified,
+                        isChannelVerified = video.isChannelVerified,
                         id = playlist.playlistId,
                     )
                 }.toTypedArray(),

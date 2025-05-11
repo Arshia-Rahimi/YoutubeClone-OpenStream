@@ -25,12 +25,12 @@ interface PlaylistRepository {
         videos: List<VideoItem>,
         playlistId: Long,
     ): Flow<Resource<Success>>
-
+    
     fun removeFromPlaylist(
         videos: List<VideoItem>,
         playlistId: Long,
     ): Flow<Resource<Success>>
-
+    
     fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>>
 
     fun getNextPage(currentPlaylist: YoutubePlaylist): Flow<Resource<Success>>

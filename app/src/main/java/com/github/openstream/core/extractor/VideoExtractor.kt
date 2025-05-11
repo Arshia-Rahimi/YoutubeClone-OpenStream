@@ -6,7 +6,6 @@ import com.github.openstream.core.model.extractordata.VideoData
 import org.schabi.newpipe.extractor.stream.StreamType
 
 object VideoExtractor {
-    
     fun fetchVideo(url: String): MediaItem {
         val extractor = YtService.getStreamExtractor(url)
         extractor.fetchPage()

@@ -26,7 +26,7 @@ data class VideoItem(
     val viewCount: Long,
     val duration: Long,
     val channelUrl: String,
-    val channelVerified: Boolean,
+    val isChannelVerified: Boolean,
     val isShort: Boolean,
     val channelAvatars: String?,
     val id: Long? = null,
@@ -41,7 +41,7 @@ data class VideoItem(
         duration = duration,
         channelUrl = channelUrl,
         channelName = channelName,
-        isChannelVerified = channelVerified,
+        isChannelVerified = isChannelVerified,
     )
     
     override val key: String
