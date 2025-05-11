@@ -43,19 +43,19 @@ data class VideoItem(
         channelName = channelName,
         isChannelVerified = channelVerified,
     )
-
+    
     override val key: String
         get() = "video-$url"
 }
 
 @Serializable
 sealed interface PlaylistItem : DataItem {
-
+    
     val thumbnail: String?
     val count: Long
-
+    
     override fun toEntity(): PlaylistEntity
-
+    
     @Serializable
     sealed interface LocalPlaylistItem : PlaylistItem {
         override val name: String
@@ -65,7 +65,7 @@ sealed interface PlaylistItem : DataItem {
         override val key: String
             get() = "playlist-$id"
     }
-
+    
     @Serializable
     sealed interface YoutubePlaylistItem : PlaylistItem {
         val channelName: String
@@ -73,7 +73,7 @@ sealed interface PlaylistItem : DataItem {
         val isChannelVerified: Boolean
         val url: String
     }
-
+    
     @Serializable
     class LocalOnlyPlaylistItem(
         override val name: String,
@@ -89,7 +89,7 @@ sealed interface PlaylistItem : DataItem {
                 playlistId = id,
             )
     }
-
+    
     @Serializable
     class OfflineFirstPlaylistItem(
         override val name: String,
@@ -112,7 +112,7 @@ sealed interface PlaylistItem : DataItem {
             playlistId = id,
         )
     }
-
+    
     @Serializable
     data class OnlinePlaylistItem(
         override val name: String,
@@ -125,7 +125,7 @@ sealed interface PlaylistItem : DataItem {
     ) : YoutubePlaylistItem {
         override val key: String
             get() = "playlist-$url"
-
+        
         override fun toEntity() =
             PlaylistEntity(
                 name = name,
@@ -135,6 +135,18 @@ sealed interface PlaylistItem : DataItem {
                 isChannelVerified = isChannelVerified,
                 url = url,
                 thumbnail = thumbnail ?: "",
+            )
+        
+        fun toOfflineFirstPlaylistItem(playlistId: Long) =
+            OfflineFirstPlaylistItem(
+                id = playlistId,
+                name = name,
+                thumbnail = thumbnail,
+                count = count,
+                channelUrl = channelUrl,
+                channelName = channelName,
+                isChannelVerified = isChannelVerified,
+                url = url
             )
     }
 }
@@ -149,7 +161,7 @@ data class ChannelItem(
 ) : DataItem {
     override val key: String
         get() = "channel-$url"
-
+    
     override fun toEntity(): ChannelEntity = ChannelEntity(
         name = name,
         url = url,

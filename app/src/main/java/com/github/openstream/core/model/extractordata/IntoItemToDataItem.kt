@@ -18,7 +18,6 @@ fun List<InfoItem>.toListOfVideos(): List<VideoItem> =
     }
 
 private fun InfoItem.toDataItem(): DataItem? = when (this) {
-    // todo get saved playlists
     is PlaylistInfoItem -> PlaylistItem.OnlinePlaylistItem(
         url = url,
         name = name,
