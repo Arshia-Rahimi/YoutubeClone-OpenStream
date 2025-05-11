@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
     
     private fun loadNewPipeConfig() {
         val downloader = OkHttpDownloader.init(null)
-        // todo get locale and add it to dataStore
         NewPipe.init(downloader, Localization("en", "US"))
     }
 }

@@ -17,7 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistItem
@@ -47,9 +47,7 @@ fun DataItemList(
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
-    val config = LocalConfiguration.current
-    // todo check the error
-    val screenWidth = config.screenWidthDp
+    val screenWidth = LocalWindowInfo.current.containerSize.width
 
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
@@ -66,11 +64,12 @@ fun DataItemList(
     PullToRefreshBox(
         onRefresh = onRefresh,
         isRefreshing = isRefreshing,
+        modifier = Modifier.fillMaxWidth(),
     ) {
         LazyColumn(
             state = lazyColumnState,
             modifier = Modifier
-                .fillMaxWidth(),
+                .matchParentSize(),
             verticalArrangement = Arrangement.Top,
         ) {
             items(
@@ -119,9 +118,7 @@ fun DataItemList(
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
-    val config = LocalConfiguration.current
-    // todo check the error
-    val screenWidth = config.screenWidthDp
+    val screenWidth = LocalWindowInfo.current.containerSize.width.dp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
@@ -161,7 +158,7 @@ fun DataItemList(
             )
         }
         item {
-            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
+            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16)))
         }
     }
 }

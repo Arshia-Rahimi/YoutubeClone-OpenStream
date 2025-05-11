@@ -45,8 +45,6 @@ fun SearchField(
     searchFieldInteractionSource: MutableInteractionSource,
     focusManager: FocusManager,
     focusRequester: FocusRequester,
-//    searchSuggestion: String,
-//    isCorrectedSearch: Boolean,
     setSearchQuery: (String) -> Unit,
     search: () -> Unit,
 ) {
