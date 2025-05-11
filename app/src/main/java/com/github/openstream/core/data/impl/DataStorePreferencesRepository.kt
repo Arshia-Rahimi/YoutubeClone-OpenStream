@@ -2,7 +2,7 @@ package com.github.openstream.core.data.impl
 
 import androidx.datastore.core.DataStore
 import com.github.openstream.core.datastore.PreferencesModel
-import com.github.openstream.ui.feature.library.components.SortType
+import com.github.openstream.core.model.enums.LibrarySortType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -18,8 +18,8 @@ class DataStorePreferencesRepository(
             started = SharingStarted.Lazily,
             replay = 1,
         )
-
-    override suspend fun setLibrarySortType(sortType: SortType) {
+    
+    override suspend fun setLibrarySortType(sortType: LibrarySortType) {
         dataStore.updateData { preferences.first().copy(librarySortType = sortType) }
     }
 }

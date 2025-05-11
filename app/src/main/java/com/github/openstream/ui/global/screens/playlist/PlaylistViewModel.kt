@@ -40,7 +40,6 @@ class PlaylistViewModel(
                 is Resource.Loading -> UiState.Loading
                 is Resource.Error -> UiState.Error(it.message)
                 is Resource.Success -> {
-                    // todo add date to videos and sort based on sort options
                     items.clear()
                     items.addAll(it.data.items.toList())
                     UiState.Success(it.data)

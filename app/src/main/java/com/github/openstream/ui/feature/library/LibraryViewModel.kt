@@ -8,9 +8,9 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.impl.PreferencesRepository
+import com.github.openstream.core.model.enums.LibrarySortType
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistItem
-import com.github.openstream.ui.feature.library.components.SortType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -28,7 +28,7 @@ class LibraryViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SortType.CREATED_AT_ASC,
+            initialValue = LibrarySortType.CREATED_AT_ASC,
         )
 
     val playlists = mutableStateListOf<DataItem>()
@@ -36,12 +36,12 @@ class LibraryViewModel(
             playlistRepo.playlists
                 .combine(sortType) { newPlaylists, sortType ->
                     val sortedPlaylists = when (sortType) {
-                        SortType.CREATED_AT_ASC -> newPlaylists
-                        SortType.CREATED_AT_DESC -> newPlaylists.reversed()
-                        SortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
-                        SortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
-                        SortType.SIZE_ASC -> newPlaylists.sortedByDescending { it.count }
-                        SortType.SIZE_DESC -> newPlaylists.sortedBy { it.count }
+                        LibrarySortType.CREATED_AT_ASC -> newPlaylists
+                        LibrarySortType.CREATED_AT_DESC -> newPlaylists.reversed()
+                        LibrarySortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
+                        LibrarySortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
+                        LibrarySortType.SIZE_ASC -> newPlaylists.sortedByDescending { it.count }
+                        LibrarySortType.SIZE_DESC -> newPlaylists.sortedBy { it.count }
                     }
                     clear()
                     addAll(sortedPlaylists)

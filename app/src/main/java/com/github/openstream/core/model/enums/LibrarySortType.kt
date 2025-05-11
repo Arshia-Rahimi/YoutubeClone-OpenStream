@@ -1,9 +1,9 @@
-package com.github.openstream.ui.feature.library.components
+package com.github.openstream.core.model.enums
 
 import androidx.annotation.StringRes
 import com.github.openstream.R
 
-enum class SortType(
+enum class LibrarySortType(
     @StringRes val string: Int,
 ) {
     CREATED_AT_ASC(
