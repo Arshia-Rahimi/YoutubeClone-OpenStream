@@ -1,6 +1,5 @@
 package com.github.openstream.ui.global.player
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val videoRepository: VideoRepository,
@@ -37,19 +35,7 @@ class PlayerViewModel(
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    val dragState = AnchoredDraggableState(
-        initialValue = PlayerSheetState.MINI_PLAYER,
-//        anchors = DraggableAnchors {
-//            PlayerSheetState.MINI_PLAYER at 1f
-//            PlayerSheetState.EXPANDED at 0f
-//        },
-//        positionalThreshold = { distance: Float -> distance * 0.01f },
-//        velocityThreshold = { 100f },
-//        decayAnimationSpec = exponentialDecay(),
-//        snapAnimationSpec = spring(
-//            stiffness = Spring.StiffnessLow
-//        ),
-    )
+    val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
 
     private val _showMiniPlayer = MutableStateFlow(false)
         .apply {
@@ -59,14 +45,12 @@ class PlayerViewModel(
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
     val sheetState = snapshotFlow { dragState.settledValue }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PlayerSheetState.MINI_PLAYER)
-    val isInLandscape = MainActivity.isInLandScape.asStateFlow()
     val shouldShowFullscreenPlayer =
         combine(
             showMiniPlayer,
             sheetState,
-            isInLandscape
-        ) { showMiniPlayer, sheetState, isInLandscape ->
-            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && isInLandscape
+        ) { showMiniPlayer, sheetState ->
+            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     val viewPlayer: Player

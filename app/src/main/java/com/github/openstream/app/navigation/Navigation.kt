@@ -2,7 +2,6 @@ package com.github.openstream.app.navigation
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +26,6 @@ import com.github.openstream.ui.global.player.view.FullScreenPlayerView
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Navigation() {
     val navigationViewModel = koinViewModel<NavigationViewModel>()
