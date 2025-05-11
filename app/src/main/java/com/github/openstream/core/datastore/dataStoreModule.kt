@@ -6,10 +6,11 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStoreFile
 import com.github.openstream.core.common.util.DataStoreSerializer
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val dataStoreModule = module {
-    single<DataStore<PreferencesModel>> {
+    single<DataStore<PreferencesModel>>(named("preferences")) {
         DataStoreFactory.create(
             serializer = DataStoreSerializer(
                 defaultValue = PreferencesModel(),
@@ -19,8 +20,8 @@ val dataStoreModule = module {
             corruptionHandler = ReplaceFileCorruptionHandler { PreferencesModel() },
         )
     }
-
-    single<DataStore<PlayerConfigModel>> {
+    
+    single<DataStore<PlayerConfigModel>>(named("player_config")) {
         DataStoreFactory.create(
             serializer = DataStoreSerializer(
                 defaultValue = PlayerConfigModel(),

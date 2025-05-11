@@ -14,6 +14,8 @@ import com.github.openstream.core.data.impl.OfflineFirstPlaylistRepository
 import com.github.openstream.core.data.impl.PreferencesRepository
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.binds
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -24,8 +26,18 @@ val dataModule = module {
     factoryOf(::ExtractorVideoRepository) { bind<VideoRepository>() }
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
-
-    factoryOf(::DataStorePreferencesRepository) { bind<PreferencesRepository>() }
-
-    factoryOf(::DataStorePlayerConfigRepository) { bind<PlayerConfigRepository>() }
+    
+    factory {
+        DataStorePreferencesRepository(
+            dataStore = get(named("preferences")),
+            scope = get()
+        )
+    } binds arrayOf(PreferencesRepository::class)
+    
+    factory {
+        DataStorePlayerConfigRepository(
+            dataStore = get(named("player_config")),
+        )
+    } binds arrayOf(PlayerConfigRepository::class)
+    
 }
