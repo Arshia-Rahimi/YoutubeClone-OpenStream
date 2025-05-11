@@ -75,7 +75,7 @@ sealed interface PlaylistItem : DataItem {
     }
     
     @Serializable
-    class LocalOnlyPlaylistItem(
+    data class LocalOnlyPlaylistItem(
         override val name: String,
         override val thumbnail: String?,
         override val count: Long,
@@ -91,7 +91,7 @@ sealed interface PlaylistItem : DataItem {
     }
     
     @Serializable
-    class OfflineFirstPlaylistItem(
+    data class OfflineFirstPlaylistItem(
         override val name: String,
         override val thumbnail: String?,
         override val count: Long,

@@ -8,7 +8,6 @@ import com.github.openstream.core.model.extractordata.PlaylistMetadata
 import com.github.openstream.core.model.extractordata.toListOfVideos
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-@Suppress("UNCHECKED_CAST")
 object PlaylistExtractor {
     fun fetchPlaylist(url: String): OnlinePlaylist {
         val extractor = YtService.getPlaylistExtractor(url) as YoutubePlaylistExtractor
@@ -20,7 +19,7 @@ object PlaylistExtractor {
             isChannelVerified = extractor.isUploaderVerified,
             count = extractor.streamCount,
         )
-        val items = extractor.initialPage.items.toListOfVideos().toTypedArray()
+        val items = extractor.initialPage.items.toListOfVideos()
         val nextPage = extractor.initialPage.nextPage
         return OnlinePlaylist(
             extractor = extractor,
@@ -32,7 +31,7 @@ object PlaylistExtractor {
     }
 
     fun fetchNextPage(playlist: YoutubePlaylist) {
-        if (playlist.extractor == null) throw Exception("fetch the playlist first to sync it with youtube")
+        requireNotNull(playlist.extractor) { "fetch the playlist first to sync it with youtube" }
         if (playlist.nextPage == null) return
         val currentPage = playlist.extractor!!.getPage(playlist.nextPage)
         playlist.nextPage = currentPage.nextPage
@@ -56,7 +55,7 @@ object PlaylistExtractor {
                         }
                     }
                 }
-            }.toTypedArray()
+            }
 
     }
 }

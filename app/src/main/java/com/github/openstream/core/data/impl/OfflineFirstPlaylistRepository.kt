@@ -119,7 +119,7 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }.asResult(Dispatchers.IO)
     
-    override fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>> =
+    override suspend fun getPlaylist(playlist: PlaylistItem): Flow<Resource<Playlist>> =
         flow<Playlist> {
             when (playlist) {
                 is PlaylistItem.LocalOnlyPlaylistItem -> {
@@ -136,16 +136,34 @@ class OfflineFirstPlaylistRepository(
                 }
                 
                 is PlaylistItem.OfflineFirstPlaylistItem -> {
-                    // todo handle error
-                    val localData = db.m2mDao().getPlaylistWithVideos(playlist.id)?.let {
-                        val correctedCount: Long = it.videos.size.toLong()
-                        if (it.playlist.count != correctedCount) {
-                            db.playlistDao()
-                                .upsert(it.playlist.copy(count = correctedCount))
+                    coroutineScope {
+                        val localDataD = async { db.m2mDao().getPlaylistWithVideos(playlist.id) }
+                        val onlineDataD = async {
+                            try {
+                                PlaylistExtractor.fetchPlaylist(playlist.url)
+                            } catch (_: Exception) {
+                                null
+                            }
                         }
-                        it.toPlaylistObject()
-                    }?.let {
-                        emit(it)
+                        val onlineData = onlineDataD.await()
+                        val localData = localDataD.await()
+                        
+                        if (onlineData == null) {
+                            if (localData == null) throw Exception("playlist not found")
+                            
+                            emit(localData.toPlaylistObject())
+                        } else {
+                            if (localData == null) {
+                                val playlistId =
+                                    db.playlistDao().insert(onlineData.toEntity()).first()
+                                emit(onlineData.toOfflineFirstPlaylist(playlistId))
+                            } else {
+                                val updatedLocalData =
+                                    onlineData.toOfflineFirstPlaylist(localData.playlist.playlistId)
+                                db.playlistDao().upsert(updatedLocalData.toEntity())
+                                emit(updatedLocalData)
+                            }
+                        }
                     }
                 }
             }

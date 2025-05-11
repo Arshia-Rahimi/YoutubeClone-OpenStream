@@ -7,7 +7,7 @@ import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 sealed interface Playlist {
-    var items: Array<VideoItem>
+    var items: List<VideoItem>
     val metadata: PlaylistMetadata
 
     fun toEntity(): PlaylistEntity
@@ -17,9 +17,9 @@ sealed interface LocalPlaylist : Playlist {
     val id: Long
 }
 
-class LocalOnlyPlaylist(
+data class LocalOnlyPlaylist(
     override val id: Long,
-    override var items: Array<VideoItem>,
+    override var items: List<VideoItem>,
     override val metadata: PlaylistMetadata,
 ) : LocalPlaylist {
     override fun toEntity() = PlaylistEntity(
@@ -38,9 +38,9 @@ sealed interface YoutubePlaylist : Playlist {
     var extractor: YoutubePlaylistExtractor?
 }
 
-class OnlinePlaylist(
+data class OnlinePlaylist(
     override val url: String,
-    override var items: Array<VideoItem>,
+    override var items: List<VideoItem>,
     override val metadata: PlaylistMetadata,
     override var extractor: YoutubePlaylistExtractor?,
     override var nextPage: Page?
@@ -55,12 +55,12 @@ class OnlinePlaylist(
     )
 }
 
-class OfflineFirstPlaylist(
+data class OfflineFirstPlaylist(
     override val url: String,
     override var nextPage: Page? = null,
     override var extractor: YoutubePlaylistExtractor? = null,
     override val id: Long,
-    override var items: Array<VideoItem>,
+    override var items: List<VideoItem>,
     override val metadata: PlaylistMetadata,
 ) : LocalPlaylist, YoutubePlaylist {
     override fun toEntity() = PlaylistEntity(
