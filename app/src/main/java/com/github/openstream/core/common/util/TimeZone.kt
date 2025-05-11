@@ -4,7 +4,7 @@ import android.icu.util.TimeZone
 import java.time.Duration
 import java.time.Instant
 
-fun getTimeZone() = TimeZone.getDefault().id
+fun getTimeZone(): String = TimeZone.getDefault().id
 
 fun Long.timeAgo(): String {
     val past = Instant.ofEpochMilli(this)
