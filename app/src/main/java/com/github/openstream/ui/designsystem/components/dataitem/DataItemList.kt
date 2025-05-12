@@ -19,10 +19,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
+import com.github.openstream.app.navigation.NavigationViewModel
+import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
+import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
@@ -30,8 +33,9 @@ import kotlin.uuid.ExperimentalUuidApi
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
     shouldViewChannel: Boolean = true,
-    onRefresh: () -> Unit = {},
     isRefreshing: Boolean,
+    scrollToTopTab: Tabs? = null,
+    onRefresh: () -> Unit = {},
     toChannelScreen: (String) -> Unit = {},
     toPlaylistScreen: (PlaylistItem) -> Unit = {},
     playVideo: (String) -> Unit = {},
@@ -42,6 +46,7 @@ fun DataItemList(
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
     val lazyColumnState = rememberLazyListState()
+    val navViewModel = koinViewModel<NavigationViewModel>()
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
@@ -50,7 +55,17 @@ fun DataItemList(
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
-    // todo scroll to top
+    
+    scrollToTopTab?.let { currentTab ->
+        LaunchedEffect(Unit) {
+            navViewModel.tabClickAction
+                .collect {
+                    if (it == currentTab) {
+                        lazyColumnState.animateScrollToItem(0)
+                    }
+                }
+        }
+    }
 
     PullToRefreshBox(
         onRefresh = onRefresh,
@@ -96,6 +111,7 @@ fun DataItemList(
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
     shouldViewChannel: Boolean = true,
+    scrollToTopTab: Tabs? = null,
     toChannelScreen: (String) -> Unit = {},
     toPlaylistScreen: (PlaylistItem) -> Unit = {},
     playVideo: (String) -> Unit = {},
@@ -105,6 +121,7 @@ fun DataItemList(
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
+    val navViewModel = koinViewModel<NavigationViewModel>()
     val lazyColumnState = rememberLazyListState()
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
@@ -112,6 +129,18 @@ fun DataItemList(
     val screenWidth = LocalWindowInfo.current.containerSize.width.dp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
+    }
+    
+    
+    scrollToTopTab?.let { currentTab ->
+        LaunchedEffect(Unit) {
+            navViewModel.tabClickAction
+                .collect {
+                    if (it == currentTab) {
+                        lazyColumnState.animateScrollToItem(0)
+                    }
+                }
+        }
     }
 
     LazyColumn(

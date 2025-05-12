@@ -111,8 +111,6 @@ class OpenStreamMediaPlayer(
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            val cause = error.cause
-            // todo catch httpError
             _playerState.getAndUpdate { it.copy(playerError = error.localizedMessage) }
         }
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.feature.search.components.SearchField
@@ -79,6 +80,7 @@ fun SearchScreen(
                 playVideo = playVideo,
                 loadNextPage = viewModel::getNextPage,
                 addToWatchLater = viewModel::addToWatchLater,
+                scrollToTopTab = Tabs.Search,
             )
         }
     }
