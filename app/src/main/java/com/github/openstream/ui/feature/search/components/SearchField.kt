@@ -33,9 +33,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
+import com.github.openstream.app.navigation.NavigationViewModel
+import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.ui.designsystem.components.NoRippleIconButton
-import com.github.openstream.ui.feature.search.SearchViewModel
-import kotlinx.coroutines.flow.receiveAsFlow
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,12 +49,14 @@ fun SearchField(
     setSearchQuery: (String) -> Unit,
     search: () -> Unit,
 ) {
+    val navViewModel = koinViewModel<NavigationViewModel>()
     LaunchedEffect(Unit) {
-        // todo doesn't work before the first composition
-        SearchViewModel.searchFieldFocusEvent
-            .receiveAsFlow()
+        // todo doesn't work in first composition of the tab
+        navViewModel.tabDoubleClickAction
             .collect {
-                focusRequester.requestFocus()
+                if (it == Tabs.Search) {
+                    focusRequester.requestFocus()
+                }
             }
     }
 

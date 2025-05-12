@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.model.extractordata.VideoItem
-import com.github.openstream.ui.feature.search.SearchViewModel
 import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
@@ -52,13 +50,7 @@ fun DataItemList(
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
-    LaunchedEffect(Unit) {
-        SearchViewModel.scrollToTopEvent
-            .receiveAsFlow()
-            .collect {
-                lazyColumnState.animateScrollToItem(0)
-            }
-    }
+    // todo scroll to top
 
     // todo top bar is not shown 
     PullToRefreshBox(
@@ -121,13 +113,6 @@ fun DataItemList(
     val screenWidth = LocalWindowInfo.current.containerSize.width.dp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
-    }
-    LaunchedEffect(Unit) {
-        SearchViewModel.scrollToTopEvent
-            .receiveAsFlow()
-            .collect {
-                lazyColumnState.animateScrollToItem(0)
-            }
     }
 
     LazyColumn(

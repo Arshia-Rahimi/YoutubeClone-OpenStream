@@ -42,7 +42,7 @@ data class PlaylistWithVideos(
                         isChannelVerified = video.isChannelVerified,
                         id = playlist.playlistId,
                     )
-                }.toTypedArray(),
+                },
                 metadata = PlaylistMetadata(
                     name = playlist.name,
                     channelUrl = playlist.channelUrl,
@@ -71,7 +71,7 @@ data class PlaylistWithVideos(
                         isChannelVerified = video.isChannelVerified,
                         id = playlist.playlistId,
                     )
-                }.toTypedArray(),
+                },
                 metadata = PlaylistMetadata(
                     name = playlist.name,
                     channelUrl = playlist.channelUrl,

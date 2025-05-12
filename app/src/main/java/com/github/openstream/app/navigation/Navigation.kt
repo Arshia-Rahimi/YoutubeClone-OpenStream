@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
@@ -30,7 +31,7 @@ import org.koin.compose.koinInject
 fun Navigation() {
     val navigationViewModel = koinViewModel<NavigationViewModel>()
     val playerViewModel = koinInject<PlayerViewModel>()
-
+    
     val rootNavController = rememberNavController()
         .apply {
             addOnDestinationChangedListener { controller, _, _ ->
@@ -41,11 +42,11 @@ fun Navigation() {
                 }
             }
         }
-
+    
     val currentTab by navigationViewModel.currentTab.collectAsStateWithLifecycle()
     val topBar by navigationViewModel.topBar.collectAsStateWithLifecycle()
     val shouldShowFullscreenPlayer by playerViewModel.shouldShowFullscreenPlayer.collectAsStateWithLifecycle()
-
+    
     if (shouldShowFullscreenPlayer) FullScreenPlayerView()
     else {
         OpenStreamScaffold(
@@ -63,13 +64,9 @@ fun Navigation() {
                             launchSingleTop = true
                         }
                     }
-
-                    destination.isInTabRoot.value -> {
-                        if (isDoubleClick) destination.tabRootDoubleClickAction?.invoke()
-                        else destination.isInTabRootAction?.invoke()
-                    }
-
-                    else -> destination.navigateToCurrentTabRoot?.invoke()
+                    
+                    isDoubleClick -> navigationViewModel.tabDoubleClick(destination)
+                    else -> navigationViewModel.tabClick(destination)
                 }
             },
             toChannelScreen = {},
@@ -124,3 +121,5 @@ inline fun <reified T : Any> NavGraphBuilder.composableWithTabAnimation(
         content(it)
     }
 }
+
+fun NavController.isInTabRoot() = getCurrentRouteClassName()?.let { it == "Root" } != false

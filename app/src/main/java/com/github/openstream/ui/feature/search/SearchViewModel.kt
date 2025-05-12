@@ -13,7 +13,6 @@ import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.SearchResult
 import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.core.shared.WATCH_LATER_ID
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -22,11 +21,6 @@ class SearchViewModel(
     private val searchRepo: SearchRepository,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-    
-    companion object {
-        val searchFieldFocusEvent = Channel<Unit>()
-        val scrollToTopEvent = Channel<Unit>()
-    }
     
     sealed interface UiState {
         data object Empty : UiState

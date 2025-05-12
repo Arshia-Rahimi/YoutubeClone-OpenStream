@@ -3,10 +3,7 @@ package com.github.openstream.app.navigation.routes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.github.openstream.R
-import com.github.openstream.core.common.util.sendPulse
 import com.github.openstream.core.model.extractordata.PlaylistItem
-import com.github.openstream.ui.feature.search.SearchViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,18 +11,12 @@ sealed class Tabs(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
     @DrawableRes val selectedIcon: Int,
-    val isInTabRoot: MutableStateFlow<Boolean> = MutableStateFlow(true),
-    val tabRootDoubleClickAction: (() -> Unit)? = null,
-    val isInTabRootAction: (() -> Unit)? = null,
-    var navigateToCurrentTabRoot: (() -> Unit)? = null,
 ) {
     @Serializable
     data object Search : Tabs(
         title = R.string.search,
         icon = R.drawable.search,
         selectedIcon = R.drawable.search_selected,
-        tabRootDoubleClickAction = { SearchViewModel.searchFieldFocusEvent.sendPulse() },
-        isInTabRootAction = { SearchViewModel.scrollToTopEvent.sendPulse() }
     ) {
         @Serializable
         data object Root

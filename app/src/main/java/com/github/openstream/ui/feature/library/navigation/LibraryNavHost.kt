@@ -6,14 +6,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.github.openstream.app.navigation.NavigationViewModel
+import com.github.openstream.app.navigation.isInTabRoot
 import com.github.openstream.app.navigation.routes.OpenStreamNavTypes
 import com.github.openstream.app.navigation.routes.Tabs
-import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.feature.library.LibraryScreen
 import com.github.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.screens.playlist.PlaylistScreen
+import org.koin.androidx.compose.koinViewModel
 import kotlin.reflect.typeOf
 
 @Composable
@@ -21,20 +23,18 @@ fun LibraryNavHost(
     playVideo: (String) -> Unit,
     topBar: (@Composable () -> Unit) -> Unit = {},
 ) {
+    val navViewModel = koinViewModel<NavigationViewModel>()
     val navController = rememberNavController()
-        .apply {
-            addOnDestinationChangedListener { controller, _, _ ->
-                Tabs.Library.isInTabRoot.value =
-                    controller.getCurrentRouteClassName()?.let { it == "Root" } != false
+    
+    LaunchedEffect(Unit) {
+        navViewModel.tabClickAction
+            .collect {
+                if (it == Tabs.Library) {
+                    if (!navController.isInTabRoot()) {
+                        navController.popToRoot()
+                    }
+                }
             }
-        }
-
-    LaunchedEffect(navController) {
-        Tabs.Search.navigateToCurrentTabRoot = {
-            if (navController.getCurrentRouteClassName() != Tabs.Library.Root.toString()) {
-                navController.popToRoot()
-            }
-        }
     }
 
     NavHost(
