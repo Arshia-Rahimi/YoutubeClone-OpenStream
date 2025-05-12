@@ -13,17 +13,16 @@ import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.ui.feature.search.SearchScreen
+import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.screens.playlist.PlaylistScreen
-import org.koin.androidx.compose.koinViewModel
 import kotlin.reflect.typeOf
 
 @Composable
 fun SearchNavHost(
-    playVideo: (String) -> Unit,
-    topBar: (@Composable () -> Unit) -> Unit = {},
+    navViewModel: NavigationViewModel,
+    playerViewModel: PlayerViewModel,
 ) {
-    val navViewModel = koinViewModel<NavigationViewModel>()
     val navController = rememberNavController()
     
     LaunchedEffect(Unit) {
@@ -43,19 +42,19 @@ fun SearchNavHost(
     ) {
         composable<Tabs.Search.Root> {
             SearchScreen(
-                topBar = topBar,
+                topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
-                playVideo = playVideo,
+                playVideo = playerViewModel::start,
             )
         }
         composable<Tabs.Search.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Search.Channel>().url,
-                topBar = topBar,
-                playVideo = playVideo,
+                topBar = navViewModel::setTopBar,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
+                playVideo = playerViewModel::start,
             )
         }
         composable<Tabs.Search.Playlist>(
@@ -65,10 +64,10 @@ fun SearchNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
-                topBar = topBar,
-                playVideo = playVideo,
+                topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 navigateBack = { navController.popBackStack() },
+                playVideo = playerViewModel::start,
             )
         }
     }

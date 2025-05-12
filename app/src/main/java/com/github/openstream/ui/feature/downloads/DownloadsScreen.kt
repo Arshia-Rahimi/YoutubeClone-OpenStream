@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.github.openstream.app.navigation.NavigationViewModel
 
 @Composable
 fun DownloadsScreen(
-    topBar: (@Composable () -> Unit) -> Unit,
+    navViewModel: NavigationViewModel,
 ) {
-    topBar {}
-    Box(Modifier.fillMaxSize().background(Color.Green))
+    navViewModel.setTopBar { }
+    Box(Modifier
+        .fillMaxSize()
+        .background(Color.Green))
 }

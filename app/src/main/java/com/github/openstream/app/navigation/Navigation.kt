@@ -77,29 +77,29 @@ fun Navigation() {
             ) {
                 composableWithTabAnimation<Tabs.Search> {
                     SearchNavHost(
-                        topBar = navigationViewModel::setTopBar,
-                        playVideo = playerViewModel::start,
+                        navViewModel = navigationViewModel,
+                        playerViewModel = playerViewModel,
                     )
                 }
                 composableWithTabAnimation<Tabs.Library> {
                     LibraryNavHost(
-                        topBar = navigationViewModel::setTopBar,
-                        playVideo = playerViewModel::start,
+                        navViewModel = navigationViewModel,
+                        playerViewModel = playerViewModel,
                     )
                 }
                 composableWithTabAnimation<Tabs.Subscriptions> {
                     SubscriptionsScreen(
-                        topBar = navigationViewModel::setTopBar,
+                        navViewModel = navigationViewModel,
                     )
                 }
                 composableWithTabAnimation<Tabs.Downloads> {
                     DownloadsScreen(
-                        topBar = navigationViewModel::setTopBar,
+                        navViewModel = navigationViewModel,
                     )
                 }
                 composableWithTabAnimation<Tabs.Settings> {
                     SettingsScreen(
-                        topBar = navigationViewModel::setTopBar,
+                        navViewModel = navigationViewModel,
                     )
                 }
             }
