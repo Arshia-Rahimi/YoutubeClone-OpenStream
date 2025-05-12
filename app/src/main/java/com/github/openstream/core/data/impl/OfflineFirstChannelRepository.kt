@@ -57,11 +57,9 @@ class OfflineFirstChannelRepository(
             emit(Success)
         }.asResult(Dispatchers.IO)
     
-    override suspend fun unSubscribe(channel: ChannelItem): Flow<Resource<Success>> =
+    override suspend fun unSubscribe(channelId: Long): Flow<Resource<Success>> =
         flow {
-            if (db.channelDao().get(channel.url) != null) {
-                db.channelDao().delete(channel.toEntity())
-            }
+            db.channelDao().delete(channelId)
             emit(Success)
         }.asResult(Dispatchers.IO)
 }

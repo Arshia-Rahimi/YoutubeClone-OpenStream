@@ -3,13 +3,10 @@ package com.github.openstream.ui.feature.subscriptions
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.openstream.core.common.compose.SnackBarController
-import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.impl.PreferencesRepository
 import com.github.openstream.core.model.enums.SubscriptionsSortType
-import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -49,18 +46,6 @@ class SubscriptionsViewModel(
     fun toggleSortType() {
         viewModelScope.launch {
             preferencesRepo.setSubscriptionsSortType(sortType.value.next())
-        }
-    }
-    
-    fun unSubscribe(channel: ChannelItem) {
-        viewModelScope.launch {
-            channelRepo.unSubscribe(channel)
-                .collect {
-                    when (it) {
-                        is Resource.Success -> SnackBarController.sendEvent("unsubscribed from ${channel.name}")
-                        else -> Unit
-                    }
-                }
         }
     }
     

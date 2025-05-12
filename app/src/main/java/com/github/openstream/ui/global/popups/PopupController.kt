@@ -27,4 +27,16 @@ object PopupController {
     fun dismissCreatePlaylistDialog() {
         _showCreatePlaylistDialog.value = false
     }
+    
+    private val _showUnsubscribeDialog: MutableStateFlow<Pair<Long, String>?> =
+        MutableStateFlow(null)
+    val showUnsubscribeDialog = _showUnsubscribeDialog.asStateFlow()
+    
+    fun openUnsubscribeDialog(channelId: Long, channelName: String) {
+        _showUnsubscribeDialog.value = channelId to channelName
+    }
+    
+    fun dismissUnsubscribeDialog() {
+        _showUnsubscribeDialog.value = null
+    }
 }

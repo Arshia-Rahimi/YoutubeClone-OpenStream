@@ -42,6 +42,7 @@ import com.github.openstream.ui.global.player.PlayerSheet
 import com.github.openstream.ui.global.popups.PopupController
 import com.github.openstream.ui.global.popups.addtoplaylistmodal.SaveVideoToPlaylistsModal
 import com.github.openstream.ui.global.popups.createplaylistdialog.CreatePlaylistDialog
+import com.github.openstream.ui.global.popups.unsubscribe.UnsubscribeDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,6 +58,7 @@ fun OpenStreamScaffold(
     var navBarOffset by remember { mutableFloatStateOf(0f) }
     val showSaveVideoToPlaylistsModal by PopupController.showSaveVideoToPlaylistsModal.collectAsStateWithLifecycle()
     val showCreatePlaylistDialog by PopupController.showCreatePlaylistDialog.collectAsStateWithLifecycle()
+    val showUnsubscribeDialog by PopupController.showUnsubscribeDialog.collectAsStateWithLifecycle()
 
     ObserveForEvents(SnackBarController.events) { event ->
         scope.launch {
@@ -83,6 +85,13 @@ fun OpenStreamScaffold(
 
     if (showCreatePlaylistDialog) {
         CreatePlaylistDialog()
+    }
+    
+    showUnsubscribeDialog?.let {
+        UnsubscribeDialog(
+            channelId = it.first,
+            name = it.second,
+        )
     }
 
     Scaffold(

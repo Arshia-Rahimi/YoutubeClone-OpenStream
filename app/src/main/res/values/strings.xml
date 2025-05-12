@@ -9,6 +9,8 @@
     <string name="dismiss">dismiss</string>
     <string name="create">create</string>
     <string name="done">done</string>
+    <string name="unsubscribe">unsubscribe</string>
+    <string name="subscribe">subscribe</string>
     <string name="save_playlist">save playlist</string>
     <string name="delete_playlist">delete playlist</string>
     <string name="view_channel">view channel</string>

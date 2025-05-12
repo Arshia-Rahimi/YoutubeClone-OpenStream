@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +31,7 @@ import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.model.extractordata.ChannelItem
+import com.github.openstream.ui.global.popups.PopupController
 
 @Composable
 fun Channel(
@@ -80,7 +82,7 @@ fun Channel(
                     maxLines = 1,
                     modifier = Modifier.basicMarquee(),
                 )
-                if (item.verified) {
+                if (item.isVerified) {
                     Icon(
                         modifier = Modifier.padding(start = 8.dp),
                         painter = painterResource(R.drawable.verified),
@@ -96,16 +98,34 @@ fun Channel(
                 fontSize = 12.sp,
             )
         }
-        Button(
-            onClick = { item.url?.let { subscribe(it) } },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFCC2849),
-            )
-        ) {
-            Text(
-                text = "Subscribe",
-                color = Color.White,
-            )
+        when (item) {
+            is ChannelItem.OnlineChannelItem -> {
+                Button(
+                    onClick = { subscribe(item.url) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFCC2849),
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.subscribe),
+                        color = Color.White,
+                    )
+                }
+            }
+            
+            is ChannelItem.OfflineFirstChannelItem -> {
+                Button(
+                    onClick = { PopupController.openUnsubscribeDialog(item.id, item.name) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFCC2849),
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.unsubscribe),
+                        color = Color.White,
+                    )
+                }
+            }
         }
     }
 }
@@ -115,13 +135,13 @@ fun Channel(
 private fun Preview() {
     MaterialTheme {
         Channel(
-            item = ChannelItem(
+            item = ChannelItem.OnlineChannelItem(
                 url = "",
                 name = "channel name",
                 description = "description",
-                verified = true,
+                isVerified = true,
                 subscriberCount = 45552365L,
-                thumbnail = "",
+                avatar = "",
             ),
             toChannelScreen = {},
             modifier = Modifier,
