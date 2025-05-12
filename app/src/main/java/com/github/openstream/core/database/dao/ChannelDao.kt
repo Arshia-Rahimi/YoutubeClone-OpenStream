@@ -28,6 +28,9 @@ interface ChannelDao {
     @Query("DELETE FROM channels WHERE channelId = :channelId")
     suspend fun delete(channelId: Long)
     
+    @Query("SELECT * FROM channels WHERE channelId = :id")
+    suspend fun get(id: Long): ChannelEntity?
+    
     @Query("SELECT * FROM channels WHERE url = :url")
     suspend fun get(url: String): ChannelEntity?
     

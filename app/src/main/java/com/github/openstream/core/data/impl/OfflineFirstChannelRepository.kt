@@ -6,6 +6,7 @@ import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.extractor.ChannelExtractor
+import com.github.openstream.core.model.extractordata.Channel
 import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.ChannelTab
 import com.github.openstream.core.model.extractordata.DataItem
@@ -29,8 +30,17 @@ class OfflineFirstChannelRepository(
             replay = 1,
         )
     
-    override fun getChannelData(channelUrl: String): Flow<Resource<ChannelExtractor>> =
-        flow { emit(ChannelExtractor(channelUrl)) }.asResult(Dispatchers.IO)
+    fun getChannel(channelId: Long): Flow<Resource<Channel>> =
+        flow {
+            val channelData =
+                db.channelDao().get(channelId) ?: throw Exception("channel was not found")
+            emit()
+        }.asResult(Dispatchers.IO)
+    
+    override fun getChannel(channelUrl: String): Flow<Resource<Channel>> =
+        flow {
+        
+        }.asResult(Dispatchers.IO)
 
     override fun getTab(
         tab: ChannelTab,

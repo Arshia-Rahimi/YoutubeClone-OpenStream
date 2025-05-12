@@ -8,7 +8,7 @@ import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 sealed interface Channel : Entityable {
     val url: String
     val metadata: ChannelMetadata
-    val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>
+    val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>?
     
     override fun toEntity(): ChannelEntity
 }
@@ -38,7 +38,7 @@ data class OnlineChannel(
 data class OfflineFirstChannel(
     override val url: String,
     override val metadata: ChannelMetadata,
-    override val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>,
+    override val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>? = null,
     val id: Long,
 ) : Channel {
     override fun toEntity() = ChannelEntity(

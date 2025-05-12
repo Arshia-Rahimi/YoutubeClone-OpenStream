@@ -1,25 +1,23 @@
 package com.github.openstream.core.extractor
 
 import com.github.openstream.core.extractor.util.YtService
+import com.github.openstream.core.model.extractordata.Channel
 import com.github.openstream.core.model.extractordata.ChannelMetadata
 import com.github.openstream.core.model.extractordata.ChannelTab
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.OnlineChannel
 import com.github.openstream.core.model.extractordata.toListOfDataItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelTabLinkHandlerFactory
 
-class ChannelExtractor(
-    val url: String,
-) {
-    private val channelExtractor = YtService.getChannelExtractor(url)
-    val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>
-    val data: ChannelMetadata
+object ChannelExtractor {
     
-    init {
+    fun getChannelData(url: String): OnlineChannel {
+        val channelExtractor = YtService.getChannelExtractor(url)
         channelExtractor.fetchPage()
-        data = ChannelMetadata(
+        val channelMetadata = ChannelMetadata(
             name = channelExtractor.name,
             subscriberCount = channelExtractor.subscriberCount,
             description = channelExtractor.description,
@@ -35,32 +33,33 @@ class ChannelExtractor(
                 )
             },
         )
-        tabExtractors = buildList<Triple<String, ChannelTabExtractor, Page?>> {
-            data.tabs.forEach {
-                try {
-                    val url = "channel/" + channelExtractor.id
-                    var name = it.url.split("/").last().lowercase()
-                        .let { last -> if (last == "streams") "livestreams" else last }
-                    val tab = YoutubeChannelTabExtractor(
-                        YtService,
-                        YoutubeChannelTabLinkHandlerFactory.getInstance()
-                            .fromQuery(url, listOf(name), null)
-                    )
-                    add(Triple(name, tab, null))
-                } catch (e: Exception) {
+        return OnlineChannel(
+            metadata = channelMetadata,
+            tabExtractors = buildList<Triple<String, ChannelTabExtractor, Page?>> {
+                channelMetadata.tabs.forEach {
+                    try {
+                        val url = "channel/" + channelExtractor.id
+                        var name = it.url.split("/").last().lowercase()
+                            .let { last -> if (last == "streams") "livestreams" else last }
+                        val tab = YoutubeChannelTabExtractor(
+                            YtService,
+                            YoutubeChannelTabLinkHandlerFactory.getInstance()
+                                .fromQuery(url, listOf(name), null)
+                        )
+                        add(Triple(name, tab, null))
+                    } catch (e: Exception) {
+                    }
                 }
-            }
-        }.toMutableList()
+            }.toMutableList(),
+            url = url,
+        )
     }
     
-    private fun getTabExtractor(tab: ChannelTab) =
-        tabExtractors.first { it.first == tab.name.lowercase() }
-    
-    fun fetchTab(tab: ChannelTab): List<DataItem>? {
-        val extractor = getTabExtractor(tab)
+    fun fetchTab(channel: Channel, tab: ChannelTab): List<DataItem>? {
+        val extractor = channel.tabExtractors.first { it.first == tab.name.lowercase() }
         extractor.second.fetchPage()
-        val index = tabExtractors.indexOfFirst { it.first == extractor.first }
-        tabExtractors[index] =
+        val index = channel.tabExtractors.indexOfFirst { it.first == extractor.first }
+        channel.tabExtractors[index] =
             Triple(
                 extractor.first, extractor.second,
                 if (extractor.second.initialPage.hasNextPage())
@@ -70,12 +69,12 @@ class ChannelExtractor(
         return extractor.second.initialPage.items.toListOfDataItem()
     }
     
-    fun fetchNextPage(tab: ChannelTab): List<DataItem>? {
-        val tab = getTabExtractor(tab)
+    fun fetchNextPage(channel: Channel, tab: ChannelTab): List<DataItem>? {
+        val tab = channel.tabExtractors.first { it.first == tab.name.lowercase() }
         return tab.third?.let {
             val currentPage = tab.second.getPage(it)
-            val index = tabExtractors.indexOfFirst { it.first == tab.first }
-            tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
+            val index = channel.tabExtractors.indexOfFirst { it.first == tab.first }
+            channel.tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
             currentPage.items.toListOfDataItem()
         }
     }
