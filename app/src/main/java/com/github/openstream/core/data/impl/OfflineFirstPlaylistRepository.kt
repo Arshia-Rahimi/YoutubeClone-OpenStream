@@ -70,7 +70,7 @@ class OfflineFirstPlaylistRepository(
         require(playlist.url != null) { ("playlist isn't local") }
         
         val ids = db.videoDao().insert(*videos.map { it.toEntity() }.toTypedArray())
-        db.m2mDao()
+        db.playlistDao()
             .addToPlaylist(*ids.map { PlaylistVideoCrossRef(playlistId, it) }.toTypedArray())
         
         updatePlaylistThumbnail(playlistId)
@@ -100,7 +100,7 @@ class OfflineFirstPlaylistRepository(
                 .toTypedArray()
         )
         
-        db.m2mDao().addToPlaylist(
+        db.playlistDao().addToPlaylist(
             *videoIds
                 .map { PlaylistVideoCrossRef(playlistId, it) }
                 .toTypedArray()
@@ -124,7 +124,7 @@ class OfflineFirstPlaylistRepository(
         flow<Playlist> {
             when (playlist) {
                 is PlaylistItem.LocalOnlyPlaylistItem -> {
-                    val playlist = db.m2mDao().getPlaylistWithVideos(playlist.id)
+                    val playlist = db.playlistDao().getPlaylistWithVideos(playlist.id)
                         ?: throw Exception("playlist was not found")
                     emit(playlist.toPlaylistObject())
                 }
@@ -135,7 +135,8 @@ class OfflineFirstPlaylistRepository(
                 
                 is PlaylistItem.OfflineFirstPlaylistItem -> {
                     supervisorScope {
-                        val localDataD = async { db.m2mDao().getPlaylistWithVideos(playlist.id) }
+                        val localDataD =
+                            async { db.playlistDao().getPlaylistWithVideos(playlist.id) }
                         val onlineDataD = async {
                             try {
                                 PlaylistExtractor.fetchPlaylist(playlist.url)
@@ -183,7 +184,7 @@ class OfflineFirstPlaylistRepository(
                 updatePlaylistDeferred.await()
                 updateVideosDeferred.await()
                 
-                db.m2mDao().getPlaylistWithVideos(playlist.id)?.toPlaylistObject().let {
+                db.playlistDao().getPlaylistWithVideos(playlist.id)?.toPlaylistObject().let {
                     emit(it ?: playlist)
                 }
             }
@@ -195,7 +196,7 @@ class OfflineFirstPlaylistRepository(
     ): Flow<Resource<Success>> = flow {
         val videoId = video.id ?: db.videoDao().insert(video.toEntity()).first()
         val currentPlaylists =
-            db.m2mDao().getVideoWithPlaylists(videoId)?.playlists?.map { it.playlistId }
+            db.playlistDao().getVideoWithPlaylists(videoId)?.playlists?.map { it.playlistId }
                 ?: emptyList()
         
         coroutineScope {
@@ -203,10 +204,11 @@ class OfflineFirstPlaylistRepository(
                 async {
                     when {
                         isInPlaylist && playlist.id !in currentPlaylists ->
-                            db.m2mDao().addToPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
+                            db.playlistDao()
+                                .addToPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
                         
                         !isInPlaylist && playlist.id in currentPlaylists ->
-                            db.m2mDao()
+                            db.playlistDao()
                                 .removeFromPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
                     }
                     updatePlaylistThumbnail(playlist.id)
@@ -217,7 +219,7 @@ class OfflineFirstPlaylistRepository(
     }.asResult(Dispatchers.IO)
     
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
-        val latestVideoThumbnail = db.m2mDao().getPlaylistWithVideos(playlistId)
+        val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideos(playlistId)
             ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOf { it.thumbnail } ?: return
         
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)

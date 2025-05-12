@@ -151,24 +151,58 @@ sealed interface PlaylistItem : DataItem {
     }
 }
 
-data class ChannelItem(
-    override val name: String,
-    val url: String,
-    val thumbnail: String?,
-    val description: String,
-    val subscriberCount: Long,
-    val verified: Boolean,
-) : DataItem {
+@Serializable
+sealed interface ChannelItem : DataItem {
+    override val name: String
+    val url: String
+    val avatar: String
+    val description: String
+    val subscriberCount: Long
+    val isVerified: Boolean
+    
     override val key: String
         get() = "channel-$url"
     
-    override fun toEntity(): ChannelEntity = ChannelEntity(
-        name = name,
-        url = url,
-        isVerified = verified,
-        subscriberCount = subscriberCount,
-        description = description,
-        avatar = thumbnail,
-        banner = "",
-    )
+    override fun toEntity(): ChannelEntity
+    
+    @Serializable
+    data class OnlineChannelItem(
+        override val name: String,
+        override val url: String,
+        override val avatar: String,
+        override val description: String,
+        override val subscriberCount: Long,
+        override val isVerified: Boolean
+    ) : ChannelItem {
+        override fun toEntity() = ChannelEntity(
+            name = name,
+            url = url,
+            isVerified = isVerified,
+            subscriberCount = subscriberCount,
+            description = description,
+            avatar = avatar,
+        )
+    }
+    
+    @Serializable
+    data class OfflineFirstChannelItem(
+        override val name: String,
+        override val url: String,
+        override val avatar: String,
+        override val description: String,
+        override val subscriberCount: Long,
+        override val isVerified: Boolean,
+        val id: Long,
+    ) : ChannelItem {
+        override fun toEntity() = ChannelEntity(
+            name = name,
+            url = url,
+            isVerified = isVerified,
+            subscriberCount = subscriberCount,
+            description = description,
+            avatar = avatar,
+            channelId = id,
+        )
+    }
 }
+

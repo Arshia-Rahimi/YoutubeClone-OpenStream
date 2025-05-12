@@ -57,7 +57,7 @@ fun Channel(
                 modifier = Modifier
                     .clip(CircleShape)
                     .aspectRatio(1f),
-                model = item.thumbnail,
+                model = item.avatar,
                 contentDescription = "channel avatar",
             )
         }

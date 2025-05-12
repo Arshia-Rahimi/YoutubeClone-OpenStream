@@ -3,7 +3,6 @@ package com.github.openstream.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.openstream.core.database.dao.ChannelDao
-import com.github.openstream.core.database.dao.M2mDao
 import com.github.openstream.core.database.dao.PlaylistDao
 import com.github.openstream.core.database.dao.VideoDao
 import com.github.openstream.core.database.entities.ChannelEntity
@@ -30,6 +29,4 @@ abstract class OpenStreamDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
 
     abstract fun videoDao(): VideoDao
-
-    abstract fun m2mDao(): M2mDao
 }
