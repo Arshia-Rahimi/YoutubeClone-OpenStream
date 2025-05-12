@@ -11,7 +11,6 @@ import com.github.openstream.ui.global.popups.addtoplaylistmodal.SaveVideoToPlay
 import com.github.openstream.ui.global.popups.createplaylistdialog.CreatePlaylistViewModel
 import com.github.openstream.ui.global.screens.channel.ChannelViewModel
 import com.github.openstream.ui.global.screens.playlist.PlaylistViewModel
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -29,7 +28,7 @@ val viewModelModule = module {
 
     // global
     viewModelOf(::NavigationViewModel)
-    singleOf(::PlayerViewModel)
+    viewModelOf(::PlayerViewModel)
 
     // components
     viewModelOf(::SaveVideoToPlaylistsViewModel)
