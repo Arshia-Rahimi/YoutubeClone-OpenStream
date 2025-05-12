@@ -52,7 +52,6 @@ fun DataItemList(
     }
     // todo scroll to top
 
-    // todo top bar is not shown 
     PullToRefreshBox(
         onRefresh = onRefresh,
         isRefreshing = isRefreshing,

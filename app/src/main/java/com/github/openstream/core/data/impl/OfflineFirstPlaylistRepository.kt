@@ -124,12 +124,9 @@ class OfflineFirstPlaylistRepository(
         flow<Playlist> {
             when (playlist) {
                 is PlaylistItem.LocalOnlyPlaylistItem -> {
-                    db.m2mDao().getPlaylistWithVideos(playlist.id)?.let {
-                        val updatedPlaylist =
-                            it.copy(playlist = it.playlist.copy(count = it.videos.size.toLong()))
-                        db.playlistDao().upsert(updatedPlaylist.playlist)
-                        emit(updatedPlaylist.toPlaylistObject())
-                    } ?: throw Exception("couldn't find playlist")
+                    val playlist = db.m2mDao().getPlaylistWithVideos(playlist.id)
+                        ?: throw Exception("playlist was not found")
+                    emit(playlist.toPlaylistObject())
                 }
                 
                 is PlaylistItem.OnlinePlaylistItem -> {
