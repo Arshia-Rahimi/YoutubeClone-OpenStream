@@ -52,6 +52,12 @@ sealed class Tabs(
     ) {
         @Serializable
         data object Root
+        
+        @Serializable
+        data class Channel(val url: String)
+        
+        @Serializable
+        data class Playlist(val playlist: PlaylistItem)
     }
 
     @Serializable

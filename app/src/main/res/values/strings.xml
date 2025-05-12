@@ -23,4 +23,8 @@
     <string name="add_to_playlist">add to playlist</string>
     <string name="added_to_watch_later">added to watch later</string>
     <string name="added_to_playlist">added to playlist</string>
+    <string name="sort_by_date_added_asc">newest added</string>
+    <string name="sort_by_date_added_desc">oldest added</string>
+    <string name="sort_by_most_subs">most subscribers</string>
+    <string name="sort_by_fewest_subs">fewest subscribers</string>
 </resources>
