@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.model.OfflineFirstPlaylist
-import com.github.openstream.core.model.Playlist
-import com.github.openstream.core.model.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
+import com.github.openstream.core.model.extractordata.Playlist
 import com.github.openstream.core.model.extractordata.PlaylistItem
+import com.github.openstream.core.model.extractordata.YoutubePlaylist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow

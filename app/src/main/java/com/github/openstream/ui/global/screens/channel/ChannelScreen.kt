@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.openstream.core.model.extractordata.ChannelInfo
+import com.github.openstream.core.model.extractordata.ChannelMetadata
 import com.github.openstream.core.model.extractordata.ChannelTab
 import com.github.openstream.core.model.extractordata.DataItem
 import com.github.openstream.core.model.extractordata.PlaylistItem
@@ -88,7 +88,7 @@ fun ChannelScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 private fun ChannelScreen(
-    channelInfo: ChannelInfo,
+    channelInfo: ChannelMetadata,
     scope: CoroutineScope,
     tabResults: List<MutableState<ChannelTab>>?,
     tabItems: SnapshotStateList<SnapshotStateList<DataItem>>,

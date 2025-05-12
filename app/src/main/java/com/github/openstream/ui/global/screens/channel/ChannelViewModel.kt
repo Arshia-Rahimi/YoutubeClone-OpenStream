@@ -9,9 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
-import com.github.openstream.core.model.extractordata.ChannelInfo
+import com.github.openstream.core.extractor.ChannelExtractor
+import com.github.openstream.core.model.extractordata.ChannelMetadata
 import com.github.openstream.core.model.extractordata.ChannelTab
-import com.github.openstream.core.model.extractordata.ChannelUnit
 import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,13 +26,13 @@ class ChannelViewModel(
     sealed interface UiState {
         data object Loading : UiState
         data class Error(val message: String? = null) : UiState
-        data class Success(val channelInfo: ChannelInfo) : UiState
+        data class Success(val channelInfo: ChannelMetadata) : UiState
     }
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
-
-    private lateinit var channel: ChannelUnit
+    
+    private lateinit var channel: ChannelExtractor
 
     private val loadingChannel: Job
 

@@ -27,14 +27,14 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         isChannelVerified = isUploaderVerified,
         count = streamCount,
     )
-
-    is ChannelInfoItem -> ChannelItem(
+    
+    is ChannelInfoItem -> ChannelItem.OnlineChannelItem(
         url = url,
         name = name,
-        thumbnail = thumbnails.first().url,
+        avatar = thumbnails.first().url,
         description = description,
         subscriberCount = subscriberCount,
-        verified = isVerified,
+        isVerified = isVerified,
     )
 
     is StreamInfoItem -> VideoItem(

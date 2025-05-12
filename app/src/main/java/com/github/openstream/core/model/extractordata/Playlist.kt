@@ -1,16 +1,15 @@
-package com.github.openstream.core.model
+package com.github.openstream.core.model.extractordata
 
+import com.github.openstream.core.database.Entityable
 import com.github.openstream.core.database.entities.PlaylistEntity
-import com.github.openstream.core.model.extractordata.PlaylistMetadata
-import com.github.openstream.core.model.extractordata.VideoItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-sealed interface Playlist {
+sealed interface Playlist : Entityable {
     var items: List<VideoItem>
     val metadata: PlaylistMetadata
-
-    fun toEntity(): PlaylistEntity
+    
+    override fun toEntity(): PlaylistEntity
 }
 
 sealed interface LocalPlaylist : Playlist {
@@ -53,6 +52,14 @@ data class OnlinePlaylist(
         channelName = metadata.channelName,
         isChannelVerified = metadata.isChannelVerified,
     )
+    
+    fun toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylist(
+        url = url,
+        items = items,
+        metadata = metadata,
+        id = id,
+        nextPage = nextPage,
+    )
 }
 
 data class OfflineFirstPlaylist(
@@ -73,11 +80,3 @@ data class OfflineFirstPlaylist(
         isChannelVerified = metadata.isChannelVerified,
     )
 }
-
-fun OnlinePlaylist.toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylist(
-    url = url,
-    items = items,
-    metadata = metadata,
-    id = id,
-    nextPage = nextPage,
-)

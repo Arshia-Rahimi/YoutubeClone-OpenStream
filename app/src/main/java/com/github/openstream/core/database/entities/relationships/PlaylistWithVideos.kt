@@ -6,9 +6,9 @@ import androidx.room.Relation
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.database.entities.VideoEntity
-import com.github.openstream.core.model.LocalOnlyPlaylist
-import com.github.openstream.core.model.OfflineFirstPlaylist
-import com.github.openstream.core.model.Playlist
+import com.github.openstream.core.model.extractordata.LocalOnlyPlaylist
+import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
+import com.github.openstream.core.model.extractordata.Playlist
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
 import com.github.openstream.core.model.extractordata.VideoItem
 

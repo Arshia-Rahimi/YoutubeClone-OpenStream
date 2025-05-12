@@ -1,10 +1,10 @@
 package com.github.openstream.core.extractor
 
 import com.github.openstream.core.extractor.util.YtService
-import com.github.openstream.core.model.OfflineFirstPlaylist
-import com.github.openstream.core.model.OnlinePlaylist
-import com.github.openstream.core.model.YoutubePlaylist
+import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
+import com.github.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.toListOfVideos
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 

@@ -5,9 +5,9 @@ import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.database.OpenStreamDatabase
+import com.github.openstream.core.extractor.ChannelExtractor
 import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.ChannelTab
-import com.github.openstream.core.model.extractordata.ChannelUnit
 import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,12 +29,12 @@ class OfflineFirstChannelRepository(
             replay = 1,
         )
     
-    override fun getChannelData(channelUrl: String): Flow<Resource<ChannelUnit>> =
-        flow { emit(ChannelUnit(channelUrl)) }.asResult(Dispatchers.IO)
+    override fun getChannelData(channelUrl: String): Flow<Resource<ChannelExtractor>> =
+        flow { emit(ChannelExtractor(channelUrl)) }.asResult(Dispatchers.IO)
 
     override fun getTab(
         tab: ChannelTab,
-        currentChannel: ChannelUnit,
+        currentChannel: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
             emit(currentChannel.fetchTab(tab))
@@ -42,7 +42,7 @@ class OfflineFirstChannelRepository(
 
     override fun getTabNextPage(
         tab: ChannelTab,
-        currentChannel: ChannelUnit,
+        currentChannel: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
             emit(currentChannel.fetchNextPage(tab))

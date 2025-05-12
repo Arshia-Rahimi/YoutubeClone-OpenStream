@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.model.extractordata.ChannelInfo
+import com.github.openstream.core.model.extractordata.ChannelMetadata
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChannelTopBar(
-    info: ChannelInfo,
+    info: ChannelMetadata,
     openBottomSheet: () -> Unit,
 //    scrollBehavior: TopAppBarScrollBehavior,
 ) {
@@ -73,13 +73,13 @@ fun ChannelTopBar(
 private fun Preview() {
     MaterialTheme {
         ChannelTopBar(
-            ChannelInfo(
+            ChannelMetadata(
                 id = "1",
                 name = "name",
                 subscriberCount = 454443L,
                 avatar = "",
                 description = "description",
-                verified = true,
+                isVerified = true,
                 banner = "",
                 tabs = emptyList(),
             ),
