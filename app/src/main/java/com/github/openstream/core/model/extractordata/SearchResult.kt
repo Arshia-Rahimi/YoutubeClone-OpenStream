@@ -5,8 +5,6 @@ import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExt
 
 data class SearchResult(
     val extractor: YoutubeSearchExtractor,
-    val searchSuggestion: String,
-    val isCorrectedSearch: Boolean,
     val items: List<DataItem>,
     var nextPage: Page?
 )

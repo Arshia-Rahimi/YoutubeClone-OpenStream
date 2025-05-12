@@ -53,7 +53,6 @@ fun SearchScreen(
         )
     }
     
-    // todo show search suggestion
     Box(
         modifier = Modifier
             .fillMaxSize()

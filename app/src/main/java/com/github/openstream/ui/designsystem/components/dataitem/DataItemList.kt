@@ -51,7 +51,7 @@ fun DataItemList(
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
     val screenWidth = LocalWindowInfo.current.containerSize.width
-
+    
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
@@ -66,7 +66,7 @@ fun DataItemList(
                 }
         }
     }
-
+    
     PullToRefreshBox(
         onRefresh = onRefresh,
         isRefreshing = isRefreshing,
