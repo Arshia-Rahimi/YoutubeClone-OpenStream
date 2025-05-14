@@ -29,4 +29,7 @@
     <string name="sort_by_date_added_desc">oldest added</string>
     <string name="sort_by_most_subs">most subscribers</string>
     <string name="sort_by_fewest_subs">fewest subscribers</string>
+    <string name="confirm_unsubscribe">Unsubscribe?</string>
+    <string name="confirm_delete_playlist">Delete playlist?</string>
+    <string name="delete">delete</string>
 </resources>

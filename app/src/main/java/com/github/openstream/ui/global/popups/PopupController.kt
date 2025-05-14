@@ -1,6 +1,7 @@
 package com.github.openstream.ui.global.popups
 
 import com.github.openstream.core.model.extractordata.VideoItem
+import com.github.openstream.ui.global.popups.confirmationdialog.Confirmation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -27,16 +28,16 @@ object PopupController {
     fun dismissCreatePlaylistDialog() {
         _showCreatePlaylistDialog.value = false
     }
-    
-    private val _showUnsubscribeDialog: MutableStateFlow<Pair<Long, String>?> =
+
+    private val _showConfirmationDialog: MutableStateFlow<Confirmation?> =
         MutableStateFlow(null)
-    val showUnsubscribeDialog = _showUnsubscribeDialog.asStateFlow()
-    
-    fun openUnsubscribeDialog(channelId: Long, channelName: String) {
-        _showUnsubscribeDialog.value = channelId to channelName
+    val showConfirmationDialog = _showConfirmationDialog.asStateFlow()
+
+    fun openConfirmationDialog(type: Confirmation) {
+        _showConfirmationDialog.value = type
     }
-    
-    fun dismissUnsubscribeDialog() {
-        _showUnsubscribeDialog.value = null
+
+    fun dismissConfirmationDialog() {
+        _showConfirmationDialog.value = null
     }
 }

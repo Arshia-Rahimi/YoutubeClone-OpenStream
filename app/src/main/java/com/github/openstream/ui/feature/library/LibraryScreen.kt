@@ -87,7 +87,6 @@ fun LibraryScreen(
             toPlaylistScreen = toPlaylistScreen,
             playVideo = playVideo,
             savePlaylist = viewModel::savePlaylist,
-            deletePlaylist = viewModel::deletePlaylist,
         )
     }
 }

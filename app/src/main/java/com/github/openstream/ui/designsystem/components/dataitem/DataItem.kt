@@ -20,7 +20,6 @@ fun DataItem(
     playVideo: (String) -> Unit,
     subscribe: (String) -> Unit = {},
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
-    deletePlaylist: (PlaylistItem.LocalPlaylistItem) -> Unit = {},
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
 ) {
@@ -42,7 +41,6 @@ fun DataItem(
             toChannelScreen = toChannelScreen,
             shouldViewChannel = shouldViewChannel,
             savePlaylist = savePlaylist,
-            deletePlaylist = deletePlaylist,
         )
 
         is ChannelItem -> Channel(

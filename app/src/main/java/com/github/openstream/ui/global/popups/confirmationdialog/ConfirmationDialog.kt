@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.popups.unsubscribe
+package com.github.openstream.ui.global.popups.confirmationdialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,15 +18,13 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun UnsubscribeDialog(
-    channelId: Long,
-    name: String,
+fun ConfirmationDialog(
+    type: Confirmation,
 ) {
-    val viewModel =
-        koinViewModel<UnsubscribeViewModel>(parameters = { parametersOf(channelId, name) })
+    val viewModel = koinViewModel<ConfirmationViewModel>(parameters = { parametersOf(type) })
     
     OpenStreamDialog(
-        dismiss = { PopupController.dismissUnsubscribeDialog() },
+        dismiss = { PopupController.dismissConfirmationDialog() },
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(
@@ -35,20 +33,22 @@ fun UnsubscribeDialog(
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Unsubscribe from $name?")
+            Text(
+                text = stringResource(type.confirmationText)
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
                 Button(
-                    onClick = { PopupController.dismissUnsubscribeDialog() },
+                    onClick = { PopupController.dismissConfirmationDialog() },
                 ) {
                     Text(stringResource(R.string.dismiss))
                 }
                 Button(
-                    onClick = viewModel::unsubscribe,
+                    onClick = viewModel::confirm,
                 ) {
-                    Text(stringResource(R.string.unsubscribe))
+                    Text(stringResource(type.confirmButton))
                 }
             }
         }

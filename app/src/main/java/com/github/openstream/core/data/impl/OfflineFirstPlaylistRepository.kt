@@ -8,7 +8,7 @@ import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.PlaylistVideoCrossRef
 import com.github.openstream.core.extractor.PlaylistExtractor
-import com.github.openstream.core.model.extractordata.LocalOnlyPlaylist
+import com.github.openstream.core.model.extractordata.LocalPlaylist
 import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.openstream.core.model.extractordata.Playlist
@@ -52,8 +52,8 @@ class OfflineFirstPlaylistRepository(
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
-    
-    override fun deletePlaylist(playlist: LocalOnlyPlaylist): Flow<Resource<Success>> =
+
+    override fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>> =
         flow {
             require(playlist.id != WATCH_LATER_ID)
             db.playlistDao().delete(playlist.toEntity())

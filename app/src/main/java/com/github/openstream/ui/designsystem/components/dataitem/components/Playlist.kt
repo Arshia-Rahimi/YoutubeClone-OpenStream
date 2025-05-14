@@ -37,6 +37,8 @@ import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.shared.WATCH_LATER_ID
+import com.github.openstream.ui.global.popups.PopupController
+import com.github.openstream.ui.global.popups.confirmationdialog.DeletePlaylistItem
 
 @Composable
 fun Playlist(
@@ -45,7 +47,6 @@ fun Playlist(
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
     shouldViewChannel: Boolean,
-    deletePlaylist: (PlaylistItem.LocalPlaylistItem) -> Unit,
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
@@ -150,7 +151,7 @@ fun Playlist(
                             text = { Text(stringResource(R.string.delete_playlist)) },
                             onClick = {
                                 isDropDownExpanded = false
-                                deletePlaylist(item)
+                                PopupController.openConfirmationDialog(DeletePlaylistItem(item))
                             }
                         )
                     }

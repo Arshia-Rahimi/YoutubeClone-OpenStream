@@ -2,7 +2,7 @@ package com.github.openstream.core.data
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
-import com.github.openstream.core.model.extractordata.LocalOnlyPlaylist
+import com.github.openstream.core.model.extractordata.LocalPlaylist
 import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.openstream.core.model.extractordata.Playlist
@@ -19,7 +19,7 @@ interface PlaylistRepository {
 
     fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>>
 
-    fun deletePlaylist(playlist: LocalOnlyPlaylist): Flow<Resource<Success>>
+    fun deletePlaylist(playlist: LocalPlaylist): Flow<Resource<Success>>
 
     fun addToPlaylist(
         videos: List<VideoItem>,

@@ -8,7 +8,7 @@ data class ChannelMetadata(
     val isVerified: Boolean,
     val banner: String,
     val tabs: List<ChannelTab>,
-    val id: String,
+    val id: Long,
 )
 
 data class ChannelTab(

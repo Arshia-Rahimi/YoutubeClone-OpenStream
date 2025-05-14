@@ -32,6 +32,7 @@ import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.ui.global.popups.PopupController
+import com.github.openstream.ui.global.popups.confirmationdialog.UnsubscribeItem
 
 @Composable
 fun Channel(
@@ -115,7 +116,7 @@ fun Channel(
             
             is ChannelItem.OfflineFirstChannelItem -> {
                 Button(
-                    onClick = { PopupController.openUnsubscribeDialog(item.id, item.name) },
+                    onClick = { PopupController.openConfirmationDialog(UnsubscribeItem(item)) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFCC2849),
                     )
