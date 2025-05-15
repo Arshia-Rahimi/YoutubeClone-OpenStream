@@ -1,16 +1,18 @@
 package com.github.openstream.core.model.extractordata
 
+import kotlinx.serialization.Serializable
+
 data class ChannelMetadata(
     val name: String,
     val subscriberCount: Long,
     val description: String,
     val avatar: String,
     val isVerified: Boolean,
-    val banner: String,
-    val tabs: List<ChannelTab>,
+    val tabs: List<ChannelTab>? = null,
     val id: Long,
 )
 
+@Serializable
 data class ChannelTab(
     val name: String,
     val url: String,

@@ -29,33 +29,37 @@ class OfflineFirstChannelRepository(
             started = SharingStarted.Lazily,
             replay = 1,
         )
-    
-    fun getChannel(channelId: Long): Flow<Resource<Channel>> =
+
+    override fun getChannel(channelItem: ChannelItem): Flow<Resource<Channel>> =
         flow {
-            val channelData =
-                db.channelDao().get(channelId) ?: throw Exception("channel was not found")
-            emit()
-        }.asResult(Dispatchers.IO)
-    
-    override fun getChannel(channelUrl: String): Flow<Resource<Channel>> =
-        flow {
-        
+            when (channelItem) {
+                is ChannelItem.OfflineFirstChannelItem -> {
+                    val channelData =
+                        db.channelDao().getChannelWithVideos(channelItem.id)
+                            ?: throw Exception("channel was not found")
+                    emit(channelData.toObject())
+                }
+
+                is ChannelItem.OnlineChannelItem -> {
+                    // todo
+                }
+            }
         }.asResult(Dispatchers.IO)
 
     override fun getTab(
+        channel: Channel,
         tab: ChannelTab,
-        currentChannel: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
-            emit(currentChannel.fetchTab(tab))
+            emit(ChannelExtractor.fetchTab(channel, tab))
         }.asResult(Dispatchers.IO)
 
     override fun getTabNextPage(
+        channel: Channel,
         tab: ChannelTab,
-        currentChannel: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
-            emit(currentChannel.fetchNextPage(tab))
+            emit(ChannelExtractor.fetchNextPage(channel, tab))
         }.asResult(Dispatchers.IO)
     
     override suspend fun subscribe(channel: ChannelItem): Flow<Resource<Success>> =

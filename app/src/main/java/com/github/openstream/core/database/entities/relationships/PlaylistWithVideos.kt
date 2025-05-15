@@ -20,8 +20,8 @@ data class PlaylistWithVideos(
         associateBy = Junction(PlaylistVideoCrossRef::class),
     )
     val videos: List<VideoEntity>,
-) {
-    fun toPlaylistObject(): Playlist =
+) : Objectable {
+    override fun toObject(): Playlist =
         when {
             playlist.url == null -> LocalOnlyPlaylist(
                 id = playlist.playlistId,

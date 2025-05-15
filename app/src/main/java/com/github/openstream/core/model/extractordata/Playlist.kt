@@ -5,7 +5,7 @@ import com.github.openstream.core.database.entities.PlaylistEntity
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-sealed interface Playlist : Entityable {
+sealed interface Playlist : Entityable, ViewableObject {
     var items: List<VideoItem>
     val metadata: PlaylistMetadata
     

@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.github.openstream.core.database.OpenStreamEntity
 import com.github.openstream.core.model.extractordata.ChannelItem
+import com.github.openstream.core.model.extractordata.ChannelTab
 
 @Entity("channels")
 data class ChannelEntity(
@@ -15,6 +16,7 @@ data class ChannelEntity(
     @ColumnInfo(name = "subscriber_count") val subscriberCount: Long,
     @ColumnInfo("is_verified") val isVerified: Boolean,
     val description: String,
+    val tabs: List<ChannelTab>? = null,
 ) : OpenStreamEntity {
     fun toDataItem() = ChannelItem.OfflineFirstChannelItem(
         id = channelId,
