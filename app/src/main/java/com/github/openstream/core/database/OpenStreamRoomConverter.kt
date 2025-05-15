@@ -7,9 +7,10 @@ import kotlinx.serialization.json.Json
 class OpenStreamRoomConverter {
 
     @TypeConverter
-    fun fromListOfChannelTabsToString(tabs: List<ChannelTab>) =
-        Json.encodeToString(tabs)
+    fun fromListOfChannelTabs(tabs: List<ChannelTab>?) = tabs?.let { Json.encodeToString(it) }
 
-    fun toListOfChannelTabs(json: String) =
-        Json.decodeFromString<List<ChannelTab>>(json)
+    @TypeConverter
+    fun toListOfChannelTabs(json: String?) =
+        json?.let { Json.decodeFromString<List<ChannelTab>>(it) }
+
 }

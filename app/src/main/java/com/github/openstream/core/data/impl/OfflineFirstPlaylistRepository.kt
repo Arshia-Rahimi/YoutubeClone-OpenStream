@@ -125,7 +125,7 @@ class OfflineFirstPlaylistRepository(
                 is PlaylistItem.LocalOnlyPlaylistItem -> {
                     val playlist = db.playlistDao().getPlaylistWithVideos(playlist.id)
                         ?: throw Exception("playlist was not found")
-                    emit(playlist.toPlaylistObject())
+                    emit(playlist.toObject())
                 }
                 
                 is PlaylistItem.OnlinePlaylistItem -> {
@@ -148,8 +148,8 @@ class OfflineFirstPlaylistRepository(
                         
                         if (onlineData == null) {
                             if (localData == null) throw Exception("playlist not found")
-                            
-                            emit(localData.toPlaylistObject())
+
+                            emit(localData.toObject())
                         } else {
                             if (localData == null) {
                                 val playlistId =
@@ -182,8 +182,8 @@ class OfflineFirstPlaylistRepository(
                 
                 updatePlaylistDeferred.await()
                 updateVideosDeferred.await()
-                
-                db.playlistDao().getPlaylistWithVideos(playlist.id)?.toPlaylistObject().let {
+
+                db.playlistDao().getPlaylistWithVideos(playlist.id)?.toObject().let {
                     emit(it ?: playlist)
                 }
             }

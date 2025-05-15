@@ -9,7 +9,6 @@ data class ChannelMetadata(
     val avatar: String,
     val isVerified: Boolean,
     val tabs: List<ChannelTab>? = null,
-    val id: Long,
 )
 
 @Serializable
