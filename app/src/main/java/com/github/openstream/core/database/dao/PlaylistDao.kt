@@ -55,4 +55,8 @@ interface PlaylistDao {
     @Transaction
     @Query("SELECT * FROM playlists WHERE playlistId = :id")
     suspend fun getPlaylistWithVideos(id: Long): PlaylistWithVideos?
+
+    @Transaction
+    @Query("SELECT * FROM playlists WHERE playlistId = :id")
+    fun getPlaylistWithVideosFlow(id: Long): Flow<PlaylistWithVideos>?
 }

@@ -3,7 +3,6 @@ package com.github.openstream.ui.global.popups.confirmationdialog
 import androidx.annotation.StringRes
 import com.github.openstream.R
 import com.github.openstream.core.model.extractordata.ChannelItem
-import com.github.openstream.core.model.extractordata.LocalPlaylist
 import com.github.openstream.core.model.extractordata.OfflineFirstChannel
 import com.github.openstream.core.model.extractordata.PlaylistItem
 

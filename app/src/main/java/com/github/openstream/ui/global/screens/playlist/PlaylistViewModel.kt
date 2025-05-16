@@ -7,10 +7,11 @@ import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.LocalOnlyPlaylist
 import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
+import com.github.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.openstream.core.model.extractordata.Playlist
 import com.github.openstream.core.model.extractordata.PlaylistItem
-import com.github.openstream.core.model.extractordata.YoutubePlaylist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -78,21 +79,18 @@ class PlaylistViewModel(
     fun getNextPage() {
         viewModelScope.launch {
             if (uiState.value !is UiState.Success) return@launch
-
             val playlist = (uiState.value as UiState.Success).playlist
-            if (playlist !is YoutubePlaylist) return@launch
 
-            playlistRepository.getNextPage(playlist)
-                .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            items.clear()
-                            items.addAll(playlist.items)
-                        }
+            when (playlist) {
+                is LocalOnlyPlaylist -> Unit
+                is OnlinePlaylist -> {
 
-                        else -> Unit
-                    }
                 }
+
+                is OfflineFirstPlaylist -> {
+
+                }
+            }
         }
     }
 }

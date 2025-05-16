@@ -5,78 +5,45 @@ import com.github.openstream.core.database.entities.PlaylistEntity
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-sealed interface Playlist : Entityable, ViewableObject {
-    var items: List<VideoItem>
-    val metadata: PlaylistMetadata
-    
-    override fun toEntity(): PlaylistEntity
-}
-
-sealed interface LocalPlaylist : Playlist {
-    val id: Long
-}
-
-data class LocalOnlyPlaylist(
-    override val id: Long,
-    override var items: List<VideoItem>,
-    override val metadata: PlaylistMetadata,
-) : LocalPlaylist {
-    override fun toEntity() = PlaylistEntity(
-        playlistId = id,
-        name = metadata.name,
-        count = metadata.count,
-        channelUrl = metadata.channelUrl,
-        channelName = metadata.channelName,
-        isChannelVerified = metadata.isChannelVerified,
-    )
-}
-
-sealed interface YoutubePlaylist : Playlist {
-    val url: String
-    var nextPage: Page?
+sealed interface YoutubePlaylist : Entityable, ViewableObject {
+    val data: PlaylistItem.YoutubePlaylistItem
     var extractor: YoutubePlaylistExtractor?
+    var nextPage: Page?
 }
 
 data class OnlinePlaylist(
-    override val url: String,
-    override var items: List<VideoItem>,
-    override val metadata: PlaylistMetadata,
+    override val data: PlaylistItem.YoutubePlaylistItem,
     override var extractor: YoutubePlaylistExtractor?,
-    override var nextPage: Page?
+    override var nextPage: Page? = null,
 ) : YoutubePlaylist {
     override fun toEntity() = PlaylistEntity(
-        url = url,
-        name = metadata.name,
-        count = metadata.count,
-        channelUrl = metadata.channelUrl,
-        channelName = metadata.channelName,
-        isChannelVerified = metadata.isChannelVerified,
+        url = data.url,
+        name = data.name,
+        count = data.count,
+        channelUrl = data.channelUrl,
+        channelName = data.channelName,
+        isChannelVerified = data.isChannelVerified,
     )
     
     fun toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylist(
-        url = url,
-        items = items,
-        metadata = metadata,
         id = id,
-        nextPage = nextPage,
+        data = data,
+        extractor = extractor,
     )
 }
 
 data class OfflineFirstPlaylist(
-    override val url: String,
-    override var nextPage: Page? = null,
+    override val data: PlaylistItem.YoutubePlaylistItem,
     override var extractor: YoutubePlaylistExtractor? = null,
-    override val id: Long,
-    override var items: List<VideoItem>,
-    override val metadata: PlaylistMetadata,
-) : LocalPlaylist, YoutubePlaylist {
+    val id: Long, override var nextPage: Page? = null,
+) : YoutubePlaylist {
     override fun toEntity() = PlaylistEntity(
-        url = url,
+        url = data.url,
         playlistId = id,
-        name = metadata.name,
-        count = metadata.count,
-        channelUrl = metadata.channelUrl,
-        channelName = metadata.channelName,
-        isChannelVerified = metadata.isChannelVerified,
+        name = data.name,
+        count = data.count,
+        channelUrl = data.channelUrl,
+        channelName = data.channelName,
+        isChannelVerified = data.isChannelVerified,
     )
 }

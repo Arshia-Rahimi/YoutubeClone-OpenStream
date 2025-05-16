@@ -2,12 +2,13 @@ package com.github.openstream.core.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.openstream.core.database.OpenStreamEntity
 import com.github.openstream.core.model.extractordata.ChannelItem
 import com.github.openstream.core.model.extractordata.ChannelTab
 
-@Entity("channels")
+@Entity("channels", indices = [Index(value = ["url"], unique = true)])
 data class ChannelEntity(
     @PrimaryKey(autoGenerate = true) val channelId: Long = 0,
     val name: String,

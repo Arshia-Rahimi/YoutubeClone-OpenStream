@@ -1,61 +1,32 @@
 package com.github.openstream.core.extractor
 
 import com.github.openstream.core.extractor.util.YtService
-import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.openstream.core.model.extractordata.OnlinePlaylist
-import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.PlaylistItem
+import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.core.model.extractordata.YoutubePlaylist
 import com.github.openstream.core.model.extractordata.toListOfVideos
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 object PlaylistExtractor {
-    fun fetchPlaylist(url: String): OnlinePlaylist {
-        val extractor = YtService.getPlaylistExtractor(url) as YoutubePlaylistExtractor
+    fun fetchPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): YoutubePlaylist {
+        val extractor = YtService.getPlaylistExtractor(playlist.url) as YoutubePlaylistExtractor
         extractor.fetchPage()
-        val metadata = PlaylistMetadata(
-            name = extractor.name,
-            channelName = extractor.uploaderName,
-            channelUrl = extractor.uploaderUrl,
-            isChannelVerified = extractor.isUploaderVerified,
-            count = extractor.streamCount,
-        )
-        val items = extractor.initialPage.items.toListOfVideos()
-        val nextPage = extractor.initialPage.nextPage
         return OnlinePlaylist(
             extractor = extractor,
-            items = items,
-            metadata = metadata,
-            nextPage = nextPage,
-            url = url,
+            data = playlist,
         )
     }
 
-    fun fetchNextPage(playlist: YoutubePlaylist) {
+    fun fetchFirstPage(playlist: YoutubePlaylist): List<VideoItem> {
+        playlist.nextPage = playlist.extractor?.initialPage?.nextPage
+        return playlist.extractor?.initialPage?.items?.toListOfVideos() ?: emptyList()
+    }
+
+    fun fetchNextPage(playlist: YoutubePlaylist): List<VideoItem> {
         requireNotNull(playlist.extractor) { "fetch the playlist first to sync it with youtube" }
-        if (playlist.nextPage == null) return
         val currentPage = playlist.extractor!!.getPage(playlist.nextPage)
         playlist.nextPage = currentPage.nextPage
-
-        playlist.items =
-            buildList {
-                when (playlist) {
-                    is OnlinePlaylist -> {
-                        addAll(playlist.items)
-                        addAll(currentPage.items.toListOfVideos().toTypedArray())
-                    }
-
-                    is OfflineFirstPlaylist -> {
-                        val newItems =
-                            currentPage.items.toListOfVideos()
-                        addAll(newItems)
-                        playlist.items.forEach { previousItem ->
-                            if (newItems.none { it.url == previousItem.url }) {
-                                add(previousItem)
-                            }
-                        }
-                    }
-                }
-            }
-
+        return currentPage.items.toListOfVideos()
     }
 }

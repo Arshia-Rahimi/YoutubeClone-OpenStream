@@ -2,11 +2,13 @@ package com.github.openstream.core.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.github.openstream.core.database.OpenStreamEntity
 import com.github.openstream.core.model.extractordata.StreamType
+import com.github.openstream.core.model.extractordata.VideoItem
 
-@Entity("videos")
+@Entity("videos", indices = [Index(value = ["url"], unique = true)])
 data class VideoEntity(
     @PrimaryKey(autoGenerate = true) val videoId: Long = 0,
     val url: String,
@@ -17,6 +19,23 @@ data class VideoEntity(
     @ColumnInfo("stream_type") val streamType: StreamType,
     val duration: Long,
     @ColumnInfo("channel_name") val channelName: String,
-    @ColumnInfo("channel_url") val channelUrl: String?,
+    @ColumnInfo("channel_url") val channelUrl: String,
     @ColumnInfo("is_channel_verified") val isChannelVerified: Boolean,
-): OpenStreamEntity
+) : OpenStreamEntity {
+    fun toDataItem() = VideoItem(
+        name = name,
+        thumbnail = thumbnail,
+        url = url,
+        streamType = streamType,
+        channelUrl = channelUrl,
+        channelName = channelName,
+        shortDescription = "",
+        duration = duration,
+        viewCount = viewCount,
+        isChannelVerified = isChannelVerified,
+        uploadDate = uploadDate,
+        channelAvatars = "",
+        id = videoId,
+        isShort = false,
+    )
+}
