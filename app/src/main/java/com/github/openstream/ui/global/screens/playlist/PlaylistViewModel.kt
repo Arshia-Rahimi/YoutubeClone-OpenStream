@@ -11,13 +11,10 @@ import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.model.extractordata.YoutubePlaylist
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 
 class PlaylistViewModel(
     var playlist: PlaylistItem,
@@ -38,43 +35,32 @@ class PlaylistViewModel(
                             when (it) {
                                 is Resource.Success -> {
                                     playlistObject = it.data
+                                    playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylist)
+                                        .collect {
+                                            when (it) {
+                                                is Resource.Success -> {
+                                                    videos.addAll(it.data)
+                                                }
+                                                
+                                                else -> Unit
+                                            }
+                                        }
                                 }
                                 
                                 else -> Unit
                             }
-                        }
+                        }.launchIn(viewModelScope)
                 }
                 
-                is PlaylistItem.LocalOnlyPlaylistItem -> {
+                is PlaylistItem.LocalPlaylistItem -> {
                     playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalOnlyPlaylistItem)
                         .onEach {
                             videos.clear()
                             videos.addAll(it)
                         }.launchIn(viewModelScope)
                 }
-                
-                is PlaylistItem.OfflineFirstPlaylistItem -> {
-                    viewModelScope.launch {
-                        supervisorScope {
-                            async { syncPlaylist() }
-                            // todo get extractor
-                            playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.OfflineFirstPlaylistItem)
-                                .collect {
-                                    videos.clear()
-                                    videos.addAll(it)
-                                }
-                        }
-                    }
-                }
             }
         }
-    
-    fun syncPlaylist() {
-        require(playlistObject is OfflineFirstPlaylist)
-        viewModelScope.launch {
-        
-        }
-    }
     
     fun getNextPage() {
         when (playlistObject) {
@@ -92,12 +78,17 @@ class PlaylistViewModel(
             }
             
             is OfflineFirstPlaylist -> {
-                playlistRepo.getPlaylistSavedVideos(playlistObject as PlaylistItem.LocalPlaylistItem)
+                playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylist).data)
                     .onEach {
                         videos.clear()
                         videos.addAll(it)
                     }.launchIn(viewModelScope)
             }
         }
+    }
+    
+    fun syncPlaylist() {
+        require(playlistObject is OfflineFirstPlaylist)
+        // todo
     }
 }

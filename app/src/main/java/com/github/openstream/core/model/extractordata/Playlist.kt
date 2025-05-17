@@ -27,13 +27,22 @@ data class OnlinePlaylist(
     
     fun toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylist(
         id = id,
-        data = data,
         extractor = extractor,
+        data = PlaylistItem.OfflineFirstPlaylistItem(
+            name = data.name,
+            thumbnail = data.thumbnail,
+            count = data.count,
+            id = id,
+            channelName = data.channelName,
+            channelUrl = data.channelUrl,
+            isChannelVerified = data.isChannelVerified,
+            url = data.url,
+        ),
     )
 }
 
 data class OfflineFirstPlaylist(
-    override val data: PlaylistItem.YoutubePlaylistItem,
+    override val data: PlaylistItem.OfflineFirstPlaylistItem,
     override var extractor: YoutubePlaylistExtractor? = null,
     val id: Long, override var nextPage: Page? = null,
 ) : YoutubePlaylist {
