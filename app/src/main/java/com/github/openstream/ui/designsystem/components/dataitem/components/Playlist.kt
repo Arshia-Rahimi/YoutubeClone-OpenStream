@@ -200,7 +200,6 @@ private fun Preview() {
             shouldViewChannel = true,
             modifier = Modifier,
             savePlaylist = {},
-            deletePlaylist = {},
         )
     }
 }

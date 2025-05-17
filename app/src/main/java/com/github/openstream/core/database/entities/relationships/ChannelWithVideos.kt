@@ -28,7 +28,6 @@ data class ChannelWithVideos(
             avatar = channel.avatar,
             isVerified = channel.isVerified,
             tabs = channel.tabs,
-            id = channel.channelId,
         ),
     )
 }

@@ -5,10 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.core.model.extractordata.Playlist
 import com.github.openstream.core.model.extractordata.PlaylistItem
-import com.github.openstream.ui.designsystem.components.ErrorPage
-import com.github.openstream.ui.designsystem.components.LoadingBox
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.global.screens.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel
@@ -24,38 +21,23 @@ fun PlaylistScreen(
 ) {
     topBar {}
     val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parametersOf(playlist) })
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
-    when (uiState) {
-        is PlaylistViewModel.UiState.Loading -> {
-            topBar {}
-            LoadingBox()
-        }
-
-        is PlaylistViewModel.UiState.Error -> ErrorPage(
-            (uiState as PlaylistViewModel.UiState.Error).message,
-            navigateBack
-        )
-
-        is PlaylistViewModel.UiState.Success -> {
-            PlaylistScreen(
-                playlist = (uiState as PlaylistViewModel.UiState.Success).playlist,
-                topBar = topBar,
-                playVideo = playVideo,
-                items = viewModel.items,
-                toChannelScreen = toChannelScreen,
-                loadNextPage = viewModel::getNextPage,
-                onRefresh = viewModel::syncPlaylist,
-                isRefreshing = isRefreshing,
-            )
-        }
-    }
+    PlaylistScreen(
+        playlist = viewModel.playlist,
+        topBar = topBar,
+        playVideo = playVideo,
+        items = viewModel.videos,
+        toChannelScreen = toChannelScreen,
+        loadNextPage = viewModel::getNextPage,
+        onRefresh = viewModel::syncPlaylist,
+        isRefreshing = isRefreshing,
+    )
 }
 
 @Composable
 private fun PlaylistScreen(
-    playlist: Playlist,
+    playlist: PlaylistItem,
     items: SnapshotStateList<DataItem>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -64,7 +46,7 @@ private fun PlaylistScreen(
     loadNextPage: () -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
-    topBar { PlaylistTopBar(playlist.metadata, toChannelScreen) }
+    topBar { PlaylistTopBar(playlist, toChannelScreen) }
 
     DataItemList(
         onRefresh = onRefresh,

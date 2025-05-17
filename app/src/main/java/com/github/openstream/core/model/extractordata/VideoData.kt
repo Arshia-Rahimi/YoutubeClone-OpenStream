@@ -15,7 +15,7 @@ data class VideoData(
     val length: Long,
     val likeCount: Long,
     val isChannelVerified: Boolean,
-    val channelAvatar: String?,
+    val channelAvatar: String,
     val subscriberCount: Long,
     val streamType: StreamType,
     val audioStreams: List<AudioStream>,

@@ -80,6 +80,7 @@ fun SearchScreen(
                 loadNextPage = viewModel::getNextPage,
                 addToWatchLater = viewModel::addToWatchLater,
                 scrollToTopTab = Tabs.Search,
+                savePlaylist = viewModel::savePlaylist,
             )
         }
     }

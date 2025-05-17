@@ -20,12 +20,12 @@ interface PlaylistRepository {
 
     fun addToPlaylist(
         videos: List<VideoItem>,
-        playlist: PlaylistItem.LocalPlaylistItem,
+        playlistId: Long,
     ): Flow<Resource<Success>>
     
     fun removeFromPlaylist(
         videos: List<VideoItem>,
-        playlist: PlaylistItem.LocalPlaylistItem,
+        playlistId: Long,
     ): Flow<Resource<Success>>
 
     fun saveVideoToPlaylists(

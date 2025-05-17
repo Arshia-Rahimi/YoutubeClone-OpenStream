@@ -74,13 +74,11 @@ private fun Preview() {
     MaterialTheme {
         ChannelTopBar(
             ChannelMetadata(
-                id = "1",
                 name = "name",
                 subscriberCount = 454443L,
                 avatar = "",
                 description = "description",
                 isVerified = true,
-                banner = "",
                 tabs = emptyList(),
             ),
             openBottomSheet = {},

@@ -53,9 +53,9 @@ class OfflineFirstPlaylistRepository(
 
     override fun addToPlaylist(
         videos: List<VideoItem>,
-        playlist: PlaylistItem.LocalPlaylistItem,
+        playlistId: Long,
     ): Flow<Resource<Success>> = flow {
-        val playlist = db.playlistDao().get(playlist.id)
+        val playlist = db.playlistDao().get(playlistId)
         requireNotNull(playlist) { "playlist doesn't exist" }
         require(playlist.url != null) { ("playlist isn't local") }
 
@@ -70,10 +70,10 @@ class OfflineFirstPlaylistRepository(
 
     override fun removeFromPlaylist(
         videos: List<VideoItem>,
-        playlist: PlaylistItem.LocalPlaylistItem,
+        playlistId: Long,
     ): Flow<Resource<Success>> = flow {
         db.videoDao().delete(*videos.map { it.toEntity() }.toTypedArray())
-        updatePlaylistThumbnail(playlist.id)
+        updatePlaylistThumbnail(playlistId)
         emit(Success)
     }.asResult(Dispatchers.IO)
 

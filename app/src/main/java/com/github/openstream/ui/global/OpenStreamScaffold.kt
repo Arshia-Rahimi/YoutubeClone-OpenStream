@@ -86,13 +86,8 @@ fun OpenStreamScaffold(
     if (showCreatePlaylistDialog) {
         CreatePlaylistDialog()
     }
-    
-    showUnsubscribeDialog?.let {
-        ConfirmationDialog(
-            channelId = it.first,
-            name = it.second,
-        )
-    }
+
+    showUnsubscribeDialog?.let { ConfirmationDialog(it) }
 
     Scaffold(
         modifier = Modifier

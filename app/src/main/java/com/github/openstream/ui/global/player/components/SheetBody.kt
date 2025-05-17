@@ -133,17 +133,18 @@ fun SheetBody(
                 modifier = Modifier.verticalScroll(scrollState),
             )
         }
+        // todo get if channel is OfflineFirst
         Channel(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
             subscribe = {},
-            item = ChannelItem(
+            item = ChannelItem.OnlineChannelItem(
                 url = videoData.channelUrl,
-                thumbnail = videoData.channelAvatar,
                 name = videoData.channelName,
-                verified = videoData.isChannelVerified,
+                isVerified = videoData.isChannelVerified,
                 subscriberCount = videoData.subscriberCount,
                 description = "",
+                avatar = videoData.channelAvatar,
             )
         )
         Row(

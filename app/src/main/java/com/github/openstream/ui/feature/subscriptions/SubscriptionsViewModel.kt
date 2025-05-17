@@ -4,19 +4,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.util.next
-import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.impl.PreferencesRepository
 import com.github.openstream.core.model.enums.SubscriptionsSortType
 import com.github.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SubscriptionsViewModel(
-    private val channelRepo: ChannelRepository,
+//    private val channelRepo: ChannelRepository,
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
     
@@ -30,17 +27,17 @@ class SubscriptionsViewModel(
     
     val playlists = mutableStateListOf<DataItem>()
         .apply {
-            channelRepo.subscriptions
-                .combine(sortType) { newPlaylists, sortType ->
-                    val sortedChannels = when (sortType) {
-                        SubscriptionsSortType.DATE_ADDED_DESC -> newPlaylists
-                        SubscriptionsSortType.DATE_ADDED_ASC -> newPlaylists.reversed()
-                        SubscriptionsSortType.MOST_SUBSCRIBERS -> newPlaylists.sortedBy { it.subscriberCount }
-                        SubscriptionsSortType.FEWEST_SUBSCRIBERS -> newPlaylists.sortedByDescending { it.subscriberCount }
-                    }
-                    clear()
-                    addAll(sortedChannels)
-                }.launchIn(viewModelScope)
+//            channelRepo.subscriptions
+//                .combine(sortType) { newPlaylists, sortType ->
+//                    val sortedChannels = when (sortType) {
+//                        SubscriptionsSortType.DATE_ADDED_DESC -> newPlaylists
+//                        SubscriptionsSortType.DATE_ADDED_ASC -> newPlaylists.reversed()
+//                        SubscriptionsSortType.MOST_SUBSCRIBERS -> newPlaylists.sortedBy { it.subscriberCount }
+//                        SubscriptionsSortType.FEWEST_SUBSCRIBERS -> newPlaylists.sortedByDescending { it.subscriberCount }
+//                    }
+//                    clear()
+//                    addAll(sortedChannels)
+//                }.launchIn(viewModelScope)
         }
     
     fun toggleSortType() {

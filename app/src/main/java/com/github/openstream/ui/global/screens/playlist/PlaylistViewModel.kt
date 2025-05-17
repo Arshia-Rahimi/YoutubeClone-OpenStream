@@ -15,17 +15,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     var playlist: PlaylistItem,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-    
+
     var playlistObject: YoutubePlaylist? = null
-    
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
-    
+
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
         .apply {
             when (playlist) {
@@ -35,23 +36,14 @@ class PlaylistViewModel(
                             when (it) {
                                 is Resource.Success -> {
                                     playlistObject = it.data
-                                    playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylist)
-                                        .collect {
-                                            when (it) {
-                                                is Resource.Success -> {
-                                                    videos.addAll(it.data)
-                                                }
-                                                
-                                                else -> Unit
-                                            }
-                                        }
+                                    getPlaylistFirstPage()
                                 }
-                                
+
                                 else -> Unit
                             }
                         }.launchIn(viewModelScope)
                 }
-                
+
                 is PlaylistItem.LocalPlaylistItem -> {
                     playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalOnlyPlaylistItem)
                         .onEach {
@@ -61,7 +53,22 @@ class PlaylistViewModel(
                 }
             }
         }
-    
+
+    private fun getPlaylistFirstPage() {
+        viewModelScope.launch {
+            playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylist)
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            videos.addAll(it.data)
+                        }
+
+                        else -> Unit
+                    }
+                }
+        }
+    }
+
     fun getNextPage() {
         when (playlistObject) {
             null -> Unit
@@ -71,12 +78,12 @@ class PlaylistViewModel(
                         when (it) {
                             is Resource.Success ->
                                 videos.addAll(it.data)
-                            
+
                             else -> Unit
                         }
                     }.launchIn(viewModelScope)
             }
-            
+
             is OfflineFirstPlaylist -> {
                 playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylist).data)
                     .onEach {
@@ -86,9 +93,11 @@ class PlaylistViewModel(
             }
         }
     }
-    
+
     fun syncPlaylist() {
-        require(playlistObject is OfflineFirstPlaylist)
-        // todo
+        if (playlist !is PlaylistItem.OfflineFirstPlaylistItem) return
+        _isRefreshing.value = true
+        // todo set playlistObject
+        _isRefreshing.value = false
     }
 }

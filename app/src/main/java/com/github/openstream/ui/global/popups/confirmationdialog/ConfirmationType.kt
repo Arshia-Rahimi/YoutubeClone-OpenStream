@@ -40,13 +40,3 @@ data class DeletePlaylistItem(
     @StringRes
     override val confirmationText = R.string.confirm_delete_playlist
 }
-
-data class DeletePlaylist(
-    val playlist: LocalPlaylist,
-) : Confirmation {
-    @StringRes
-    override val confirmButton = R.string.delete
-
-    @StringRes
-    override val confirmationText = R.string.confirm_delete_playlist
-}

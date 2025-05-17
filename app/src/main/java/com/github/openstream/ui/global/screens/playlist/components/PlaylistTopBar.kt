@@ -16,12 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.openstream.core.model.extractordata.PlaylistMetadata
+import com.github.openstream.core.model.extractordata.PlaylistItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistTopBar(
-    playlist: PlaylistMetadata,
+    playlist: PlaylistItem,
     toChannelScreen: (String) -> Unit,
 //    scrollBehavior: TopAppBarScrollBehavior,
 ) {
@@ -40,12 +40,12 @@ fun PlaylistTopBar(
                         text = playlist.name,
                         fontSize = 20.sp,
                     )
-                    playlist.channelName?.let {
+                    if (playlist is PlaylistItem.YoutubePlaylistItem) {
                         Text(
-                            text = it,
+                            text = playlist.channelName,
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onTertiary,
-                            modifier = Modifier.clickable { toChannelScreen(it) },
+                            modifier = Modifier.clickable { toChannelScreen(playlist.channelUrl) },
                         )
                     }
                 }

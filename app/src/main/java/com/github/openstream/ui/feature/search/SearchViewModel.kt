@@ -10,31 +10,34 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.model.extractordata.DataItem
+import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.model.extractordata.SearchResult
 import com.github.openstream.core.model.extractordata.VideoItem
 import com.github.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchRepo: SearchRepository,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-    
+
     sealed interface UiState {
         data object Empty : UiState
         data object Loading : UiState
         data class Error(val message: String?) : UiState
         data class Success(val searchResult: SearchResult) : UiState
     }
-    
+
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Empty)
     val uiState = _uiState.asStateFlow()
     val items = mutableStateListOf<DataItem>()
-    
+
     var searchQuery = mutableStateOf("")
-    
+
     fun search() {
         viewModelScope.launch {
             searchRepo.search(searchQuery.value)
@@ -51,7 +54,7 @@ class SearchViewModel(
                 }
         }
     }
-    
+
     fun getNextPage() {
         viewModelScope.launch {
             if (_uiState.value !is UiState.Success) return@launch
@@ -74,10 +77,21 @@ class SearchViewModel(
                         is Resource.Success -> {
                             SnackBarController.sendEvent(R.string.added_to_watch_later)
                         }
-                        
+
                         else -> {}
                     }
                 }
         }
+    }
+
+    fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem) {
+        playlistRepo.savePlaylist(playlist)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> SnackBarController.sendEvent("playlist saved")
+                    is Resource.Error -> SnackBarController.sendEvent("failed to save playlist")
+                    is Resource.Loading -> Unit
+                }
+            }.launchIn(viewModelScope)
     }
 }

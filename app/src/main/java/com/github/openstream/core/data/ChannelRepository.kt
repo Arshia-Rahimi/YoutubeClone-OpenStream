@@ -23,8 +23,8 @@ interface ChannelRepository {
         channel: Channel,
         tab: ChannelTab,
     ): Flow<Resource<List<DataItem>?>>
-    
-    suspend fun subscribe(channel: ChannelItem): Flow<Resource<Success>>
-    
-    suspend fun unSubscribe(channelId: Long): Flow<Resource<Success>>
+
+    fun subscribe(channel: ChannelItem): Flow<Resource<Success>>
+
+    fun unSubscribe(channelId: Long): Flow<Resource<Success>>
 }
