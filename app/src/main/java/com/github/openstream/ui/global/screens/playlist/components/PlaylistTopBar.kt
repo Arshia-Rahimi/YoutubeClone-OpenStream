@@ -1,5 +1,6 @@
 package com.github.openstream.ui.global.screens.playlist.components
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,8 @@ fun PlaylistTopBar(
                     Text(
                         text = playlist.name,
                         fontSize = 20.sp,
+                        maxLines = 1,
+                        modifier = Modifier.basicMarquee(),
                     )
                     if (playlist is PlaylistItem.YoutubePlaylistItem) {
                         Text(
@@ -56,6 +59,9 @@ fun PlaylistTopBar(
                     color = MaterialTheme.colorScheme.onTertiary,
                 )
             }
+        },
+        actions = {
+            // todo save/delete playlist with videos
         }
     )
 }

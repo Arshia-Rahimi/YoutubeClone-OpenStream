@@ -45,7 +45,7 @@ class PlaylistViewModel(
                 }
 
                 is PlaylistItem.LocalPlaylistItem -> {
-                    playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalOnlyPlaylistItem)
+                    playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
                         .onEach {
                             videos.clear()
                             videos.addAll(it)
@@ -96,8 +96,23 @@ class PlaylistViewModel(
 
     fun syncPlaylist() {
         if (playlist !is PlaylistItem.OfflineFirstPlaylistItem) return
-        _isRefreshing.value = true
-        // todo set playlistObject
-        _isRefreshing.value = false
+        viewModelScope.launch {
+            _isRefreshing.value = true
+
+            playlistRepo.getPlaylist(playlist as PlaylistItem.YoutubePlaylistItem)
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            playlistObject = it.data
+                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylist)
+                                .collect { }
+                        }
+
+                        else -> Unit
+                    }
+                }
+
+            _isRefreshing.value = false
+        }
     }
 }

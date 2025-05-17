@@ -117,6 +117,8 @@ class OfflineFirstPlaylistRepository(
             val data = PlaylistExtractor.fetchPlaylist(playlist)
             if (playlist is PlaylistItem.OfflineFirstPlaylistItem) {
                 db.playlistDao().upsert(data.data.toEntity().copy(playlistId = playlist.id))
+                emit(data.toOfflineFirstPlaylist(playlist.id))
+                return@flow
             }
             emit(data)
         }.asResult(Dispatchers.IO)
@@ -141,7 +143,7 @@ class OfflineFirstPlaylistRepository(
     // online playlists
     override fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem): Flow<Resource<Success>> =
         flow {
-            require(db.playlistDao().index().any { it.url == playlist.url })
+            require(db.playlistDao().index().none { it.url == playlist.url })
             { "This playlist already exist in your library" }
 
             val id = db.playlistDao().insert(playlist.toEntity()).first()

@@ -48,12 +48,25 @@ private fun PlaylistScreen(
 ) {
     topBar { PlaylistTopBar(playlist, toChannelScreen) }
 
-    DataItemList(
-        onRefresh = onRefresh,
-        isRefreshing = isRefreshing,
-        items = items,
-        toChannelScreen = toChannelScreen,
-        playVideo = playVideo,
-        loadNextPage = loadNextPage,
-    )
+    when (playlist) {
+        is PlaylistItem.OfflineFirstPlaylistItem -> {
+            DataItemList(
+                onRefresh = onRefresh,
+                isRefreshing = isRefreshing,
+                items = items,
+                toChannelScreen = toChannelScreen,
+                playVideo = playVideo,
+                loadNextPage = loadNextPage,
+            )
+        }
+
+        else -> {
+            DataItemList(
+                items = items,
+                toChannelScreen = toChannelScreen,
+                playVideo = playVideo,
+                loadNextPage = loadNextPage,
+            )
+        }
+    }
 }

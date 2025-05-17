@@ -74,8 +74,7 @@ fun DataItemList(
     ) {
         LazyColumn(
             state = lazyColumnState,
-            modifier = Modifier
-                .matchParentSize(),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top,
         ) {
             items(

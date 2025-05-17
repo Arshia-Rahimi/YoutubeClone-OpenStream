@@ -9,7 +9,7 @@ import com.github.openstream.core.model.extractordata.toListOfVideos
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 object PlaylistExtractor {
-    fun fetchPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): YoutubePlaylist {
+    fun fetchPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): OnlinePlaylist {
         val extractor = YtService.getPlaylistExtractor(playlist.url) as YoutubePlaylistExtractor
         extractor.fetchPage()
         return OnlinePlaylist(
