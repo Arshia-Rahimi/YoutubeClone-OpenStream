@@ -11,10 +11,13 @@ import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.openstream.core.model.extractordata.PlaylistItem
 import com.github.openstream.core.model.extractordata.YoutubePlaylist
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 
 class PlaylistViewModel(
     var playlist: PlaylistItem,
@@ -51,38 +54,26 @@ class PlaylistViewModel(
                 }
                 
                 is PlaylistItem.OfflineFirstPlaylistItem -> {
-                    // todo get extractor
-                    playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.OfflineFirstPlaylistItem)
-                        .onEach {
-                            videos.clear()
-                            videos.addAll(it)
-                        }.launchIn(viewModelScope)
+                    viewModelScope.launch {
+                        supervisorScope {
+                            async { syncPlaylist() }
+                            // todo get extractor
+                            playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.OfflineFirstPlaylistItem)
+                                .collect {
+                                    videos.clear()
+                                    videos.addAll(it)
+                                }
+                        }
+                    }
                 }
             }
         }
     
     fun syncPlaylist() {
-//        viewModelScope.launch {
-//            if (uiState.value !is UiState.Success) return@launch
-//
-//            val playlist = (uiState.value as UiState.Success).playlist
-//            if (playlist !is OfflineFirstPlaylist) return@launch
-//
-//            playlistRepo.syncPlaylist(playlist)
-//                .collect {
-//                    when (it) {
-//                        is Resource.Loading -> _isRefreshing.value = true
-//                        is Resource.Error -> {
-//                            _isRefreshing.value = false
-//                            SnackBarController.sendEvent("failed to sync")
-//                        }
-//
-//                        is Resource.Success -> {
-//                            _isRefreshing.value = false
-//                        }
-//                    }
-//                }
-//        }
+        require(playlistObject is OfflineFirstPlaylist)
+        viewModelScope.launch {
+        
+        }
     }
     
     fun getNextPage() {
