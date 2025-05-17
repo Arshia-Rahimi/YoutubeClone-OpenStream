@@ -32,13 +32,13 @@ interface PlaylistRepository {
         video: VideoItem,
         playlistsMap: Map<PlaylistItem.LocalOnlyPlaylistItem, Boolean>
     ): Flow<Resource<Success>>
-
+    
+    fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>>
+    
     // youtube playlists
     fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<YoutubePlaylist>>
 
     // offline first playlists
-    fun getPlaylistSavedVideos(playlist: PlaylistItem.OfflineFirstPlaylistItem): Flow<List<VideoItem>>
-
     fun getPlaylistFirstPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>>
 
     fun getNextPage(currentPlaylist: OfflineFirstPlaylist): Flow<Resource<Success>>

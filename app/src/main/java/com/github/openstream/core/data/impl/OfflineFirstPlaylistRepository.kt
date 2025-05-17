@@ -104,6 +104,11 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }
     }.asResult(Dispatchers.IO)
+    
+    override fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>> =
+        db.playlistDao().getPlaylistWithVideosFlow(playlist.id)
+            ?.map { it.videos.map { it.toDataItem() } }
+            ?: flow { emptyList<VideoItem>() }
     //
 
     // youtube playlists
@@ -115,13 +120,8 @@ class OfflineFirstPlaylistRepository(
             }
             emit(data)
         }.asResult(Dispatchers.IO)
-
-    override fun getPlaylistSavedVideos(playlist: PlaylistItem.OfflineFirstPlaylistItem): Flow<List<VideoItem>> =
-        db.playlistDao().getPlaylistWithVideosFlow(playlist.id)
-            ?.map { it.videos.map { it.toDataItem() } }
-            ?: flow { emptyList<VideoItem>() }
     //
-
+    
     // offline first playlists
     override fun getPlaylistFirstPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>> =
         flow {

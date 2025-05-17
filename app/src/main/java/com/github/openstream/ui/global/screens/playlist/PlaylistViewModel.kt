@@ -1,95 +1,111 @@
 package com.github.openstream.ui.global.screens.playlist
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.model.extractordata.DataItem
-import com.github.openstream.core.model.extractordata.LocalOnlyPlaylist
 import com.github.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.openstream.core.model.extractordata.OnlinePlaylist
-import com.github.openstream.core.model.extractordata.Playlist
 import com.github.openstream.core.model.extractordata.PlaylistItem
+import com.github.openstream.core.model.extractordata.YoutubePlaylist
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class PlaylistViewModel(
-    playlistDataItem: PlaylistItem,
-    private val playlistRepository: PlaylistRepository,
+    var playlist: PlaylistItem,
+    private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-
-    sealed interface UiState {
-        data object Loading : UiState
-        data class Error(val message: String? = null) : UiState
-        data class Success(val playlist: Playlist) : UiState
-    }
-
-    val items = mutableStateListOf<DataItem>()
-
+    
+    var playlistObject: YoutubePlaylist? = null
+    
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
-            
-    val uiState = playlistRepository.getPlaylist(playlistDataItem)
-        .map {
-            when (it) {
-                is Resource.Loading -> UiState.Loading
-                is Resource.Error -> UiState.Error(it.message)
-                is Resource.Success -> {
-                    items.clear()
-                    items.addAll(it.data.items.toList())
-                    UiState.Success(it.data)
+    
+    val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
+        .apply {
+            when (playlist) {
+                is PlaylistItem.OnlinePlaylistItem -> {
+                    playlistRepo.getPlaylist(playlist as PlaylistItem.OnlinePlaylistItem)
+                        .onEach {
+                            when (it) {
+                                is Resource.Success -> {
+                                    playlistObject = it.data
+                                }
+                                
+                                else -> Unit
+                            }
+                        }
+                }
+                
+                is PlaylistItem.LocalOnlyPlaylistItem -> {
+                    playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalOnlyPlaylistItem)
+                        .onEach {
+                            videos.clear()
+                            videos.addAll(it)
+                        }.launchIn(viewModelScope)
+                }
+                
+                is PlaylistItem.OfflineFirstPlaylistItem -> {
+                    // todo get extractor
+                    playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.OfflineFirstPlaylistItem)
+                        .onEach {
+                            videos.clear()
+                            videos.addAll(it)
+                        }.launchIn(viewModelScope)
                 }
             }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UiState.Loading,
-        )
-
-    fun syncPlaylist() {
-        viewModelScope.launch {
-            if (uiState.value !is UiState.Success) return@launch
-
-            val playlist = (uiState.value as UiState.Success).playlist
-            if (playlist !is OfflineFirstPlaylist) return@launch
-
-            playlistRepository.syncPlaylist(playlist)
-                .collect {
-                    when (it) {
-                        is Resource.Loading -> _isRefreshing.value = true
-                        is Resource.Error -> {
-                            _isRefreshing.value = false
-                            SnackBarController.sendEvent("failed to sync")
-                        }
-
-                        is Resource.Success -> {
-                            _isRefreshing.value = false
-                        }
-                    }
-                }
         }
+    
+    fun syncPlaylist() {
+//        viewModelScope.launch {
+//            if (uiState.value !is UiState.Success) return@launch
+//
+//            val playlist = (uiState.value as UiState.Success).playlist
+//            if (playlist !is OfflineFirstPlaylist) return@launch
+//
+//            playlistRepo.syncPlaylist(playlist)
+//                .collect {
+//                    when (it) {
+//                        is Resource.Loading -> _isRefreshing.value = true
+//                        is Resource.Error -> {
+//                            _isRefreshing.value = false
+//                            SnackBarController.sendEvent("failed to sync")
+//                        }
+//
+//                        is Resource.Success -> {
+//                            _isRefreshing.value = false
+//                        }
+//                    }
+//                }
+//        }
     }
-
+    
     fun getNextPage() {
-        viewModelScope.launch {
-            if (uiState.value !is UiState.Success) return@launch
-            val playlist = (uiState.value as UiState.Success).playlist
-
-            when (playlist) {
-                is LocalOnlyPlaylist -> Unit
-                is OnlinePlaylist -> {
-
-                }
-
-                is OfflineFirstPlaylist -> {
-
-                }
+        when (playlistObject) {
+            null -> Unit
+            is OnlinePlaylist -> {
+                playlistRepo.getNextPage(playlistObject as OnlinePlaylist)
+                    .onEach {
+                        when (it) {
+                            is Resource.Success ->
+                                videos.addAll(it.data)
+                            
+                            else -> Unit
+                        }
+                    }.launchIn(viewModelScope)
+            }
+            
+            is OfflineFirstPlaylist -> {
+                playlistRepo.getPlaylistSavedVideos(playlistObject as PlaylistItem.LocalPlaylistItem)
+                    .onEach {
+                        videos.clear()
+                        videos.addAll(it)
+                    }.launchIn(viewModelScope)
             }
         }
     }
