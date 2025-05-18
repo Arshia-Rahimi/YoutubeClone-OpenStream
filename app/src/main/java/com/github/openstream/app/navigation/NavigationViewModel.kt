@@ -2,18 +2,16 @@ package com.github.openstream.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.app.navigation.routes.Tabs.Downloads
 import com.github.openstream.app.navigation.routes.Tabs.Library
 import com.github.openstream.app.navigation.routes.Tabs.Search
 import com.github.openstream.app.navigation.routes.Tabs.Settings
 import com.github.openstream.app.navigation.routes.Tabs.Subscriptions
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class NavigationViewModel : ViewModel() {
     
@@ -36,21 +34,17 @@ class NavigationViewModel : ViewModel() {
         _topBar.value = newTopBar
     }
     
-    private val _tabDoubleClickAction = MutableSharedFlow<Tabs>()
-    val tabDoubleClickAction = _tabDoubleClickAction.asSharedFlow()
+    private val _tabDoubleClickAction = Channel<Tabs>(1)
+    val tabDoubleClickAction = _tabDoubleClickAction.receiveAsFlow()
     
     fun tabDoubleClick(tab: Tabs) {
-        viewModelScope.launch {
-            _tabDoubleClickAction.emit(tab)
-        }
+        _tabDoubleClickAction.trySend(tab)
     }
     
-    private val _tabClickAction = MutableSharedFlow<Tabs>()
-    val tabClickAction = _tabClickAction.asSharedFlow()
+    private val _tabClickAction = Channel<Tabs>(1)
+    val tabClickAction = _tabClickAction.receiveAsFlow()
     
     fun tabClick(tab: Tabs) {
-        viewModelScope.launch {
-            _tabClickAction.emit(tab)
-        }
+        _tabClickAction.trySend(tab)
     }
 }

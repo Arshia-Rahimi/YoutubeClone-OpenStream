@@ -51,7 +51,6 @@ fun SearchField(
 ) {
     val navViewModel = koinViewModel<NavigationViewModel>()
     LaunchedEffect(Unit) {
-        // todo doesn't work in first composition of the tab
         navViewModel.tabDoubleClickAction
             .collect {
                 if (it == Tabs.Search) {
