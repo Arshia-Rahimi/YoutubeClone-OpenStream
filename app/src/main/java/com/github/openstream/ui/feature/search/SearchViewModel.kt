@@ -88,8 +88,8 @@ class SearchViewModel(
         playlistRepo.savePlaylist(playlist)
             .onEach {
                 when (it) {
-                    is Resource.Success -> SnackBarController.sendEvent("playlist saved")
-                    is Resource.Error -> SnackBarController.sendEvent("failed to save playlist")
+                    is Resource.Success -> SnackBarController.sendEvent("saved ${playlist.name}")
+                    is Resource.Error -> SnackBarController.sendEvent("failed to save playlist ${playlist.name}")
                     is Resource.Loading -> Unit
                 }
             }.launchIn(viewModelScope)
