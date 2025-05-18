@@ -35,7 +35,10 @@ class PlayerViewModel(
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
-
+    
+    val viewPlayer: Player
+        get() = player.player
+    
     val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
 
     private val _showMiniPlayer = MutableStateFlow(false)
@@ -54,8 +57,6 @@ class PlayerViewModel(
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    val viewPlayer: Player
-        get() = player.player
     val playerState = player.playerState
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)

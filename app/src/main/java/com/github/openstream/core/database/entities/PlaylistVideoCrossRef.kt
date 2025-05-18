@@ -6,7 +6,7 @@ import androidx.room.Index
 @Entity(
     primaryKeys = ["playlistId", "videoId"],
     tableName = "playlist_video",
-    indices = [Index("playlistId")],
+    indices = [Index("playlistId"), Index("videoId")],
 )
 data class PlaylistVideoCrossRef(
     val playlistId: Long,

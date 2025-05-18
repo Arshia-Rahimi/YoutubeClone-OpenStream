@@ -37,7 +37,6 @@ class OpenStreamMediaPlayer(
     val player: ExoPlayer
         get() = _player ?: throw Exception("player must be initialized first")
 
-    // returns null when uninitialized
     private var _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
 
@@ -47,6 +46,8 @@ class OpenStreamMediaPlayer(
                 emit(_player?.currentPosition?.div(1000) ?: 0L)
                 delay(1000L)
             }
+        } else {
+            emit(_player?.currentPosition?.div(1000) ?: 0L)
         }
     }
 
@@ -55,7 +56,7 @@ class OpenStreamMediaPlayer(
         _player = ExoPlayer.Builder(context)
             .setSeekParameters(SeekParameters(seekIncrement, seekIncrement))
             .build()
-        player.addListener(playerListener)
+        _player?.addListener(playerListener)
     }
 
     fun release() {
