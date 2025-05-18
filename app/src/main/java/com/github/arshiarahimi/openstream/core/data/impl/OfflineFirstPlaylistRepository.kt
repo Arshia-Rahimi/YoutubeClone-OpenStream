@@ -128,7 +128,19 @@ class OfflineFirstPlaylistRepository(
     override fun getPlaylistFirstPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>> =
         flow {
             val firstPage = PlaylistExtractor.fetchFirstPage(playlist)
-            db.videoDao().upsert(*firstPage.map { it.toEntity() }.toTypedArray())
+            val ids =
+                db.videoDao().upsertAndReturnIds(*firstPage.map { it.toEntity() }.toTypedArray())
+            db.playlistDao().addToPlaylist(
+                *ids
+                    .map {
+                        PlaylistVideoCrossRef(
+                            playlistId = playlist.id,
+                            videoId = it
+                        )
+                    }
+                    .toTypedArray()
+            )
+            updatePlaylistThumbnail(playlist.id)
             emit(Success)
         }.asResult(Dispatchers.IO)
 
@@ -164,7 +176,7 @@ class OfflineFirstPlaylistRepository(
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
         val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideos(playlistId)
-            ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOf { it.thumbnail } ?: return
+            ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOfOrNull { it.thumbnail } ?: return
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }

@@ -3,6 +3,7 @@ package com.github.arshiarahimi.openstream.core.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -42,7 +43,7 @@ interface PlaylistDao {
     @Query("UPDATE $TABLE_NAME SET thumbnail = :thumbnail WHERE playlistId = :id")
     suspend fun updatePlaylistThumbnail(id: Long, thumbnail: String)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToPlaylist(vararg playlistVideoCrossRef: PlaylistVideoCrossRef)
 
     @Delete

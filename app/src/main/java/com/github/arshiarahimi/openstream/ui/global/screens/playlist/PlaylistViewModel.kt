@@ -28,6 +28,7 @@ class PlaylistViewModel(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
+    // todo cleanup
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>().apply {
         when (playlist) {
             is PlaylistItem.OnlinePlaylistItem -> {
@@ -46,20 +47,29 @@ class PlaylistViewModel(
 
             is PlaylistItem.LocalPlaylistItem -> {
                 playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
-                    .onFirst {
-                        if (videos.isEmpty()) {
-                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylist)
+                    .onEach {
+                        videos.clear()
+                        videos.addAll(it)
+                    }.onFirst {
+                        if (videos.isEmpty() && playlist is PlaylistItem.OfflineFirstPlaylistItem) {
+                            playlistRepo.getPlaylist(playlist as PlaylistItem.OfflineFirstPlaylistItem)
                                 .collect {
                                     when (it) {
-                                        is Resource.Error -> "failed to retrieve playlist items"
+                                        is Resource.Success -> {
+                                            playlistObject = it.data
+                                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylist)
+                                                .collect {
+                                                    when (it) {
+                                                        is Resource.Error -> "failed to retrieve playlist items"
+                                                        else -> Unit
+                                                    }
+                                                }
+                                        }
+
                                         else -> Unit
                                     }
                                 }
                         }
-                    }
-                    .onEach {
-                        videos.clear()
-                        videos.addAll(it)
                     }.launchIn(viewModelScope)
             }
         }
