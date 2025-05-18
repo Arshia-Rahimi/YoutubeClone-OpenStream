@@ -13,8 +13,8 @@ class ConfirmationViewModel(
 //    private val channelRepo: ChannelRepository,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-
-    // todo add undo to snackbar
+    
+    // todo add undo to snackbar ## probably requires an UndoViewModel -needs more insight
     fun confirm() {
         when (type) {
             is UnsubscribeItem -> {

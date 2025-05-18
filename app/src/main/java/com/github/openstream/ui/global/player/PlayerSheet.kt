@@ -72,7 +72,7 @@ const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
 const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 1f
 const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 
-// todo migrate deprecated screenWidth
+// todo migrate deprecated screenWidth -boxWithConstraints in recommended
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
