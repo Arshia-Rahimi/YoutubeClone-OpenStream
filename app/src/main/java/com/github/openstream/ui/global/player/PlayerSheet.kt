@@ -1,5 +1,6 @@
 package com.github.openstream.ui.global.player
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -46,8 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -71,6 +72,8 @@ const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
 const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 1f
 const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 
+// todo migrate deprecated screenWidth
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlayerSheet(
@@ -83,7 +86,8 @@ fun PlayerSheet(
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val density = LocalDensity.current
-    val screenWidth = LocalWindowInfo.current.containerSize.width.dp
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight =
         with(density) { (screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()

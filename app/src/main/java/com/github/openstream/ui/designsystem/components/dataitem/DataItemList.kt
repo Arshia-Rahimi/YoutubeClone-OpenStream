@@ -1,5 +1,6 @@
 package com.github.openstream.ui.designsystem.components.dataitem
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.github.openstream.app.navigation.NavigationViewModel
 import com.github.openstream.app.navigation.routes.Tabs
@@ -28,6 +29,7 @@ import com.github.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DataItemList(
@@ -50,7 +52,8 @@ fun DataItemList(
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
-    val screenWidth = LocalWindowInfo.current.containerSize.width
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
     
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
@@ -105,6 +108,7 @@ fun DataItemList(
     }
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DataItemList(
@@ -125,7 +129,8 @@ fun DataItemList(
     val shouldLoadNextPage by remember {
         derivedStateOf { !lazyColumnState.canScrollForward && items.isNotEmpty() }
     }
-    val screenWidth = LocalWindowInfo.current.containerSize.width.dp
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
@@ -170,7 +175,7 @@ fun DataItemList(
             )
         }
         item {
-            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16)))
+            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
         }
     }
 }
