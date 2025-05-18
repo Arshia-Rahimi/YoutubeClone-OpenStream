@@ -1,0 +1,41 @@
+package com.github.arshiarahimi.openstream.core.data.di
+
+import com.github.arshiarahimi.openstream.core.data.PlayerConfigRepository
+import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
+import com.github.arshiarahimi.openstream.core.data.SearchRepository
+import com.github.arshiarahimi.openstream.core.data.VideoRepository
+import com.github.arshiarahimi.openstream.core.data.impl.DataStorePlayerConfigRepository
+import com.github.arshiarahimi.openstream.core.data.impl.DataStorePreferencesRepository
+import com.github.arshiarahimi.openstream.core.data.impl.ExtractorSearchRepository
+import com.github.arshiarahimi.openstream.core.data.impl.ExtractorVideoRepository
+import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstPlaylistRepository
+import com.github.arshiarahimi.openstream.core.data.impl.PreferencesRepository
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.binds
+import org.koin.dsl.module
+
+val dataModule = module {
+    factoryOf(::ExtractorSearchRepository) { bind<SearchRepository>() }
+
+//    factoryOf(::OfflineFirstChannelRepository) { bind<ChannelRepository>() }
+
+    factoryOf(::ExtractorVideoRepository) { bind<VideoRepository>() }
+
+    factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
+
+    factory {
+        DataStorePreferencesRepository(
+            dataStore = get(named("preferences")),
+            scope = get()
+        )
+    } binds arrayOf(PreferencesRepository::class)
+
+    factory {
+        DataStorePlayerConfigRepository(
+            dataStore = get(named("player_config")),
+        )
+    } binds arrayOf(PlayerConfigRepository::class)
+
+}

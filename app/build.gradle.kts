@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.openstream"
+    namespace = "com.github.arshiarahimi.openstream"
     compileSdk = 35
 
     defaultConfig {
