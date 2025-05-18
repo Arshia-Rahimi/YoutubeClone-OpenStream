@@ -26,7 +26,6 @@ class PlayerViewModel(
     private val videoRepository: VideoRepository,
 ) : ViewModel() {
 
-    // todo init player
     sealed interface UiState {
         data object Loading : UiState
         data class Error(val message: String? = null) : UiState

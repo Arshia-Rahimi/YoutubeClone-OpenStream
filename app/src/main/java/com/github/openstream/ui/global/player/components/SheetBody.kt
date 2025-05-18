@@ -133,7 +133,6 @@ fun SheetBody(
                 modifier = Modifier.verticalScroll(scrollState),
             )
         }
-        // todo get if channel is OfflineFirst
         Channel(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
