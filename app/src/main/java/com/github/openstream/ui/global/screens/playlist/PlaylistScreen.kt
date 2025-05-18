@@ -16,10 +16,8 @@ fun PlaylistScreen(
     playlist: PlaylistItem,
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
-    navigateBack: () -> Unit,
     toChannelScreen: (String) -> Unit,
 ) {
-    topBar {}
     val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parametersOf(playlist) })
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 

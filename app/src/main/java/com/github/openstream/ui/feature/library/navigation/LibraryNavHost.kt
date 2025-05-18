@@ -67,7 +67,6 @@ fun LibraryNavHost(
                 topBar = navViewModel::setTopBar,
                 playVideo = playerViewModel::start,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
-                navigateBack = { navController.popBackStack() },
             )
         }
     }

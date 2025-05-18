@@ -66,7 +66,6 @@ fun SearchNavHost(
                 playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
                 topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
-                navigateBack = { navController.popBackStack() },
                 playVideo = playerViewModel::start,
             )
         }

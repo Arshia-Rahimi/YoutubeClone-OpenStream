@@ -22,7 +22,7 @@ class LibraryViewModel(
     private val playlistRepo: PlaylistRepository,
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
-
+    
     val sortType = preferencesRepo.preferences
         .map { it.librarySortType }
         .stateIn(
@@ -30,30 +30,29 @@ class LibraryViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = LibrarySortType.CREATED_AT_ASC,
         )
-
-    val playlists = mutableStateListOf<DataItem>()
-        .apply {
-            playlistRepo.playlists
-                .combine(sortType) { newPlaylists, sortType ->
-                    val sortedPlaylists = when (sortType) {
-                        LibrarySortType.CREATED_AT_ASC -> newPlaylists
-                        LibrarySortType.CREATED_AT_DESC -> newPlaylists.reversed()
-                        LibrarySortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
-                        LibrarySortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
-                        LibrarySortType.SIZE_ASC -> newPlaylists.sortedByDescending { it.count }
-                        LibrarySortType.SIZE_DESC -> newPlaylists.sortedBy { it.count }
-                    }
-                    clear()
-                    addAll(sortedPlaylists)
-                }.launchIn(viewModelScope)
-        }
-
+    
+    val playlists = mutableStateListOf<DataItem>().apply {
+        playlistRepo.playlists
+            .combine(sortType) { newPlaylists, sortType ->
+                val sortedPlaylists = when (sortType) {
+                    LibrarySortType.CREATED_AT_ASC -> newPlaylists
+                    LibrarySortType.CREATED_AT_DESC -> newPlaylists.reversed()
+                    LibrarySortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
+                    LibrarySortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
+                    LibrarySortType.SIZE_ASC -> newPlaylists.sortedByDescending { it.count }
+                    LibrarySortType.SIZE_DESC -> newPlaylists.sortedBy { it.count }
+                }
+                clear()
+                addAll(sortedPlaylists)
+            }.launchIn(viewModelScope)
+    }
+    
     fun toggleSortType() {
         viewModelScope.launch {
             preferencesRepo.setLibrarySortType(sortType.value.next())
         }
     }
-
+    
     fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem) {
         viewModelScope.launch {
             playlistRepo.deletePlaylist(playlist)
@@ -61,16 +60,16 @@ class LibraryViewModel(
                     when (it) {
                         is Resource.Error -> SnackBarController
                             .sendEvent("failed to delete playlist: ${playlist.name}")
-
+                        
                         is Resource.Success -> SnackBarController
                             .sendEvent("deleted playlist: ${playlist.name}")
-
+                        
                         else -> Unit
                     }
                 }
         }
     }
-
+    
     fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem) {
         viewModelScope.launch {
             playlistRepo.savePlaylist(playlist)
@@ -78,10 +77,10 @@ class LibraryViewModel(
                     when (it) {
                         is Resource.Error -> SnackBarController
                             .sendEvent("failed to save playlist: ${playlist.name}")
-
+                        
                         is Resource.Success -> SnackBarController
                             .sendEvent("saved playlist: ${playlist.name}")
-
+                        
                         else -> Unit
                     }
                 }
