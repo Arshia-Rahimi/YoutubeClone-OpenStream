@@ -13,11 +13,11 @@ class ConfirmationViewModel(
 //    private val channelRepo: ChannelRepository,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-
-    // todo add undo to snackbar ## probably requires an UndoViewModel -needs more insight
-    fun confirm() {
-        when (type) {
-            is UnsubscribeItem -> {
+    
+    // todo add undo to snackbar ## probably requires an UndoViewModel
+    fun confirm() = when (type) {
+        // todo add when local channels are available
+        is UnsubscribeItem -> {
 //                channelRepo.unSubscribe(type.channel.id)
 //                    .onEach {
 //                        when (it) {
@@ -26,29 +26,29 @@ class ConfirmationViewModel(
 //                            is Resource.Success -> SnackBarController.sendEvent("unsubscribed from ${type.channel.name}")
 //                        }
 //                    }.launchIn(viewModelScope)
-            }
-
-            is Unsubscribe -> {
-//                channelRepo.unSubscribe(type.channel.id)
-//                    .onEach {
-//                        when (it) {
-//                            is Resource.Loading -> Unit
-//                            is Resource.Error -> SnackBarController.sendEvent("failed to unsubscribe from ${type.channel.metadata.name}")
-//                            is Resource.Success -> SnackBarController.sendEvent("unsubscribed from ${type.channel.metadata.name}")
-//                        }
-//                    }.launchIn(viewModelScope)
-            }
-
-            is DeletePlaylistItem -> {
-                playlistRepo.deletePlaylist(type.playlist)
-                    .onEach {
-                        when (it) {
-                            is Resource.Loading -> Unit
-                            is Resource.Error -> SnackBarController.sendEvent("failed to delete playlist ${type.playlist.name}")
-                            is Resource.Success -> SnackBarController.sendEvent("deleted playlist ${type.playlist.name}")
-                        }
-                    }.launchIn(viewModelScope)
-            }
+        }
+        
+        is DeletePlaylistItem -> {
+            playlistRepo.deletePlaylist(type.playlist)
+                .onEach {
+                    when (it) {
+                        is Resource.Loading -> Unit
+                        is Resource.Error -> SnackBarController.sendEvent("failed to delete playlist ${type.playlist.name}")
+                        is Resource.Success -> SnackBarController.sendEvent("deleted playlist ${type.playlist.name}")
+                    }
+                }.launchIn(viewModelScope)
+        }
+        
+        is SavePlaylistItem -> {
+            playlistRepo.savePlaylist(type.playlist)
+                .onEach {
+                    when (it) {
+                        is Resource.Loading -> Unit
+                        is Resource.Error -> SnackBarController.sendEvent("failed to save playlist ${type.playlist.name}")
+                        is Resource.Success -> SnackBarController.sendEvent("saved playlist ${type.playlist.name}")
+                    }
+                }.launchIn(viewModelScope)
         }
     }
+    
 }

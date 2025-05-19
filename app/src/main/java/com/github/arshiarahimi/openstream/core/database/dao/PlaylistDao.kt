@@ -59,5 +59,5 @@ interface PlaylistDao {
 
     @Transaction
     @Query("SELECT * FROM playlists WHERE playlistId = :id")
-    fun getPlaylistWithVideosFlow(id: Long): Flow<PlaylistWithVideos>?
+    fun getPlaylistWithVideosFlow(id: Long): Flow<PlaylistWithVideos?>
 }

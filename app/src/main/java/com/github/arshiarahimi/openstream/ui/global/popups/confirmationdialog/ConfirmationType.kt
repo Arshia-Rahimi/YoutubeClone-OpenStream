@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstChannelExtractor
 
 sealed interface Confirmation {
     val confirmButton: Int
@@ -21,16 +20,6 @@ data class UnsubscribeItem(
     override val confirmationText = R.string.unsubscribe
 }
 
-data class Unsubscribe(
-    val channel: OfflineFirstChannelExtractor,
-) : Confirmation {
-    @StringRes
-    override val confirmButton = R.string.confirm_unsubscribe
-
-    @StringRes
-    override val confirmationText = R.string.unsubscribe
-}
-
 data class DeletePlaylistItem(
     val playlist: PlaylistItem.LocalPlaylistItem,
 ) : Confirmation {
@@ -39,4 +28,14 @@ data class DeletePlaylistItem(
 
     @StringRes
     override val confirmationText = R.string.confirm_delete_playlist
+}
+
+data class SavePlaylistItem(
+    val playlist: PlaylistItem.OnlinePlaylistItem,
+) : Confirmation {
+    @StringRes
+    override val confirmButton = R.string.save_playlist
+    
+    @StringRes
+    override val confirmationText = R.string.confirm_save_playlist
 }

@@ -32,8 +32,8 @@ interface PlaylistRepository {
         video: VideoItem,
         playlistsMap: Map<PlaylistItem.LocalOnlyPlaylistItem, Boolean>
     ): Flow<Resource<Success>>
-
-    fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>>
+    
+    fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>?>
 
     // youtube playlists
     fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<PlaylistExtractor>>

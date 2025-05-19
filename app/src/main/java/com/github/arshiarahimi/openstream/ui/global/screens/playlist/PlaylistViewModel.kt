@@ -55,7 +55,9 @@ class PlaylistViewModel(
                 playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylistExtractor).data)
                     .onEach {
                         videos.clear()
-                        videos.addAll(it)
+                        if (it == null) {
+                            // todo nav back
+                        } else videos.addAll(it)
                     }.launchIn(viewModelScope)
             }
         }
@@ -125,7 +127,9 @@ class PlaylistViewModel(
         playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
             .onEach {
                 videos.clear()
-                videos.addAll(it)
+                if (it == null) {
+                    // todo nav back
+                } else videos.addAll(it)
             }.onFirst {
                 // if the playlist is offlineFirst and there is no videos saved fetch it
                 if (videos.isEmpty() && playlist is PlaylistItem.OfflineFirstPlaylistItem) {
