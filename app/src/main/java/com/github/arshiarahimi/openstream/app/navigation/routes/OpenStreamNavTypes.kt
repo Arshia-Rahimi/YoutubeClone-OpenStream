@@ -3,7 +3,7 @@ package com.github.arshiarahimi.openstream.app.navigation.routes
 import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavType
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import kotlinx.serialization.json.Json
 
 object OpenStreamNavTypes {

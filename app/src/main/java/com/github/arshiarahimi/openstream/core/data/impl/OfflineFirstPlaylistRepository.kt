@@ -6,13 +6,13 @@ import com.github.arshiarahimi.openstream.core.common.util.asResult
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.database.OpenStreamDatabase
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
-import com.github.arshiarahimi.openstream.core.database.entities.PlaylistVideoCrossRef
+import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.PlaylistVideoCrossRef
 import com.github.arshiarahimi.openstream.core.extractor.datasource.PlaylistRemoteDataSource
-import com.github.arshiarahimi.openstream.core.model.extractordata.OfflineFirstPlaylist
-import com.github.arshiarahimi.openstream.core.model.extractordata.OnlinePlaylist
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.YoutubePlaylist
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
+import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
+import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
+import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
 import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -112,7 +112,7 @@ class OfflineFirstPlaylistRepository(
     //
 
     // youtube playlists
-    override fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<YoutubePlaylist>> =
+    override fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<PlaylistExtractor>> =
         flow {
             val data = PlaylistRemoteDataSource.fetchPlaylist(playlist)
             if (playlist is PlaylistItem.OfflineFirstPlaylistItem) {
@@ -125,7 +125,7 @@ class OfflineFirstPlaylistRepository(
     //
 
     // offline first playlists
-    override fun getPlaylistFirstPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>> =
+    override fun getPlaylistFirstPage(playlist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>> =
         flow {
             val firstPage = PlaylistRemoteDataSource.fetchFirstPage(playlist)
             val ids =
@@ -144,7 +144,7 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }.asResult(Dispatchers.IO)
 
-    override fun getNextPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>> =
+    override fun getNextPage(playlist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>> =
         flow {
             val nextPage = PlaylistRemoteDataSource.fetchNextPage(playlist)
             db.videoDao().upsert(*nextPage.map { it.toEntity() }.toTypedArray())
@@ -163,12 +163,12 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }.asResult(Dispatchers.IO)
 
-    override fun getPlaylistFirstPage(playlist: OnlinePlaylist): Flow<Resource<List<VideoItem>>> =
+    override fun getPlaylistFirstPage(playlist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>> =
         flow {
             emit(PlaylistRemoteDataSource.fetchFirstPage(playlist))
         }.asResult(Dispatchers.IO)
 
-    override fun getNextPage(playlist: OnlinePlaylist): Flow<Resource<List<VideoItem>>> =
+    override fun getNextPage(playlist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>> =
         flow {
             emit(PlaylistRemoteDataSource.fetchNextPage(playlist))
         }.asResult(Dispatchers.IO)

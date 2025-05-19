@@ -1,4 +1,4 @@
-package com.github.arshiarahimi.openstream.core.database.entities
+package com.github.arshiarahimi.openstream.core.database.entities.crossrefs
 
 import androidx.room.Entity
 import androidx.room.Index

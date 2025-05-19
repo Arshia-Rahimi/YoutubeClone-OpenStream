@@ -1,5 +1,6 @@
 package com.github.arshiarahimi.openstream.core.model.extractordata
 
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.arshiarahimi.openstream.R
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.DeletePlaylistItem

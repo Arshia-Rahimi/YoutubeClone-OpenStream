@@ -38,8 +38,8 @@ import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.common.util.timeAgo
 import com.github.arshiarahimi.openstream.core.common.util.toShortForm
 import com.github.arshiarahimi.openstream.core.common.util.toTime
-import com.github.arshiarahimi.openstream.core.model.extractordata.StreamType
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 
 @Composable

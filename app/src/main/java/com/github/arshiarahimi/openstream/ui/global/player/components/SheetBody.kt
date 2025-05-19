@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.sp
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.common.util.timeAgo
 import com.github.arshiarahimi.openstream.core.common.util.toShortForm
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.StreamType
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.components.Channel
 import kotlinx.coroutines.CoroutineScope

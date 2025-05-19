@@ -2,11 +2,11 @@ package com.github.arshiarahimi.openstream.core.data
 
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.common.util.Success
-import com.github.arshiarahimi.openstream.core.model.extractordata.OfflineFirstPlaylist
-import com.github.arshiarahimi.openstream.core.model.extractordata.OnlinePlaylist
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.YoutubePlaylist
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
+import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
+import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
+import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -36,18 +36,18 @@ interface PlaylistRepository {
     fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>>
 
     // youtube playlists
-    fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<YoutubePlaylist>>
+    fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<PlaylistExtractor>>
 
     // offline first playlists
-    fun getPlaylistFirstPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>>
+    fun getPlaylistFirstPage(playlist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>>
 
-    fun getNextPage(currentPlaylist: OfflineFirstPlaylist): Flow<Resource<Success>>
+    fun getNextPage(currentPlaylist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>>
 
     // online playlists
     fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem): Flow<Resource<Success>>
 
-    fun getPlaylistFirstPage(playlist: OnlinePlaylist): Flow<Resource<List<VideoItem>>>
+    fun getPlaylistFirstPage(playlist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>>
 
-    fun getNextPage(currentPlaylist: OnlinePlaylist): Flow<Resource<List<VideoItem>>>
+    fun getNextPage(currentPlaylist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>>
 
 }

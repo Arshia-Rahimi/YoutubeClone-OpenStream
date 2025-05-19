@@ -1,11 +1,11 @@
-package com.github.arshiarahimi.openstream.core.model.extractordata
+package com.github.arshiarahimi.openstream.core.model.extractor
 
-import com.github.arshiarahimi.openstream.core.database.Entityable
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
+import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 
-sealed interface Channel : Entityable, ViewableObject {
+sealed interface ChannelExtractor : Entityable {
     val url: String
     val metadata: ChannelMetadata
     val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>?
@@ -13,11 +13,11 @@ sealed interface Channel : Entityable, ViewableObject {
     override fun toEntity(): ChannelEntity
 }
 
-data class OnlineChannel(
+data class OnlineChannelExtractor(
     override val metadata: ChannelMetadata,
     override val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>,
     override val url: String
-) : Channel {
+) : ChannelExtractor {
     override fun toEntity() = ChannelEntity(
         name = metadata.name,
         url = url,
@@ -27,7 +27,7 @@ data class OnlineChannel(
         description = metadata.description,
     )
 
-    fun toOfflineFirstChannel(id: Long) = OfflineFirstChannel(
+    fun toOfflineFirstChannel(id: Long) = OfflineFirstChannelExtractor(
         url = url,
         metadata = metadata,
         tabExtractors = tabExtractors,
@@ -35,12 +35,12 @@ data class OnlineChannel(
     )
 }
 
-data class OfflineFirstChannel(
+data class OfflineFirstChannelExtractor(
     override val url: String,
     override val metadata: ChannelMetadata,
     override val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>? = null,
     val id: Long,
-) : Channel {
+) : ChannelExtractor {
     override fun toEntity() = ChannelEntity(
         channelId = id,
         name = metadata.name,

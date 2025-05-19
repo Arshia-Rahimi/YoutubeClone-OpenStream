@@ -11,7 +11,7 @@ import com.github.arshiarahimi.openstream.app.navigation.isInTabRoot
 import com.github.arshiarahimi.openstream.app.navigation.routes.OpenStreamNavTypes
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.common.compose.popToRoot
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.feature.search.SearchScreen
 import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.ChannelScreen

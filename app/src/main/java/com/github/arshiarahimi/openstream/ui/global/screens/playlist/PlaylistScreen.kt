@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel

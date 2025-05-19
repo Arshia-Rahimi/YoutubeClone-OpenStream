@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

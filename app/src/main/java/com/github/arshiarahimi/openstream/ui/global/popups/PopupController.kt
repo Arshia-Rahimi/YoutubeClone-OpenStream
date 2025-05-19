@@ -1,6 +1,6 @@
 package com.github.arshiarahimi.openstream.ui.global.popups
 
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.Confirmation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

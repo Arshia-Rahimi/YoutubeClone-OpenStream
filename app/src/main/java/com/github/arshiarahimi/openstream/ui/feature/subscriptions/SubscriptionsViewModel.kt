@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.core.common.util.next
 import com.github.arshiarahimi.openstream.core.data.PreferencesRepository
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.enums.SubscriptionsSortType
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

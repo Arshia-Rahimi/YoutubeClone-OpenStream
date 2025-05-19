@@ -1,5 +1,7 @@
 package com.github.arshiarahimi.openstream.core.model.extractordata
 
+import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.SubtitlesStream
 import org.schabi.newpipe.extractor.stream.VideoStream

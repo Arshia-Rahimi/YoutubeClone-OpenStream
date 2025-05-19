@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.arshiarahimi.openstream.core.database.OpenStreamEntity
-import com.github.arshiarahimi.openstream.core.model.extractordata.StreamType
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
+import com.github.arshiarahimi.openstream.core.model.extractor.OpenStreamEntity
 
 @Entity("videos", indices = [Index(value = ["url"], unique = true)])
 data class VideoEntity(

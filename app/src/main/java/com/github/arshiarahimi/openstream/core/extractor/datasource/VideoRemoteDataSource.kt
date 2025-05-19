@@ -27,9 +27,9 @@ object VideoRemoteDataSource {
             likeCount = extractor.likeCount,
             channelAvatar = extractor.uploaderAvatars.first().url,
             streamType = when (extractor.streamType) {
-                StreamType.LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.extractordata.StreamType.LIVE_STREAM
-                StreamType.POST_LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.extractordata.StreamType.POST_LIVE_STREAM
-                else -> com.github.arshiarahimi.openstream.core.model.extractordata.StreamType.NORMAL
+                StreamType.LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.dataitem.StreamType.LIVE_STREAM
+                StreamType.POST_LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.dataitem.StreamType.POST_LIVE_STREAM
+                else -> com.github.arshiarahimi.openstream.core.model.dataitem.StreamType.NORMAL
             },
         )
         val url = data.videoStreams.first().content

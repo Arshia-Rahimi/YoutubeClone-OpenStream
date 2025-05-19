@@ -9,10 +9,10 @@ import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.SearchRepository
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.SearchResult
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
 import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

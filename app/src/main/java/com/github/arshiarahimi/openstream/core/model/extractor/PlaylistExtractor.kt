@@ -1,21 +1,21 @@
-package com.github.arshiarahimi.openstream.core.model.extractordata
+package com.github.arshiarahimi.openstream.core.model.extractor
 
-import com.github.arshiarahimi.openstream.core.database.Entityable
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-sealed interface YoutubePlaylist : Entityable, ViewableObject {
+sealed interface PlaylistExtractor : Entityable {
     val data: PlaylistItem.YoutubePlaylistItem
     var extractor: YoutubePlaylistExtractor?
     var nextPage: Page?
 }
 
-data class OnlinePlaylist(
+data class OnlinePlaylistExtractor(
     override val data: PlaylistItem.YoutubePlaylistItem,
     override var extractor: YoutubePlaylistExtractor?,
     override var nextPage: Page? = null,
-) : YoutubePlaylist {
+) : PlaylistExtractor {
     override fun toEntity() = PlaylistEntity(
         url = data.url,
         name = data.name,
@@ -25,7 +25,7 @@ data class OnlinePlaylist(
         isChannelVerified = data.isChannelVerified,
     )
 
-    fun toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylist(
+    fun toOfflineFirstPlaylist(id: Long) = OfflineFirstPlaylistExtractor(
         id = id,
         extractor = extractor,
         data = PlaylistItem.OfflineFirstPlaylistItem(
@@ -41,11 +41,11 @@ data class OnlinePlaylist(
     )
 }
 
-data class OfflineFirstPlaylist(
+data class OfflineFirstPlaylistExtractor(
     override val data: PlaylistItem.OfflineFirstPlaylistItem,
     override var extractor: YoutubePlaylistExtractor? = null,
     val id: Long, override var nextPage: Page? = null,
-) : YoutubePlaylist {
+) : PlaylistExtractor {
     override fun toEntity() = PlaylistEntity(
         url = data.url,
         playlistId = id,

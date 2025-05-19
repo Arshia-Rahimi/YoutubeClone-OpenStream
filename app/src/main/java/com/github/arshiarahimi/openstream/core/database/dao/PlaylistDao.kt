@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
-import com.github.arshiarahimi.openstream.core.database.entities.PlaylistVideoCrossRef
+import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.PlaylistVideoCrossRef
 import com.github.arshiarahimi.openstream.core.database.entities.relationships.PlaylistWithVideos
 import com.github.arshiarahimi.openstream.core.database.entities.relationships.VideoWithPlaylists
 import kotlinx.coroutines.flow.Flow

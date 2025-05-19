@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.common.util.onFirst
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.OfflineFirstPlaylist
-import com.github.arshiarahimi.openstream.core.model.extractordata.OnlinePlaylist
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.YoutubePlaylist
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
+import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
+import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -23,7 +23,7 @@ class PlaylistViewModel(
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
 
-    var playlistObject: YoutubePlaylist? = null
+    var playlistObject: PlaylistExtractor? = null
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -57,7 +57,7 @@ class PlaylistViewModel(
                                     when (it) {
                                         is Resource.Success -> {
                                             playlistObject = it.data
-                                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylist)
+                                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
                                                 .collect {
                                                     when (it) {
                                                         is Resource.Error -> "failed to retrieve playlist items"
@@ -77,7 +77,7 @@ class PlaylistViewModel(
 
     private fun getPlaylistFirstPage() {
         viewModelScope.launch {
-            playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylist)
+            playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylistExtractor)
                 .collect {
                     when (it) {
                         is Resource.Success -> {
@@ -93,8 +93,8 @@ class PlaylistViewModel(
     fun getNextPage() {
         when (playlistObject) {
             null -> Unit
-            is OnlinePlaylist -> {
-                playlistRepo.getNextPage(playlistObject as OnlinePlaylist)
+            is OnlinePlaylistExtractor -> {
+                playlistRepo.getNextPage(playlistObject as OnlinePlaylistExtractor)
                     .onEach {
                         when (it) {
                             is Resource.Success ->
@@ -105,8 +105,8 @@ class PlaylistViewModel(
                     }.launchIn(viewModelScope)
             }
 
-            is OfflineFirstPlaylist -> {
-                playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylist).data)
+            is OfflineFirstPlaylistExtractor -> {
+                playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylistExtractor).data)
                     .onEach {
                         videos.clear()
                         videos.addAll(it)
@@ -125,7 +125,7 @@ class PlaylistViewModel(
                     when (it) {
                         is Resource.Success -> {
                             playlistObject = it.data
-                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylist)
+                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
                                 .collect { }
                         }
 

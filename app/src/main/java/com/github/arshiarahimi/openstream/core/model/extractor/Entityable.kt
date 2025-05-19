@@ -1,4 +1,4 @@
-package com.github.arshiarahimi.openstream.core.database
+package com.github.arshiarahimi.openstream.core.model.extractor
 
 interface OpenStreamEntity
 

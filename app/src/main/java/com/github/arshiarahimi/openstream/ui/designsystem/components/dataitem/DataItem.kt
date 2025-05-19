@@ -2,10 +2,10 @@ package com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.components.Playlist
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.components.Video

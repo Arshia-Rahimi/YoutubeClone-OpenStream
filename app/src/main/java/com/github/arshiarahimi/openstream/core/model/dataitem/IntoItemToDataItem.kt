@@ -1,4 +1,4 @@
-package com.github.arshiarahimi.openstream.core.model.extractordata
+package com.github.arshiarahimi.openstream.core.model.dataitem
 
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
@@ -52,9 +52,9 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         channelName = uploaderName,
         uploadDate = uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli(),
         streamType = when (streamType) {
-            StreamType.LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.extractordata.StreamType.LIVE_STREAM
-            StreamType.POST_LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.extractordata.StreamType.POST_LIVE_STREAM
-            else -> com.github.arshiarahimi.openstream.core.model.extractordata.StreamType.NORMAL
+            StreamType.LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.dataitem.StreamType.LIVE_STREAM
+            StreamType.POST_LIVE_STREAM -> com.github.arshiarahimi.openstream.core.model.dataitem.StreamType.POST_LIVE_STREAM
+            else -> com.github.arshiarahimi.openstream.core.model.dataitem.StreamType.NORMAL
         },
     )
 

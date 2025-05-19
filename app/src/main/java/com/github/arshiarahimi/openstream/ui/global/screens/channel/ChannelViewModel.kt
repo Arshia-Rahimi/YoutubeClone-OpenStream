@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.github.arshiarahimi.openstream.core.extractor.datasource.ChannelRemoteDataSource
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

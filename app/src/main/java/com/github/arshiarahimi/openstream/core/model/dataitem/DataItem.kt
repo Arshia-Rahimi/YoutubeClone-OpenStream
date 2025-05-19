@@ -1,9 +1,9 @@
-package com.github.arshiarahimi.openstream.core.model.extractordata
+package com.github.arshiarahimi.openstream.core.model.dataitem
 
-import com.github.arshiarahimi.openstream.core.database.Entityable
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
 import com.github.arshiarahimi.openstream.core.database.entities.VideoEntity
+import com.github.arshiarahimi.openstream.core.model.extractor.Entityable
 import kotlinx.serialization.Serializable
 
 sealed interface DataItem : Entityable {

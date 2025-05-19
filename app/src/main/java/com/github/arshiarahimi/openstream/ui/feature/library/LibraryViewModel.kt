@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.core.common.util.next
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.PreferencesRepository
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.enums.LibrarySortType
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn

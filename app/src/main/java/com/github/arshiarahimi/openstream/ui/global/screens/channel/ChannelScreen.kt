@@ -7,10 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.ErrorPage
 import com.github.arshiarahimi.openstream.ui.designsystem.components.LoadingBox
 import kotlinx.coroutines.CoroutineScope

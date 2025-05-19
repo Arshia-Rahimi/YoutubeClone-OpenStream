@@ -2,9 +2,9 @@ package com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog
 
 import androidx.annotation.StringRes
 import com.github.arshiarahimi.openstream.R
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.OfflineFirstChannel
-import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstChannelExtractor
 
 sealed interface Confirmation {
     val confirmButton: Int
@@ -22,7 +22,7 @@ data class UnsubscribeItem(
 }
 
 data class Unsubscribe(
-    val channel: OfflineFirstChannel,
+    val channel: OfflineFirstChannelExtractor,
 ) : Confirmation {
     @StringRes
     override val confirmButton = R.string.confirm_unsubscribe

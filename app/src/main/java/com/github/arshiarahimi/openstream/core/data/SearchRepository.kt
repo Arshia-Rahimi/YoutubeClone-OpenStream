@@ -1,7 +1,7 @@
 package com.github.arshiarahimi.openstream.core.data
 
 import com.github.arshiarahimi.openstream.core.common.util.Resource
-import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.SearchResult
 import kotlinx.coroutines.flow.Flow
 

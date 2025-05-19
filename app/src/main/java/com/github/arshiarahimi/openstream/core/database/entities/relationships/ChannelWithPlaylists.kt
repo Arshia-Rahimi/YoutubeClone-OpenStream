@@ -4,8 +4,8 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
-import com.github.arshiarahimi.openstream.core.database.entities.ChannelPlaylistCrossRef
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
+import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.ChannelPlaylistCrossRef
 
 data class ChannelWithPlaylists(
     @Embedded val channel: ChannelEntity,
