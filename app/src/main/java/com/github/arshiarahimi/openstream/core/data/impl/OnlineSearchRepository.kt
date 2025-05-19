@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class ExtractorSearchRepository(
+class OnlineSearchRepository(
     private val db: OpenStreamDatabase,
 ) : SearchRepository {
 

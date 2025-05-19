@@ -7,9 +7,9 @@ import com.github.arshiarahimi.openstream.core.data.SearchRepository
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.DataStorePlayerConfigRepository
 import com.github.arshiarahimi.openstream.core.data.impl.DataStorePreferencesRepository
-import com.github.arshiarahimi.openstream.core.data.impl.ExtractorSearchRepository
 import com.github.arshiarahimi.openstream.core.data.impl.ExtractorVideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstPlaylistRepository
+import com.github.arshiarahimi.openstream.core.data.impl.OnlineSearchRepository
 import com.github.arshiarahimi.openstream.core.shared.PLAYER_CONFIG_QUALIFIER
 import com.github.arshiarahimi.openstream.core.shared.PREFERENCES_QUALIFIER
 import org.koin.core.module.dsl.bind
@@ -19,7 +19,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 val dataModule = module {
-    factoryOf(::ExtractorSearchRepository) { bind<SearchRepository>() }
+    factoryOf(::OnlineSearchRepository) { bind<SearchRepository>() }
 
 //    factoryOf(::OfflineFirstChannelRepository) { bind<ChannelRepository>() }
 
