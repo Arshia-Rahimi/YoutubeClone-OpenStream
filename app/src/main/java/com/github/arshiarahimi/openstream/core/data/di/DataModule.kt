@@ -10,6 +10,8 @@ import com.github.arshiarahimi.openstream.core.data.impl.DataStorePreferencesRep
 import com.github.arshiarahimi.openstream.core.data.impl.ExtractorSearchRepository
 import com.github.arshiarahimi.openstream.core.data.impl.ExtractorVideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstPlaylistRepository
+import com.github.arshiarahimi.openstream.core.shared.PLAYER_CONFIG_QUALIFIER
+import com.github.arshiarahimi.openstream.core.shared.PREFERENCES_QUALIFIER
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
@@ -27,14 +29,14 @@ val dataModule = module {
 
     factory {
         DataStorePreferencesRepository(
-            dataStore = get(named("preferences")),
+            dataStore = get(named(PREFERENCES_QUALIFIER)),
             scope = get()
         )
     } binds arrayOf(PreferencesRepository::class)
 
     factory {
         DataStorePlayerConfigRepository(
-            dataStore = get(named("player_config")),
+            dataStore = get(named(PLAYER_CONFIG_QUALIFIER)),
         )
     } binds arrayOf(PlayerConfigRepository::class)
 
