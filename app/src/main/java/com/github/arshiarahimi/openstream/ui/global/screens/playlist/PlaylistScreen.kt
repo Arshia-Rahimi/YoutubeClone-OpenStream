@@ -17,11 +17,13 @@ fun PlaylistScreen(
     topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     toChannelScreen: (String) -> Unit,
+    navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parametersOf(playlist) })
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     PlaylistScreen(
+        navigateBack = navigateBack,
         playlist = viewModel.playlist,
         topBar = topBar,
         playVideo = playVideo,
@@ -40,11 +42,12 @@ private fun PlaylistScreen(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     toChannelScreen: (String) -> Unit,
+    navigateBack: () -> Unit,
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
-    topBar { PlaylistTopBar(playlist, toChannelScreen) }
+    topBar { PlaylistTopBar(playlist, toChannelScreen, navigateBack) }
 
     when (playlist) {
         is PlaylistItem.OfflineFirstPlaylistItem -> {

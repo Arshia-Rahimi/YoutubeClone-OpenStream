@@ -67,6 +67,7 @@ fun SearchNavHost(
                 topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 playVideo = playerViewModel::start,
+                navigateBack = { navController.navigateUp() },
             )
         }
     }

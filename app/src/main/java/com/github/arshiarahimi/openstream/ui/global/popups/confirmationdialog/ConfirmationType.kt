@@ -22,6 +22,7 @@ data class UnsubscribeItem(
 
 data class DeletePlaylistItem(
     val playlist: PlaylistItem.LocalPlaylistItem,
+    val navBackAction: (() -> Unit)? = null,
 ) : Confirmation {
     @StringRes
     override val confirmButton = R.string.delete

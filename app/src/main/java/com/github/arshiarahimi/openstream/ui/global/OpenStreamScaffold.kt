@@ -78,9 +78,7 @@ fun OpenStreamScaffold(
     }
 
     showSaveVideoToPlaylistsModal?.let {
-        SaveVideoToPlaylistsModal(
-            video = it,
-        )
+        SaveVideoToPlaylistsModal(it)
     }
 
     if (showCreatePlaylistDialog) {

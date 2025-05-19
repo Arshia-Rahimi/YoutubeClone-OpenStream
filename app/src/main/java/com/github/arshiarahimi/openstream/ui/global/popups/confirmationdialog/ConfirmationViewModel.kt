@@ -13,8 +13,8 @@ class ConfirmationViewModel(
 //    private val channelRepo: ChannelRepository,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-    
-    // todo add undo to snackbar ## probably requires an UndoViewModel
+
+    // todo add undo to snackbar ## maybe delay the action for a few seconds and if undo doesn't happen then proceed
     fun confirm() = when (type) {
         // todo add when local channels are available
         is UnsubscribeItem -> {
@@ -34,7 +34,10 @@ class ConfirmationViewModel(
                     when (it) {
                         is Resource.Loading -> Unit
                         is Resource.Error -> SnackBarController.sendEvent("failed to delete playlist ${type.playlist.name}")
-                        is Resource.Success -> SnackBarController.sendEvent("deleted playlist ${type.playlist.name}")
+                        is Resource.Success -> {
+                            type.navBackAction?.invoke()
+                            SnackBarController.sendEvent("deleted playlist ${type.playlist.name}")
+                        }
                     }
                 }.launchIn(viewModelScope)
         }
