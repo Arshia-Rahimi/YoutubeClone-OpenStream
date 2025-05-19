@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
-import com.github.arshiarahimi.openstream.core.extractor.ChannelExtractor
+import com.github.arshiarahimi.openstream.core.extractor.datasource.ChannelRemoteDataSource
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
 import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
@@ -27,7 +27,7 @@ class ChannelViewModel(
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private lateinit var channel: ChannelExtractor
+    private lateinit var channel: ChannelRemoteDataSource
 
 //    private val loadingChannel: Job
 

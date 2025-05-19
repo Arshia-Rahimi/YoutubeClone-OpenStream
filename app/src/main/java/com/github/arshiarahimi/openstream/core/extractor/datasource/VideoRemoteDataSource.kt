@@ -1,11 +1,11 @@
-package com.github.arshiarahimi.openstream.core.extractor
+package com.github.arshiarahimi.openstream.core.extractor.datasource
 
 import androidx.media3.common.MediaItem
-import com.github.arshiarahimi.openstream.core.extractor.util.YtService
+import com.github.arshiarahimi.openstream.core.extractor.YtService
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
 import org.schabi.newpipe.extractor.stream.StreamType
 
-object VideoExtractor {
+object VideoRemoteDataSource {
     fun fetchVideo(url: String): MediaItem {
         val extractor = YtService.getStreamExtractor(url)
         extractor.fetchPage()

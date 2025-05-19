@@ -4,7 +4,7 @@ import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.common.util.asResult
 import com.github.arshiarahimi.openstream.core.data.SearchRepository
 import com.github.arshiarahimi.openstream.core.database.OpenStreamDatabase
-import com.github.arshiarahimi.openstream.core.extractor.SearchExtractor
+import com.github.arshiarahimi.openstream.core.extractor.datasource.SearchRemoteDataSource
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
@@ -23,14 +23,15 @@ class ExtractorSearchRepository(
         contentFilter: List<String>,
         sortFilter: String?,
     ): Flow<Resource<SearchResult>> = flow {
-        val searchResult = SearchExtractor.fetchSearchResult(query, contentFilter, sortFilter)
+        val searchResult =
+            SearchRemoteDataSource.fetchSearchResult(query, contentFilter, sortFilter)
         val firstPage = syncDataItemsWithDB(searchResult.items)
         emit(searchResult.copy(items = firstPage))
     }.asResult(Dispatchers.IO)
 
     override suspend fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>> =
         flow {
-            val result = SearchExtractor.fetchNextPage(currentSearch)
+            val result = SearchRemoteDataSource.fetchNextPage(currentSearch)
             val nextPage = syncDataItemsWithDB(result)
             emit(nextPage)
         }.asResult(Dispatchers.IO)

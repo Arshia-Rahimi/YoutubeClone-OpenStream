@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import com.github.arshiarahimi.openstream.app.navigation.Navigation
-import com.github.arshiarahimi.openstream.core.extractor.util.OkHttpDownloader
+import com.github.arshiarahimi.openstream.core.extractor.OkHttpDownloader
 import com.github.arshiarahimi.openstream.ui.designsystem.theme.OpenStreamTheme
 import org.koin.androidx.compose.KoinAndroidContext
 import org.schabi.newpipe.extractor.NewPipe

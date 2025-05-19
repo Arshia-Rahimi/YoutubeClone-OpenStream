@@ -60,6 +60,9 @@ import com.github.arshiarahimi.openstream.core.common.compose.onCondition
 import com.github.arshiarahimi.openstream.core.common.util.toTime
 import com.github.arshiarahimi.openstream.core.media3.PlayerState
 import com.github.arshiarahimi.openstream.core.media3.PlayingStatus
+import com.github.arshiarahimi.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
+import com.github.arshiarahimi.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
+import com.github.arshiarahimi.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
 import com.github.arshiarahimi.openstream.ui.global.player.components.PlayerSheetState
 import com.github.arshiarahimi.openstream.ui.global.player.components.SheetBody
 import com.github.arshiarahimi.openstream.ui.global.player.view.PlayerView
@@ -67,10 +70,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
-
-const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
-const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 1f
-const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 
 // todo migrate deprecated screenWidth -boxWithConstraints in recommended
 @SuppressLint("ConfigurationScreenWidthHeight")

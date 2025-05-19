@@ -1,4 +1,4 @@
-package com.github.arshiarahimi.openstream.core.data.impl
+package com.github.arshiarahimi.openstream.core.data
 
 import com.github.arshiarahimi.openstream.core.datastore.PreferencesModel
 import com.github.arshiarahimi.openstream.core.model.enums.LibrarySortType

@@ -1,6 +1,6 @@
-package com.github.arshiarahimi.openstream.core.extractor
+package com.github.arshiarahimi.openstream.core.extractor.datasource
 
-import com.github.arshiarahimi.openstream.core.extractor.util.YtService
+import com.github.arshiarahimi.openstream.core.extractor.YtService
 import com.github.arshiarahimi.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
@@ -8,7 +8,7 @@ import com.github.arshiarahimi.openstream.core.model.extractordata.YoutubePlayli
 import com.github.arshiarahimi.openstream.core.model.extractordata.toListOfVideos
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
-object PlaylistExtractor {
+object PlaylistRemoteDataSource {
     fun fetchPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): OnlinePlaylist {
         val extractor = YtService.getPlaylistExtractor(playlist.url) as YoutubePlaylistExtractor
         extractor.fetchPage()

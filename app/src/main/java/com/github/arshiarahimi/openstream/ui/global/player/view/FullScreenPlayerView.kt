@@ -1,5 +1,3 @@
-@file:kotlin.OptIn(ExperimentalFoundationApi::class)
-
 package com.github.arshiarahimi.openstream.ui.global.player.view
 
 import android.annotation.SuppressLint

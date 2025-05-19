@@ -25,7 +25,7 @@ import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoItem
-import com.github.arshiarahimi.openstream.ui.global.player.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
+import com.github.arshiarahimi.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 

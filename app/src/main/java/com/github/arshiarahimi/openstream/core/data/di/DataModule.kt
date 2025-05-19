@@ -2,6 +2,7 @@ package com.github.arshiarahimi.openstream.core.data.di
 
 import com.github.arshiarahimi.openstream.core.data.PlayerConfigRepository
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
+import com.github.arshiarahimi.openstream.core.data.PreferencesRepository
 import com.github.arshiarahimi.openstream.core.data.SearchRepository
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.DataStorePlayerConfigRepository
@@ -9,7 +10,6 @@ import com.github.arshiarahimi.openstream.core.data.impl.DataStorePreferencesRep
 import com.github.arshiarahimi.openstream.core.data.impl.ExtractorSearchRepository
 import com.github.arshiarahimi.openstream.core.data.impl.ExtractorVideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstPlaylistRepository
-import com.github.arshiarahimi.openstream.core.data.impl.PreferencesRepository
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named

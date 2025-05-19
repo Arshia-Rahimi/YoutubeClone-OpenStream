@@ -7,7 +7,7 @@ import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.database.OpenStreamDatabase
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistVideoCrossRef
-import com.github.arshiarahimi.openstream.core.extractor.PlaylistExtractor
+import com.github.arshiarahimi.openstream.core.extractor.datasource.PlaylistRemoteDataSource
 import com.github.arshiarahimi.openstream.core.model.extractordata.OfflineFirstPlaylist
 import com.github.arshiarahimi.openstream.core.model.extractordata.OnlinePlaylist
 import com.github.arshiarahimi.openstream.core.model.extractordata.PlaylistItem
@@ -114,7 +114,7 @@ class OfflineFirstPlaylistRepository(
     // youtube playlists
     override fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<YoutubePlaylist>> =
         flow {
-            val data = PlaylistExtractor.fetchPlaylist(playlist)
+            val data = PlaylistRemoteDataSource.fetchPlaylist(playlist)
             if (playlist is PlaylistItem.OfflineFirstPlaylistItem) {
                 db.playlistDao().upsert(data.data.toEntity().copy(playlistId = playlist.id))
                 emit(data.toOfflineFirstPlaylist(playlist.id))
@@ -127,7 +127,7 @@ class OfflineFirstPlaylistRepository(
     // offline first playlists
     override fun getPlaylistFirstPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>> =
         flow {
-            val firstPage = PlaylistExtractor.fetchFirstPage(playlist)
+            val firstPage = PlaylistRemoteDataSource.fetchFirstPage(playlist)
             val ids =
                 db.videoDao().upsertAndReturnIds(*firstPage.map { it.toEntity() }.toTypedArray())
             db.playlistDao().addToPlaylist(
@@ -146,7 +146,7 @@ class OfflineFirstPlaylistRepository(
 
     override fun getNextPage(playlist: OfflineFirstPlaylist): Flow<Resource<Success>> =
         flow {
-            val nextPage = PlaylistExtractor.fetchNextPage(playlist)
+            val nextPage = PlaylistRemoteDataSource.fetchNextPage(playlist)
             db.videoDao().upsert(*nextPage.map { it.toEntity() }.toTypedArray())
             emit(Success)
         }.asResult(Dispatchers.IO)
@@ -165,12 +165,12 @@ class OfflineFirstPlaylistRepository(
 
     override fun getPlaylistFirstPage(playlist: OnlinePlaylist): Flow<Resource<List<VideoItem>>> =
         flow {
-            emit(PlaylistExtractor.fetchFirstPage(playlist))
+            emit(PlaylistRemoteDataSource.fetchFirstPage(playlist))
         }.asResult(Dispatchers.IO)
 
     override fun getNextPage(playlist: OnlinePlaylist): Flow<Resource<List<VideoItem>>> =
         flow {
-            emit(PlaylistExtractor.fetchNextPage(playlist))
+            emit(PlaylistRemoteDataSource.fetchNextPage(playlist))
         }.asResult(Dispatchers.IO)
     //
 

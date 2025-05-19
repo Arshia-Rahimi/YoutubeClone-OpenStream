@@ -5,7 +5,7 @@ import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.common.util.asResult
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.database.OpenStreamDatabase
-import com.github.arshiarahimi.openstream.core.extractor.VideoExtractor
+import com.github.arshiarahimi.openstream.core.extractor.datasource.VideoRemoteDataSource
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ class ExtractorVideoRepository(
 ) : VideoRepository {
     override fun fetchVideo(url: String): Flow<Resource<MediaItem>> =
         flow {
-            val video = VideoExtractor.fetchVideo(url)
+            val video = VideoRemoteDataSource.fetchVideo(url)
             val videoId = db.videoDao().get(url)?.videoId
             if (videoId != null) {
                 video.localConfiguration?.tag =

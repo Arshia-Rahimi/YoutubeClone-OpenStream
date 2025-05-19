@@ -1,6 +1,6 @@
-package com.github.arshiarahimi.openstream.core.extractor
+package com.github.arshiarahimi.openstream.core.extractor.datasource
 
-import com.github.arshiarahimi.openstream.core.extractor.util.YtService
+import com.github.arshiarahimi.openstream.core.extractor.YtService
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
 import com.github.arshiarahimi.openstream.core.model.extractordata.DataItem
@@ -11,7 +11,7 @@ import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeChannelTabLinkHandlerFactory
 
-object ChannelExtractor {
+object ChannelRemoteDataSource {
 
     fun getChannelData(url: String): OnlineChannel {
         val channelExtractor = YtService.getChannelExtractor(url)
