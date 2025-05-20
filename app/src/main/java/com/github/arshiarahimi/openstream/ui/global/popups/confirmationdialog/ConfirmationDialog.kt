@@ -21,7 +21,10 @@ import org.koin.core.parameter.parametersOf
 fun ConfirmationDialog(
     type: Confirmation,
 ) {
-    val viewModel = koinViewModel<ConfirmationViewModel>(parameters = { parametersOf(type) })
+    val viewModel = koinViewModel<ConfirmationViewModel>(
+        parameters = { parametersOf(type) },
+        key = type.hashCode().toString(),
+    )
 
     OpenStreamDialog(
         dismiss = { PopupController.dismissConfirmationDialog() },

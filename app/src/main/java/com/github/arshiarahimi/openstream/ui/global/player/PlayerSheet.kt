@@ -71,7 +71,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
-// todo migrate deprecated screenWidth -boxWithConstraints in recommended
+// migrate deprecated screenWidth -boxWithConstraints in recommended
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

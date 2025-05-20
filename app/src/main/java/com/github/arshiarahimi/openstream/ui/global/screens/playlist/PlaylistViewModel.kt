@@ -6,16 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.common.util.onFirst
+import com.github.arshiarahimi.openstream.core.common.util.sendPulse
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
@@ -24,6 +27,8 @@ class PlaylistViewModel(
 ) : ViewModel() {
     
     var playlistObject: PlaylistExtractor? = null
+    private val _navBack = Channel<Unit>()
+    val navBack = _navBack.receiveAsFlow()
     
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -55,9 +60,8 @@ class PlaylistViewModel(
                 playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylistExtractor).data)
                     .onEach {
                         videos.clear()
-                        if (it == null) {
-                            // todo nav back
-                        } else videos.addAll(it)
+                        if (it == null) _navBack.sendPulse()
+                        else videos.addAll(it)
                     }.launchIn(viewModelScope)
             }
         }
@@ -127,11 +131,10 @@ class PlaylistViewModel(
         playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
             .onEach {
                 videos.clear()
-                if (it == null) {
-                    // todo nav back
-                } else videos.addAll(it)
+                if (it == null) _navBack.sendPulse()
+                else videos.addAll(it)
             }.onFirst {
-                // if the playlist is offlineFirst and there is no videos saved fetch it
+                // if is offlineFirst and there is no videos saved fetch it
                 if (videos.isEmpty() && playlist is PlaylistItem.OfflineFirstPlaylistItem) {
                     playlistRepo.getPlaylist(playlist as PlaylistItem.OfflineFirstPlaylistItem)
                         .collect {

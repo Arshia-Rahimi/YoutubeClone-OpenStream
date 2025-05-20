@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.arshiarahimi.openstream.core.common.compose.ObserveForEvents
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
@@ -19,11 +20,16 @@ fun PlaylistScreen(
     toChannelScreen: (String) -> Unit,
     navigateBack: () -> Unit,
 ) {
-    val viewModel = koinViewModel<PlaylistViewModel>(parameters = { parametersOf(playlist) })
+    val viewModel = koinViewModel<PlaylistViewModel>(
+        parameters = { parametersOf(playlist) },
+    )
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
+    ObserveForEvents(viewModel.navBack) {
+        navigateBack()
+    }
+
     PlaylistScreen(
-        navigateBack = navigateBack,
         playlist = viewModel.playlist,
         topBar = topBar,
         playVideo = playVideo,
@@ -42,12 +48,11 @@ private fun PlaylistScreen(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     toChannelScreen: (String) -> Unit,
-    navigateBack: () -> Unit,
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
     topBar: (@Composable () -> Unit) -> Unit,
 ) {
-    topBar { PlaylistTopBar(playlist, toChannelScreen, navigateBack) }
+    topBar { PlaylistTopBar(playlist, toChannelScreen) }
 
     when (playlist) {
         is PlaylistItem.OfflineFirstPlaylistItem -> {

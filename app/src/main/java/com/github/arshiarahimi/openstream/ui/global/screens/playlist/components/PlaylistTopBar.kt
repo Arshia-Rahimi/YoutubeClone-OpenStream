@@ -32,7 +32,6 @@ import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.Sa
 fun PlaylistTopBar(
     playlist: PlaylistItem,
     toChannelScreen: (String) -> Unit,
-    navigateBack: () -> Unit,
 //    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     CenterAlignedTopAppBar(
@@ -86,11 +85,9 @@ fun PlaylistTopBar(
                     if (playlist.id != WATCH_LATER_ID) {
                         IconButton(
                             onClick = {
-                                // todo nav back
                                 PopupController.openConfirmationDialog(
                                     DeletePlaylistItem(
-                                        playlist = playlist,
-                                        navBackAction = navigateBack,
+                                        playlist
                                     )
                                 )
                             }
