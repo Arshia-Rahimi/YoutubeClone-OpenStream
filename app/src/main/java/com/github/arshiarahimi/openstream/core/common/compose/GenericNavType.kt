@@ -28,11 +28,10 @@ class GenericNavType<T>(
         )
     }
 
-    override fun serializeAsValue(value: T?): String {
-        return Uri.encode(Json.encodeToString(serializer, value!!))
-    }
+    override fun serializeAsValue(value: T?): String =
+        Uri.encode(Json.encodeToString(serializer, value!!))
 
-    override fun parseValue(value: String): T? {
-        return Json.decodeFromString(serializer, Uri.decode(value))
-    }
+    override fun parseValue(value: String): T? =
+        Json.decodeFromString(serializer, Uri.decode(value))
+    
 }
