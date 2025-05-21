@@ -6,7 +6,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
-import com.github.arshiarahimi.openstream.core.database.entities.relationships.ChannelWithPlaylists
 import com.github.arshiarahimi.openstream.core.database.entities.relationships.ChannelWithVideos
 import kotlinx.coroutines.flow.Flow
 

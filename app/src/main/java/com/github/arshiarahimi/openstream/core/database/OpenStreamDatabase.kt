@@ -9,7 +9,6 @@ import com.github.arshiarahimi.openstream.core.database.dao.VideoDao
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
 import com.github.arshiarahimi.openstream.core.database.entities.VideoEntity
-import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.ChannelPlaylistCrossRef
 import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.ChannelVideoCrossRef
 import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.PlaylistVideoCrossRef
 
@@ -20,7 +19,6 @@ import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.Playl
         VideoEntity::class,
         PlaylistVideoCrossRef::class,
         ChannelVideoCrossRef::class,
-        ChannelPlaylistCrossRef::class,
     ],
     version = 1,
 )

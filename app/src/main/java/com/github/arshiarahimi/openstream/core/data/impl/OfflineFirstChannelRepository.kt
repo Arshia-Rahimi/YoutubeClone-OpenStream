@@ -8,8 +8,6 @@ import com.github.arshiarahimi.openstream.core.database.OpenStreamDatabase
 import com.github.arshiarahimi.openstream.core.extractor.datasource.ChannelRemoteDataSource
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
-import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractor.ChannelExtractor
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +17,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
-
 
 class OfflineFirstChannelRepository(
     private val db: OpenStreamDatabase,
@@ -49,19 +46,8 @@ class OfflineFirstChannelRepository(
         }.asResult(Dispatchers.IO)
     
     override fun getChannel(channelItem: ChannelItem): Flow<Resource<ChannelExtractor>> =
-        flow {
-            when (channelItem) {
-                is ChannelItem.OfflineFirstChannelItem -> {
-                    val channelData =
-                        db.channelDao().getChannelWithVideos(channelItem.id)
-                            ?: throw Exception("channel was not found")
-                    emit(channelData.toObject())
-                }
-                
-                is ChannelItem.OnlineChannelItem -> {
-                    // todo
-                }
-            }
+        flow<ChannelExtractor> {
+            emit(ChannelRemoteDataSource.getChannelData(channelItem.url))
         }.asResult(Dispatchers.IO)
     
     override fun getTabFirstPage(
@@ -79,13 +65,5 @@ class OfflineFirstChannelRepository(
         flow {
             emit(ChannelRemoteDataSource.fetchNextPage(channel, tab))
         }.asResult(Dispatchers.IO)
-    
-    override fun getChannelSavedVideos(channel: ChannelItem): Flow<List<VideoItem>?> {
-        TODO("Not yet implemented")
-    }
-    
-    override fun getChannelSavedPlaylists(channel: ChannelItem): Flow<List<PlaylistItem>?> {
-        TODO("Not yet implemented")
-    }
     
 }
