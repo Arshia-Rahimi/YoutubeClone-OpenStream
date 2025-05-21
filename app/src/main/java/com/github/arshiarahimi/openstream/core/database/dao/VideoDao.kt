@@ -43,4 +43,7 @@ interface VideoDao {
 
     @Delete
     suspend fun delete(vararg videoEntities: VideoEntity)
+
+    @Query("DELETE FROM videos")
+    suspend fun deleteAll()
 }

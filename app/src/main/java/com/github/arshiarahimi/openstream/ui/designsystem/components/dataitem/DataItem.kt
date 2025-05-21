@@ -18,7 +18,7 @@ fun DataItem(
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
     playVideo: (String) -> Unit,
-    subscribe: (String) -> Unit = {},
+    subscribe: (ChannelItem) -> Unit = {},
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,

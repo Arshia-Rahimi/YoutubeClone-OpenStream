@@ -39,7 +39,7 @@ fun Channel(
     modifier: Modifier,
     item: ChannelItem,
     toChannelScreen: (String) -> Unit,
-    subscribe: (String) -> Unit,
+    subscribe: (ChannelItem) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -102,7 +102,7 @@ fun Channel(
         when (item) {
             is ChannelItem.OnlineChannelItem -> {
                 Button(
-                    onClick = { subscribe(item.url) },
+                    onClick = { subscribe(item) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFCC2849),
                     )

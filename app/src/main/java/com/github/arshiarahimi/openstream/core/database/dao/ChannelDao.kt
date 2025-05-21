@@ -3,10 +3,9 @@ package com.github.arshiarahimi.openstream.core.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Upsert
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
-import com.github.arshiarahimi.openstream.core.database.entities.relationships.ChannelWithVideos
+import com.github.arshiarahimi.openstream.core.database.entities.VideoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -33,11 +32,9 @@ interface ChannelDao {
     @Query("SELECT * FROM channels WHERE url = :url")
     suspend fun get(url: String): ChannelEntity?
 
-    @Transaction
-    @Query("SELECT * FROM channels WHERE channelId = :id")
-    suspend fun getChannelWithVideos(id: Long): ChannelWithVideos?
+    @Query("SELECT DISTINCT v.* FROM videos v INNER JOIN channel_video cvr ON v.videoId = cvr.videoId")
+    fun getAllChannelVideos(): Flow<List<VideoEntity>>
 
-    @Transaction
-    @Query("SELECT * FROM channels WHERE channelId = :id")
-    suspend fun getChannelWithPlaylists(id: Long): ChannelWithPlaylists?
+    @Query("DELETE FROM channel_video")
+    suspend fun deleteAllVideos()
 }

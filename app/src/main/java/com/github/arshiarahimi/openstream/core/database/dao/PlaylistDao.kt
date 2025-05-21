@@ -60,4 +60,7 @@ interface PlaylistDao {
     @Transaction
     @Query("SELECT * FROM playlists WHERE playlistId = :id")
     fun getPlaylistWithVideosFlow(id: Long): Flow<PlaylistWithVideos?>
+
+    @Query("DELETE FROM playlist_video")
+    suspend fun deleteAllVideos()
 }

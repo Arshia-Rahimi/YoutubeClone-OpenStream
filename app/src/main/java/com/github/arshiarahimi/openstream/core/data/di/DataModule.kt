@@ -8,9 +8,9 @@ import com.github.arshiarahimi.openstream.core.data.SearchRepository
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.DataStorePlayerConfigRepository
 import com.github.arshiarahimi.openstream.core.data.impl.DataStorePreferencesRepository
-import com.github.arshiarahimi.openstream.core.data.impl.ExtractorVideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstChannelRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstPlaylistRepository
+import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstVideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OnlineSearchRepository
 import com.github.arshiarahimi.openstream.core.shared.PLAYER_CONFIG_QUALIFIER
 import com.github.arshiarahimi.openstream.core.shared.PREFERENCES_QUALIFIER
@@ -25,7 +25,7 @@ val dataModule = module {
     
     factoryOf(::OfflineFirstChannelRepository) { bind<ChannelRepository>() }
 
-    factoryOf(::ExtractorVideoRepository) { bind<VideoRepository>() }
+    factoryOf(::OfflineFirstVideoRepository) { bind<VideoRepository>() }
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
 

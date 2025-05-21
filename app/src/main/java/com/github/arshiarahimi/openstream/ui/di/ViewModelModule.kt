@@ -6,6 +6,7 @@ import com.github.arshiarahimi.openstream.ui.feature.library.LibraryViewModel
 import com.github.arshiarahimi.openstream.ui.feature.search.SearchViewModel
 import com.github.arshiarahimi.openstream.ui.feature.settings.SettingsViewModel
 import com.github.arshiarahimi.openstream.ui.feature.subscriptions.SubscriptionsViewModel
+import com.github.arshiarahimi.openstream.ui.feature.subscriptions.subroutes.subscribedchannels.SubscribedChannelsViewModel
 import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.popups.addtoplaylistmodal.SaveVideoToPlaylistsViewModel
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.ConfirmationViewModel
@@ -23,6 +24,9 @@ val viewModelModule = module {
     viewModelOf(::DownloadsViewModel)
     viewModelOf(::LibraryViewModel)
     viewModelOf(::SearchViewModel)
+
+    // subRoutes
+    viewModelOf(::SubscribedChannelsViewModel)
 
     // reusable
     viewModelOf(::ChannelViewModel)

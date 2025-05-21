@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.github.arshiarahimi.openstream.app.navigation.NavigationViewModel
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
@@ -45,7 +46,7 @@ fun DataItemList(
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
-    subscribe: (String) -> Unit = {},
+    subscribe: (ChannelItem) -> Unit = {},
 ) {
     val lazyColumnState = rememberLazyListState()
     val navViewModel = koinViewModel<NavigationViewModel>()
@@ -122,7 +123,7 @@ fun DataItemList(
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
-    subscribe: (String) -> Unit = {},
+    subscribe: (ChannelItem) -> Unit = {},
 ) {
     val navViewModel = koinViewModel<NavigationViewModel>()
     val lazyColumnState = rememberLazyListState()

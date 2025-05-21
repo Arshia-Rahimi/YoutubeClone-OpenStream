@@ -29,7 +29,9 @@ class OfflineFirstChannelRepository(
             started = SharingStarted.Lazily,
             replay = 1,
         )
-    
+    override val subscribedVideos = db.channelDao().getAllChannelVideos()
+        .map { list -> list.map { video -> video.toDataItem() } }
+
     override fun subscribe(channel: ChannelItem): Flow<Resource<Success>> =
         flow {
             // todo save videos and playlists
