@@ -1,10 +1,10 @@
 package com.github.arshiarahimi.openstream.core.extractor.datasource
 
 import com.github.arshiarahimi.openstream.core.extractor.YtService
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.toListOfDataItem
 import com.github.arshiarahimi.openstream.core.model.extractor.ChannelExtractor
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
 import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
@@ -16,24 +16,17 @@ object ChannelRemoteDataSource {
     fun getChannelData(url: String): ChannelExtractor {
         val channelExtractor = YtService.getChannelExtractor(url)
         channelExtractor.fetchPage()
-        val channelMetadata = ChannelMetadata(
-            name = channelExtractor.name,
-            subscriberCount = channelExtractor.subscriberCount,
-            description = channelExtractor.description,
-            avatar = channelExtractor.avatars.first().url,
-            isVerified = channelExtractor.isVerified,
-            tabs = channelExtractor.tabs.map {
-                ChannelTab(
-                    name = it.url.split("/").last().lowercase()
-                        .let { last -> if (last == "streams") "livestreams" else last },
-                    url = it.url,
-                )
-            },
-        )
+        val tabs = channelExtractor.tabs.map {
+            ChannelTab(
+                name = it.url.split("/").last().lowercase()
+                    .let { last -> if (last == "streams") "livestreams" else last },
+                url = it.url,
+            )
+        }
         return ChannelExtractor(
-            metadata = channelMetadata,
+            tabs = tabs,
             tabExtractors = buildList<Triple<String, ChannelTabExtractor, Page?>> {
-                channelMetadata.tabs?.forEach {
+                tabs.forEach {
                     try {
                         val url = "channel/" + channelExtractor.id
                         var name = it.url.split("/").last().lowercase()
@@ -49,6 +42,14 @@ object ChannelRemoteDataSource {
                 }
             }.toMutableList(),
             url = url,
+            channelItem = ChannelItem.OnlineChannelItem(
+                name = channelExtractor.name,
+                subscriberCount = channelExtractor.subscriberCount,
+                description = channelExtractor.description,
+                avatar = channelExtractor.avatars.first().url,
+                isVerified = channelExtractor.isVerified,
+                url = url,
+            )
         )
     }
 

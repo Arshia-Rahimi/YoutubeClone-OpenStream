@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 
-class DataStoreSerializer<T : @Serializable Any>(
+class GenericDataStoreSerializer<T : @Serializable Any>(
     override val defaultValue: T,
     private val serializer: KSerializer<T>,
 ) : Serializer<T> {

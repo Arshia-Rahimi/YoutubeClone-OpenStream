@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
-import com.github.arshiarahimi.openstream.core.common.compose.replaceFirstWith
 import com.github.arshiarahimi.openstream.core.common.util.Resource
+import com.github.arshiarahimi.openstream.core.common.util.replaceFirstWith
 import com.github.arshiarahimi.openstream.core.data.ChannelRepository
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.SearchRepository
@@ -108,7 +108,6 @@ class SearchViewModel(
                     if (uiState.value !is UiState.Success) return@onEach
                     val currentChannel =
                         (uiState.value as UiState.Success).searchResult.items.first { it == channel } as ChannelItem
-                    // todo item is not updated when unsubscribed
                     items.replaceFirstWith(result.data) {
                         it is ChannelItem && it.url == currentChannel.url
                     }

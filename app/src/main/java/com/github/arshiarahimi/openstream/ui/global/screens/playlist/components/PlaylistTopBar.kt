@@ -32,10 +32,8 @@ import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.Sa
 fun PlaylistTopBar(
     playlist: PlaylistItem,
     toChannelScreen: (String) -> Unit,
-//    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     CenterAlignedTopAppBar(
-//        scrollBehavior = scrollBehavior,
         title = {
             Row(
                 modifier = Modifier

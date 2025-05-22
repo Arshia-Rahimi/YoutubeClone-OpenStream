@@ -1,107 +1,97 @@
 package com.github.arshiarahimi.openstream.ui.global.screens.channel
 
-import android.annotation.SuppressLint
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
-import com.github.arshiarahimi.openstream.core.extractor.datasource.ChannelRemoteDataSource
+import androidx.lifecycle.viewModelScope
+import com.github.arshiarahimi.openstream.core.common.util.Resource
+import com.github.arshiarahimi.openstream.core.common.util.replaceFirstWith
+import com.github.arshiarahimi.openstream.core.data.ChannelRepository
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTab
+import com.github.arshiarahimi.openstream.core.model.extractor.ChannelExtractor
+import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTabView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class ChannelViewModel(
     private val url: String,
-//    private val channelRepository: ChannelRepository,
+    private val channelRepo: ChannelRepository,
 ) : ViewModel() {
 
     sealed interface UiState {
         data object Loading : UiState
         data class Error(val message: String? = null) : UiState
-        data class Success(val channelInfo: ChannelMetadata) : UiState
+        data class Success(val channelExtractor: ChannelExtractor) : UiState
     }
+
+    val channelItem: ChannelItem
+        get() = (_uiState.value as UiState.Success).channelExtractor.channelItem
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
+        .apply {
+            channelRepo.getChannel(url).onEach {
+                _uiState.value = when (it) {
+                    is Resource.Error -> UiState.Error(it.message)
+                    is Resource.Loading -> UiState.Loading
+                    is Resource.Success -> UiState.Success(it.data)
+                }
+            }.launchIn(viewModelScope)
+        }
 
-    private lateinit var channel: ChannelRemoteDataSource
-
-//    private val loadingChannel: Job
-
-    @SuppressLint("MutableCollectionMutableState")
-    val tabResults = mutableStateOf(emptyList<MutableState<ChannelTab>>())
+    val tabs = mutableStateListOf<ChannelTabView>()
     val tabItems = mutableStateListOf<SnapshotStateList<DataItem>>()
 
-//    init {
-//        loadingChannel = viewModelScope.launch {
-//            channelRepository.getChannelData(url)
-//                .collect {
-//                    _uiState.value = when (it) {
-//                        is Resource.Loading -> UiState.Loading
-//                        is Resource.Error -> {
-//                            UiState.Error(it.message)
-//                        }
-//                        is Resource.Success -> {
-//                            channel = it.data
-//                            repeat(it.data.data.tabs.size) { tabItems.add(mutableStateListOf()) }
-//                            tabResults.value = it.data.data.tabs.map { mutableStateOf(it) }
-//                            UiState.Success(it.data.data)
-//                        }
-//                    }
-//                }
-//        }
-//    }
+    fun getTabFirstPage(tab: ChannelTabView) {
+        if (_uiState.value !is UiState.Success) return
+        viewModelScope.launch {
+            channelRepo.getTabFirstPage(
+                channelItem,
+                (_uiState.value as UiState.Success).channelExtractor,
+                tab.toChannelTab()
+            )
+                .collect {
+                    when (it) {
+                        is Resource.Loading -> tabs.replaceFirstWith(tab.copy(isLoading = true)) { it == tab }
+                        is Resource.Error ->
+                            tabs.replaceFirstWith(
+                                tab.copy(
+                                    isLoading = false,
+                                    error = it.message
+                                )
+                            ) { it == tab }
 
-    fun onAction(action: ChannelAction) {
-        val tab = tabResults.value[action.tab].value
-        when (action) {
-            is ChannelAction.GetTab -> getTab(tab, action.index)
-            is ChannelAction.GetTabNextPage -> getTabNextPage(tab, action.index)
+                        is Resource.Success -> {
+                            tabs.replaceFirstWith(tab.copy(isLoading = false)) { it == tab }
+                            val index = tabs.indexOfFirst { it == tab }
+                            tabItems[index].addAll(it.data ?: emptyList())
+                        }
+                    }
+                }
         }
     }
 
-    private fun getTab(tab: ChannelTab, index: Int) {
-//        viewModelScope.launch {
-//            loadingChannel.join()
-//            channelRepository.getTab(tab, channel)
-//                .collect {
-//                    when (it) {
-//                        is Resource.Loading -> {}
-//                        is Resource.Error -> {
-//                            tabResults.value[index].value = tabResults.value[index].value
-//                                .copy(isLoading = false, error = it.message)
-//                        }
-//                        is Resource.Success -> {
-//                            tabResults.value[index].value =
-//                                tabResults.value[index].value.copy(isLoading = false)
-//                            tabItems[index].addAll(it.data ?: emptyList())
-//                        }
-//                    }
-//                }
-//        }
-    }
+    fun getTabNextPage(tab: ChannelTabView) {
+        if (_uiState.value !is UiState.Success) return
+        viewModelScope.launch {
+            channelRepo.getTabNextPage(
+                channelItem,
+                (_uiState.value as UiState.Success).channelExtractor,
+                tab.toChannelTab()
+            ).collect {
+                when (it) {
+                    is Resource.Success -> {
+                        val index = tabs.indexOfFirst { it == tab }
+                        tabItems[index].addAll(it.data ?: emptyList())
+                    }
 
-    private fun getTabNextPage(tab: ChannelTab, index: Int) {
-//        viewModelScope.launch {
-//            if (channel.tabExtractors[index].third == null) return@launch
-//            channelRepository.getTabNextPage(tab, channel)
-//                .collect {
-//                    when (it) {
-//                        is Resource.Loading -> {}
-//                        is Resource.Error -> {
-//                            tabResults.value[index].value = tabResults.value[index].value
-//                                .copy(isLoading = false, error = it.message)
-//                        }
-//                        is Resource.Success -> {
-//                            tabResults.value[index].value =
-//                                tabResults.value[index].value.copy(isLoading = false)
-//                            tabItems[index].addAll(it.data ?: emptyList())
-//                        }
-//                    }
-//                }
-//        }
+                    else -> Unit
+                }
+            }
+        }
     }
 }

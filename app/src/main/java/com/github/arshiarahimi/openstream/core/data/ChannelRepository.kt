@@ -18,8 +18,8 @@ interface ChannelRepository {
     fun subscribe(channel: ChannelItem.OnlineChannelItem): Flow<Resource<ChannelItem.OfflineFirstChannelItem>>
     
     fun unSubscribe(channelId: Long): Flow<Resource<Success>>
-    
-    fun getChannel(channelItem: ChannelItem): Flow<Resource<ChannelExtractor>>
+
+    fun getChannel(url: String): Flow<Resource<ChannelExtractor>>
     
     fun getTabFirstPage(
         channel: ChannelItem,

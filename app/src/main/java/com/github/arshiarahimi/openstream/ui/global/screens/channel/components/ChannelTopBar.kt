@@ -22,17 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.arshiarahimi.openstream.core.common.util.toShortForm
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelMetadata
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChannelTopBar(
-    info: ChannelMetadata,
+    info: ChannelItem,
     openBottomSheet: () -> Unit,
-//    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     CenterAlignedTopAppBar(
-//        scrollBehavior = scrollBehavior,
         title = {
             Row(
                 modifier = Modifier
@@ -73,16 +71,15 @@ fun ChannelTopBar(
 private fun Preview() {
     MaterialTheme {
         ChannelTopBar(
-            ChannelMetadata(
+            ChannelItem.OnlineChannelItem(
                 name = "name",
                 subscriberCount = 454443L,
                 avatar = "",
                 description = "description",
                 isVerified = true,
-                tabs = emptyList(),
+                url = "",
             ),
             openBottomSheet = {},
-//            TopAppBarDefaults.enterAlwaysScrollBehavior(),
         )
     }
 }

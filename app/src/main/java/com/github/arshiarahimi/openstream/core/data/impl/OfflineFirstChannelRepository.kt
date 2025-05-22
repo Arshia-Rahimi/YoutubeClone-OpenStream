@@ -55,9 +55,9 @@ class OfflineFirstChannelRepository(
             }
         }.asResult(Dispatchers.IO)
 
-    override fun getChannel(channelItem: ChannelItem): Flow<Resource<ChannelExtractor>> =
+    override fun getChannel(url: String): Flow<Resource<ChannelExtractor>> =
         flow<ChannelExtractor> {
-            emit(ChannelRemoteDataSource.getChannelData(channelItem.url))
+            emit(ChannelRemoteDataSource.getChannelData(url))
         }.asResult(Dispatchers.IO)
 
     override fun getTabFirstPage(
@@ -115,7 +115,7 @@ class OfflineFirstChannelRepository(
                 subscriptions.map { channel ->
                     async {
                         val extractor = ChannelRemoteDataSource.getChannelData(channel.url)
-                        val videosTab = extractor.metadata.tabs?.firstOrNull { it.name == "videos" }
+                        val videosTab = extractor.tabs?.firstOrNull { it.name == "videos" }
                             ?: return@async
                         val nextPage = ChannelRemoteDataSource.fetchTab(extractor, videosTab)
                         val ids = db.videoDao()
