@@ -8,7 +8,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
@@ -24,6 +26,7 @@ fun SubscriptionsScreen(
     playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SubscriptionsViewModel>()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     topBar {
         TopAppBar(
@@ -48,5 +51,7 @@ fun SubscriptionsScreen(
         toChannelScreen = toChannelScreen,
         toPlaylistScreen = toPlaylistScreen,
         playVideo = playVideo,
+        isRefreshing = isRefreshing,
+        onRefresh = viewModel::updateSubscriptions,
     )
 }

@@ -39,7 +39,7 @@ fun Channel(
     modifier: Modifier,
     item: ChannelItem,
     toChannelScreen: (String) -> Unit,
-    subscribe: (ChannelItem) -> Unit,
+    subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
 ) {
     Row(
         modifier = modifier

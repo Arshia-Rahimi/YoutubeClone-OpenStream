@@ -14,21 +14,25 @@ interface ChannelRepository {
     val subscriptions: SharedFlow<List<ChannelItem>>
 
     val subscribedVideos: Flow<List<VideoItem>>
-    
-    fun subscribe(channel: ChannelItem): Flow<Resource<Success>>
+
+    fun subscribe(channel: ChannelItem.OnlineChannelItem): Flow<Resource<ChannelItem.OfflineFirstChannelItem>>
     
     fun unSubscribe(channelId: Long): Flow<Resource<Success>>
     
     fun getChannel(channelItem: ChannelItem): Flow<Resource<ChannelExtractor>>
     
     fun getTabFirstPage(
+        channel: ChannelItem,
         channelExtractor: ChannelExtractor,
         tab: ChannelTab,
     ): Flow<Resource<List<DataItem>?>>
     
     fun getTabNextPage(
+        channel: ChannelItem,
         channelExtractor: ChannelExtractor,
         tab: ChannelTab,
     ): Flow<Resource<List<DataItem>?>>
+
+    suspend fun updateSubscriptions(): Flow<Resource<Success>>
     
 }

@@ -182,6 +182,16 @@ sealed interface ChannelItem : DataItem {
             description = description,
             avatar = avatar,
         )
+
+        fun toOfflineFirstChannelItem(id: Long) = OfflineFirstChannelItem(
+            name = name,
+            url = url,
+            avatar = avatar,
+            description = description,
+            subscriberCount = subscriberCount,
+            isVerified = isVerified,
+            id = id,
+        )
     }
 
     @Serializable
@@ -205,4 +215,3 @@ sealed interface ChannelItem : DataItem {
         )
     }
 }
-

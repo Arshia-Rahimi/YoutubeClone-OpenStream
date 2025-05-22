@@ -15,6 +15,4 @@ data class ChannelMetadata(
 data class ChannelTab(
     val name: String,
     val url: String,
-    var isLoading: Boolean = true,
-    var error: String? = null,
 )

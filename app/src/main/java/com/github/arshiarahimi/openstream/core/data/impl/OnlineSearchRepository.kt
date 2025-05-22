@@ -63,9 +63,15 @@ class OnlineSearchRepository(
                         }
                     }
 
-                    is ChannelItem -> {
-                        // todo sync when channels can be saved locally
-                        add(item)
+                    is ChannelItem.OnlineChannelItem -> {
+                        val channelId = db.channelDao().get(item.url)?.channelId
+                        if (channelId == null) {
+                            add(item)
+                        } else {
+                            val updatedChannel = item.toOfflineFirstChannelItem(channelId)
+                            db.channelDao().upsert(updatedChannel.toEntity())
+                            add(updatedChannel)
+                        }
                     }
 
                     else -> {}

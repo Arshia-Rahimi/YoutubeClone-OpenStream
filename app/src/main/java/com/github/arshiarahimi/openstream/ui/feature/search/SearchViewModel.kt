@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
+import com.github.arshiarahimi.openstream.core.common.compose.replaceFirstWith
 import com.github.arshiarahimi.openstream.core.common.util.Resource
+import com.github.arshiarahimi.openstream.core.data.ChannelRepository
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.SearchRepository
+import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
@@ -23,6 +26,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     private val searchRepo: SearchRepository,
     private val playlistRepo: PlaylistRepository,
+    private val channelRepo: ChannelRepository,
 ) : ViewModel() {
 
     sealed interface UiState {
@@ -93,5 +97,23 @@ class SearchViewModel(
                     is Resource.Loading -> Unit
                 }
             }.launchIn(viewModelScope)
+    }
+
+    fun subscribe(channel: ChannelItem.OnlineChannelItem) {
+        channelRepo.subscribe(channel).onEach { result ->
+            when (result) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> SnackBarController.sendEvent("failed to subscribe to channel")
+                is Resource.Success -> {
+                    if (uiState.value !is UiState.Success) return@onEach
+                    val currentChannel =
+                        (uiState.value as UiState.Success).searchResult.items.first { it == channel } as ChannelItem
+                    // todo item is not updated when unsubscribed
+                    items.replaceFirstWith(result.data) {
+                        it is ChannelItem && it.url == currentChannel.url
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 }
