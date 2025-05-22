@@ -28,8 +28,9 @@ class ChannelViewModel(
         data class Success(val channelExtractor: ChannelExtractor) : UiState
     }
 
-    val channelItem: ChannelItem
-        get() = (_uiState.value as UiState.Success).channelExtractor.channelItem
+    private val channelExtractor: ChannelExtractor
+        get() = (_uiState.value as UiState.Success).channelExtractor
+    val channelItem: ChannelItem = channelExtractor.channelItem
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
@@ -51,7 +52,7 @@ class ChannelViewModel(
         viewModelScope.launch {
             channelRepo.getTabFirstPage(
                 channelItem,
-                (_uiState.value as UiState.Success).channelExtractor,
+                channelExtractor,
                 tab.toChannelTab()
             )
                 .collect {
@@ -80,7 +81,7 @@ class ChannelViewModel(
         viewModelScope.launch {
             channelRepo.getTabNextPage(
                 channelItem,
-                (_uiState.value as UiState.Success).channelExtractor,
+                channelExtractor,
                 tab.toChannelTab()
             ).collect {
                 when (it) {
