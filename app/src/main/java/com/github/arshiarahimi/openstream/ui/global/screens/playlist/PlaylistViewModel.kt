@@ -17,22 +17,23 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     var playlist: PlaylistItem,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-    
+
     var playlistObject: PlaylistExtractor? = null
     private val _navBack = Channel<Unit>()
     val navBack = _navBack.receiveAsFlow()
-    
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
-    
+
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
         .apply {
             when (playlist) {
@@ -40,7 +41,7 @@ class PlaylistViewModel(
                 is PlaylistItem.LocalPlaylistItem -> getLocalPlaylistInitialData()
             }
         }
-    
+
     fun getNextPage() {
         when (playlistObject) {
             null -> Unit
@@ -50,12 +51,12 @@ class PlaylistViewModel(
                         when (it) {
                             is Resource.Success ->
                                 videos.addAll(it.data)
-                            
+
                             else -> Unit
                         }
                     }.launchIn(viewModelScope)
             }
-            
+
             is OfflineFirstPlaylistExtractor -> {
                 playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylistExtractor).data)
                     .onEach {
@@ -66,29 +67,26 @@ class PlaylistViewModel(
             }
         }
     }
-    
+
     fun syncPlaylist() {
         if (playlist !is PlaylistItem.OfflineFirstPlaylistItem) return
-        viewModelScope.launch {
-            _isRefreshing.value = true
-            
-            playlistRepo.getPlaylist(playlist as PlaylistItem.YoutubePlaylistItem)
-                .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            playlistObject = it.data
-                            playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
-                                .collect { }
-                        }
-                        
-                        else -> Unit
+        playlistRepo.getPlaylist(playlist as PlaylistItem.YoutubePlaylistItem)
+            .onStart { _isRefreshing.value = true }
+            .onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        playlistObject = it.data
+                        playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
+                            .collect { }
                     }
+
+                    else -> Unit
                 }
-            
-            _isRefreshing.value = false
-        }
+            }
+            .onCompletion { _isRefreshing.value = false }
+            .launchIn(viewModelScope)
     }
-    
+
     private fun getOnlinePlaylistInitialData() {
         suspend fun getFirstPage() =
             playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylistExtractor)
@@ -97,27 +95,25 @@ class PlaylistViewModel(
                         is Resource.Success -> {
                             videos.addAll(it.data)
                         }
-                        
+
                         else -> Unit
                     }
                 }
-        
-        viewModelScope.launch {
-            playlistRepo.getPlaylist(playlist as PlaylistItem.OnlinePlaylistItem)
-                .onEach {
-                    when (it) {
-                        is Resource.Success -> {
-                            playlistObject = it.data
-                            getFirstPage()
-                        }
-                        
-                        else -> Unit
+
+        playlistRepo.getPlaylist(playlist as PlaylistItem.OnlinePlaylistItem)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        playlistObject = it.data
+                        getFirstPage()
                     }
-                }.launchIn(viewModelScope)
-            
-        }
+
+                    else -> Unit
+                }
+            }.launchIn(viewModelScope)
+
     }
-    
+
     private fun getLocalPlaylistInitialData() {
         suspend fun getFirstPage() =
             playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
@@ -127,7 +123,7 @@ class PlaylistViewModel(
                         else -> Unit
                     }
                 }
-        
+
         playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
             .onEach {
                 videos.clear()
@@ -143,12 +139,12 @@ class PlaylistViewModel(
                                     playlistObject = it.data
                                     getFirstPage()
                                 }
-                                
+
                                 else -> Unit
                             }
                         }
                 }
             }.launchIn(viewModelScope)
     }
-    
+
 }

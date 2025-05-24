@@ -11,7 +11,6 @@ import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class SubscriptionsViewModel(
     private val channelRepo: ChannelRepository,
@@ -29,8 +28,7 @@ class SubscriptionsViewModel(
         }
 
     fun updateSubscriptions() {
-        viewModelScope.launch {
-            channelRepo.updateSubscriptions().collect {
+        channelRepo.updateSubscriptions().onEach {
                 when (it) {
                     is Resource.Loading -> isRefreshing.value = true
                     is Resource.Error -> {
@@ -40,7 +38,6 @@ class SubscriptionsViewModel(
 
                     is Resource.Success -> isRefreshing.value = false
                 }
-            }
-        }
+        }.launchIn(viewModelScope)
     }
 }

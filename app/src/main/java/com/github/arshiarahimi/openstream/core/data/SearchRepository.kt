@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
 
-    suspend fun search(
+    fun search(
         query: String,
         contentFilter: List<String> = emptyList(),
         sortFilter: String? = null,
     ): Flow<Resource<SearchResult>>
 
-    suspend fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>>
+    fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>>
 }

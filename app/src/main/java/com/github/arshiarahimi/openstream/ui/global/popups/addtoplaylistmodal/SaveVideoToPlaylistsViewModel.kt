@@ -11,7 +11,6 @@ import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class SaveVideoToPlaylistsViewModel(
     private val video: VideoItem,
@@ -33,9 +32,8 @@ class SaveVideoToPlaylistsViewModel(
         }
 
     fun saveVideoToPlaylists() {
-        viewModelScope.launch {
             playlistRepo.saveVideoToPlaylists(video, localPlaylists)
-                .collect {
+                .onEach {
                     when (it) {
                         is Resource.Error -> SnackBarController.sendEvent(
                             it.message ?: "failed to save to playlist"
@@ -48,8 +46,7 @@ class SaveVideoToPlaylistsViewModel(
 
                         else -> Unit
                     }
-                }
-        }
+                }.launchIn(viewModelScope)
     }
 
     fun showCreatePlaylistDialog() = PopupController.openCreatePlaylistDialog()

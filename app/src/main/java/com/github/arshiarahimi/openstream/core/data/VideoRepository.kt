@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface VideoRepository {
     fun fetchVideo(url: String): Flow<Resource<MediaItem>>
 
-    suspend fun deleteLocalVideoHistory(): Flow<Resource<Success>>
+    fun deleteLocalVideoHistory(): Flow<Resource<Success>>
 }

@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class ChannelViewModel(
     private val url: String,
@@ -49,50 +48,46 @@ class ChannelViewModel(
 
     fun getTabFirstPage(tab: ChannelTabView) {
         if (_uiState.value !is UiState.Success) return
-        viewModelScope.launch {
-            channelRepo.getTabFirstPage(
-                channelItem,
-                channelExtractor,
-                tab.toChannelTab()
-            )
-                .collect {
-                    when (it) {
-                        is Resource.Loading -> tabs.replaceFirstWith(tab.copy(isLoading = true)) { it == tab }
-                        is Resource.Error ->
-                            tabs.replaceFirstWith(
-                                tab.copy(
-                                    isLoading = false,
-                                    error = it.message
-                                )
-                            ) { it == tab }
+        channelRepo.getTabFirstPage(
+            channelItem,
+            channelExtractor,
+            tab.toChannelTab()
+        )
+            .onEach {
+                when (it) {
+                    is Resource.Loading -> tabs.replaceFirstWith(tab.copy(isLoading = true)) { it == tab }
+                    is Resource.Error ->
+                        tabs.replaceFirstWith(
+                            tab.copy(
+                                isLoading = false,
+                                error = it.message
+                            )
+                        ) { it == tab }
 
-                        is Resource.Success -> {
-                            tabs.replaceFirstWith(tab.copy(isLoading = false)) { it == tab }
-                            val index = tabs.indexOfFirst { it == tab }
-                            tabItems[index].addAll(it.data ?: emptyList())
-                        }
+                    is Resource.Success -> {
+                        tabs.replaceFirstWith(tab.copy(isLoading = false)) { it == tab }
+                        val index = tabs.indexOfFirst { it == tab }
+                        tabItems[index].addAll(it.data ?: emptyList())
                     }
                 }
-        }
+            }.launchIn(viewModelScope)
     }
 
     fun getTabNextPage(tab: ChannelTabView) {
         if (_uiState.value !is UiState.Success) return
-        viewModelScope.launch {
-            channelRepo.getTabNextPage(
-                channelItem,
-                channelExtractor,
-                tab.toChannelTab()
-            ).collect {
-                when (it) {
-                    is Resource.Success -> {
-                        val index = tabs.indexOfFirst { it == tab }
-                        tabItems[index].addAll(it.data ?: emptyList())
-                    }
-
-                    else -> Unit
+        channelRepo.getTabNextPage(
+            channelItem,
+            channelExtractor,
+            tab.toChannelTab()
+        ).onEach {
+            when (it) {
+                is Resource.Success -> {
+                    val index = tabs.indexOfFirst { it == tab }
+                    tabItems[index].addAll(it.data ?: emptyList())
                 }
+
+                else -> Unit
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }

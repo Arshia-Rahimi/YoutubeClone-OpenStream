@@ -30,7 +30,7 @@ class OfflineFirstVideoRepository(
             emit(video)
         }.asResult(Dispatchers.IO)
 
-    override suspend fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
+    override fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
         flow {
             supervisorScope {
                 val d1 = async { db.videoDao().deleteAll() }

@@ -109,7 +109,7 @@ class OfflineFirstChannelRepository(
             emit(nextPage)
         }.asResult(Dispatchers.IO)
 
-    override suspend fun updateSubscriptions(): Flow<Resource<Success>> =
+    override fun updateSubscriptions(): Flow<Resource<Success>> =
         flow {
             supervisorScope {
                 val subscriptions = subscriptions.first()

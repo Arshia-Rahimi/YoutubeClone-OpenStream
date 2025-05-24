@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
@@ -63,9 +62,8 @@ class PlayerViewModel(
     fun start(videoUrl: String) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
-        viewModelScope.launch {
             videoRepository.fetchVideo(videoUrl)
-                .collect { video ->
+                .onEach { video ->
                     _uiState.value = when (video) {
                         is Resource.Loading -> UiState.Loading
                         is Resource.Error -> UiState.Error(video.message)
@@ -77,8 +75,7 @@ class PlayerViewModel(
                                 }
                         }
                     }
-                }
-        }
+                }.launchIn(viewModelScope)
     }
 
     fun togglePlay() {

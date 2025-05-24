@@ -6,14 +6,14 @@ import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class CreatePlaylistViewModel(
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
     fun createPlaylist(title: String) {
-        viewModelScope.launch {
-            playlistRepo.createPlaylist(title).collect {
+        playlistRepo.createPlaylist(title).onEach {
                 when (it) {
                     is Resource.Error -> SnackBarController
                         .sendEvent("failed to create playlist: $title")
@@ -26,7 +26,6 @@ class CreatePlaylistViewModel(
 
                     else -> Unit
                 }
-            }
-        }
+        }.launchIn(viewModelScope)
     }
 }

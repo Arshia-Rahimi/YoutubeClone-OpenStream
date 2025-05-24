@@ -33,6 +33,6 @@ interface ChannelRepository {
         tab: ChannelTab,
     ): Flow<Resource<List<DataItem>?>>
 
-    suspend fun updateSubscriptions(): Flow<Resource<Success>>
+    fun updateSubscriptions(): Flow<Resource<Success>>
     
 }

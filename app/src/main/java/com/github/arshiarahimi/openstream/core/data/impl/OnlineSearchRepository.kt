@@ -18,7 +18,7 @@ class OnlineSearchRepository(
     private val db: OpenStreamDatabase,
 ) : SearchRepository {
 
-    override suspend fun search(
+    override fun search(
         query: String,
         contentFilter: List<String>,
         sortFilter: String?,
@@ -29,7 +29,7 @@ class OnlineSearchRepository(
         emit(searchResult.copy(items = firstPage))
     }.asResult(Dispatchers.IO)
 
-    override suspend fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>> =
+    override fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>> =
         flow {
             val result = SearchRemoteDataSource.fetchNextPage(currentSearch)
             val nextPage = syncDataItemsWithDB(result)

@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val searchRepo: SearchRepository,
@@ -43,9 +42,8 @@ class SearchViewModel(
     var searchQuery = mutableStateOf("")
 
     fun search() {
-        viewModelScope.launch {
             searchRepo.search(searchQuery.value)
-                .collect {
+                .onEach {
                     _uiState.value = when (it) {
                         is Resource.Loading -> UiState.Loading
                         is Resource.Error -> UiState.Error(it.message)
@@ -55,37 +53,32 @@ class SearchViewModel(
                             UiState.Success(it.data)
                         }
                     }
-                }
-        }
+                }.launchIn(viewModelScope)
     }
 
     fun getNextPage() {
-        viewModelScope.launch {
-            if (_uiState.value !is UiState.Success) return@launch
-            (_uiState.value as UiState.Success).searchResult.let {
-                searchRepo.getNextPage(it).collect {
-                    when (it) {
-                        is Resource.Success -> items.addAll(it.data)
-                        else -> {}
-                    }
+        if (_uiState.value !is UiState.Success) return
+        (_uiState.value as UiState.Success).searchResult.let {
+            searchRepo.getNextPage(it).onEach {
+                when (it) {
+                    is Resource.Success -> items.addAll(it.data)
+                    else -> {}
                 }
-            }
+            }.launchIn(viewModelScope)
         }
     }
 
     fun addToWatchLater(video: VideoItem) {
-        viewModelScope.launch {
-            playlistRepo.addToPlaylist(listOf(video), WATCH_LATER_ID)
-                .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            SnackBarController.sendEvent(R.string.added_to_watch_later)
-                        }
-
-                        else -> {}
+        playlistRepo.addToPlaylist(listOf(video), WATCH_LATER_ID)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        SnackBarController.sendEvent(R.string.added_to_watch_later)
                     }
+
+                    else -> {}
                 }
-        }
+            }.launchIn(viewModelScope)
     }
 
     fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem) {

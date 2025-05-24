@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class SettingsViewModel(
     private val videoRepo: VideoRepository,
@@ -17,22 +18,20 @@ class SettingsViewModel(
     var localVideoHistoryLoading by mutableStateOf(false)
 
     fun clearLocalVideoHistory() {
-        viewModelScope.launch {
-            videoRepo.deleteLocalVideoHistory().collect {
-                when (it) {
-                    is Resource.Success -> {
-                        localVideoHistoryLoading = false
-                        SnackBarController.sendEvent("clear local video history")
-                    }
-
-                    is Resource.Error -> {
-                        localVideoHistoryLoading = false
-                        SnackBarController.sendEvent("failed to clear local video history")
-                    }
-
-                    else -> localVideoHistoryLoading = true
+        videoRepo.deleteLocalVideoHistory().onEach {
+            when (it) {
+                is Resource.Success -> {
+                    localVideoHistoryLoading = false
+                    SnackBarController.sendEvent("clear local video history")
                 }
+
+                is Resource.Error -> {
+                    localVideoHistoryLoading = false
+                    SnackBarController.sendEvent("failed to clear local video history")
+                }
+
+                else -> localVideoHistoryLoading = true
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }
