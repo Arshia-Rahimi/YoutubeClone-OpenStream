@@ -32,7 +32,10 @@ fun SaveVideoToPlaylistsModal(
     video: VideoItem,
 ) {
     val viewModel =
-        koinViewModel<SaveVideoToPlaylistsViewModel>(parameters = { parametersOf(video) })
+        koinViewModel<SaveVideoToPlaylistsViewModel>(
+            parameters = { parametersOf(video) },
+            key = video.hashCode().toString(),
+        )
 
     ModalBottomSheet(
         onDismissRequest = { PopupController.dismissSaveVideoToPlaylistModal() },

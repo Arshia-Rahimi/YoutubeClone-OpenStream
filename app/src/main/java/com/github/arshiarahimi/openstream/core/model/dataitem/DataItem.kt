@@ -44,6 +44,7 @@ data class VideoItem(
         isChannelVerified = isChannelVerified,
     )
 
+    // todo fix keys
     override val key: String
         get() = "video-$url"
 }

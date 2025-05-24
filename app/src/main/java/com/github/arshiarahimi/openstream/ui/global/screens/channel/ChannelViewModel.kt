@@ -10,7 +10,7 @@ import com.github.arshiarahimi.openstream.core.data.ChannelRepository
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.extractor.ChannelExtractor
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTabView
+import com.github.arshiarahimi.openstream.ui.global.screens.channel.components.ChannelTabView
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -30,21 +30,34 @@ class ChannelViewModel(
 
     private val channelExtractor: ChannelExtractor
         get() = (uiState.value as UiState.Success).channelExtractor
-    val channelItem: ChannelItem = channelExtractor.channelItem
+    val channelItem: ChannelItem
+        get() = channelExtractor.channelItem
 
     val uiState = channelRepo.getChannel(url)
         .map {
             when (it) {
                 is Resource.Error -> UiState.Error(it.message)
                 is Resource.Loading -> UiState.Loading
-                is Resource.Success -> UiState.Success(it.data)
+                is Resource.Success -> {
+                    tabs.clear()
+                    tabItems.clear()
+                    tabs.addAll(
+                        it.data.tabs
+                            ?.map { ChannelTabView(it.name, it.url, true) }
+                            ?: emptyList()
+                    )
+                    repeat(it.data.tabs?.size ?: 0) {
+                        tabItems.add(mutableStateListOf())
+                    }
+                    UiState.Success(it.data)
+                }
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = UiState.Loading,
         )
-   
+
     val tabs = mutableStateListOf<ChannelTabView>()
     val tabItems = mutableStateListOf<SnapshotStateList<DataItem>>()
 
@@ -64,7 +77,7 @@ class ChannelViewModel(
 
                     is Resource.Success -> {
                         tabs.replaceFirstWith(tab.copy(isLoading = false)) { it == tab }
-                        val index = tabs.indexOfFirst { it == tab }
+                        val index = tabs.indexOfFirst { it.url == tab.url }
                         tabItems[index].addAll(it.data ?: emptyList())
                     }
                 }
@@ -77,7 +90,7 @@ class ChannelViewModel(
             .onEach {
                 when (it) {
                     is Resource.Success -> {
-                        val index = tabs.indexOfFirst { it == tab }
+                        val index = tabs.indexOfFirst { it.url == tab.url }
                         tabItems[index].addAll(it.data ?: emptyList())
                     }
 

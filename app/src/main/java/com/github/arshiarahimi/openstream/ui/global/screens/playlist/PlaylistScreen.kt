@@ -22,6 +22,7 @@ fun PlaylistScreen(
 ) {
     val viewModel = koinViewModel<PlaylistViewModel>(
         parameters = { parametersOf(playlist) },
+        key = playlist.hashCode().toString(),
     )
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 

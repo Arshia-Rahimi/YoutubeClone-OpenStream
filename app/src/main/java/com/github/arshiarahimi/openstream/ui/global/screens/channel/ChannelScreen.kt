@@ -1,6 +1,5 @@
 package com.github.arshiarahimi.openstream.ui.global.screens.channel
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,12 +32,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
-import com.github.arshiarahimi.openstream.core.model.extractordata.ChannelTabView
 import com.github.arshiarahimi.openstream.ui.designsystem.components.ErrorPage
 import com.github.arshiarahimi.openstream.ui.designsystem.components.LoadingBox
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
+import com.github.arshiarahimi.openstream.ui.global.screens.channel.components.ChannelTabView
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.components.ChannelTopBar
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -53,11 +51,14 @@ fun ChannelScreen(
     navigateBack: () -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
 ) {
-    topBar {}
-    val viewModel = koinViewModel<ChannelViewModel>(parameters = { parametersOf(url) })
+    val viewModel = koinViewModel<ChannelViewModel>(
+        parameters = { parametersOf(url) },
+        key = url,
+    )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val tabResults = viewModel.tabs
-    val scope = rememberCoroutineScope()
+
+    topBar {}
 
     when (uiState) {
         is ChannelViewModel.UiState.Loading -> {
@@ -74,7 +75,6 @@ fun ChannelScreen(
             channelItem = viewModel.channelItem,
             topBar = topBar,
             tabResults = tabResults,
-            scope = scope,
             tabItems = viewModel.tabItems,
             navigateBack = navigateBack,
             playVideo = playVideo,
@@ -89,7 +89,6 @@ fun ChannelScreen(
 @Composable
 private fun ChannelScreen(
     channelItem: ChannelItem,
-    scope: CoroutineScope,
     tabResults: SnapshotStateList<ChannelTabView>,
     tabItems: SnapshotStateList<SnapshotStateList<DataItem>>,
     navigateBack: () -> Unit,
@@ -101,7 +100,10 @@ private fun ChannelScreen(
 ) {
     val pagerState = rememberPagerState { tabResults.size }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
     topBar { ChannelTopBar(channelItem) { isBottomSheetVisible = true } }
+
     if (isBottomSheetVisible) {
         ModalBottomSheet(
             onDismissRequest = { isBottomSheetVisible = false },
@@ -114,50 +116,60 @@ private fun ChannelScreen(
             }
         }
     }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            horizontalArrangement = Arrangement.Center,
+
+    if (tabResults.isNotEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            itemsIndexed(tabResults) { index, tab ->
-                val color =
-                    if (pagerState.currentPage == index) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondary
-                Box(
-                    modifier = Modifier
-                        .padding(top = 4.dp, bottom = 8.dp)
-                        .background(color)
-                        .clickable { scope.launch { pagerState.scrollToPage(index) } }
-                        .padding(horizontal = 8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(tab.name, fontSize = 16.sp)
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                horizontalArrangement = Arrangement.spacedBy(
+                    space = 16.dp,
+                    alignment = Alignment.CenterHorizontally,
+                ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                itemsIndexed(tabResults) { index, tab ->
+                    val isSelected = index == pagerState.currentPage
+                    Box(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable { scope.launch { pagerState.scrollToPage(index) } }
+                            .padding(horizontal = 8.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            tab.name,
+                            fontSize = 16.sp,
+                            color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onTertiary,
+                        )
+                    }
                 }
             }
-        }
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f),
-        ) { page ->
-            val currentTab = tabResults[page]
-            val currentItems = tabItems[page]
-            LaunchedEffect(page) { getTabFirstPage(currentTab) }
+            // todo when paging it's content is lost
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) { page ->
+                val currentTab = tabResults[page]
+                LaunchedEffect(page) { getTabFirstPage(currentTab) }
 
-            when {
-                currentTab.isLoading -> LoadingBox()
-                currentTab.error != null -> ErrorPage(currentTab.error) { navigateBack() }
-                else -> {
-                    DataItemList(
-                        items = currentItems,
-                        shouldViewChannel = false,
-                        loadNextPage = { getTabNextPage(currentTab) },
-                        playVideo = playVideo,
-                        toPlaylistScreen = toPlaylistScreen,
-                    )
+                when {
+                    currentTab.isLoading -> LoadingBox()
+                    currentTab.error != null -> ErrorPage(currentTab.error) { navigateBack() }
+                    else -> {
+                        DataItemList(
+                            items = tabItems[page],
+                            shouldViewChannel = false,
+                            loadNextPage = { getTabNextPage(currentTab) },
+                            playVideo = playVideo,
+                            toPlaylistScreen = toPlaylistScreen,
+                        )
+                    }
                 }
             }
         }

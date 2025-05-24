@@ -68,19 +68,13 @@ sealed class Tabs(
         title = R.string.downloads,
         icon = R.drawable.downloads,
         selectedIcon = R.drawable.downlaods_selected,
-    ) {
-        @Serializable
-        data object Root
-    }
+    )
 
     @Serializable
     data object Settings : Tabs(
         title = R.string.settings,
         icon = R.drawable.settings,
         selectedIcon = R.drawable.settings_selected,
-    ) {
-        @Serializable
-        data object Root
-    }
+    )
 
 }
