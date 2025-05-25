@@ -27,6 +27,7 @@ class NavigationViewModel : ViewModel() {
 
     val currentTab = MutableStateFlow<Tabs>(Subscriptions)
 
+    // todo move topBar to a per screen scaffold
     private val _topBar: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
     val topBar = _topBar.asStateFlow()
 
