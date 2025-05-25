@@ -42,7 +42,6 @@ fun SearchNavHost(
     ) {
         composable<Tabs.Search.Root> {
             SearchScreen(
-                topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
                 playVideo = playerViewModel::start,
@@ -51,7 +50,6 @@ fun SearchNavHost(
         composable<Tabs.Search.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Search.Channel>().url,
-                topBar = navViewModel::setTopBar,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
                 playVideo = playerViewModel::start,
@@ -64,7 +62,6 @@ fun SearchNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
-                topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 playVideo = playerViewModel::start,
                 navigateBack = { navController.navigateUp() },

@@ -1,6 +1,5 @@
 package com.github.arshiarahimi.openstream.app.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs.Downloads
@@ -10,7 +9,6 @@ import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs.Settings
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs.Subscriptions
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class NavigationViewModel : ViewModel() {
@@ -26,14 +24,6 @@ class NavigationViewModel : ViewModel() {
     }
 
     val currentTab = MutableStateFlow<Tabs>(Subscriptions)
-
-    // todo move topBar to a per screen scaffold
-    private val _topBar: MutableStateFlow<(@Composable () -> Unit)?> = MutableStateFlow(null)
-    val topBar = _topBar.asStateFlow()
-
-    fun setTopBar(newTopBar: @Composable () -> Unit) {
-        _topBar.value = newTopBar
-    }
 
     private val _tabDoubleClickAction = Channel<Tabs>(1)
     val tabDoubleClickAction = _tabDoubleClickAction.receiveAsFlow()

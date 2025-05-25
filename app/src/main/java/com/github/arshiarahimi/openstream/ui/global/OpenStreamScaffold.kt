@@ -2,15 +2,8 @@ package com.github.arshiarahimi.openstream.ui.global
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -50,8 +43,7 @@ fun OpenStreamScaffold(
     currentTab: Tabs,
     navAction: (Tabs, Boolean) -> Unit,
     toChannelScreen: (String) -> Unit,
-    topBar: (@Composable () -> Unit)?,
-    content: @Composable () -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -90,7 +82,6 @@ fun OpenStreamScaffold(
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        topBar = { topBar?.invoke() },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState
@@ -102,22 +93,9 @@ fun OpenStreamScaffold(
                 navAction = navAction,
                 setNavBarOffset = { navBarOffset = it },
             )
-        }
-    ) { ip ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(ip)
-                .consumeWindowInsets(ip)
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(
-                        WindowInsetsSides.Horizontal
-                    ),
-                ),
-        ) {
-            content()
-        }
-    }
+        },
+        content = content,
+    ) 
     PlayerSheet(
         navBarOffset = navBarOffset,
         toChannelScreen = toChannelScreen,

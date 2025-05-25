@@ -43,7 +43,6 @@ fun SubscriptionsNavHost(
     ) {
         composable<Tabs.Subscriptions.Root> {
             SubscriptionsScreen(
-                topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
                 playVideo = playerViewModel::start,
@@ -53,7 +52,6 @@ fun SubscriptionsNavHost(
         composable<Tabs.Subscriptions.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Subscriptions.Channel>().url,
-                topBar = navViewModel::setTopBar,
                 playVideo = playerViewModel::start,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
@@ -66,7 +64,6 @@ fun SubscriptionsNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Subscriptions.Playlist>().playlist,
-                topBar = navViewModel::setTopBar,
                 playVideo = playerViewModel::start,
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
                 navigateBack = { navController.navigateUp() },
@@ -75,7 +72,6 @@ fun SubscriptionsNavHost(
         composable<Tabs.Subscriptions.SubscribedChannels> {
             SubscribedChannelsScreen(
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
-                topBar = navViewModel::setTopBar,
             )
         }
     }

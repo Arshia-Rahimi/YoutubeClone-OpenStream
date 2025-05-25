@@ -1,8 +1,13 @@
 package com.github.arshiarahimi.openstream.ui.global.screens.playlist
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.arshiarahimi.openstream.core.common.compose.ObserveForEvents
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
@@ -15,7 +20,6 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun PlaylistScreen(
     playlist: PlaylistItem,
-    topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     toChannelScreen: (String) -> Unit,
     navigateBack: () -> Unit,
@@ -32,7 +36,6 @@ fun PlaylistScreen(
 
     PlaylistScreen(
         playlist = viewModel.playlist,
-        topBar = topBar,
         playVideo = playVideo,
         items = viewModel.videos,
         toChannelScreen = toChannelScreen,
@@ -51,31 +54,42 @@ private fun PlaylistScreen(
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
-    topBar: (@Composable () -> Unit) -> Unit,
 ) {
-    topBar { PlaylistTopBar(playlist, toChannelScreen) }
 
-    when (playlist) {
-        is PlaylistItem.OfflineFirstPlaylistItem -> {
-            DataItemList(
-                onRefresh = onRefresh,
-                isRefreshing = isRefreshing,
-                items = items,
-                toChannelScreen = toChannelScreen,
-                playVideo = playVideo,
-                loadNextPage = loadNextPage,
-                lazyListUniqueId = "playlistScreen",
-            )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            PlaylistTopBar(playlist, toChannelScreen)
         }
+    ) { ip ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(ip)
+        ) {
+            when (playlist) {
+                is PlaylistItem.OfflineFirstPlaylistItem -> {
+                    DataItemList(
+                        onRefresh = onRefresh,
+                        isRefreshing = isRefreshing,
+                        items = items,
+                        toChannelScreen = toChannelScreen,
+                        playVideo = playVideo,
+                        loadNextPage = loadNextPage,
+                        lazyListUniqueId = "playlistScreen",
+                    )
+                }
 
-        else -> {
-            DataItemList(
-                items = items,
-                toChannelScreen = toChannelScreen,
-                playVideo = playVideo,
-                loadNextPage = loadNextPage,
-                lazyListUniqueId = "playlistScreen",
-            )
+                else -> {
+                    DataItemList(
+                        items = items,
+                        toChannelScreen = toChannelScreen,
+                        playVideo = playVideo,
+                        loadNextPage = loadNextPage,
+                        lazyListUniqueId = "playlistScreen",
+                    )
+                }
+            }
         }
     }
 }

@@ -3,8 +3,12 @@ package com.github.arshiarahimi.openstream.app.navigation
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -44,14 +48,12 @@ fun Navigation() {
         }
 
     val currentTab by navigationViewModel.currentTab.collectAsStateWithLifecycle()
-    val topBar by navigationViewModel.topBar.collectAsStateWithLifecycle()
     val shouldShowFullscreenPlayer by playerViewModel.shouldShowFullscreenPlayer.collectAsStateWithLifecycle()
 
     if (shouldShowFullscreenPlayer) FullScreenPlayerView()
     else {
         OpenStreamScaffold(
             currentTab = currentTab,
-            topBar = topBar,
             navAction = { destination, isDoubleClick ->
                 when {
                     currentTab != destination -> {
@@ -70,8 +72,12 @@ fun Navigation() {
                 }
             },
             toChannelScreen = {},
-        ) {
+        ) { ip ->
             NavHost(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(ip)
+                    .consumeWindowInsets(ip),
                 navController = rootNavController,
                 startDestination = Tabs.Subscriptions,
             ) {
@@ -94,14 +100,10 @@ fun Navigation() {
                     )
                 }
                 composableWithTabAnimation<Tabs.Downloads> {
-                    DownloadsScreen(
-                        navViewModel = navigationViewModel,
-                    )
+                    DownloadsScreen()
                 }
                 composableWithTabAnimation<Tabs.Settings> {
-                    SettingsScreen(
-                        navViewModel = navigationViewModel,
-                    )
+                    SettingsScreen()
                 }
             }
         }

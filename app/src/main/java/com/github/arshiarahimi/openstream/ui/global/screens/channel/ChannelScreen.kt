@@ -15,6 +15,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +47,6 @@ import kotlin.uuid.ExperimentalUuidApi
 @Composable
 fun ChannelScreen(
     url: String,
-    topBar: (@Composable () -> Unit) -> Unit,
     playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
@@ -58,7 +58,6 @@ fun ChannelScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val tabResults = viewModel.tabs
 
-    topBar {}
 
     when (uiState) {
         is ChannelViewModel.UiState.Loading -> LoadingBox()
@@ -70,7 +69,6 @@ fun ChannelScreen(
 
         is ChannelViewModel.UiState.Success -> ChannelScreen(
             channelItem = viewModel.channelItem,
-            topBar = topBar,
             tabResults = tabResults,
             tabItems = viewModel.tabItems,
             navigateBack = navigateBack,
@@ -93,13 +91,10 @@ private fun ChannelScreen(
     toPlaylistScreen: (PlaylistItem) -> Unit,
     getTabFirstPage: (ChannelTabView) -> Unit,
     getTabNextPage: (ChannelTabView) -> Unit,
-    topBar: (@Composable () -> Unit) -> Unit,
 ) {
     val pagerState = rememberPagerState { tabResults.size }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-
-    topBar { ChannelTopBar(channelItem) { isBottomSheetVisible = true } }
 
     if (isBottomSheetVisible) {
         ModalBottomSheet(
@@ -114,58 +109,67 @@ private fun ChannelScreen(
         }
     }
 
-    if (tabResults.isNotEmpty()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            LazyRow(
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            ChannelTopBar(channelItem) { isBottomSheetVisible = true }
+        }
+    ) { ip ->
+        if (tabResults.isNotEmpty()) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                horizontalArrangement = Arrangement.spacedBy(
-                    space = 16.dp,
-                    alignment = Alignment.CenterHorizontally,
-                ),
-                verticalAlignment = Alignment.CenterVertically,
+                    .fillMaxSize()
+                    .padding(ip),
             ) {
-                itemsIndexed(tabResults) { index, tab ->
-                    val isSelected = index == pagerState.currentPage
-                    Box(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable { scope.launch { pagerState.scrollToPage(index) } }
-                            .padding(horizontal = 8.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            tab.name,
-                            fontSize = 16.sp,
-                            color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onTertiary,
-                        )
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 16.dp,
+                        alignment = Alignment.CenterHorizontally,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    itemsIndexed(tabResults) { index, tab ->
+                        val isSelected = index == pagerState.currentPage
+                        Box(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable { scope.launch { pagerState.scrollToPage(index) } }
+                                .padding(horizontal = 8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                tab.name,
+                                fontSize = 16.sp,
+                                color = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onTertiary,
+                            )
+                        }
                     }
                 }
-            }
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-            ) { page ->
-                val currentTab = tabResults[page]
-                LaunchedEffect(page) { getTabFirstPage(currentTab) }
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) { page ->
+                    val currentTab = tabResults[page]
+                    LaunchedEffect(page) { getTabFirstPage(currentTab) }
 
-                when {
-                    currentTab.isLoading -> LoadingBox()
-                    currentTab.error != null -> ErrorPage(currentTab.error) { navigateBack() }
-                    else -> {
-                        DataItemList(
-                            items = tabItems[page],
-                            shouldViewChannel = false,
-                            loadNextPage = { getTabNextPage(currentTab) },
-                            playVideo = playVideo,
-                            toPlaylistScreen = toPlaylistScreen,
-                            lazyListUniqueId = "channelScreen/${currentTab.name}"
-                        )
+                    when {
+                        currentTab.isLoading -> LoadingBox()
+                        currentTab.error != null -> ErrorPage(currentTab.error) { navigateBack() }
+                        else -> {
+                            DataItemList(
+                                items = tabItems[page],
+                                shouldViewChannel = false,
+                                loadNextPage = { getTabNextPage(currentTab) },
+                                playVideo = playVideo,
+                                toPlaylistScreen = toPlaylistScreen,
+                                lazyListUniqueId = "channelScreen/${currentTab.name}"
+                            )
+                        }
                     }
                 }
             }

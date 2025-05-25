@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -32,7 +33,6 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
-    topBar: (@Composable () -> Unit) -> Unit,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
     playVideo: (String) -> Unit,
@@ -41,53 +41,58 @@ fun LibraryScreen(
     val playlists = viewModel.playlists
     val sortType by viewModel.sortType.collectAsStateWithLifecycle()
 
-    topBar {
-        TopAppBar(
-            title = {
-                Text(stringResource(R.string.library))
-            },
-            actions = {
-                IconButton(
-                    onClick = { PopupController.openCreatePlaylistDialog() },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.plus),
-                        contentDescription = stringResource(R.string.cd_plus_icon)
-                    )
-                }
-            }
-        )
-    }
-
-    Column(
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.End,
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .padding(end = 16.dp)
-                .clickable { viewModel.toggleSortType() },
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = stringResource(sortType.string),
-                fontSize = 16.sp,
-                color = Color.White,
-            )
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = stringResource(sortType.string),
-                tint = Color.White,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.library))
+                },
+                actions = {
+                    IconButton(
+                        onClick = { PopupController.openCreatePlaylistDialog() },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.plus),
+                            contentDescription = stringResource(R.string.cd_plus_icon)
+                        )
+                    }
+                }
             )
         }
-        DataItemList(
-            items = playlists,
-            toChannelScreen = toChannelScreen,
-            toPlaylistScreen = toPlaylistScreen,
-            playVideo = playVideo,
-            lazyListUniqueId = "libraryScreen",
-        )
+    ) { ip ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(ip),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .padding(end = 16.dp)
+                    .clickable { viewModel.toggleSortType() },
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = stringResource(sortType.string),
+                    fontSize = 16.sp,
+                    color = Color.White,
+                )
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = stringResource(sortType.string),
+                    tint = Color.White,
+                )
+            }
+            DataItemList(
+                items = playlists,
+                toChannelScreen = toChannelScreen,
+                toPlaylistScreen = toPlaylistScreen,
+                playVideo = playVideo,
+                lazyListUniqueId = "libraryScreen",
+            )
+        }
     }
 }
 

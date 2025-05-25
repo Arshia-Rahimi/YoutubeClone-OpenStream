@@ -1,29 +1,42 @@
 package com.github.arshiarahimi.openstream.ui.feature.subscriptions.subroutes.subscribedchannels
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscribedChannelsScreen(
-    topBar: (@Composable () -> Unit) -> Unit,
     toChannelScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SubscribedChannelsViewModel>()
 
-    topBar {
-        TopAppBar(
-            title = { Text("Subscribed Channels") }
-        )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("Subscribed Channels") }
+            )
+        }
+    ) { ip ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(ip),
+        ) {
+            DataItemList(
+                items = viewModel.subscriptions,
+                toChannelScreen = toChannelScreen,
+                lazyListUniqueId = "subscribedChannelsScreen",
+            )
+        }
     }
-
-    DataItemList(
-        items = viewModel.subscriptions,
-        toChannelScreen = toChannelScreen,
-        lazyListUniqueId = "subscribedChannelsScreen",
-    )
 }

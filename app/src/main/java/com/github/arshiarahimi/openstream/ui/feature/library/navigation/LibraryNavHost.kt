@@ -42,7 +42,6 @@ fun LibraryNavHost(
     ) {
         composable<Tabs.Library.Root> {
             LibraryScreen(
-                topBar = navViewModel::setTopBar,
                 toChannelScreen = { navController.navigate(Tabs.Library.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Library.Playlist(it)) },
                 playVideo = playerViewModel::start,
@@ -51,7 +50,6 @@ fun LibraryNavHost(
         composable<Tabs.Library.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Library.Channel>().url,
-                topBar = navViewModel::setTopBar,
                 playVideo = playerViewModel::start,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Library.Playlist(it)) },
@@ -64,7 +62,6 @@ fun LibraryNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Library.Playlist>().playlist,
-                topBar = navViewModel::setTopBar,
                 playVideo = playerViewModel::start,
                 toChannelScreen = { navController.navigate(Tabs.Library.Channel(it)) },
                 navigateBack = { navController.navigateUp() },
