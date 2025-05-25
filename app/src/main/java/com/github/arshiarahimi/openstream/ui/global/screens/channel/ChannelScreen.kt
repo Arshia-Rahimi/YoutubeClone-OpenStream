@@ -145,7 +145,6 @@ private fun ChannelScreen(
                     }
                 }
             }
-            // todo when paging it's content is lost
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -153,10 +152,7 @@ private fun ChannelScreen(
                     .weight(1f),
             ) { page ->
                 val currentTab = tabResults[page]
-                LaunchedEffect(1) {
-                    println("fetch tab $page")
-                    getTabFirstPage(currentTab)
-                }
+                LaunchedEffect(page) { getTabFirstPage(currentTab) }
 
                 when {
                     currentTab.isLoading -> LoadingBox()

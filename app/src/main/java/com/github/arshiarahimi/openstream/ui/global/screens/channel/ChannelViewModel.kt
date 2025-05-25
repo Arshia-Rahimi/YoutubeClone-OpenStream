@@ -62,6 +62,12 @@ class ChannelViewModel(
 
     fun getTabFirstPage(tab: ChannelTabView) {
         if (uiState.value !is UiState.Success) return
+
+        val index = tabs.indexOfFirst { it.url == tab.url }
+        // don't fetch first page for the second time
+        // it's checked here for config changes
+        if (tabItems[index].isNotEmpty()) return
+        
         channelRepo.getTabFirstPage(channelItem, channelExtractor, tab.toChannelTab())
             .onEach {
                 when (it) {
@@ -76,7 +82,6 @@ class ChannelViewModel(
 
                     is Resource.Success -> {
                         tabs.replaceFirstWith(tab.copy(isLoading = false)) { it == tab }
-                        val index = tabs.indexOfFirst { it.url == tab.url }
                         tabItems[index].addAll(it.data ?: emptyList())
                     }
                 }
