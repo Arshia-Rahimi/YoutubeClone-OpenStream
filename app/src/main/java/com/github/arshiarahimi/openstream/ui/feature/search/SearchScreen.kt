@@ -82,6 +82,7 @@ fun SearchScreen(
                 scrollToTopTab = Tabs.Search,
                 savePlaylist = viewModel::savePlaylist,
                 subscribe = viewModel::subscribe,
+                lazyListUniqueId = "searchScreen",
             )
         }
     }

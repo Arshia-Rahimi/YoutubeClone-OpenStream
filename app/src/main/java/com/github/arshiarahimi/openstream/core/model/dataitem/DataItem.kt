@@ -46,7 +46,7 @@ data class VideoItem(
 
     // todo fix keys
     override val key: String
-        get() = "video-$url"
+        get() = "video-$url-"
 }
 
 @Serializable
@@ -64,7 +64,7 @@ sealed interface PlaylistItem : DataItem {
         override val count: Long
         val id: Long
         override val key: String
-            get() = "playlist-$id"
+            get() = "playlist-$id-"
     }
 
     @Serializable
@@ -125,7 +125,7 @@ sealed interface PlaylistItem : DataItem {
         override val url: String,
     ) : YoutubePlaylistItem {
         override val key: String
-            get() = "playlist-$url"
+            get() = "playlist-$url-"
 
         override fun toEntity() =
             PlaylistEntity(
@@ -162,7 +162,7 @@ sealed interface ChannelItem : DataItem {
     val isVerified: Boolean
 
     override val key: String
-        get() = "channel-$url"
+        get() = "channel-$url-"
 
     override fun toEntity(): ChannelEntity
 

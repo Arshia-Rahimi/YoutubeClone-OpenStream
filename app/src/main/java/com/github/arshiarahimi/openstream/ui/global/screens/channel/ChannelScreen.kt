@@ -61,10 +61,7 @@ fun ChannelScreen(
     topBar {}
 
     when (uiState) {
-        is ChannelViewModel.UiState.Loading -> {
-            topBar {}
-            LoadingBox()
-        }
+        is ChannelViewModel.UiState.Loading -> LoadingBox()
 
         is ChannelViewModel.UiState.Error -> ErrorPage(
             (uiState as ChannelViewModel.UiState.Error).message,
@@ -156,7 +153,10 @@ private fun ChannelScreen(
                     .weight(1f),
             ) { page ->
                 val currentTab = tabResults[page]
-                LaunchedEffect(1) { getTabFirstPage(currentTab) }
+                LaunchedEffect(1) {
+                    println("fetch tab $page")
+                    getTabFirstPage(currentTab)
+                }
 
                 when {
                     currentTab.isLoading -> LoadingBox()
@@ -168,6 +168,7 @@ private fun ChannelScreen(
                             loadNextPage = { getTabNextPage(currentTab) },
                             playVideo = playVideo,
                             toPlaylistScreen = toPlaylistScreen,
+                            lazyListUniqueId = "channelScreen/${currentTab.name}"
                         )
                     }
                 }
