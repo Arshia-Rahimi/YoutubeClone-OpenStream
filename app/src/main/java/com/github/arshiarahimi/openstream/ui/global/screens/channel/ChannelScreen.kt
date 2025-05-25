@@ -156,7 +156,7 @@ private fun ChannelScreen(
                     .weight(1f),
             ) { page ->
                 val currentTab = tabResults[page]
-                LaunchedEffect(page) { getTabFirstPage(currentTab) }
+                LaunchedEffect(1) { getTabFirstPage(currentTab) }
 
                 when {
                     currentTab.isLoading -> LoadingBox()

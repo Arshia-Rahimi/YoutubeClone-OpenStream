@@ -43,10 +43,9 @@ class ChannelViewModel(
                     tabItems.clear()
                     tabs.addAll(
                         it.data.tabs
-                            ?.map { ChannelTabView(it.name, it.url, true) }
-                            ?: emptyList()
+                            .map { ChannelTabView(it.name, it.url, true) }
                     )
-                    repeat(it.data.tabs?.size ?: 0) {
+                    repeat(it.data.tabs.size) {
                         tabItems.add(mutableStateListOf())
                     }
                     UiState.Success(it.data)

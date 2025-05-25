@@ -7,7 +7,7 @@ import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 
 data class ChannelExtractor(
     val url: String,
-    val tabs: List<ChannelTab>?,
+    val tabs: List<ChannelTab>,
     val channelItem: ChannelItem,
     val tabExtractors: MutableList<Triple<String, ChannelTabExtractor, Page?>>,
 )
