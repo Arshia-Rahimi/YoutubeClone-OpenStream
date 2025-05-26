@@ -160,16 +160,14 @@ private fun ChannelScreen(
                     when {
                         currentTab.isLoading -> LoadingBox()
                         currentTab.error != null -> ErrorPage(currentTab.error) { navigateBack() }
-                        else -> {
-                            DataItemList(
-                                items = tabItems[page],
-                                shouldViewChannel = false,
-                                loadNextPage = { getTabNextPage(currentTab) },
-                                playVideo = playVideo,
-                                toPlaylistScreen = toPlaylistScreen,
-                                lazyListUniqueId = "channelScreen/${currentTab.name}"
-                            )
-                        }
+                        else -> DataItemList(
+                            items = tabItems[page],
+                            shouldViewChannel = false,
+                            loadNextPage = { getTabNextPage(currentTab) },
+                            playVideo = playVideo,
+                            toPlaylistScreen = toPlaylistScreen,
+                            lazyListUniqueId = "channelScreen/${currentTab.name}"
+                        )
                     }
                 }
             }
