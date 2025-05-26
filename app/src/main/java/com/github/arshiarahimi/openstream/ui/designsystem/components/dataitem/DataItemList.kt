@@ -35,7 +35,7 @@ import kotlin.uuid.ExperimentalUuidApi
 @Composable
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
-    lazyListUniqueId: String,
+    lazyListUniqueId: String = "",
     shouldViewChannel: Boolean = true,
     isRefreshing: Boolean,
     scrollToTopTab: Tabs? = null,
@@ -115,7 +115,7 @@ fun DataItemList(
 @Composable
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
-    lazyListUniqueId: String,
+    lazyListUniqueId: String = "",
     shouldViewChannel: Boolean = true,
     scrollToTopTab: Tabs? = null,
     toChannelScreen: (String) -> Unit = {},

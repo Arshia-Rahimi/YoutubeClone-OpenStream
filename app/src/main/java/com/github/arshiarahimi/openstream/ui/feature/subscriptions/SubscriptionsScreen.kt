@@ -64,7 +64,6 @@ fun SubscriptionsScreen(
                 playVideo = playVideo,
                 isRefreshing = isRefreshing,
                 onRefresh = viewModel::updateSubscriptions,
-                lazyListUniqueId = "subscriptionsScreen",
             )
         }
     }

@@ -76,7 +76,6 @@ private fun PlaylistScreen(
                         toChannelScreen = toChannelScreen,
                         playVideo = playVideo,
                         loadNextPage = loadNextPage,
-                        lazyListUniqueId = "playlistScreen",
                     )
                 }
 
@@ -86,7 +85,6 @@ private fun PlaylistScreen(
                         toChannelScreen = toChannelScreen,
                         playVideo = playVideo,
                         loadNextPage = loadNextPage,
-                        lazyListUniqueId = "playlistScreen",
                     )
                 }
             }

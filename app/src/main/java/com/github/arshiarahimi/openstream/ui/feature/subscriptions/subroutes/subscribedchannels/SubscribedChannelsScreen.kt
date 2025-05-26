@@ -35,7 +35,6 @@ fun SubscribedChannelsScreen(
             DataItemList(
                 items = viewModel.subscriptions,
                 toChannelScreen = toChannelScreen,
-                lazyListUniqueId = "subscribedChannelsScreen",
             )
         }
     }

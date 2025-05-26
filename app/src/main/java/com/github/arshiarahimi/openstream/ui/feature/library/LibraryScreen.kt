@@ -90,7 +90,6 @@ fun LibraryScreen(
                 toChannelScreen = toChannelScreen,
                 toPlaylistScreen = toPlaylistScreen,
                 playVideo = playVideo,
-                lazyListUniqueId = "libraryScreen",
             )
         }
     }
