@@ -1,6 +1,5 @@
 package com.github.arshiarahimi.openstream.ui.feature.subscriptions.subroutes.subscribedchannels
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +17,7 @@ fun SubscribedChannelsScreen(
     toChannelScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SubscribedChannelsViewModel>()
-
+    
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -27,15 +26,12 @@ fun SubscribedChannelsScreen(
             )
         }
     ) { ip ->
-        Box(
+        DataItemList(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(ip),
-        ) {
-            DataItemList(
-                items = viewModel.subscriptions,
-                toChannelScreen = toChannelScreen,
-            )
-        }
+            items = viewModel.subscriptions,
+            toChannelScreen = toChannelScreen,
+        )
     }
 }

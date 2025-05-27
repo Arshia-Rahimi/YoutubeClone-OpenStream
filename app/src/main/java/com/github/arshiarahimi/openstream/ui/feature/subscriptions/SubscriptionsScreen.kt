@@ -1,6 +1,5 @@
 package com.github.arshiarahimi.openstream.ui.feature.subscriptions
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -31,7 +30,7 @@ fun SubscriptionsScreen(
 ) {
     val viewModel = koinViewModel<SubscriptionsViewModel>()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-
+    
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -52,19 +51,16 @@ fun SubscriptionsScreen(
             )
         }
     ) { ip ->
-        Box(
+        DataItemList(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(ip)
-        ) {
-            DataItemList(
-                items = viewModel.videos,
-                toChannelScreen = toChannelScreen,
-                toPlaylistScreen = toPlaylistScreen,
-                playVideo = playVideo,
-                isRefreshing = isRefreshing,
-                onRefresh = viewModel::updateSubscriptions,
-            )
-        }
+                .padding(ip),
+            items = viewModel.videos,
+            toChannelScreen = toChannelScreen,
+            toPlaylistScreen = toPlaylistScreen,
+            playVideo = playVideo,
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::updateSubscriptions,
+        )
     }
 }

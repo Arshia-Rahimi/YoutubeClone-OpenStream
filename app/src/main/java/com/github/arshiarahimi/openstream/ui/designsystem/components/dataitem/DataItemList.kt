@@ -35,6 +35,7 @@ import kotlin.uuid.ExperimentalUuidApi
 @Composable
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
+    modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
     shouldViewChannel: Boolean = true,
     isRefreshing: Boolean,
@@ -75,7 +76,7 @@ fun DataItemList(
     PullToRefreshBox(
         onRefresh = onRefresh,
         isRefreshing = isRefreshing,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         LazyColumn(
             state = lazyColumnState,
@@ -115,6 +116,7 @@ fun DataItemList(
 @Composable
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
+    modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
     shouldViewChannel: Boolean = true,
     scrollToTopTab: Tabs? = null,
@@ -152,7 +154,7 @@ fun DataItemList(
 
     LazyColumn(
         state = lazyColumnState,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         verticalArrangement = Arrangement.Top,
     ) {

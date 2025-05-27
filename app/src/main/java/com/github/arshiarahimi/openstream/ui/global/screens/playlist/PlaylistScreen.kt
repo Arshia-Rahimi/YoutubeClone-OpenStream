@@ -1,6 +1,5 @@
 package com.github.arshiarahimi.openstream.ui.global.screens.playlist
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -29,11 +28,11 @@ fun PlaylistScreen(
         key = playlist.hashCode().toString(),
     )
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-
+    
     ObserveForEvents(viewModel.navBack) {
         navigateBack()
     }
-
+    
     PlaylistScreen(
         playlist = viewModel.playlist,
         playVideo = playVideo,
@@ -55,38 +54,38 @@ private fun PlaylistScreen(
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
 ) {
-
+    
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             PlaylistTopBar(playlist, toChannelScreen)
         }
     ) { ip ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(ip)
-        ) {
-            when (playlist) {
-                is PlaylistItem.OfflineFirstPlaylistItem -> {
-                    DataItemList(
-                        onRefresh = onRefresh,
-                        isRefreshing = isRefreshing,
-                        items = items,
-                        toChannelScreen = toChannelScreen,
-                        playVideo = playVideo,
-                        loadNextPage = loadNextPage,
-                    )
-                }
-
-                else -> {
-                    DataItemList(
-                        items = items,
-                        toChannelScreen = toChannelScreen,
-                        playVideo = playVideo,
-                        loadNextPage = loadNextPage,
-                    )
-                }
+        when (playlist) {
+            is PlaylistItem.OfflineFirstPlaylistItem -> {
+                DataItemList(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(ip),
+                    onRefresh = onRefresh,
+                    isRefreshing = isRefreshing,
+                    items = items,
+                    toChannelScreen = toChannelScreen,
+                    playVideo = playVideo,
+                    loadNextPage = loadNextPage,
+                )
+            }
+            
+            else -> {
+                DataItemList(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(ip),
+                    items = items,
+                    toChannelScreen = toChannelScreen,
+                    playVideo = playVideo,
+                    loadNextPage = loadNextPage,
+                )
             }
         }
     }
