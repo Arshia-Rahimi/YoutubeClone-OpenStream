@@ -31,7 +31,6 @@ class OfflineFirstPlaylistRepository(
     private val scope: CoroutineScope,
 ) : PlaylistRepository {
 
-    // todo update playlist count in flow
     override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
         .shareIn(
@@ -67,6 +66,8 @@ class OfflineFirstPlaylistRepository(
                 .toTypedArray())
 
         updatePlaylistThumbnail(playlist.playlistId)
+        updatePlaylistCount(playlist.playlistId)
+        
         emit(Success)
     }.asResult(Dispatchers.IO)
 
@@ -75,7 +76,10 @@ class OfflineFirstPlaylistRepository(
         playlistId: Long,
     ): Flow<Resource<Success>> = flow {
         db.videoDao().delete(*videos.map { it.toEntity() }.toTypedArray())
+
         updatePlaylistThumbnail(playlistId)
+        updatePlaylistCount(playlistId)
+        
         emit(Success)
     }.asResult(Dispatchers.IO)
 
@@ -100,16 +104,18 @@ class OfflineFirstPlaylistRepository(
                             db.playlistDao()
                                 .removeFromPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
                     }
+
                     updatePlaylistThumbnail(playlist.id)
+                    updatePlaylistCount(playlist.id)
                 }
             }.awaitAll()
             emit(Success)
         }
     }.asResult(Dispatchers.IO)
-    
+
     override fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean> =
         db.playlistDao().isInPlaylist(videoId, playlistId)
-    
+
     override fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>?> =
         db.playlistDao().getPlaylistWithVideosFlow(playlist.id)
             .map { it?.videos?.map { it.toDataItem() } }
@@ -144,7 +150,10 @@ class OfflineFirstPlaylistRepository(
                     }
                     .toTypedArray()
             )
+
             updatePlaylistThumbnail(playlist.id)
+            updatePlaylistCount(playlist.id)
+            
             emit(Success)
         }.asResult(Dispatchers.IO)
 
@@ -164,6 +173,7 @@ class OfflineFirstPlaylistRepository(
 
             val id = db.playlistDao().insert(playlist.toEntity()).first()
             updatePlaylistThumbnail(id)
+            updatePlaylistCount(id)
             emit(Success)
         }.asResult(Dispatchers.IO)
 
@@ -183,6 +193,13 @@ class OfflineFirstPlaylistRepository(
             ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOfOrNull { it.thumbnail } ?: return
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
+    }
+
+    private suspend fun updatePlaylistCount(playlistId: Long) {
+        val playlistVideosCount = db.playlistDao().getPlaylistWithVideos(playlistId)
+            ?.videos?.size ?: return
+        
+        db.playlistDao().updatePlaylistCount(playlistId, playlistVideosCount.toLong())
     }
 
 }

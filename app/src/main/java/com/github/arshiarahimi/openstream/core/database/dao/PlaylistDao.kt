@@ -43,6 +43,9 @@ interface PlaylistDao {
     @Query("UPDATE $TABLE_NAME SET thumbnail = :thumbnail WHERE playlistId = :id")
     suspend fun updatePlaylistThumbnail(id: Long, thumbnail: String)
 
+    @Query("UPDATE $TABLE_NAME SET count = :count WHERE playlistId = :id")
+    suspend fun updatePlaylistCount(id: Long, count: Long)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToPlaylist(vararg playlistVideoCrossRef: PlaylistVideoCrossRef)
 
