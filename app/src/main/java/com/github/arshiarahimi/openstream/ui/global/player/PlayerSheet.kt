@@ -1,9 +1,7 @@
 package com.github.arshiarahimi.openstream.ui.global.player
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -153,13 +151,11 @@ private fun PlayerSheet(
                     y = dragState.requireOffset().roundToInt(),
                 )
             }
-            // todo swipe to close sheet is too slow
             .anchoredDraggable(
                 state = dragState,
                 orientation = Orientation.Vertical,
                 flingBehavior = AnchoredDraggableDefaults.flingBehavior(
                     positionalThreshold = { distance: Float -> distance * 0.01f },
-                    animationSpec = spring(Spring.StiffnessLow),
                     state = dragState,
                 )
             ),
