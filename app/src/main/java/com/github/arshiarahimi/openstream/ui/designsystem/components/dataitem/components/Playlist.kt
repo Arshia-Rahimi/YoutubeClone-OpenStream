@@ -147,7 +147,7 @@ fun Playlist(
                 tonalElevation = 4.dp,
             ) {
                 if (item is PlaylistItem.LocalPlaylistItem) {
-                    if (item.id != WATCH_LATER_ID || item.id != LIKED_VIDEOS_ID) {
+                    if (item.id != WATCH_LATER_ID && item.id != LIKED_VIDEOS_ID) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.delete_playlist)) },
                             onClick = {

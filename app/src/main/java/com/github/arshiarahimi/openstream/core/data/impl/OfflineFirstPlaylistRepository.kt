@@ -31,6 +31,7 @@ class OfflineFirstPlaylistRepository(
     private val scope: CoroutineScope,
 ) : PlaylistRepository {
 
+    // todo update playlist count in flow
     override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
         .shareIn(
@@ -47,7 +48,7 @@ class OfflineFirstPlaylistRepository(
 
     override fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>> =
         flow {
-            require(playlist.id != WATCH_LATER_ID || playlist.id != LIKED_VIDEOS_ID)
+            require(playlist.id != WATCH_LATER_ID && playlist.id != LIKED_VIDEOS_ID)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)

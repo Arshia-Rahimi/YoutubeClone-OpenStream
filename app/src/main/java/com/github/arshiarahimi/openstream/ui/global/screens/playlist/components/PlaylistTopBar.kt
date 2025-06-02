@@ -81,7 +81,7 @@ fun PlaylistTopBar(
                 }
                 
                 is PlaylistItem.LocalPlaylistItem -> {
-                    if (playlist.id != WATCH_LATER_ID || playlist.id != LIKED_VIDEOS_ID) {
+                    if (playlist.id != WATCH_LATER_ID && playlist.id != LIKED_VIDEOS_ID) {
                         IconButton(
                             onClick = {
                                 PopupController.openConfirmationDialog(
