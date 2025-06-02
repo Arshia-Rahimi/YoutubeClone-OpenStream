@@ -18,7 +18,7 @@ val databaseModule = module {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 db.execSQL(
-                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name) VALUES ($WATCH_LATER_ID, 'watch later', '', false, 0, '')"
+                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name) VALUES ($WATCH_LATER_ID, 'watch later', NULL, 0, 0, NULL)"
                 )
             }
         }).build()

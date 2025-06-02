@@ -21,7 +21,7 @@ class SubscriptionsViewModel(
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
         .apply {
             channelRepo.subscribedVideos.onEach {
-                val sortedVideos = it.sortedBy { it.uploadDate }
+                val sortedVideos = it.sortedByDescending { it.uploadDate }
                 videos.clear()
                 videos.addAll(sortedVideos)
             }.launchIn(viewModelScope)
