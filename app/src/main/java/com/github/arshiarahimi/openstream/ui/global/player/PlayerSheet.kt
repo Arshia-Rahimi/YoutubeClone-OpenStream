@@ -119,6 +119,8 @@ fun PlayerSheet(
             dispose = { viewModel.dispose() },
             togglePlay = { viewModel.togglePlay() },
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
+            toggleVideoLiked = viewModel::toggleVideoLiked,
+            toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
         )
     }
 }
@@ -138,6 +140,8 @@ private fun PlayerSheet(
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
     togglePlay: () -> Unit,
+    toggleVideoWatchLater: () -> Unit,
+    toggleVideoLiked: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -149,6 +153,7 @@ private fun PlayerSheet(
                     y = dragState.requireOffset().roundToInt(),
                 )
             }
+            // todo swipe to close sheet is too slow
             .anchoredDraggable(
                 state = dragState,
                 orientation = Orientation.Vertical,
@@ -294,10 +299,9 @@ private fun PlayerSheet(
                         scrollState = rememberScrollState(),
                         scope = scope,
                         toChannelScreen = toChannelScreen,
-                        likeVideo = {},
                         shareVideo = {},
-                        addToWatchLater = {},
-                        addToPlaylist = {},
+                        likeVideo = { toggleVideoLiked() },
+                        addToWatchLater = { toggleVideoWatchLater() },
                     )
                 }
             }

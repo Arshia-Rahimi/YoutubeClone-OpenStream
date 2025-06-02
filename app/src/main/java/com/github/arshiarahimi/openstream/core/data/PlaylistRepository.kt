@@ -33,6 +33,8 @@ interface PlaylistRepository {
         playlistsMap: Map<PlaylistItem.LocalOnlyPlaylistItem, Boolean>
     ): Flow<Resource<Success>>
     
+    fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean>
+    
     fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>?>
 
     // youtube playlists

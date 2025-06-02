@@ -7,22 +7,31 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import com.github.arshiarahimi.openstream.app.MainActivity
 import com.github.arshiarahimi.openstream.core.common.util.Resource
+import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.arshiarahimi.openstream.core.media3.PlayingStatus
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
+import com.github.arshiarahimi.openstream.core.shared.LIKED_VIDEOS_ID
+import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
 import com.github.arshiarahimi.openstream.ui.global.player.components.PlayerSheetState
+import com.github.arshiarahimi.openstream.ui.global.player.components.VideoPlaylistsState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
-    private val videoRepository: VideoRepository,
+    private val videoRepo: VideoRepository,
+    private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
 
     sealed interface UiState {
@@ -33,6 +42,18 @@ class PlayerViewModel(
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
+    
+    val playlistsState = _uiState.flatMapLatest {
+        if (it !is UiState.Success || it.data.id == null)
+            return@flatMapLatest flow { emit(VideoPlaylistsState()) }
+        
+        combine(
+            playlistRepo.isInPlaylist(it.data.id, WATCH_LATER_ID),
+            playlistRepo.isInPlaylist(it.data.id, LIKED_VIDEOS_ID)
+        ) { isInWatchLater, isLiked ->
+            VideoPlaylistsState(isInWatchLater, isLiked)
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoPlaylistsState())
 
     val viewPlayer: Player
         get() = player.player
@@ -62,7 +83,7 @@ class PlayerViewModel(
     fun start(videoUrl: String) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
-            videoRepository.fetchVideo(videoUrl)
+        videoRepo.fetchVideo(videoUrl)
                 .onEach { video ->
                     _uiState.value = when (video) {
                         is Resource.Loading -> UiState.Loading
@@ -89,5 +110,30 @@ class PlayerViewModel(
     fun dispose() {
         _showMiniPlayer.value = false
     }
-
+    
+    fun toggleVideoWatchLater() {
+        if (_uiState.value !is UiState.Success) return
+        
+        val videoItem = (_uiState.value as UiState.Success).data.toDataItem()
+        if (playlistsState.value.isInWatchLater) {
+            playlistRepo.removeFromPlaylist(listOf(videoItem), WATCH_LATER_ID)
+                .launchIn(viewModelScope)
+        } else {
+            playlistRepo.addToPlaylist(listOf(videoItem), WATCH_LATER_ID)
+                .launchIn(viewModelScope)
+        }
+    }
+    
+    fun toggleVideoLiked() {
+        if (_uiState.value !is UiState.Success) return
+        
+        val videoItem = (_uiState.value as UiState.Success).data.toDataItem()
+        if (playlistsState.value.isLiked) {
+            playlistRepo.removeFromPlaylist(listOf(videoItem), LIKED_VIDEOS_ID)
+                .launchIn(viewModelScope)
+        } else {
+            playlistRepo.addToPlaylist(listOf(videoItem), LIKED_VIDEOS_ID)
+                .launchIn(viewModelScope)
+        }
+    }
 }

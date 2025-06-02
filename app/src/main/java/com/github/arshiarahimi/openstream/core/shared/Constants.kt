@@ -1,6 +1,7 @@
 package com.github.arshiarahimi.openstream.core.shared
 
 const val WATCH_LATER_ID = 0L
+const val LIKED_VIDEOS_ID = 1L
 
 // mini player config
 const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f

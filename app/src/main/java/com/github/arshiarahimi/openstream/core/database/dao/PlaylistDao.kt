@@ -63,4 +63,15 @@ interface PlaylistDao {
 
     @Query("DELETE FROM playlist_video")
     suspend fun deleteAllVideos()
+    
+    @Query(
+        """
+        SELECT EXISTS(
+            SELECT 1 FROM playlist_video
+            WHERE playlistId = :playlistId AND videoId = :videoId
+        )
+    """
+    )
+    fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean>
+    
 }

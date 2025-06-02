@@ -40,8 +40,10 @@ import com.github.arshiarahimi.openstream.core.common.util.timeAgo
 import com.github.arshiarahimi.openstream.core.common.util.toShortForm
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.components.Channel
+import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -52,13 +54,13 @@ fun SheetBody(
     scrollState: ScrollState,
     scope: CoroutineScope,
     toChannelScreen: (String) -> Unit,
-    likeVideo: (String) -> Unit,
-    shareVideo: (String) -> Unit,
-    addToPlaylist: (String) -> Unit,
-    addToWatchLater: (String) -> Unit,
+    shareVideo: (VideoItem) -> Unit,
+    likeVideo: () -> Unit,
+    addToWatchLater: () -> Unit,
 ) {
     val rowScroll = rememberScrollState()
     var showDescription by remember { mutableStateOf(false) }
+    val videoItem = remember { videoData.toDataItem() }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -161,7 +163,7 @@ fun SheetBody(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { likeVideo(videoData.url) },
+                    onClick = { likeVideo() },
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.like),
@@ -181,7 +183,7 @@ fun SheetBody(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { shareVideo(videoData.url) },
+                    onClick = { shareVideo(videoItem) },
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.share),
@@ -197,7 +199,7 @@ fun SheetBody(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { addToWatchLater(videoData.url) },
+                    onClick = { addToWatchLater() },
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.watchlater),
@@ -213,7 +215,7 @@ fun SheetBody(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { addToPlaylist(videoData.url) },
+                    onClick = { PopupController.openSaveVideoToPlaylistModal(videoItem) },
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.addtoplaylist),
@@ -253,7 +255,6 @@ private fun Preview() {
                     uploadDate = null,
                 ),
                 scrollState = rememberScrollState(),
-                addToPlaylist = {},
                 likeVideo = {},
                 shareVideo = {},
                 addToWatchLater = {},

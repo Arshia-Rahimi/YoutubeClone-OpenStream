@@ -13,6 +13,7 @@ import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
+import com.github.arshiarahimi.openstream.core.shared.LIKED_VIDEOS_ID
 import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +47,7 @@ class OfflineFirstPlaylistRepository(
 
     override fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>> =
         flow {
-            require(playlist.id != WATCH_LATER_ID)
+            require(playlist.id != WATCH_LATER_ID || playlist.id != LIKED_VIDEOS_ID)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
@@ -104,6 +105,9 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }
     }.asResult(Dispatchers.IO)
+    
+    override fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean> =
+        db.playlistDao().isInPlaylist(videoId, playlistId)
     
     override fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>?> =
         db.playlistDao().getPlaylistWithVideosFlow(playlist.id)
