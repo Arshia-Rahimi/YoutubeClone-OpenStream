@@ -53,6 +53,7 @@ fun SheetBody(
     videoData: VideoData,
     scrollState: ScrollState,
     scope: CoroutineScope,
+    videoPlaylistsState: VideoPlaylistsState,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
     likeVideo: () -> Unit,
@@ -166,7 +167,8 @@ fun SheetBody(
                     onClick = { likeVideo() },
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.like),
+                        // todo add filled icons
+                        painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like else R.drawable.like),
                         contentDescription = "like video",
                         tint = Color.White,
                     )
@@ -202,7 +204,8 @@ fun SheetBody(
                     onClick = { addToWatchLater() },
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.watchlater),
+                        // todo
+                        painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watchlater else R.drawable.watchlater),
                         contentDescription = "add to watch later",
                         tint = Color.White,
                     )
@@ -260,6 +263,7 @@ private fun Preview() {
                 addToWatchLater = {},
                 modifier = Modifier,
                 scope = rememberCoroutineScope(),
+                videoPlaylistsState = VideoPlaylistsState(),
             )
         }
     }

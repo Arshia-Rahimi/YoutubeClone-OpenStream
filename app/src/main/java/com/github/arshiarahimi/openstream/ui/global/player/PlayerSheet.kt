@@ -63,6 +63,7 @@ import com.github.arshiarahimi.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREE
 import com.github.arshiarahimi.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
 import com.github.arshiarahimi.openstream.ui.global.player.components.PlayerSheetState
 import com.github.arshiarahimi.openstream.ui.global.player.components.SheetBody
+import com.github.arshiarahimi.openstream.ui.global.player.components.VideoPlaylistsState
 import com.github.arshiarahimi.openstream.ui.global.player.view.PlayerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -82,6 +83,7 @@ fun PlayerSheet(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
+    val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
@@ -119,6 +121,7 @@ fun PlayerSheet(
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
+            videoPlaylistsState = playlistsState,
         )
     }
 }
@@ -134,6 +137,7 @@ private fun PlayerSheet(
     uiState: PlayerViewModel.UiState,
     playerState: PlayerState,
     isSheetExpanded: Boolean,
+    videoPlaylistsState: VideoPlaylistsState,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
@@ -298,6 +302,7 @@ private fun PlayerSheet(
                         shareVideo = {},
                         likeVideo = { toggleVideoLiked() },
                         addToWatchLater = { toggleVideoWatchLater() },
+                        videoPlaylistsState = videoPlaylistsState,
                     )
                 }
             }
