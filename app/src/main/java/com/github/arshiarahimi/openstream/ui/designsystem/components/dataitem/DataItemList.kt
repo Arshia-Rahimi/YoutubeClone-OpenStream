@@ -35,12 +35,12 @@ import kotlin.uuid.ExperimentalUuidApi
 @Composable
 fun DataItemList(
     items: SnapshotStateList<DataItem>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
     shouldViewChannel: Boolean = true,
-    isRefreshing: Boolean,
     scrollToTopTab: Tabs? = null,
-    onRefresh: () -> Unit = {},
     toChannelScreen: (String) -> Unit = {},
     toPlaylistScreen: (PlaylistItem) -> Unit = {},
     playVideo: (String) -> Unit = {},
