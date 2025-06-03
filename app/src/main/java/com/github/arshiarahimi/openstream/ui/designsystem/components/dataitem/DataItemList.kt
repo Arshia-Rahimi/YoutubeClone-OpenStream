@@ -3,7 +3,7 @@ package com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -76,11 +76,11 @@ fun DataItemList(
     PullToRefreshBox(
         onRefresh = onRefresh,
         isRefreshing = isRefreshing,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
     ) {
         LazyColumn(
             state = lazyColumnState,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Top,
         ) {
             items(
@@ -155,7 +155,7 @@ fun DataItemList(
     LazyColumn(
         state = lazyColumnState,
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
     ) {
         items(
