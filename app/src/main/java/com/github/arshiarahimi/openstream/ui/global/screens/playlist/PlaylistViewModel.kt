@@ -10,6 +10,7 @@ import com.github.arshiarahimi.openstream.core.common.util.sendPulse
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
@@ -145,6 +146,15 @@ class PlaylistViewModel(
                         }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    fun removeFromPlaylist(videoItem: VideoItem) {
+        if (playlist !is PlaylistItem.LocalOnlyPlaylistItem) return
+
+        playlistRepo.removeFromPlaylist(
+            listOf(videoItem),
+            (playlist as PlaylistItem.LocalOnlyPlaylistItem).id
+        ).launchIn(viewModelScope)
     }
 
 }

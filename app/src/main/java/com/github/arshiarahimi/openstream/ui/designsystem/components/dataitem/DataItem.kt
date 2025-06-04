@@ -22,6 +22,7 @@ fun DataItem(
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit = {},
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
+    removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
     when (item) {
         is VideoItem -> Video(
@@ -32,6 +33,7 @@ fun DataItem(
             shouldViewChannel = shouldViewChannel,
             saveToWatchLater = addToWatchLater,
             removeFromWatchLater = removeFromWatchLater,
+            removeFromPlaylist = removeFromPlaylist,
         )
 
         is PlaylistItem -> Playlist(

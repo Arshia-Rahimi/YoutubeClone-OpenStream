@@ -23,6 +23,7 @@
     <string name="add_to_watch_later">add to watch later</string>
     <string name="remove_from_watch_later">remove from watch later</string>
     <string name="add_to_playlist">add to playlist</string>
+    <string name="removeFrom_playlist">remove from playlist</string>
     <string name="added_to_watch_later">added to watch later</string>
     <string name="added_to_playlist">added to playlist</string>
     <string name="sort_by_date_added_asc">newest added</string>

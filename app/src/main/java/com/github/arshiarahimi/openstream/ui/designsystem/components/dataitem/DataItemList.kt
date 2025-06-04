@@ -49,6 +49,7 @@ fun DataItemList(
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit = {},
+    removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
     val lazyColumnState = rememberLazyListState()
     val navViewModel = koinViewModel<NavigationViewModel>()
@@ -102,6 +103,7 @@ fun DataItemList(
                     savePlaylist = savePlaylist,
                     removeFromWatchLater = removeFromWatchLater,
                     addToWatchLater = addToWatchLater,
+                    removeFromPlaylist = removeFromPlaylist,
                 )
             }
             item {
@@ -128,6 +130,7 @@ fun DataItemList(
     addToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit = {},
+    removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
     val navViewModel = koinViewModel<NavigationViewModel>()
     val lazyColumnState = rememberLazyListState()
@@ -177,6 +180,7 @@ fun DataItemList(
                 removeFromWatchLater = removeFromWatchLater,
                 addToWatchLater = addToWatchLater,
                 subscribe = subscribe,
+                removeFromPlaylist = removeFromPlaylist,
             )
         }
         item {

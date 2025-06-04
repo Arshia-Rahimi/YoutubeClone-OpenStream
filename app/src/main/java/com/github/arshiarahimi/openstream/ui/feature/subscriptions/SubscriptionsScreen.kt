@@ -61,6 +61,7 @@ fun SubscriptionsScreen(
             playVideo = playVideo,
             isRefreshing = isRefreshing,
             onRefresh = viewModel::updateSubscriptions,
+            addToWatchLater = viewModel::addToWatchLater,
         )
     }
 }

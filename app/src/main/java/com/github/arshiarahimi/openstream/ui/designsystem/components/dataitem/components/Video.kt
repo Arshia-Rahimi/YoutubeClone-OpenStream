@@ -51,6 +51,7 @@ fun Video(
     playVideo: (String) -> Unit,
     saveToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
+    removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
     Row(
@@ -175,6 +176,12 @@ fun Video(
                         PopupController.openSaveVideoToPlaylistModal(item)
                     },
                 )
+                removeFromPlaylist?.let {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.removeFrom_playlist)) },
+                        onClick = { it.invoke(item) },
+                    )
+                }
             }
         }
     }

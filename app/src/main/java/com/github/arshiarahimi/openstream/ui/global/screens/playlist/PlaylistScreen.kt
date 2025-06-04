@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.arshiarahimi.openstream.core.common.compose.ObserveForEvents
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel
@@ -41,6 +42,7 @@ fun PlaylistScreen(
         loadNextPage = viewModel::getNextPage,
         onRefresh = viewModel::syncPlaylist,
         isRefreshing = isRefreshing,
+        removeFromPlaylist = viewModel::removeFromPlaylist,
     )
 }
 
@@ -53,6 +55,7 @@ private fun PlaylistScreen(
     toChannelScreen: (String) -> Unit,
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
+    removeFromPlaylist: (VideoItem) -> Unit,
 ) {
     
     Scaffold(
@@ -75,8 +78,21 @@ private fun PlaylistScreen(
                     loadNextPage = loadNextPage,
                 )
             }
-            
-            else -> {
+
+            is PlaylistItem.LocalOnlyPlaylistItem -> {
+                DataItemList(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(ip),
+                    items = items,
+                    toChannelScreen = toChannelScreen,
+                    playVideo = playVideo,
+                    loadNextPage = loadNextPage,
+                    removeFromPlaylist = removeFromPlaylist,
+                )
+            }
+
+            is PlaylistItem.OnlinePlaylistItem -> {
                 DataItemList(
                     modifier = Modifier
                         .fillMaxSize()
