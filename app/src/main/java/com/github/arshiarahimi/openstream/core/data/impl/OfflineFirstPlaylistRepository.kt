@@ -59,10 +59,16 @@ class OfflineFirstPlaylistRepository(
         requireNotNull(playlist) { "playlist doesn't exist" }
         require(playlist.url == null) { ("playlist isn't local") }
 
-        val ids = db.videoDao().insert(*videos.map { it.toEntity() }.toTypedArray())
-        db.playlistDao()
-            .addToPlaylist(*ids.map { PlaylistVideoCrossRef(playlist.playlistId, it) }
-                .toTypedArray())
+        val (localVideos, onlineVideos) = videos.partition { it.id != null }
+        val onlineVideosIds =
+            db.videoDao().insert(*onlineVideos.map { it.toEntity() }.toTypedArray())
+        val allIds = localVideos.mapNotNull { it.id }.union(onlineVideosIds)
+
+        db.playlistDao().addToPlaylist(
+            *allIds
+                .map { PlaylistVideoCrossRef(playlist.playlistId, it) }
+                .toTypedArray()
+        )
 
         updatePlaylistThumbnail(playlist.playlistId)
         updatePlaylistCount(playlist.playlistId)
