@@ -1,7 +1,7 @@
 package com.github.arshiarahimi.openstream.ui.di
 
 import com.github.arshiarahimi.openstream.app.navigation.NavigationViewModel
-import com.github.arshiarahimi.openstream.ui.feature.downloads.DownloadsViewModel
+import com.github.arshiarahimi.openstream.ui.feature.downloads.QueueViewModel
 import com.github.arshiarahimi.openstream.ui.feature.library.LibraryViewModel
 import com.github.arshiarahimi.openstream.ui.feature.search.SearchViewModel
 import com.github.arshiarahimi.openstream.ui.feature.settings.SettingsViewModel
@@ -21,7 +21,7 @@ val viewModelModule = module {
     // tabs
     viewModelOf(::SubscriptionsViewModel)
     viewModelOf(::SettingsViewModel)
-    viewModelOf(::DownloadsViewModel)
+    viewModelOf(::QueueViewModel)
     viewModelOf(::LibraryViewModel)
     viewModelOf(::SearchViewModel)
 

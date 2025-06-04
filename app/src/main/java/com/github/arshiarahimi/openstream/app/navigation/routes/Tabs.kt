@@ -64,10 +64,10 @@ sealed class Tabs(
     }
 
     @Serializable
-    data object Downloads : Tabs(
-        title = R.string.downloads,
-        icon = R.drawable.downloads,
-        selectedIcon = R.drawable.downlaods_selected,
+    data object Queue : Tabs(
+        title = R.string.queue,
+        icon = R.drawable.queue,
+        selectedIcon = R.drawable.queue_selected,
     )
 
     @Serializable

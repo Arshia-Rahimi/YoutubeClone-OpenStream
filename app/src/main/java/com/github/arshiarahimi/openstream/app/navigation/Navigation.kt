@@ -1,8 +1,5 @@
 package com.github.arshiarahimi.openstream.app.navigation
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,17 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.arshiarahimi.openstream.app.navigation.NavigationViewModel.Companion.tabsList
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.common.compose.getCurrentRouteClassName
-import com.github.arshiarahimi.openstream.ui.feature.downloads.DownloadsScreen
+import com.github.arshiarahimi.openstream.ui.feature.downloads.QueueScreen
 import com.github.arshiarahimi.openstream.ui.feature.library.navigation.LibraryNavHost
 import com.github.arshiarahimi.openstream.ui.feature.search.navigation.SearchNavHost
 import com.github.arshiarahimi.openstream.ui.feature.settings.SettingsScreen
@@ -81,47 +76,32 @@ fun Navigation() {
                 navController = rootNavController,
                 startDestination = Tabs.Subscriptions,
             ) {
-                composableWithTabAnimation<Tabs.Search> {
+                composable<Tabs.Search> {
                     SearchNavHost(
                         navViewModel = navigationViewModel,
                         playerViewModel = playerViewModel,
                     )
                 }
-                composableWithTabAnimation<Tabs.Library> {
+                composable<Tabs.Library> {
                     LibraryNavHost(
                         navViewModel = navigationViewModel,
                         playerViewModel = playerViewModel,
                     )
                 }
-                composableWithTabAnimation<Tabs.Subscriptions> {
+                composable<Tabs.Subscriptions> {
                     SubscriptionsNavHost(
                         navViewModel = navigationViewModel,
                         playerViewModel = playerViewModel,
                     )
                 }
-                composableWithTabAnimation<Tabs.Downloads> {
-                    DownloadsScreen()
+                composable<Tabs.Queue> {
+                    QueueScreen()
                 }
-                composableWithTabAnimation<Tabs.Settings> {
+                composable<Tabs.Settings> {
                     SettingsScreen()
                 }
             }
         }
-    }
-}
-
-inline fun <reified T : Any> NavGraphBuilder.composableWithTabAnimation(
-    noinline content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
-) {
-    composable<T>(
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                animationSpec = tween(300),
-            )
-        },
-    ) {
-        content(it)
     }
 }
 
