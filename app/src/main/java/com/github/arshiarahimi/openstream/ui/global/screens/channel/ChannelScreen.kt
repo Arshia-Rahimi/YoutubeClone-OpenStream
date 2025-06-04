@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.designsystem.components.ErrorPage
 import com.github.arshiarahimi.openstream.ui.designsystem.components.LoadingBox
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
@@ -76,6 +77,7 @@ fun ChannelScreen(
             toPlaylistScreen = toPlaylistScreen,
             getTabNextPage = viewModel::getTabNextPage,
             getTabFirstPage = viewModel::getTabFirstPage,
+            addToWatchLater = viewModel::addToWatchLater,
         )
     }
 }
@@ -91,6 +93,7 @@ private fun ChannelScreen(
     toPlaylistScreen: (PlaylistItem) -> Unit,
     getTabFirstPage: (ChannelTabView) -> Unit,
     getTabNextPage: (ChannelTabView) -> Unit,
+    addToWatchLater: (VideoItem) -> Unit,
 ) {
     val pagerState = rememberPagerState { tabResults.size }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -166,7 +169,8 @@ private fun ChannelScreen(
                             loadNextPage = { getTabNextPage(currentTab) },
                             playVideo = playVideo,
                             toPlaylistScreen = toPlaylistScreen,
-                            lazyListUniqueId = "channelScreen/${currentTab.name}"
+                            lazyListUniqueId = "channelScreen/${currentTab.name}",
+                            addToWatchLater = addToWatchLater,
                         )
                     }
                 }

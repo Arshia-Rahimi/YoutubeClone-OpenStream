@@ -4,6 +4,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.arshiarahimi.openstream.R
+import com.github.arshiarahimi.openstream.core.common.compose.SnackBarController
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.common.util.onFirst
 import com.github.arshiarahimi.openstream.core.common.util.sendPulse
@@ -14,6 +16,7 @@ import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
+import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -144,6 +147,19 @@ class PlaylistViewModel(
                                 else -> Unit
                             }
                         }
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    fun addToWatchLater(video: VideoItem) {
+        playlistRepo.addToPlaylist(listOf(video), DefaultPlaylists.WATCH_LATER_ID)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        SnackBarController.sendEvent(R.string.added_to_watch_later)
+                    }
+
+                    else -> {}
                 }
             }.launchIn(viewModelScope)
     }

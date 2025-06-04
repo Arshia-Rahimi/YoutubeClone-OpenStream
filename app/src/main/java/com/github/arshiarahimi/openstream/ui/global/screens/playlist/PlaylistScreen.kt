@@ -12,6 +12,7 @@ import com.github.arshiarahimi.openstream.core.common.compose.ObserveForEvents
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
+import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import com.github.arshiarahimi.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel
@@ -43,6 +44,7 @@ fun PlaylistScreen(
         onRefresh = viewModel::syncPlaylist,
         isRefreshing = isRefreshing,
         removeFromPlaylist = viewModel::removeFromPlaylist,
+        addToWatchLater = viewModel::addToWatchLater,
     )
 }
 
@@ -56,6 +58,7 @@ private fun PlaylistScreen(
     playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
     removeFromPlaylist: (VideoItem) -> Unit,
+    addToWatchLater: (VideoItem) -> Unit,
 ) {
     
     Scaffold(
@@ -80,16 +83,30 @@ private fun PlaylistScreen(
             }
 
             is PlaylistItem.LocalOnlyPlaylistItem -> {
-                DataItemList(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(ip),
-                    items = items,
-                    toChannelScreen = toChannelScreen,
-                    playVideo = playVideo,
-                    loadNextPage = loadNextPage,
-                    removeFromPlaylist = removeFromPlaylist,
-                )
+                if (playlist.id == DefaultPlaylists.WATCH_LATER_ID) {
+                    DataItemList(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(ip),
+                        items = items,
+                        toChannelScreen = toChannelScreen,
+                        playVideo = playVideo,
+                        loadNextPage = loadNextPage,
+                        removeFromPlaylist = removeFromPlaylist,
+                    )
+                } else {
+                    DataItemList(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(ip),
+                        items = items,
+                        toChannelScreen = toChannelScreen,
+                        playVideo = playVideo,
+                        loadNextPage = loadNextPage,
+                        removeFromPlaylist = removeFromPlaylist,
+                        addToWatchLater = addToWatchLater,
+                    )
+                }
             }
 
             is PlaylistItem.OnlinePlaylistItem -> {
