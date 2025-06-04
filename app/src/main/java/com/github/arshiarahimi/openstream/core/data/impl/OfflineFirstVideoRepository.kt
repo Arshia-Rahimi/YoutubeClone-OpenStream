@@ -21,13 +21,13 @@ class OfflineFirstVideoRepository(
         flow {
             val video = VideoRemoteDataSource.fetchVideo(url)
             val videoId = db.videoDao().get(url)?.videoId
-            if (videoId != null) {
-                video.localConfiguration?.tag =
-                    (video.localConfiguration?.tag as VideoData).copy(id = videoId)
-                db.videoDao()
-                    .upsert((video.localConfiguration?.tag as VideoData).toDataItem().toEntity())
+
+            if (videoId == null) emit(video)
+            else {
+                val videoData = (video.localConfiguration?.tag as VideoData).copy(id = videoId)
+                db.videoDao().upsert(videoData.toDataItem().toEntity())
+                emit(video.buildUpon().setTag(videoData).build())
             }
-            emit(video)
         }.asResult(Dispatchers.IO)
 
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
