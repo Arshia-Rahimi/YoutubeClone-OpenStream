@@ -22,8 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
-import com.github.arshiarahimi.openstream.core.shared.LIKED_VIDEOS_ID
-import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
+import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.DeletePlaylistItem
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.SavePlaylistItem
@@ -81,7 +80,7 @@ fun PlaylistTopBar(
                 }
                 
                 is PlaylistItem.LocalPlaylistItem -> {
-                    if (playlist.id != WATCH_LATER_ID && playlist.id != LIKED_VIDEOS_ID) {
+                    if (playlist.id !in DefaultPlaylists.all) {
                         IconButton(
                             onClick = {
                                 PopupController.openConfirmationDialog(

@@ -12,8 +12,7 @@ import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.arshiarahimi.openstream.core.media3.PlayingStatus
 import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
-import com.github.arshiarahimi.openstream.core.shared.LIKED_VIDEOS_ID
-import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
+import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import com.github.arshiarahimi.openstream.ui.global.player.components.PlayerSheetState
 import com.github.arshiarahimi.openstream.ui.global.player.components.VideoPlaylistsState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,14 +41,14 @@ class PlayerViewModel(
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
-    
+
     val playlistsState = _uiState.flatMapLatest {
         if (it !is UiState.Success || it.data.id == null)
             return@flatMapLatest flow { emit(VideoPlaylistsState()) }
-        
+
         combine(
-            playlistRepo.isInPlaylist(it.data.id, WATCH_LATER_ID),
-            playlistRepo.isInPlaylist(it.data.id, LIKED_VIDEOS_ID)
+            playlistRepo.isInPlaylist(it.data.id, DefaultPlaylists.WATCH_LATER_ID),
+            playlistRepo.isInPlaylist(it.data.id, DefaultPlaylists.LIKED_VIDEOS_ID)
         ) { isInWatchLater, isLiked ->
             VideoPlaylistsState(isInWatchLater, isLiked)
         }
@@ -84,19 +83,19 @@ class PlayerViewModel(
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
         videoRepo.fetchVideo(videoUrl)
-                .onEach { video ->
-                    _uiState.value = when (video) {
-                        is Resource.Loading -> UiState.Loading
-                        is Resource.Error -> UiState.Error(video.message)
-                        is Resource.Success -> {
-                            UiState.Success(video.data.localConfiguration?.tag as VideoData)
-                                .also {
-                                    player.prepareSingleVideo(video.data)
-                                    player.resume()
-                                }
-                        }
+            .onEach { video ->
+                _uiState.value = when (video) {
+                    is Resource.Loading -> UiState.Loading
+                    is Resource.Error -> UiState.Error(video.message)
+                    is Resource.Success -> {
+                        UiState.Success(video.data.localConfiguration?.tag as VideoData)
+                            .also {
+                                player.prepareSingleVideo(video.data)
+                                player.resume()
+                            }
                     }
-                }.launchIn(viewModelScope)
+                }
+            }.launchIn(viewModelScope)
     }
 
     fun togglePlay() {
@@ -110,30 +109,32 @@ class PlayerViewModel(
     fun dispose() {
         _showMiniPlayer.value = false
     }
-    
+
     fun toggleVideoWatchLater() {
         if (_uiState.value !is UiState.Success) return
-        
         val videoItem = (_uiState.value as UiState.Success).data.toDataItem()
-        if (playlistsState.value.isInWatchLater) {
-            playlistRepo.removeFromPlaylist(listOf(videoItem), WATCH_LATER_ID)
-                .launchIn(viewModelScope)
-        } else {
-            playlistRepo.addToPlaylist(listOf(videoItem), WATCH_LATER_ID)
-                .launchIn(viewModelScope)
-        }
+
+        when (playlistsState.value.isInWatchLater) {
+            true -> playlistRepo.removeFromPlaylist(
+                listOf(videoItem),
+                DefaultPlaylists.WATCH_LATER_ID
+            )
+
+            false -> playlistRepo.addToPlaylist(listOf(videoItem), DefaultPlaylists.WATCH_LATER_ID)
+        }.launchIn(viewModelScope)
     }
-    
+
     fun toggleVideoLiked() {
         if (_uiState.value !is UiState.Success) return
-        
         val videoItem = (_uiState.value as UiState.Success).data.toDataItem()
-        if (playlistsState.value.isLiked) {
-            playlistRepo.removeFromPlaylist(listOf(videoItem), LIKED_VIDEOS_ID)
-                .launchIn(viewModelScope)
-        } else {
-            playlistRepo.addToPlaylist(listOf(videoItem), LIKED_VIDEOS_ID)
-                .launchIn(viewModelScope)
-        }
+
+        when (playlistsState.value.isLiked) {
+            true -> playlistRepo.removeFromPlaylist(
+                listOf(videoItem),
+                DefaultPlaylists.LIKED_VIDEOS_ID
+            )
+
+            false -> playlistRepo.addToPlaylist(listOf(videoItem), DefaultPlaylists.LIKED_VIDEOS_ID)
+        }.launchIn(viewModelScope)
     }
 }

@@ -13,8 +13,7 @@ import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.OnlinePlaylistExtractor
 import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
-import com.github.arshiarahimi.openstream.core.shared.LIKED_VIDEOS_ID
-import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
+import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -47,7 +46,7 @@ class OfflineFirstPlaylistRepository(
 
     override fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>> =
         flow {
-            require(playlist.id != WATCH_LATER_ID && playlist.id != LIKED_VIDEOS_ID)
+            require(playlist.id !in DefaultPlaylists.all)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
@@ -58,7 +57,7 @@ class OfflineFirstPlaylistRepository(
     ): Flow<Resource<Success>> = flow {
         val playlist = db.playlistDao().get(playlistId)
         requireNotNull(playlist) { "playlist doesn't exist" }
-        require(playlist.url != null) { ("playlist isn't local") }
+        require(playlist.url == null) { ("playlist isn't local") }
 
         val ids = db.videoDao().insert(*videos.map { it.toEntity() }.toTypedArray())
         db.playlistDao()
@@ -67,7 +66,7 @@ class OfflineFirstPlaylistRepository(
 
         updatePlaylistThumbnail(playlist.playlistId)
         updatePlaylistCount(playlist.playlistId)
-        
+
         emit(Success)
     }.asResult(Dispatchers.IO)
 
@@ -75,11 +74,19 @@ class OfflineFirstPlaylistRepository(
         videos: List<VideoItem>,
         playlistId: Long,
     ): Flow<Resource<Success>> = flow {
-        db.videoDao().delete(*videos.map { it.toEntity() }.toTypedArray())
+        val playlist = db.playlistDao().get(playlistId)
+        requireNotNull(playlist) { "playlist doesn't exist" }
+        require(playlist.url == null) { ("playlist isn't local") }
+
+        db.playlistDao().removeFromPlaylist(
+            *videos.mapNotNull { it.id }
+                .map { PlaylistVideoCrossRef(playlist.playlistId, it) }
+                .toTypedArray()
+        )
 
         updatePlaylistThumbnail(playlistId)
         updatePlaylistCount(playlistId)
-        
+
         emit(Success)
     }.asResult(Dispatchers.IO)
 
@@ -153,7 +160,7 @@ class OfflineFirstPlaylistRepository(
 
             updatePlaylistThumbnail(playlist.id)
             updatePlaylistCount(playlist.id)
-            
+
             emit(Success)
         }.asResult(Dispatchers.IO)
 
@@ -190,7 +197,7 @@ class OfflineFirstPlaylistRepository(
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
         val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideos(playlistId)
-            ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOfOrNull { it.thumbnail } ?: return
+            ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOfOrNull { it.thumbnail }
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }
@@ -198,7 +205,7 @@ class OfflineFirstPlaylistRepository(
     private suspend fun updatePlaylistCount(playlistId: Long) {
         val playlistVideosCount = db.playlistDao().getPlaylistWithVideos(playlistId)
             ?.videos?.size ?: return
-        
+
         db.playlistDao().updatePlaylistCount(playlistId, playlistVideosCount.toLong())
     }
 

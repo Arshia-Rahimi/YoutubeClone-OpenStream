@@ -164,11 +164,10 @@ fun SheetBody(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { likeVideo() },
+                    onClick = likeVideo,
                 ) {
                     Icon(
-                        // todo add filled icons
-                        painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like else R.drawable.like),
+                        painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like_filled else R.drawable.like),
                         contentDescription = "like video",
                         tint = Color.White,
                     )
@@ -201,11 +200,10 @@ fun SheetBody(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = { addToWatchLater() },
+                    onClick = addToWatchLater,
                 ) {
                     Icon(
-                        // todo
-                        painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watchlater else R.drawable.watchlater),
+                        painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
                         contentDescription = "add to watch later",
                         tint = Color.White,
                     )

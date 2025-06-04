@@ -36,8 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
-import com.github.arshiarahimi.openstream.core.shared.LIKED_VIDEOS_ID
-import com.github.arshiarahimi.openstream.core.shared.WATCH_LATER_ID
+import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.DeletePlaylistItem
 
@@ -147,7 +146,7 @@ fun Playlist(
                 tonalElevation = 4.dp,
             ) {
                 if (item is PlaylistItem.LocalPlaylistItem) {
-                    if (item.id != WATCH_LATER_ID && item.id != LIKED_VIDEOS_ID) {
+                    if (item.id !in DefaultPlaylists.all) {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.delete_playlist)) },
                             onClick = {
