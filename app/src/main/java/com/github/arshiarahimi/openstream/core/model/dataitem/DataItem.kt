@@ -15,6 +15,7 @@ enum class StreamType {
     NORMAL, LIVE_STREAM, POST_LIVE_STREAM
 }
 
+@Serializable
 data class VideoItem(
     override val name: String,
     val thumbnail: String?,

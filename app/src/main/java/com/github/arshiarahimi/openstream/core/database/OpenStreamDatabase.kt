@@ -5,11 +5,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.github.arshiarahimi.openstream.core.database.dao.ChannelDao
 import com.github.arshiarahimi.openstream.core.database.dao.PlaylistDao
-import com.github.arshiarahimi.openstream.core.database.dao.QueueItemDao
 import com.github.arshiarahimi.openstream.core.database.dao.VideoDao
 import com.github.arshiarahimi.openstream.core.database.entities.ChannelEntity
 import com.github.arshiarahimi.openstream.core.database.entities.PlaylistEntity
-import com.github.arshiarahimi.openstream.core.database.entities.QueueItemEntity
 import com.github.arshiarahimi.openstream.core.database.entities.VideoEntity
 import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.ChannelVideoCrossRef
 import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.PlaylistVideoCrossRef
@@ -19,7 +17,6 @@ import com.github.arshiarahimi.openstream.core.database.entities.crossrefs.Playl
         ChannelEntity::class,
         PlaylistEntity::class,
         VideoEntity::class,
-        QueueItemEntity::class,
         PlaylistVideoCrossRef::class,
         ChannelVideoCrossRef::class,
     ],
@@ -36,6 +33,4 @@ abstract class OpenStreamDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
 
     abstract fun videoDao(): VideoDao
-
-    abstract fun queueItemDao(): QueueItemDao
 }

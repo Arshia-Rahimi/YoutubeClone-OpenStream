@@ -4,6 +4,7 @@ import com.github.arshiarahimi.openstream.core.data.ChannelRepository
 import com.github.arshiarahimi.openstream.core.data.PlayerConfigRepository
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.PreferencesRepository
+import com.github.arshiarahimi.openstream.core.data.QueueRepository
 import com.github.arshiarahimi.openstream.core.data.SearchRepository
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.data.impl.DataStorePlayerConfigRepository
@@ -11,9 +12,9 @@ import com.github.arshiarahimi.openstream.core.data.impl.DataStorePreferencesRep
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstChannelRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstPlaylistRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OfflineFirstVideoRepository
+import com.github.arshiarahimi.openstream.core.data.impl.OfflineQueueRepository
 import com.github.arshiarahimi.openstream.core.data.impl.OnlineSearchRepository
-import com.github.arshiarahimi.openstream.core.shared.PLAYER_CONFIG_QUALIFIER
-import com.github.arshiarahimi.openstream.core.shared.PREFERENCES_QUALIFIER
+import com.github.arshiarahimi.openstream.core.shared.KoinQualifiers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
@@ -31,15 +32,20 @@ val dataModule = module {
 
     factory {
         DataStorePreferencesRepository(
-            dataStore = get(named(PREFERENCES_QUALIFIER)),
+            dataStore = get(named(KoinQualifiers.PREFERENCES)),
             scope = get()
         )
     } binds arrayOf(PreferencesRepository::class)
 
     factory {
         DataStorePlayerConfigRepository(
-            dataStore = get(named(PLAYER_CONFIG_QUALIFIER)),
+            dataStore = get(named(KoinQualifiers.PLAYER_CONFIG)),
         )
     } binds arrayOf(PlayerConfigRepository::class)
 
+    factory {
+        OfflineQueueRepository(
+            dataStore = get(named(KoinQualifiers.QUEUE)),
+        )
+    } binds arrayOf(QueueRepository::class)
 }

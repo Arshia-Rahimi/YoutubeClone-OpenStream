@@ -5,9 +5,11 @@ const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
 const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 1f
 const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 
-// koin qualifiers
-const val PREFERENCES_QUALIFIER = "preferences"
-const val PLAYER_CONFIG_QUALIFIER = "player_config"
+object KoinQualifiers {
+    const val PREFERENCES = "preferences"
+    const val PLAYER_CONFIG = "player_config"
+    const val QUEUE = "queue"
+}
 
 object DefaultPlaylists {
     val all = arrayOf(WATCH_LATER_ID, LIKED_VIDEOS_ID)
