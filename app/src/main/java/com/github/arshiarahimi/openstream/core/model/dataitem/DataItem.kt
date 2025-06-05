@@ -127,6 +127,7 @@ sealed interface PlaylistItem : DataItem {
         override val key: String
             get() = "playlist-$url-"
 
+        // todo count and thumbnail aren't saved
         override fun toEntity() =
             PlaylistEntity(
                 name = name,

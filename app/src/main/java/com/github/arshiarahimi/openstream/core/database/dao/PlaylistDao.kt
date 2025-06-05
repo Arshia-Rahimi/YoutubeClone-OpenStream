@@ -31,6 +31,9 @@ interface PlaylistDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE url = :url")
     fun get(url: String): PlaylistEntity?
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE playlistId = :playlistId")
+    fun getAsFlow(playlistId: Long): Flow<PlaylistEntity?>
+
     @Insert
     suspend fun insert(vararg playlistEntities: PlaylistEntity): List<Long>
 

@@ -14,6 +14,8 @@ interface PlaylistRepository {
     val playlists: SharedFlow<List<PlaylistItem>>
 
     // local playlists
+    fun getPlaylistItem(playlistId: Long): Flow<PlaylistItem>
+    
     fun createPlaylist(playlistName: String): Flow<Resource<Success>>
 
     fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>>

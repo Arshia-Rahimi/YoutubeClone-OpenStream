@@ -78,6 +78,7 @@ fun ChannelScreen(
             getTabNextPage = viewModel::getTabNextPage,
             getTabFirstPage = viewModel::getTabFirstPage,
             addToWatchLater = viewModel::addToWatchLater,
+            savePlaylist = viewModel::savePlaylist,
         )
     }
 }
@@ -94,6 +95,7 @@ private fun ChannelScreen(
     getTabFirstPage: (ChannelTabView) -> Unit,
     getTabNextPage: (ChannelTabView) -> Unit,
     addToWatchLater: (VideoItem) -> Unit,
+    savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit,
 ) {
     val pagerState = rememberPagerState { tabResults.size }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -171,6 +173,7 @@ private fun ChannelScreen(
                             toPlaylistScreen = toPlaylistScreen,
                             lazyListUniqueId = "channelScreen/${currentTab.name}",
                             addToWatchLater = addToWatchLater,
+                            savePlaylist = savePlaylist,
                         )
                     }
                 }

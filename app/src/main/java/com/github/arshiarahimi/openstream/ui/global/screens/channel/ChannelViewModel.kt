@@ -12,6 +12,7 @@ import com.github.arshiarahimi.openstream.core.data.ChannelRepository
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
 import com.github.arshiarahimi.openstream.core.model.dataitem.ChannelItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.DataItem
+import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.core.model.extractor.ChannelExtractor
 import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
@@ -122,4 +123,14 @@ class ChannelViewModel(
             }.launchIn(viewModelScope)
     }
 
+    fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem) {
+        playlistRepo.savePlaylist(playlist)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> SnackBarController.sendEvent("saved playlist ${playlist.name}")
+                    is Resource.Error -> SnackBarController.sendEvent("failed to save playlist ${playlist.name}")
+                    else -> Unit
+                }
+            }.launchIn(viewModelScope)
+    }
 }

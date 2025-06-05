@@ -30,13 +30,14 @@ fun PlaylistScreen(
         key = playlist.hashCode().toString(),
     )
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val playlist by viewModel.playlist.collectAsStateWithLifecycle()
     
     ObserveForEvents(viewModel.navBack) {
         navigateBack()
     }
     
     PlaylistScreen(
-        playlist = viewModel.playlist,
+        playlist = playlist,
         playVideo = playVideo,
         items = viewModel.videos,
         toChannelScreen = toChannelScreen,

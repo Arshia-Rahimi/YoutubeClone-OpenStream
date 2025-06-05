@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
 
 class OfflineFirstPlaylistRepository(
@@ -39,6 +40,9 @@ class OfflineFirstPlaylistRepository(
         )
 
     // local playlists
+    override fun getPlaylistItem(playlistId: Long) =
+        db.playlistDao().getAsFlow(playlistId).mapNotNull { it?.toDataItem() }
+
     override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
         db.playlistDao().insert(PlaylistEntity(name = playlistName, count = 0L))
         emit(Success)

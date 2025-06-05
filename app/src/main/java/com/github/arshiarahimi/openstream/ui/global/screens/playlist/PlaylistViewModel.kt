@@ -19,24 +19,24 @@ import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
 import com.github.arshiarahimi.openstream.core.shared.DefaultPlaylists
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 
 class PlaylistViewModel(
-    var playlist: PlaylistItem,
+    playlist: PlaylistItem,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
 
-    var playlistObject: PlaylistExtractor? = null
-    private val _navBack = Channel<Unit>()
-    val navBack = _navBack.receiveAsFlow()
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
+    val playlist = if (playlist !is PlaylistItem.LocalPlaylistItem) MutableStateFlow(playlist)
+    else playlistRepo.getPlaylistItem(playlist.id)
+        .onEach { println(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), playlist)
 
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
         .apply {
@@ -45,6 +45,13 @@ class PlaylistViewModel(
                 is PlaylistItem.LocalPlaylistItem -> getLocalPlaylistInitialData()
             }
         }
+
+    var playlistObject: PlaylistExtractor? = null
+    private val _navBack = Channel<Unit>()
+    val navBack = _navBack.receiveAsFlow()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     fun getNextPage() {
         when (playlistObject) {
@@ -73,8 +80,8 @@ class PlaylistViewModel(
     }
 
     fun syncPlaylist() {
-        if (playlist !is PlaylistItem.OfflineFirstPlaylistItem) return
-        playlistRepo.getPlaylist(playlist as PlaylistItem.YoutubePlaylistItem)
+        if (playlist.value !is PlaylistItem.OfflineFirstPlaylistItem) return
+        playlistRepo.getPlaylist(playlist.value as PlaylistItem.YoutubePlaylistItem)
             .onStart { _isRefreshing.value = true }
             .onEach {
                 when (it) {
@@ -104,7 +111,7 @@ class PlaylistViewModel(
                     }
                 }
 
-        playlistRepo.getPlaylist(playlist as PlaylistItem.OnlinePlaylistItem)
+        playlistRepo.getPlaylist(playlist.value as PlaylistItem.OnlinePlaylistItem)
             .onEach {
                 when (it) {
                     is Resource.Success -> {
@@ -128,15 +135,15 @@ class PlaylistViewModel(
                     }
                 }
 
-        playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
+        playlistRepo.getPlaylistSavedVideos(playlist.value as PlaylistItem.LocalPlaylistItem)
             .onEach {
                 videos.clear()
                 if (it == null) _navBack.sendPulse()
                 else videos.addAll(it)
             }.onFirst {
                 // if is offlineFirst and there is no videos saved fetch it
-                if (videos.isEmpty() && playlist is PlaylistItem.OfflineFirstPlaylistItem) {
-                    playlistRepo.getPlaylist(playlist as PlaylistItem.OfflineFirstPlaylistItem)
+                if (videos.isEmpty() && playlist.value is PlaylistItem.OfflineFirstPlaylistItem) {
+                    playlistRepo.getPlaylist(playlist.value as PlaylistItem.OfflineFirstPlaylistItem)
                         .collect {
                             when (it) {
                                 is Resource.Success -> {
@@ -165,11 +172,11 @@ class PlaylistViewModel(
     }
 
     fun removeFromPlaylist(videoItem: VideoItem) {
-        if (playlist !is PlaylistItem.LocalOnlyPlaylistItem) return
+        if (playlist.value !is PlaylistItem.LocalOnlyPlaylistItem) return
 
         playlistRepo.removeFromPlaylist(
             listOf(videoItem),
-            (playlist as PlaylistItem.LocalOnlyPlaylistItem).id
+            (playlist.value as PlaylistItem.LocalOnlyPlaylistItem).id
         ).launchIn(viewModelScope)
     }
 
