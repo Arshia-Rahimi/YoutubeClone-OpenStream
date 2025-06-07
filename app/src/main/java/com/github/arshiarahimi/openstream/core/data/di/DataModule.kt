@@ -46,6 +46,8 @@ val dataModule = module {
     factory {
         OfflineQueueRepository(
             dataStore = get(named(KoinQualifiers.QUEUE)),
+            scope = get(),
         )
     } binds arrayOf(QueueRepository::class)
+    
 }

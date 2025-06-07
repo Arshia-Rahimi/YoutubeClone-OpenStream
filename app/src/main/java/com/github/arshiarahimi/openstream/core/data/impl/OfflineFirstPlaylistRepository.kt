@@ -187,10 +187,8 @@ class OfflineFirstPlaylistRepository(
         flow {
             require(db.playlistDao().index().none { it.url == playlist.url })
             { "This playlist already exist in your library" }
-
-            val id = db.playlistDao().insert(playlist.toEntity()).first()
-            updatePlaylistThumbnail(id)
-            updatePlaylistCount(id)
+            
+            db.playlistDao().insert(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO)
 
