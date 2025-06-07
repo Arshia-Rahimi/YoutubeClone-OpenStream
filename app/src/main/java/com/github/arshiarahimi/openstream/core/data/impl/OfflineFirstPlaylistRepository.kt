@@ -171,10 +171,6 @@ class OfflineFirstPlaylistRepository(
                     }
                     .toTypedArray()
             )
-
-            updatePlaylistThumbnail(playlist.id)
-            updatePlaylistCount(playlist.id)
-
             emit(Success)
         }.asResult(Dispatchers.IO)
 
