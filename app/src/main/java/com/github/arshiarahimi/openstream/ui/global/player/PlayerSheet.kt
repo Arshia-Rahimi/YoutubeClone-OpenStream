@@ -233,7 +233,7 @@ private fun PlayerSheet(
                     }
                     if (uiState is PlayerViewModel.UiState.Success) {
                         IconButton(
-                            onClick = { PlayerAction.TogglePlay.send() },
+                            onClick = PlayerAction.TogglePlay::send,
                             enabled = sheetDragProgress == 0f,
                             modifier = Modifier.alpha(miniPlayerContentAlpha),
                         ) {
