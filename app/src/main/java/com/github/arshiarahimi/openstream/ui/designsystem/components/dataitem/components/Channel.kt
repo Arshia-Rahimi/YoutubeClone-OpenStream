@@ -118,7 +118,7 @@ fun Channel(
                 Button(
                     onClick = { PopupController.openConfirmationDialog(UnsubscribeItem(item)) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFCC2849),
+                        containerColor = Color(0xFF242424),
                     )
                 ) {
                     Text(
@@ -136,13 +136,14 @@ fun Channel(
 private fun Preview() {
     MaterialTheme {
         Channel(
-            item = ChannelItem.OnlineChannelItem(
+            item = ChannelItem.OfflineFirstChannelItem(
                 url = "",
                 name = "channel name",
                 description = "description",
                 isVerified = true,
                 subscriberCount = 45552365L,
                 avatar = "",
+                id = 1,
             ),
             toChannelScreen = {},
             modifier = Modifier,
