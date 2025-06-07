@@ -108,7 +108,7 @@ fun PlayerSheet(
 
     if (showMiniPlayer) {
         PlayerSheet(
-            player = viewModel.viewPlayer,
+            player = viewModel.playerInstance,
             dragState = dragState,
             playerWidth = playerWidth,
             sheetDragProgress = sheetDragProgress,

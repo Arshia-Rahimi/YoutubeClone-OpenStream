@@ -53,10 +53,14 @@ class PlayerViewModel(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoPlaylistsState())
     
-    val viewPlayer = player.player
-
+    val playerInstance = player.player
+    
+    val playerState = player.playerState
+    val currentPosition = player.playerPosition
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
+    
+    
     val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
-
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
     val sheetState = snapshotFlow { dragState.settledValue }
@@ -69,14 +73,18 @@ class PlayerViewModel(
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    val playerState = player.playerState
-    val currentPosition = player.playerPosition
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
-    
     fun processAction(action: PlayerAction) {
         when (action) {
             is PlayerAction.Start -> start(action.url)
             is PlayerAction.TogglePlay -> togglePlay()
+            is PlayerAction.Next -> player.next()
+            is PlayerAction.Previous -> player.previous()
+            is PlayerAction.SeekBackward -> player.seekBackward()
+            is PlayerAction.SeekForward -> player.seekForward()
+            is PlayerAction.SeekTo -> player.seekTo(action.ms)
+            is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed)
+            is PlayerAction.SetRepeatMode -> player.setRepeatMode(action.repeatMode)
+            is PlayerAction.ToggleShuffleMode -> player.toggleShuffleMode()
         }
     }
     
@@ -109,6 +117,7 @@ class PlayerViewModel(
 
     fun dispose() {
         _showMiniPlayer.value = false
+        player.clear()
     }
 
     fun toggleVideoWatchLater() {

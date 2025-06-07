@@ -40,7 +40,7 @@ fun FullScreenPlayerView() {
         modifier = Modifier.fillMaxSize(),
         factory = { context ->
             PlayerView(context).also {
-                it.player = viewModel.viewPlayer
+                it.player = viewModel.playerInstance
                 it.useController = true
                 it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
                 it.setFullscreenButtonState(true)

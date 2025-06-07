@@ -18,11 +18,12 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
     context: Context,
-    playerConfigRepo: PlayerConfigRepository,
+    private val playerConfigRepo: PlayerConfigRepository,
     private val scope: CoroutineScope,
 ) {
     val player: ExoPlayer = ExoPlayer.Builder(context).build()
@@ -86,6 +87,11 @@ class OpenStreamMediaPlayer(
         player.prepare()
     }
     
+    fun clear() {
+        player.pause()
+        player.clearMediaItems()
+    }
+    
     fun resume() = player.play()
     
     fun pause() = player.pause()
@@ -104,16 +110,22 @@ class OpenStreamMediaPlayer(
         if (player.hasPreviousMediaItem()) player.seekToPreviousMediaItem()
     }
     
-    fun setRepeatMode(mode: Int) {
-        player.repeatMode = mode
+    fun setRepeatMode(repeatMode: PlayerRepeatMode) {
+        scope.launch {
+            playerConfigRepo.setRepeatMode(repeatMode)
+        }
     }
     
-    fun setShuffleMode(isShuffleEnabled: Boolean) {
-        player.shuffleModeEnabled = isShuffleEnabled
+    fun toggleShuffleMode() {
+        scope.launch {
+            playerConfigRepo.setShuffleMode(!player.shuffleModeEnabled)
+        }
     }
     
     fun setPlaybackSpeed(speed: Float) {
-        player.playbackParameters.speed = speed
+        scope.launch {
+            player.setPlaybackSpeed(speed)
+        }
     }
     
 }
