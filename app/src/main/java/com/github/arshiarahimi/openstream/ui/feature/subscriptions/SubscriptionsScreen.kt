@@ -92,9 +92,6 @@ fun SubscriptionsScreen(
                     
                     SubscriptionsPage.CHANNELS.ordinal ->
                         DataItemList(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(ip),
                             items = viewModel.subscriptions,
                             toChannelScreen = toChannelScreen,
                         )
