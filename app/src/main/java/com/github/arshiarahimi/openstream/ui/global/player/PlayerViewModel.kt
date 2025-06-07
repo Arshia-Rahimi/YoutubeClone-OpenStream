@@ -4,7 +4,6 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.Player
 import com.github.arshiarahimi.openstream.app.MainActivity
 import com.github.arshiarahimi.openstream.core.common.util.Resource
 import com.github.arshiarahimi.openstream.core.data.PlaylistRepository
@@ -53,17 +52,12 @@ class PlayerViewModel(
             VideoPlaylistsState(isInWatchLater, isLiked)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoPlaylistsState())
-
-    val viewPlayer: Player
-        get() = player.player
+    
+    val viewPlayer = player.player
 
     val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
 
     private val _showMiniPlayer = MutableStateFlow(false)
-        .apply {
-            onEach { if (it) player.init() else player.release() }
-                .launchIn(viewModelScope)
-        }
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
     val sheetState = snapshotFlow { dragState.settledValue }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PlayerSheetState.MINI_PLAYER)

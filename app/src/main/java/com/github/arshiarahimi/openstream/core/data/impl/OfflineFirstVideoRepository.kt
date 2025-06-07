@@ -7,7 +7,7 @@ import com.github.arshiarahimi.openstream.core.common.util.asResult
 import com.github.arshiarahimi.openstream.core.data.VideoRepository
 import com.github.arshiarahimi.openstream.core.database.OpenStreamDatabase
 import com.github.arshiarahimi.openstream.core.extractor.datasource.VideoRemoteDataSource
-import com.github.arshiarahimi.openstream.core.model.extractordata.VideoData
+import com.github.arshiarahimi.openstream.core.shared.getVideoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ class OfflineFirstVideoRepository(
 
             if (videoId == null) emit(video)
             else {
-                val videoData = (video.localConfiguration?.tag as VideoData).copy(id = videoId)
+                val videoData = video.getVideoData().copy(id = videoId)
                 db.videoDao().upsert(videoData.toDataItem().toEntity())
                 emit(video.buildUpon().setTag(videoData).build())
             }

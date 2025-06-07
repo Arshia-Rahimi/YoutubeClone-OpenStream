@@ -10,99 +10,45 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
 import com.github.arshiarahimi.openstream.core.data.PlayerConfigRepository
-import com.github.arshiarahimi.openstream.core.datastore.PlayerConfigModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
 
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
-    private val context: Context,
-    private val scope: CoroutineScope,
+    context: Context,
     playerConfigRepo: PlayerConfigRepository,
+    private val scope: CoroutineScope,
 ) {
-    private val playerConfig = playerConfigRepo.playerConfig
-        .stateIn(
-            scope = scope,
-            initialValue = PlayerConfigModel(),
-            started = SharingStarted.WhileSubscribed(5000),
-        )
-
-    private var _player: ExoPlayer? = null
-    val player: ExoPlayer
-        get() = _player ?: throw Exception("player must be initialized first")
-
+    val player: ExoPlayer = ExoPlayer.Builder(context).build()
+        .apply {
+            playerConfigRepo.playerConfig.onEach {
+                setSeekParameters(SeekParameters(it.seekIncrement, it.seekIncrement))
+                repeatMode = it.playerRepeatMode.ordinal
+                shuffleModeEnabled = it.isShuffleEnabled
+                setPlaybackSpeed(it.playbackSpeed)
+            }.launchIn(scope)
+        }
+    
     private var _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
-
+    
     val playerPosition = playerState.transform { state ->
         if (state.playingStatus == PlayingStatus.PLAYING) {
             while (true) {
-                emit(_player?.currentPosition?.div(1000) ?: 0L)
+                emit(player.currentPosition / 1000)
                 delay(1000L)
             }
         } else {
-            emit(_player?.currentPosition?.div(1000) ?: 0L)
+            emit(player.currentPosition / 1000)
         }
     }
-
-    fun init() {
-        val seekIncrement = 5000L
-        _player = ExoPlayer.Builder(context)
-            .setSeekParameters(SeekParameters(seekIncrement, seekIncrement))
-            .build()
-        _player?.addListener(playerListener)
-    }
-
-    fun release() {
-        _player?.removeListener(playerListener)
-        _player?.release()
-        _playerState.value = PlayerState()
-        _player = null
-    }
-
-    fun prepareSingleVideo(video: MediaItem) {
-        player.pause()
-        player.clearMediaItems()
-        player.setMediaItem(video)
-        player.prepare()
-    }
-
-    fun resume() = player.play()
-
-    fun pause() = player.pause()
-
-    fun seekTo(ms: Long) = player.seekTo(ms)
-
-    fun seekForward() = player.seekForward()
-
-    fun seekBackward() = player.seekBack()
-
-    fun next() {
-        if (player.hasNextMediaItem()) player.seekToNextMediaItem()
-    }
-
-    fun previous() {
-        if (player.hasPreviousMediaItem()) player.seekToPreviousMediaItem()
-    }
-
-    fun setRepeatMode(mode: Int) {
-        player.repeatMode = mode
-    }
-
-    fun setShuffleMode(isShuffleEnabled: Boolean) {
-        player.shuffleModeEnabled = isShuffleEnabled
-    }
-
-    fun setPlaybackSpeed(speed: Float) {
-        player.playbackParameters.speed = speed
-    }
-
+    
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             val status = if (isPlaying) PlayingStatus.PLAYING
@@ -110,22 +56,64 @@ class OpenStreamMediaPlayer(
             else PlayingStatus.PAUSED
             _playerState.getAndUpdate { it.copy(playingStatus = status) }
         }
-
+        
         override fun onPlayerError(error: PlaybackException) {
+            // todo catch and show playerError
             _playerState.getAndUpdate { it.copy(playerError = error.localizedMessage) }
         }
-
+        
         override fun onRepeatModeChanged(repeatMode: Int) {
             _playerState.getAndUpdate { it.copy(repeatMode = repeatMode) }
         }
-
+        
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
             _playerState.getAndUpdate { it.copy(shuffleModeEnabled = shuffleModeEnabled) }
         }
-
+        
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
             _playerState.getAndUpdate { it.copy(playbackSpeed = playbackParameters.speed) }
         }
     }
-
+    
+    init {
+        player.addListener(playerListener)
+    }
+    
+    fun prepareSingleVideo(video: MediaItem) {
+        player.pause()
+        player.clearMediaItems()
+        player.setMediaItem(video)
+        player.prepare()
+    }
+    
+    fun resume() = player.play()
+    
+    fun pause() = player.pause()
+    
+    fun seekTo(ms: Long) = player.seekTo(ms)
+    
+    fun seekForward() = player.seekForward()
+    
+    fun seekBackward() = player.seekBack()
+    
+    fun next() {
+        if (player.hasNextMediaItem()) player.seekToNextMediaItem()
+    }
+    
+    fun previous() {
+        if (player.hasPreviousMediaItem()) player.seekToPreviousMediaItem()
+    }
+    
+    fun setRepeatMode(mode: Int) {
+        player.repeatMode = mode
+    }
+    
+    fun setShuffleMode(isShuffleEnabled: Boolean) {
+        player.shuffleModeEnabled = isShuffleEnabled
+    }
+    
+    fun setPlaybackSpeed(speed: Float) {
+        player.playbackParameters.speed = speed
+    }
+    
 }

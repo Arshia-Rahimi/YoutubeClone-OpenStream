@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class PlayerConfigModel(
     val seekIncrement: Long = 10000L,
     val playerRepeatMode: PlayerRepeatMode = PlayerRepeatMode.OFF,
-    val isPlaylistShuffleEnabled: Boolean = false,
+    val isShuffleEnabled: Boolean = false,
     val playbackSpeed: Float = 1F,
 )
