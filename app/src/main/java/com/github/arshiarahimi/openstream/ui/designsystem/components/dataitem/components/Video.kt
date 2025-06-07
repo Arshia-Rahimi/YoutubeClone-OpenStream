@@ -41,7 +41,6 @@ import com.github.arshiarahimi.openstream.core.common.util.toTime
 import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.player.PlayerAction
-import com.github.arshiarahimi.openstream.ui.global.player.PlayerController
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 
 @Composable
@@ -59,7 +58,7 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { PlayerController.sendAction(PlayerAction.Start(item.url)) }
+            .clickable { PlayerAction.Start(item.url).send() }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
