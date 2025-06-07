@@ -41,6 +41,8 @@ interface PlaylistRepository {
 
     // youtube playlists
     fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<PlaylistExtractor>>
+    
+    fun getPlaylist(url: String): Flow<Resource<PlaylistItem.OnlinePlaylistItem>>
 
     // offline first playlists
     fun getPlaylistFirstPage(playlist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>>

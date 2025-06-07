@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
+import com.github.arshiarahimi.openstream.ui.global.popups.inputdialog.CreatePlaylist
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -50,7 +51,7 @@ fun SaveVideoToPlaylistsModal(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     IconButton(
-                        onClick = viewModel::showCreatePlaylistDialog,
+                        onClick = { PopupController.openInputDialog(CreatePlaylist()) },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.plus),

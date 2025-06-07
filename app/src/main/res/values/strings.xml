@@ -6,9 +6,11 @@
     <string name="search">Search</string>
     <string name="downloads">Downloads</string>
     <string name="queue">Queue</string>
-    <string name="cd_plus_icon">create a new playlist</string>
+    <string name="create_new_playlist">create a new playlist</string>
+    <string name="search_for_playlist">search for playlist</string>
     <string name="dismiss">dismiss</string>
     <string name="create">create</string>
+    <string name="find_playlist">find playlist</string>
     <string name="done">done</string>
     <string name="unsubscribe">unsubscribe</string>
     <string name="subscribe">subscribe</string>

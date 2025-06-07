@@ -21,7 +21,7 @@ import org.koin.core.parameter.parametersOf
 fun ConfirmationDialog(
     type: Confirmation,
 ) {
-    val viewModel = koinViewModel<ConfirmationViewModel>(
+    val viewModel = koinViewModel<ConfirmationDialogViewModel>(
         parameters = { parametersOf(type) },
         key = type.hashCode().toString(),
     )

@@ -9,6 +9,20 @@ import com.github.arshiarahimi.openstream.core.model.extractor.PlaylistExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 object PlaylistRemoteDataSource {
+    fun fetchPlaylist(url: String): PlaylistItem.OnlinePlaylistItem {
+        val extractor = YtService.getPlaylistExtractor(url)
+        extractor.fetchPage()
+        return PlaylistItem.OnlinePlaylistItem(
+            name = extractor.name,
+            thumbnail = extractor.thumbnails.first().url,
+            count = extractor.streamCount,
+            channelName = extractor.uploaderName,
+            channelUrl = extractor.uploaderUrl,
+            isChannelVerified = extractor.isUploaderVerified,
+            url = extractor.url,
+        )
+    }
+    
     fun fetchPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): OnlinePlaylistExtractor {
         val extractor =
             YtService.getPlaylistExtractor(playlist.url) as YoutubePlaylistExtractor

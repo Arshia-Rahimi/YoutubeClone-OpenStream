@@ -149,6 +149,10 @@ class OfflineFirstPlaylistRepository(
             }
             emit(data)
         }.asResult(Dispatchers.IO)
+    
+    override fun getPlaylist(url: String) = flow {
+        emit(PlaylistRemoteDataSource.fetchPlaylist(url))
+    }.asResult(Dispatchers.IO)
     //
 
     // offline first playlists

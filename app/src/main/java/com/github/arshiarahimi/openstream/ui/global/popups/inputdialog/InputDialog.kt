@@ -1,4 +1,4 @@
-package com.github.arshiarahimi.openstream.ui.global.popups.createplaylistdialog
+package com.github.arshiarahimi.openstream.ui.global.popups.inputdialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,14 +8,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,22 +22,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.arshiarahimi.openstream.R
 import com.github.arshiarahimi.openstream.ui.designsystem.components.OpenStreamDialog
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePlaylistDialog() {
-    val viewModel = koinViewModel<CreatePlaylistViewModel>()
-    var newPlaylistTitle by remember { mutableStateOf("") }
+fun InputDialog(
+    type: InputType,
+) {
+    val viewModel = koinViewModel<InputDialogViewModel>(
+        parameters = { parametersOf(type) },
+        key = type.hashCode().toString(),
+    )
+    var newPlaylistTitle by viewModel.input
+    val isLoading by viewModel.isLoading
 
     OpenStreamDialog(
-        dismiss = { PopupController.dismissCreatePlaylistDialog() },
+        dismiss = { PopupController.dismissInputDialog() },
     ) {
         Column(
             modifier = Modifier,
@@ -55,8 +59,8 @@ fun CreatePlaylistDialog() {
                 singleLine = true,
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.createPlaylist(newPlaylistTitle)
-                        PopupController.dismissCreatePlaylistDialog()
+                        viewModel.confirm()
+                        PopupController.dismissInputDialog()
                     }
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -74,16 +78,18 @@ fun CreatePlaylistDialog() {
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
                 Button(
-                    onClick = { PopupController.dismissCreatePlaylistDialog() },
+                    onClick = { PopupController.dismissInputDialog() },
                 ) {
                     Text(stringResource(R.string.dismiss))
                 }
                 Button(
                     onClick = {
-                        viewModel.createPlaylist(newPlaylistTitle)
+                        viewModel.confirm()
                     },
+                    enabled = !isLoading,
                 ) {
-                    Text(stringResource(R.string.create))
+                    if (isLoading) CircularProgressIndicator()
+                    else Text(stringResource(type.confirmButton))
                 }
             }
         }

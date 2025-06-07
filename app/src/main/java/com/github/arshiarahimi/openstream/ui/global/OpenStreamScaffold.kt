@@ -35,7 +35,7 @@ import com.github.arshiarahimi.openstream.ui.global.player.PlayerSheet
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import com.github.arshiarahimi.openstream.ui.global.popups.addtoplaylistmodal.SaveVideoToPlaylistsModal
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.ConfirmationDialog
-import com.github.arshiarahimi.openstream.ui.global.popups.createplaylistdialog.CreatePlaylistDialog
+import com.github.arshiarahimi.openstream.ui.global.popups.inputdialog.InputDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,7 +49,7 @@ fun OpenStreamScaffold(
     val scope = rememberCoroutineScope()
     var navBarOffset by remember { mutableFloatStateOf(0f) }
     val showSaveVideoToPlaylistsModal by PopupController.showSaveVideoToPlaylistsModal.collectAsStateWithLifecycle()
-    val showCreatePlaylistDialog by PopupController.showCreatePlaylistDialog.collectAsStateWithLifecycle()
+    val showCreatePlaylistDialog by PopupController.showInputDialog.collectAsStateWithLifecycle()
     val showUnsubscribeDialog by PopupController.showConfirmationDialog.collectAsStateWithLifecycle()
 
     ObserveForEvents(SnackBarController.events) { event ->
@@ -68,14 +68,10 @@ fun OpenStreamScaffold(
             }
         }
     }
-
-    showSaveVideoToPlaylistsModal?.let {
-        SaveVideoToPlaylistsModal(it)
-    }
-
-    if (showCreatePlaylistDialog) {
-        CreatePlaylistDialog()
-    }
+    
+    showSaveVideoToPlaylistsModal?.let { SaveVideoToPlaylistsModal(it) }
+    
+    showCreatePlaylistDialog?.let { InputDialog(it) }
 
     showUnsubscribeDialog?.let { ConfirmationDialog(it) }
 

@@ -9,8 +9,8 @@ import com.github.arshiarahimi.openstream.ui.feature.subscriptions.Subscriptions
 import com.github.arshiarahimi.openstream.ui.feature.subscriptions.subroutes.subscribedchannels.SubscribedChannelsViewModel
 import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.popups.addtoplaylistmodal.SaveVideoToPlaylistsViewModel
-import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.ConfirmationViewModel
-import com.github.arshiarahimi.openstream.ui.global.popups.createplaylistdialog.CreatePlaylistViewModel
+import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.ConfirmationDialogViewModel
+import com.github.arshiarahimi.openstream.ui.global.popups.inputdialog.InputDialogViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.ChannelViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.PlaylistViewModel
 import org.koin.core.module.dsl.singleOf
@@ -38,6 +38,6 @@ val viewModelModule = module {
 
     // components
     viewModelOf(::SaveVideoToPlaylistsViewModel)
-    viewModelOf(::CreatePlaylistViewModel)
-    viewModelOf(::ConfirmationViewModel)
+    viewModelOf(::InputDialogViewModel)
+    viewModelOf(::ConfirmationDialogViewModel)
 }

@@ -17,7 +17,7 @@ class SaveVideoToPlaylistsViewModel(
     private val video: VideoItem,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-
+    
     val localPlaylists = mutableStateMapOf<PlaylistItem.LocalOnlyPlaylistItem, Boolean>()
         .apply {
             playlistRepo.playlists
@@ -32,24 +32,23 @@ class SaveVideoToPlaylistsViewModel(
                         }
                 }.launchIn(viewModelScope)
         }
-
+    
     fun saveVideoToPlaylists() {
-            playlistRepo.saveVideoToPlaylists(video, localPlaylists)
-                .onEach {
-                    when (it) {
-                        is Resource.Error -> SnackBarController.sendEvent(
-                            it.message ?: "failed to save to playlist"
-                        )
-
-                        is Resource.Success -> {
-                            SnackBarController.sendEvent("saved to playlist")
-                            PopupController.dismissSaveVideoToPlaylistModal()
-                        }
-
-                        else -> Unit
+        playlistRepo.saveVideoToPlaylists(video, localPlaylists)
+            .onEach {
+                when (it) {
+                    is Resource.Error -> SnackBarController.sendEvent(
+                        it.message ?: "failed to save to playlist"
+                    )
+                    
+                    is Resource.Success -> {
+                        SnackBarController.sendEvent("saved to playlist")
+                        PopupController.dismissSaveVideoToPlaylistModal()
                     }
-                }.launchIn(viewModelScope)
+                    
+                    is Resource.Loading -> Unit
+                }
+            }.launchIn(viewModelScope)
     }
-
-    fun showCreatePlaylistDialog() = PopupController.openCreatePlaylistDialog()
+    
 }

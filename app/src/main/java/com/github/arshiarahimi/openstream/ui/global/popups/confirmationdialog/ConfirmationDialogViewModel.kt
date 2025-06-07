@@ -10,7 +10,7 @@ import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class ConfirmationViewModel(
+class ConfirmationDialogViewModel(
     private val type: Confirmation,
     private val channelRepo: ChannelRepository,
     private val playlistRepo: PlaylistRepository,

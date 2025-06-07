@@ -2,6 +2,7 @@ package com.github.arshiarahimi.openstream.ui.global.popups
 
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
 import com.github.arshiarahimi.openstream.ui.global.popups.confirmationdialog.Confirmation
+import com.github.arshiarahimi.openstream.ui.global.popups.inputdialog.InputType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -17,16 +18,16 @@ object PopupController {
     fun dismissSaveVideoToPlaylistModal() {
         _showSaveVideoToPlaylistsModal.value = null
     }
-
-    private val _showCreatePlaylistDialog = MutableStateFlow(false)
-    val showCreatePlaylistDialog = _showCreatePlaylistDialog.asStateFlow()
-
-    fun openCreatePlaylistDialog() {
-        _showCreatePlaylistDialog.value = true
+    
+    private val _showInputDialog = MutableStateFlow<InputType?>(null)
+    val showInputDialog = _showInputDialog.asStateFlow()
+    
+    fun openInputDialog(input: InputType) {
+        _showInputDialog.value = input
     }
-
-    fun dismissCreatePlaylistDialog() {
-        _showCreatePlaylistDialog.value = false
+    
+    fun dismissInputDialog() {
+        _showInputDialog.value = null
     }
 
     private val _showConfirmationDialog: MutableStateFlow<Confirmation?> =
