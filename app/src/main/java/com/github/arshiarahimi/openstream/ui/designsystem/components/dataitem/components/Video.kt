@@ -40,6 +40,8 @@ import com.github.arshiarahimi.openstream.core.common.util.toShortForm
 import com.github.arshiarahimi.openstream.core.common.util.toTime
 import com.github.arshiarahimi.openstream.core.model.dataitem.StreamType
 import com.github.arshiarahimi.openstream.core.model.dataitem.VideoItem
+import com.github.arshiarahimi.openstream.ui.global.player.PlayerAction
+import com.github.arshiarahimi.openstream.ui.global.player.PlayerController
 import com.github.arshiarahimi.openstream.ui.global.popups.PopupController
 
 @Composable
@@ -48,7 +50,6 @@ fun Video(
     item: VideoItem,
     shouldViewChannel: Boolean,
     toChannelScreen: (String) -> Unit,
-    playVideo: (String) -> Unit,
     saveToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromPlaylist: ((VideoItem) -> Unit)? = null,
@@ -58,7 +59,7 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { playVideo(item.url) }
+            .clickable { PlayerController.sendAction(PlayerAction.Start(item.url)) }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
@@ -229,7 +230,6 @@ private fun Preview() {
                 duration = 14533L,
             ),
             toChannelScreen = {},
-            playVideo = {},
             shouldViewChannel = true,
             modifier = Modifier,
         )

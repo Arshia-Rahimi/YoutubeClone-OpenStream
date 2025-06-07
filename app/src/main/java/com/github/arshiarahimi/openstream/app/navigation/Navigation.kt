@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.arshiarahimi.openstream.app.navigation.NavigationViewModel.Companion.tabsList
 import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
+import com.github.arshiarahimi.openstream.core.common.compose.ObserveForEvents
 import com.github.arshiarahimi.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.arshiarahimi.openstream.ui.feature.downloads.QueueScreen
 import com.github.arshiarahimi.openstream.ui.feature.library.navigation.LibraryNavHost
@@ -21,6 +22,7 @@ import com.github.arshiarahimi.openstream.ui.feature.search.navigation.SearchNav
 import com.github.arshiarahimi.openstream.ui.feature.settings.SettingsScreen
 import com.github.arshiarahimi.openstream.ui.feature.subscriptions.navigation.SubscriptionsNavHost
 import com.github.arshiarahimi.openstream.ui.global.OpenStreamScaffold
+import com.github.arshiarahimi.openstream.ui.global.player.PlayerController
 import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.player.view.FullScreenPlayerView
 import org.koin.androidx.compose.koinViewModel
@@ -44,6 +46,10 @@ fun Navigation() {
 
     val currentTab by navigationViewModel.currentTab.collectAsStateWithLifecycle()
     val shouldShowFullscreenPlayer by playerViewModel.shouldShowFullscreenPlayer.collectAsStateWithLifecycle()
+    
+    ObserveForEvents(PlayerController.events) {
+        playerViewModel.processAction(it)
+    }
 
     if (shouldShowFullscreenPlayer) FullScreenPlayerView()
     else {
@@ -79,19 +85,16 @@ fun Navigation() {
                 composable<Tabs.Search> {
                     SearchNavHost(
                         navViewModel = navigationViewModel,
-                        playerViewModel = playerViewModel,
                     )
                 }
                 composable<Tabs.Library> {
                     LibraryNavHost(
                         navViewModel = navigationViewModel,
-                        playerViewModel = playerViewModel,
                     )
                 }
                 composable<Tabs.Subscriptions> {
                     SubscriptionsNavHost(
                         navViewModel = navigationViewModel,
-                        playerViewModel = playerViewModel,
                     )
                 }
                 composable<Tabs.Queue> {

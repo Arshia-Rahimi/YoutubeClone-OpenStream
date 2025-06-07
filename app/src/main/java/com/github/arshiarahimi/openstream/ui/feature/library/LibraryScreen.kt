@@ -35,7 +35,6 @@ import org.koin.androidx.compose.koinViewModel
 fun LibraryScreen(
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
-    playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<LibraryViewModel>()
     val playlists = viewModel.playlists
@@ -97,7 +96,6 @@ fun LibraryScreen(
                 items = playlists,
                 toChannelScreen = toChannelScreen,
                 toPlaylistScreen = toPlaylistScreen,
-                playVideo = playVideo,
             )
         }
     }

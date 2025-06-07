@@ -117,7 +117,6 @@ fun PlayerSheet(
             uiState = uiState,
             playerState = playerState,
             dispose = { viewModel.dispose() },
-            togglePlay = { viewModel.togglePlay() },
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
@@ -141,7 +140,6 @@ private fun PlayerSheet(
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
-    togglePlay: () -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
 ) {
@@ -235,7 +233,7 @@ private fun PlayerSheet(
                     }
                     if (uiState is PlayerViewModel.UiState.Success) {
                         IconButton(
-                            onClick = { togglePlay() },
+                            onClick = { PlayerController.sendAction(PlayerAction.TogglePlay) },
                             enabled = sheetDragProgress == 0f,
                             modifier = Modifier.alpha(miniPlayerContentAlpha),
                         ) {

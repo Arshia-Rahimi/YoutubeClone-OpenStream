@@ -31,7 +31,6 @@ import kotlin.uuid.ExperimentalUuidApi
 fun SearchScreen(
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
-    playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -85,7 +84,6 @@ fun SearchScreen(
                     items = items,
                     toPlaylistScreen = toPlaylistScreen,
                     toChannelScreen = toChannelScreen,
-                    playVideo = playVideo,
                     loadNextPage = viewModel::getNextPage,
                     addToWatchLater = viewModel::addToWatchLater,
                     scrollToTopTab = Tabs.Search,

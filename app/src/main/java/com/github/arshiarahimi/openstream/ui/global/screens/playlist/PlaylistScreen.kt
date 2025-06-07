@@ -21,7 +21,6 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun PlaylistScreen(
     playlist: PlaylistItem,
-    playVideo: (String) -> Unit,
     toChannelScreen: (String) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -38,7 +37,6 @@ fun PlaylistScreen(
     
     PlaylistScreen(
         playlist = playlist,
-        playVideo = playVideo,
         items = viewModel.videos,
         toChannelScreen = toChannelScreen,
         loadNextPage = viewModel::getNextPage,
@@ -56,7 +54,6 @@ private fun PlaylistScreen(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     toChannelScreen: (String) -> Unit,
-    playVideo: (String) -> Unit,
     loadNextPage: () -> Unit,
     removeFromPlaylist: (VideoItem) -> Unit,
     addToWatchLater: (VideoItem) -> Unit,
@@ -78,7 +75,6 @@ private fun PlaylistScreen(
                     isRefreshing = isRefreshing,
                     items = items,
                     toChannelScreen = toChannelScreen,
-                    playVideo = playVideo,
                     loadNextPage = loadNextPage,
                 )
             }
@@ -91,7 +87,6 @@ private fun PlaylistScreen(
                             .padding(ip),
                         items = items,
                         toChannelScreen = toChannelScreen,
-                        playVideo = playVideo,
                         loadNextPage = loadNextPage,
                         removeFromPlaylist = removeFromPlaylist,
                     )
@@ -102,7 +97,6 @@ private fun PlaylistScreen(
                             .padding(ip),
                         items = items,
                         toChannelScreen = toChannelScreen,
-                        playVideo = playVideo,
                         loadNextPage = loadNextPage,
                         removeFromPlaylist = removeFromPlaylist,
                         addToWatchLater = addToWatchLater,
@@ -117,7 +111,6 @@ private fun PlaylistScreen(
                         .padding(ip),
                     items = items,
                     toChannelScreen = toChannelScreen,
-                    playVideo = playVideo,
                     loadNextPage = loadNextPage,
                 )
             }

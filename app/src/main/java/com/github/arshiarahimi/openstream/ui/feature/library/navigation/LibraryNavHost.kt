@@ -13,7 +13,6 @@ import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.common.compose.popToRoot
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.feature.library.LibraryScreen
-import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.PlaylistScreen
 import kotlin.reflect.typeOf
@@ -21,7 +20,6 @@ import kotlin.reflect.typeOf
 @Composable
 fun LibraryNavHost(
     navViewModel: NavigationViewModel,
-    playerViewModel: PlayerViewModel,
 ) {
     val navController = rememberNavController()
 
@@ -44,13 +42,11 @@ fun LibraryNavHost(
             LibraryScreen(
                 toChannelScreen = { navController.navigate(Tabs.Library.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Library.Playlist(it)) },
-                playVideo = playerViewModel::start,
             )
         }
         composable<Tabs.Library.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Library.Channel>().url,
-                playVideo = playerViewModel::start,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Library.Playlist(it)) },
             )
@@ -62,7 +58,6 @@ fun LibraryNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Library.Playlist>().playlist,
-                playVideo = playerViewModel::start,
                 toChannelScreen = { navController.navigate(Tabs.Library.Channel(it)) },
                 navigateBack = { navController.navigateUp() },
             )

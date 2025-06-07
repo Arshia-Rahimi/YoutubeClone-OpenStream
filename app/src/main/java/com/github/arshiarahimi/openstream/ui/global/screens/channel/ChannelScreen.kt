@@ -48,7 +48,6 @@ import kotlin.uuid.ExperimentalUuidApi
 @Composable
 fun ChannelScreen(
     url: String,
-    playVideo: (String) -> Unit,
     navigateBack: () -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
 ) {
@@ -73,7 +72,6 @@ fun ChannelScreen(
             tabResults = tabResults,
             tabItems = viewModel.tabItems,
             navigateBack = navigateBack,
-            playVideo = playVideo,
             toPlaylistScreen = toPlaylistScreen,
             getTabNextPage = viewModel::getTabNextPage,
             getTabFirstPage = viewModel::getTabFirstPage,
@@ -90,7 +88,6 @@ private fun ChannelScreen(
     tabResults: SnapshotStateList<ChannelTabView>,
     tabItems: SnapshotStateList<SnapshotStateList<DataItem>>,
     navigateBack: () -> Unit,
-    playVideo: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
     getTabFirstPage: (ChannelTabView) -> Unit,
     getTabNextPage: (ChannelTabView) -> Unit,
@@ -169,7 +166,6 @@ private fun ChannelScreen(
                             items = tabItems[page],
                             shouldViewChannel = false,
                             loadNextPage = { getTabNextPage(currentTab) },
-                            playVideo = playVideo,
                             toPlaylistScreen = toPlaylistScreen,
                             lazyListUniqueId = "channelScreen/${currentTab.name}",
                             addToWatchLater = addToWatchLater,

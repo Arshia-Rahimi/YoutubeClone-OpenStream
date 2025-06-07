@@ -13,7 +13,6 @@ import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.common.compose.popToRoot
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.feature.subscriptions.SubscriptionsScreen
-import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.PlaylistScreen
 import kotlin.reflect.typeOf
@@ -21,7 +20,6 @@ import kotlin.reflect.typeOf
 @Composable
 fun SubscriptionsNavHost(
     navViewModel: NavigationViewModel,
-    playerViewModel: PlayerViewModel,
 ) {
     val navController = rememberNavController()
 
@@ -44,13 +42,11 @@ fun SubscriptionsNavHost(
             SubscriptionsScreen(
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
-                playVideo = playerViewModel::start,
             )
         }
         composable<Tabs.Subscriptions.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Subscriptions.Channel>().url,
-                playVideo = playerViewModel::start,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
             )
@@ -62,7 +58,6 @@ fun SubscriptionsNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Subscriptions.Playlist>().playlist,
-                playVideo = playerViewModel::start,
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
                 navigateBack = { navController.navigateUp() },
             )

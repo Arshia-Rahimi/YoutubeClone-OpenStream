@@ -13,7 +13,6 @@ import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.common.compose.popToRoot
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.feature.search.SearchScreen
-import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.PlaylistScreen
 import kotlin.reflect.typeOf
@@ -21,7 +20,6 @@ import kotlin.reflect.typeOf
 @Composable
 fun SearchNavHost(
     navViewModel: NavigationViewModel,
-    playerViewModel: PlayerViewModel,
 ) {
     val navController = rememberNavController()
 
@@ -44,7 +42,6 @@ fun SearchNavHost(
             SearchScreen(
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
-                playVideo = playerViewModel::start,
             )
         }
         composable<Tabs.Search.Channel> {
@@ -52,7 +49,6 @@ fun SearchNavHost(
                 url = it.toRoute<Tabs.Search.Channel>().url,
                 navigateBack = { navController.popBackStack() },
                 toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
-                playVideo = playerViewModel::start,
             )
         }
         composable<Tabs.Search.Playlist>(
@@ -63,7 +59,6 @@ fun SearchNavHost(
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
                 toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
-                playVideo = playerViewModel::start,
                 navigateBack = { navController.navigateUp() },
             )
         }

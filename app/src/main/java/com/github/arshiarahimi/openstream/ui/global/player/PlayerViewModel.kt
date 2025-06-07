@@ -78,8 +78,15 @@ class PlayerViewModel(
     val playerState = player.playerState
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
-
-    fun start(videoUrl: String) {
+    
+    fun processAction(action: PlayerAction) {
+        when (action) {
+            is PlayerAction.Start -> start(action.url)
+            is PlayerAction.TogglePlay -> togglePlay()
+        }
+    }
+    
+    private fun start(videoUrl: String) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
         videoRepo.fetchVideo(videoUrl)
@@ -97,8 +104,8 @@ class PlayerViewModel(
                 }
             }.launchIn(viewModelScope)
     }
-
-    fun togglePlay() {
+    
+    private fun togglePlay() {
         when (playerState.value.playingStatus) {
             PlayingStatus.PLAYING -> player.pause()
             PlayingStatus.PAUSED -> player.resume()

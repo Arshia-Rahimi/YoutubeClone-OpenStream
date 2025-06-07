@@ -32,7 +32,6 @@ import org.koin.androidx.compose.koinViewModel
 fun SubscriptionsScreen(
     toPlaylistScreen: (PlaylistItem) -> Unit,
     toChannelScreen: (String) -> Unit,
-    playVideo: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<SubscriptionsViewModel>()
     val scope = rememberCoroutineScope()
@@ -84,7 +83,6 @@ fun SubscriptionsScreen(
                             items = viewModel.videos,
                             toChannelScreen = toChannelScreen,
                             toPlaylistScreen = toPlaylistScreen,
-                            playVideo = playVideo,
                             isRefreshing = isRefreshing,
                             onRefresh = viewModel::updateSubscriptions,
                             addToWatchLater = viewModel::addToWatchLater,
