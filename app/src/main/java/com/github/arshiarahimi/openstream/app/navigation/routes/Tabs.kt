@@ -58,9 +58,6 @@ sealed class Tabs(
 
         @Serializable
         data class Playlist(val playlist: PlaylistItem)
-
-        @Serializable
-        data object SubscribedChannels
     }
 
     @Serializable

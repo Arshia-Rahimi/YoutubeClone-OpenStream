@@ -13,7 +13,6 @@ import com.github.arshiarahimi.openstream.app.navigation.routes.Tabs
 import com.github.arshiarahimi.openstream.core.common.compose.popToRoot
 import com.github.arshiarahimi.openstream.core.model.dataitem.PlaylistItem
 import com.github.arshiarahimi.openstream.ui.feature.subscriptions.SubscriptionsScreen
-import com.github.arshiarahimi.openstream.ui.feature.subscriptions.subroutes.subscribedchannels.SubscribedChannelsScreen
 import com.github.arshiarahimi.openstream.ui.global.player.PlayerViewModel
 import com.github.arshiarahimi.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.arshiarahimi.openstream.ui.global.screens.playlist.PlaylistScreen
@@ -46,7 +45,6 @@ fun SubscriptionsNavHost(
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
                 toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
                 playVideo = playerViewModel::start,
-                toSubscribedChannelsScreen = { navController.navigate(Tabs.Subscriptions.SubscribedChannels) },
             )
         }
         composable<Tabs.Subscriptions.Channel> {
@@ -67,11 +65,6 @@ fun SubscriptionsNavHost(
                 playVideo = playerViewModel::start,
                 toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
                 navigateBack = { navController.navigateUp() },
-            )
-        }
-        composable<Tabs.Subscriptions.SubscribedChannels> {
-            SubscribedChannelsScreen(
-                toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
             )
         }
     }

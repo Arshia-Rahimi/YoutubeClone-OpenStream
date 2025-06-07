@@ -37,4 +37,6 @@
     <string name="confirm_delete_playlist">Delete playlist?</string>
     <string name="confirm_save_playlist">Save playlist?</string>
     <string name="delete">delete</string>
+    <string name="videos">videos</string>
+    <string name="channels">channels</string>
 </resources>
