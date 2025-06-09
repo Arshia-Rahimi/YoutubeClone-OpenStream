@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.MainActivity
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
+import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.PlayingStatus
@@ -30,6 +31,7 @@ class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val videoRepo: VideoRepository,
     private val playlistRepo: PlaylistRepository,
+    private val queueRepo: QueueRepository,
 ) : ViewModel() {
 
     sealed interface UiState {
@@ -72,10 +74,13 @@ class PlayerViewModel(
         ) { showMiniPlayer, sheetState ->
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    
+    private val currentVideo =
+        queueRepo.currentVideo.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     fun processAction(action: PlayerAction) {
         when (action) {
-            is PlayerAction.Start -> start(action.url)
+            is PlayerAction.Start -> start()
             is PlayerAction.TogglePlay -> togglePlay()
             is PlayerAction.Next -> player.next()
             is PlayerAction.Previous -> player.previous()
@@ -88,10 +93,11 @@ class PlayerViewModel(
         }
     }
     
-    private fun start(videoUrl: String) {
+    private fun start() {
+        if (currentVideo.value == null) return
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
-        videoRepo.fetchVideo(videoUrl)
+        videoRepo.fetchVideo(currentVideo.value!!.url)
             .onEach { video ->
                 _uiState.value = when (video) {
                     is Resource.Loading -> UiState.Loading

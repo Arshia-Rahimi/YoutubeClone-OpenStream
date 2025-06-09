@@ -1,10 +1,19 @@
 package com.github.openstream.core.data
 
 import com.github.openstream.core.model.dataitem.VideoItem
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 interface QueueRepository {
-    fun getQueue(): SharedFlow<List<VideoItem>>
-
-    suspend fun updateQueue(videos: List<VideoItem>)
+    val queue: Flow<List<VideoItem>>
+    
+    val currentVideo: SharedFlow<VideoItem?>
+    
+    suspend fun replaceQueue(videos: List<VideoItem>)
+    
+    suspend fun addToQueue(vararg video: VideoItem)
+    
+    suspend fun playNext(newVideo: VideoItem)
+    
+    suspend fun playFrom(index: Int)
 }

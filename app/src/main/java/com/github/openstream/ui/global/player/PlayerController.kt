@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 
 sealed interface PlayerAction {
-    data class Start(val url: String) : PlayerAction
+    data object Start : PlayerAction
     data object TogglePlay : PlayerAction
     data object Next : PlayerAction
     data object Previous : PlayerAction

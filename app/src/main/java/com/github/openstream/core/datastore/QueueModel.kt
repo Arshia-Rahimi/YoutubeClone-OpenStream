@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class QueueModel(
+    val currentVideoIndex: Int? = null,
     val queue: List<VideoItem> = emptyList(),
 )
