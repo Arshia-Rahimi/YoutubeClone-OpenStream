@@ -25,7 +25,12 @@ class OfflineQueueRepository(
             .shareIn(scope, SharingStarted.WhileSubscribed(5000), 1)
     
     override suspend fun replaceQueue(videos: List<VideoItem>) {
-        dataStore.updateData { QueueModel() }
+        dataStore.updateData {
+            QueueModel(
+                currentVideoIndex = 0,
+                queue = videos,
+            )
+        }
     }
     
     override suspend fun addToQueue(vararg video: VideoItem) {
