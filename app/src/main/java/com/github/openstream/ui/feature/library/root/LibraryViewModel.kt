@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.library
+package com.github.openstream.ui.feature.library.root
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel

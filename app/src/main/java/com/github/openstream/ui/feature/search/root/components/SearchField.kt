@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.search.components
+package com.github.openstream.ui.feature.search.root.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

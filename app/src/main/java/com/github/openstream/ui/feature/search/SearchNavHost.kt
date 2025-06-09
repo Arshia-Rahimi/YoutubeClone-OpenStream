@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.library.navigation
+package com.github.openstream.ui.feature.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,13 +12,13 @@ import com.github.openstream.app.navigation.routes.OpenStreamNavTypes
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.ui.feature.library.LibraryScreen
+import com.github.openstream.ui.feature.search.root.SearchScreen
 import com.github.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.screens.playlist.PlaylistScreen
 import kotlin.reflect.typeOf
 
 @Composable
-fun LibraryNavHost(
+fun SearchNavHost(
     navViewModel: NavigationViewModel,
 ) {
     val navController = rememberNavController()
@@ -26,7 +26,7 @@ fun LibraryNavHost(
     LaunchedEffect(Unit) {
         navViewModel.tabClickAction
             .collect {
-                if (it == Tabs.Library) {
+                if (it == Tabs.Search) {
                     if (!navController.isInTabRoot()) {
                         navController.popToRoot()
                     }
@@ -36,29 +36,29 @@ fun LibraryNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = Tabs.Library.Root,
+        startDestination = Tabs.Search.Root,
     ) {
-        composable<Tabs.Library.Root> {
-            LibraryScreen(
-                toChannelScreen = { navController.navigate(Tabs.Library.Channel(it)) },
-                toPlaylistScreen = { navController.navigate(Tabs.Library.Playlist(it)) },
+        composable<Tabs.Search.Root> {
+            SearchScreen(
+                toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
+                toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
             )
         }
-        composable<Tabs.Library.Channel> {
+        composable<Tabs.Search.Channel> {
             ChannelScreen(
-                url = it.toRoute<Tabs.Library.Channel>().url,
+                url = it.toRoute<Tabs.Search.Channel>().url,
                 navigateBack = { navController.popBackStack() },
-                toPlaylistScreen = { navController.navigate(Tabs.Library.Playlist(it)) },
+                toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
             )
         }
-        composable<Tabs.Library.Playlist>(
+        composable<Tabs.Search.Playlist>(
             typeMap = mapOf(
                 typeOf<PlaylistItem>() to OpenStreamNavTypes.playlistType,
             ),
         ) {
             PlaylistScreen(
-                playlist = it.toRoute<Tabs.Library.Playlist>().playlist,
-                toChannelScreen = { navController.navigate(Tabs.Library.Channel(it)) },
+                playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
+                toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
                 navigateBack = { navController.navigateUp() },
             )
         }

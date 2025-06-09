@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.search
+package com.github.openstream.ui.feature.search.root
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf

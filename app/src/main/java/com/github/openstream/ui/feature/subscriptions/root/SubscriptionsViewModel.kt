@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.subscriptions
+package com.github.openstream.ui.feature.subscriptions.root
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList

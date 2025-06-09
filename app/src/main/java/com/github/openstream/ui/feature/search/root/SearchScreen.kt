@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.search
+package com.github.openstream.ui.feature.search.root
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.model.dataitem.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
-import com.github.openstream.ui.feature.search.components.SearchField
+import com.github.openstream.ui.feature.search.root.components.SearchField
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 

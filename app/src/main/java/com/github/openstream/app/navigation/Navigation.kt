@@ -17,10 +17,10 @@ import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.ui.feature.downloads.QueueScreen
-import com.github.openstream.ui.feature.library.navigation.LibraryNavHost
-import com.github.openstream.ui.feature.search.navigation.SearchNavHost
+import com.github.openstream.ui.feature.library.LibraryNavHost
+import com.github.openstream.ui.feature.search.SearchNavHost
 import com.github.openstream.ui.feature.settings.SettingsScreen
-import com.github.openstream.ui.feature.subscriptions.navigation.SubscriptionsNavHost
+import com.github.openstream.ui.feature.subscriptions.SubscriptionsNavHost
 import com.github.openstream.ui.global.OpenStreamScaffold
 import com.github.openstream.ui.global.player.PlayerController
 import com.github.openstream.ui.global.player.PlayerViewModel

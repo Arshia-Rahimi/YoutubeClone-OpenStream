@@ -2,10 +2,10 @@ package com.github.openstream.ui.di
 
 import com.github.openstream.app.navigation.NavigationViewModel
 import com.github.openstream.ui.feature.downloads.QueueViewModel
-import com.github.openstream.ui.feature.library.LibraryViewModel
-import com.github.openstream.ui.feature.search.SearchViewModel
+import com.github.openstream.ui.feature.library.root.LibraryViewModel
+import com.github.openstream.ui.feature.search.root.SearchViewModel
 import com.github.openstream.ui.feature.settings.SettingsViewModel
-import com.github.openstream.ui.feature.subscriptions.SubscriptionsViewModel
+import com.github.openstream.ui.feature.subscriptions.root.SubscriptionsViewModel
 import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.popups.addtoplaylistmodal.SaveVideoToPlaylistsViewModel
 import com.github.openstream.ui.global.popups.confirmationdialog.ConfirmationDialogViewModel

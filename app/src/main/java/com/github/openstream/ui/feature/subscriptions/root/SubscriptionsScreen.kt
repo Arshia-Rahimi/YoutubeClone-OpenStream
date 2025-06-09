@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.subscriptions
+package com.github.openstream.ui.feature.subscriptions.root
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
 import com.github.openstream.core.model.dataitem.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
+import com.github.openstream.ui.feature.subscriptions.root.components.SubscriptionsPage
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

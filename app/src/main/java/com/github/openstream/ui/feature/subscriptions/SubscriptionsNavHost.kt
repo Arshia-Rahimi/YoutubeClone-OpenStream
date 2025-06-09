@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.subscriptions.navigation
+package com.github.openstream.ui.feature.subscriptions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,7 +12,7 @@ import com.github.openstream.app.navigation.routes.OpenStreamNavTypes
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.ui.feature.subscriptions.SubscriptionsScreen
+import com.github.openstream.ui.feature.subscriptions.root.SubscriptionsScreen
 import com.github.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.screens.playlist.PlaylistScreen
 import kotlin.reflect.typeOf

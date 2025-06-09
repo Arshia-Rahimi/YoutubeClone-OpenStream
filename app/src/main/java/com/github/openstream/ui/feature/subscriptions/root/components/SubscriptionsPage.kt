@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.subscriptions
+package com.github.openstream.ui.feature.subscriptions.root.components
 
 import androidx.annotation.StringRes
 import com.github.openstream.R
