@@ -27,8 +27,6 @@ class OpenStreamMediaPlayer(
     context: Context,
     private val playerConfigRepo: PlayerConfigRepository,
 ) {
-    val player: ExoPlayer = ExoPlayer.Builder(context).build()
-    
     private var _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
     
@@ -71,17 +69,18 @@ class OpenStreamMediaPlayer(
     
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
-    init {
-        player.addListener(playerListener)
-        playerConfigRepo.playerConfig.onEach {
-            player.apply {
-                setSeekParameters(SeekParameters(it.seekIncrement, it.seekIncrement))
-                repeatMode = it.playerRepeatMode.ordinal
-                shuffleModeEnabled = it.isShuffleEnabled
-                setPlaybackSpeed(it.playbackSpeed)
-            }
-        }.launchIn(scope)
-    }
+    val player: ExoPlayer = ExoPlayer.Builder(context).build()
+        .apply {
+            addListener(playerListener)
+            playerConfigRepo.playerConfig.onEach {
+                player.apply {
+                    setSeekParameters(SeekParameters(it.seekIncrement, it.seekIncrement))
+                    repeatMode = it.playerRepeatMode.ordinal
+                    shuffleModeEnabled = it.isShuffleEnabled
+                    setPlaybackSpeed(it.playbackSpeed)
+                }
+            }.launchIn(scope)
+        }
     
     fun prepareSingleVideo(video: MediaItem) {
         player.pause()
