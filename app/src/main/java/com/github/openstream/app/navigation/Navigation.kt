@@ -32,7 +32,7 @@ import org.koin.compose.koinInject
 fun Navigation() {
     val navigationViewModel = koinViewModel<NavigationViewModel>()
     val playerViewModel = koinInject<PlayerViewModel>()
-
+    
     val rootNavController = rememberNavController()
         .apply {
             addOnDestinationChangedListener { controller, _, _ ->
@@ -43,66 +43,64 @@ fun Navigation() {
                 }
             }
         }
-
+    
     val currentTab by navigationViewModel.currentTab.collectAsStateWithLifecycle()
     val shouldShowFullscreenPlayer by playerViewModel.shouldShowFullscreenPlayer.collectAsStateWithLifecycle()
     
     ObserveForEvents(PlayerController.events) {
         playerViewModel.processAction(it)
     }
-
+    
     if (shouldShowFullscreenPlayer) FullScreenPlayerView()
-    else {
-        OpenStreamScaffold(
-            currentTab = currentTab,
-            navAction = { destination, isDoubleClick ->
-                when {
-                    currentTab != destination -> {
-                        rootNavController.navigate(destination) {
-                            popUpTo(rootNavController.graph.findStartDestination().id) {
-                                saveState = true
-                                inclusive = false
-                            }
-                            restoreState = true
-                            launchSingleTop = true
+    else OpenStreamScaffold(
+        currentTab = currentTab,
+        navAction = { destination, isDoubleClick ->
+            when {
+                currentTab != destination -> {
+                    rootNavController.navigate(destination) {
+                        popUpTo(rootNavController.graph.findStartDestination().id) {
+                            saveState = true
+                            inclusive = false
                         }
+                        restoreState = true
+                        launchSingleTop = true
                     }
-
-                    isDoubleClick -> navigationViewModel.tabDoubleClick(destination)
-                    else -> navigationViewModel.tabClick(destination)
                 }
-            },
-            toChannelScreen = {},
-        ) { ip ->
-            NavHost(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(ip)
-                    .consumeWindowInsets(ip),
-                navController = rootNavController,
-                startDestination = Tabs.Subscriptions,
-            ) {
-                composable<Tabs.Search> {
-                    SearchNavHost(
-                        navViewModel = navigationViewModel,
-                    )
-                }
-                composable<Tabs.Library> {
-                    LibraryNavHost(
-                        navViewModel = navigationViewModel,
-                    )
-                }
-                composable<Tabs.Subscriptions> {
-                    SubscriptionsNavHost(
-                        navViewModel = navigationViewModel,
-                    )
-                }
-                composable<Tabs.Queue> {
-                    QueueScreen()
-                }
-                composable<Tabs.Settings> {
-                    SettingsScreen()
-                }
+                
+                isDoubleClick -> navigationViewModel.tabDoubleClick(destination)
+                else -> navigationViewModel.tabClick(destination)
+            }
+        },
+        toChannelScreen = {},
+    ) { ip ->
+        NavHost(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(ip)
+                .consumeWindowInsets(ip),
+            navController = rootNavController,
+            startDestination = Tabs.Subscriptions,
+        ) {
+            composable<Tabs.Search> {
+                SearchNavHost(
+                    navViewModel = navigationViewModel,
+                )
+            }
+            composable<Tabs.Library> {
+                LibraryNavHost(
+                    navViewModel = navigationViewModel,
+                )
+            }
+            composable<Tabs.Subscriptions> {
+                SubscriptionsNavHost(
+                    navViewModel = navigationViewModel,
+                )
+            }
+            composable<Tabs.Queue> {
+                QueueScreen()
+            }
+            composable<Tabs.Settings> {
+                SettingsScreen()
             }
         }
     }
