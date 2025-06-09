@@ -18,9 +18,7 @@ sealed interface PlayerAction {
     data object ToggleShuffleMode : PlayerAction
     data class SetPlaybackSpeed(val speed: Float) : PlayerAction
     
-    fun send() {
-        PlayerController.sendAction(this)
-    }
+    fun send() = PlayerController.sendAction(this)
 }
 
 object PlayerController {
