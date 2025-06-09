@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.MainActivity
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.PlayingStatus
+import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.ui.global.player.components.PlayerSheetState
@@ -31,23 +31,20 @@ class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val videoRepo: VideoRepository,
     private val playlistRepo: PlaylistRepository,
-    private val queueRepo: QueueRepository,
 ) : ViewModel() {
-
+    
     sealed interface UiState {
         data object Loading : UiState
         data class Error(val message: String? = null) : UiState
         data class Success(val data: VideoData) : UiState
     }
-
+    
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val uiState = _uiState.asStateFlow()
-
+    
     val playlistsState = _uiState.flatMapLatest {
-        if (it !is UiState.Success || it.data.id == null)
-            return@flatMapLatest flow { emit(VideoPlaylistsState()) }
-
-        combine(
+        if (it !is UiState.Success || it.data.id == null) flow { emit(VideoPlaylistsState()) }
+        else combine(
             playlistRepo.isInPlaylist(it.data.id, DefaultPlaylists.WATCH_LATER_ID),
             playlistRepo.isInPlaylist(it.data.id, DefaultPlaylists.LIKED_VIDEOS_ID)
         ) { isInWatchLater, isLiked ->
@@ -60,7 +57,6 @@ class PlayerViewModel(
     val playerState = player.playerState
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
-    
     
     val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
     private val _showMiniPlayer = MutableStateFlow(false)
@@ -75,29 +71,23 @@ class PlayerViewModel(
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     
-    private val currentVideo =
-        queueRepo.currentVideo.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
-    fun processAction(action: PlayerAction) {
-        when (action) {
-            is PlayerAction.Start -> start()
-            is PlayerAction.TogglePlay -> togglePlay()
-            is PlayerAction.Next -> player.next()
-            is PlayerAction.Previous -> player.previous()
-            is PlayerAction.SeekBackward -> player.seekBackward()
-            is PlayerAction.SeekForward -> player.seekForward()
-            is PlayerAction.SeekTo -> player.seekTo(action.ms)
-            is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed)
-            is PlayerAction.SetRepeatMode -> player.setRepeatMode(action.repeatMode)
-            is PlayerAction.ToggleShuffleMode -> player.toggleShuffleMode()
-        }
+    fun processAction(action: PlayerAction) = when (action) {
+        is PlayerAction.Start -> start(action.video)
+        is PlayerAction.TogglePlay -> togglePlay()
+        is PlayerAction.Next -> player.next()
+        is PlayerAction.Previous -> player.previous()
+        is PlayerAction.SeekBackward -> player.seekBackward()
+        is PlayerAction.SeekForward -> player.seekForward()
+        is PlayerAction.SeekTo -> player.seekTo(action.ms)
+        is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed)
+        is PlayerAction.SetRepeatMode -> player.setRepeatMode(action.repeatMode)
+        is PlayerAction.ToggleShuffleMode -> player.toggleShuffleMode()
     }
     
-    private fun start() {
-        if (currentVideo.value == null) return
+    private fun start(video: VideoItem) {
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
-        videoRepo.fetchVideo(currentVideo.value!!.url)
+        videoRepo.fetchVideo(video.url)
             .onEach { video ->
                 _uiState.value = when (video) {
                     is Resource.Loading -> UiState.Loading
@@ -120,36 +110,36 @@ class PlayerViewModel(
             else -> Unit
         }
     }
-
+    
     fun dispose() {
         _showMiniPlayer.value = false
         player.clear()
     }
-
+    
     fun toggleVideoWatchLater() {
         if (_uiState.value !is UiState.Success) return
         val videoItem = (_uiState.value as UiState.Success).data.toDataItem()
-
+        
         when (playlistsState.value.isInWatchLater) {
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoItem),
                 DefaultPlaylists.WATCH_LATER_ID
             )
-
+            
             false -> playlistRepo.addToPlaylist(listOf(videoItem), DefaultPlaylists.WATCH_LATER_ID)
         }.launchIn(viewModelScope)
     }
-
+    
     fun toggleVideoLiked() {
         if (_uiState.value !is UiState.Success) return
         val videoItem = (_uiState.value as UiState.Success).data.toDataItem()
-
+        
         when (playlistsState.value.isLiked) {
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoItem),
                 DefaultPlaylists.LIKED_VIDEOS_ID
             )
-
+            
             false -> playlistRepo.addToPlaylist(listOf(videoItem), DefaultPlaylists.LIKED_VIDEOS_ID)
         }.launchIn(viewModelScope)
     }

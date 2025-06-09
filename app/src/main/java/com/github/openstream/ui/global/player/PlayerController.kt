@@ -1,12 +1,13 @@
 package com.github.openstream.ui.global.player
 
 import com.github.openstream.core.media3.PlayerRepeatMode
+import com.github.openstream.core.model.dataitem.VideoItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
 
 sealed interface PlayerAction {
-    data object Start : PlayerAction
+    data class Start(val video: VideoItem) : PlayerAction
     data object TogglePlay : PlayerAction
     data object Next : PlayerAction
     data object Previous : PlayerAction

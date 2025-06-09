@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.ui.global.player.PlayerAction
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -30,7 +29,6 @@ class QueueViewModel(
     fun playFrom(videoIndex: Int) {
         viewModelScope.launch {
             queueRepo.playFrom(videoIndex)
-            PlayerAction.Start.send()
         }
     }
 }
