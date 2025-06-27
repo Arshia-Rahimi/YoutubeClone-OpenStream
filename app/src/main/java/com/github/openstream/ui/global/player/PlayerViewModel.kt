@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.MainActivity
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.PlayingStatus
@@ -33,7 +32,7 @@ class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val videoRepo: VideoRepository,
     private val playlistRepo: PlaylistRepository,
-    private val queueRepo: QueueRepository,
+//    private val queueRepo: QueueRepository,
 ) : ViewModel() {
     
     sealed interface UiState {
@@ -73,9 +72,9 @@ class PlayerViewModel(
         ) { showMiniPlayer, sheetState ->
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-    
-    private val currentVideo =
-        queueRepo.currentVideo.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+//    private val currentVideo =
+//        queueRepo.currentVideo.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.video)
@@ -89,10 +88,9 @@ class PlayerViewModel(
         is PlayerAction.SeekForward -> player.seekForward()
         is PlayerAction.ToggleShuffleMode -> player.toggleShuffleMode()
     }
-    
-    private suspend fun fetchVideoAndPlay() {
-        if (currentVideo.value == null) return
-        videoRepo.fetchVideo(currentVideo.value!!.url)
+
+    private suspend fun fetchVideoAndPlay(video: VideoItem) {
+        videoRepo.fetchVideo(video.url)
             .collect { video ->
                 _uiState.value = when (video) {
                     is Resource.Loading -> UiState.Loading
@@ -112,8 +110,8 @@ class PlayerViewModel(
         if (!_showMiniPlayer.value) _showMiniPlayer.value = true
         player.pause()
         viewModelScope.launch {
-            queueRepo.replaceQueue(listOf(video))
-            fetchVideoAndPlay()
+//            queueRepo.replaceQueue(listOf(video))
+            fetchVideoAndPlay(video)
         }
     }
     
