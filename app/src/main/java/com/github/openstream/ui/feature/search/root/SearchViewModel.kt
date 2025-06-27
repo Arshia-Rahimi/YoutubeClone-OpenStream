@@ -1,0 +1,111 @@
+package com.github.openstream.ui.feature.search.root
+
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.github.openstream.R
+import com.github.openstream.core.common.compose.SnackBarController
+import com.github.openstream.core.common.util.Resource
+import com.github.openstream.core.common.util.replaceFirstWith
+import com.github.openstream.core.data.ChannelRepository
+import com.github.openstream.core.data.PlaylistRepository
+import com.github.openstream.core.data.SearchRepository
+import com.github.openstream.core.model.dataitem.ChannelItem
+import com.github.openstream.core.model.dataitem.DataItem
+import com.github.openstream.core.model.dataitem.PlaylistItem
+import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.model.extractordata.SearchResult
+import com.github.openstream.core.shared.DefaultPlaylists
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+
+class SearchViewModel(
+    private val searchRepo: SearchRepository,
+    private val playlistRepo: PlaylistRepository,
+    private val channelRepo: ChannelRepository,
+) : ViewModel() {
+
+    sealed interface UiState {
+        data object Empty : UiState
+        data object Loading : UiState
+        data class Error(val message: String?) : UiState
+        data class Success(val searchResult: SearchResult) : UiState
+    }
+
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Empty)
+    val uiState = _uiState.asStateFlow()
+    val items = mutableStateListOf<DataItem>()
+
+    var searchQuery = mutableStateOf("")
+
+    fun search() {
+            searchRepo.search(searchQuery.value)
+                .onEach {
+                    _uiState.value = when (it) {
+                        is Resource.Loading -> UiState.Loading
+                        is Resource.Error -> UiState.Error(it.message)
+                        is Resource.Success -> {
+                            items.clear()
+                            items.addAll(it.data.items)
+                            UiState.Success(it.data)
+                        }
+                    }
+                }.launchIn(viewModelScope)
+    }
+
+    fun getNextPage() {
+        if (_uiState.value !is UiState.Success) return
+        (_uiState.value as UiState.Success).searchResult.let {
+            searchRepo.getNextPage(it).onEach {
+                when (it) {
+                    is Resource.Success -> items.addAll(it.data)
+                    else -> {}
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun addToWatchLater(video: VideoItem) {
+        playlistRepo.addToPlaylist(listOf(video), DefaultPlaylists.WATCH_LATER_ID)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        SnackBarController.sendEvent(R.string.added_to_watch_later)
+                    }
+
+                    else -> {}
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem) {
+        playlistRepo.savePlaylist(playlist)
+            .onEach {
+                when (it) {
+                    is Resource.Success -> SnackBarController.sendEvent("saved ${playlist.name}")
+                    is Resource.Error -> SnackBarController.sendEvent("failed to save playlist ${playlist.name}")
+                    is Resource.Loading -> Unit
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    fun subscribe(channel: ChannelItem.OnlineChannelItem) {
+        channelRepo.subscribe(channel).onEach { result ->
+            when (result) {
+                is Resource.Loading -> Unit
+                is Resource.Error -> SnackBarController.sendEvent("failed to subscribe to channel")
+                is Resource.Success -> {
+                    if (uiState.value !is UiState.Success) return@onEach
+                    val currentChannel =
+                        (uiState.value as UiState.Success).searchResult.items.first { it == channel } as ChannelItem
+                    items.replaceFirstWith(result.data) {
+                        it is ChannelItem && it.url == currentChannel.url
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+}
