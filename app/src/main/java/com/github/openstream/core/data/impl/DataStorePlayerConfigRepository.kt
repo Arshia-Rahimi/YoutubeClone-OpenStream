@@ -3,22 +3,17 @@ package com.github.openstream.core.data.impl
 import androidx.datastore.core.DataStore
 import com.github.openstream.core.data.PlayerConfigRepository
 import com.github.openstream.core.datastore.PlayerConfigModel
-import com.github.openstream.core.media3.PlayerRepeatMode
 
 class DataStorePlayerConfigRepository(
     private val dataStore: DataStore<PlayerConfigModel>,
 ) : PlayerConfigRepository {
     override val playerConfig = dataStore.data
     
-    override suspend fun setShuffleMode(isShuffleEnabled: Boolean) {
-        dataStore.updateData { it.copy(isShuffleEnabled = isShuffleEnabled) }
-    }
-    
-    override suspend fun setRepeatMode(repeatMode: PlayerRepeatMode) {
-        dataStore.updateData { it.copy(playerRepeatMode = repeatMode) }
-    }
-    
     override suspend fun setPlaybackSpeed(speed: Float) {
         dataStore.updateData { it.copy(playbackSpeed = speed) }
+    }
+
+    override suspend fun setSeekIncrement(seekIncrement: Long) {
+        dataStore.updateData { it.copy(seekIncrement = seekIncrement) }
     }
 }

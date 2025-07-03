@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Tabs(
-    @StringRes val title: Int,
-    @DrawableRes val icon: Int,
-    @DrawableRes val selectedIcon: Int,
+    @param:StringRes val title: Int,
+    @param:DrawableRes val icon: Int,
+    @param:DrawableRes val selectedIcon: Int,
 ) {
     @Serializable
     data object Search : Tabs(
@@ -59,13 +59,6 @@ sealed class Tabs(
         @Serializable
         data class Playlist(val playlist: PlaylistItem)
     }
-
-    @Serializable
-    data object Queue : Tabs(
-        title = R.string.queue,
-        icon = R.drawable.queue,
-        selectedIcon = R.drawable.queue_selected,
-    )
 
     @Serializable
     data object Settings : Tabs(

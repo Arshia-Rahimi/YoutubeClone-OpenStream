@@ -75,8 +75,6 @@ class OpenStreamMediaPlayer(
             playerConfigRepo.playerConfig.onEach {
                 player.apply {
                     setSeekParameters(SeekParameters(it.seekIncrement, it.seekIncrement))
-                    repeatMode = it.playerRepeatMode.ordinal
-                    shuffleModeEnabled = it.isShuffleEnabled
                     setPlaybackSpeed(it.playbackSpeed)
                 }
             }.launchIn(scope)
@@ -110,18 +108,6 @@ class OpenStreamMediaPlayer(
     
     fun previous() {
         if (player.hasPreviousMediaItem()) player.seekToPreviousMediaItem()
-    }
-    
-    fun setRepeatMode(repeatMode: PlayerRepeatMode) {
-        scope.launch {
-            playerConfigRepo.setRepeatMode(repeatMode)
-        }
-    }
-    
-    fun toggleShuffleMode() {
-        scope.launch {
-            playerConfigRepo.setShuffleMode(!player.shuffleModeEnabled)
-        }
     }
     
     fun setPlaybackSpeed(speed: Float) {

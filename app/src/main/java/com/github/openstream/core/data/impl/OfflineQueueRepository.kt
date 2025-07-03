@@ -1,63 +1,72 @@
 package com.github.openstream.core.data.impl
 
 import androidx.datastore.core.DataStore
+import com.github.openstream.core.common.util.next
 import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.datastore.QueueModel
 import com.github.openstream.core.model.dataitem.VideoItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 
 class OfflineQueueRepository(
     private val dataStore: DataStore<QueueModel>,
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
 ) : QueueRepository {
-    private val queueModel = dataStore.data
+    
+    // todo implement shuffle
+    override val queueModel = dataStore.data
         .shareIn(scope, SharingStarted.WhileSubscribed(5000), 1)
     
-    override val queue = queueModel.map { it.queue }
-        .shareIn(scope, SharingStarted.WhileSubscribed(5000), 1)
+    override fun replaceQueue(videos: List<VideoItem>, startIndex: Int) {
+        scope.launch { dataStore.updateData { QueueModel(startIndex, videos) } }
+    }
     
-    override val currentVideo =
-        queue.map { queue -> queueModel.first().currentVideoIndex?.let { queue[it] } }
-            .shareIn(scope, SharingStarted.WhileSubscribed(5000), 1)
-    
-    override suspend fun replaceQueue(videos: List<VideoItem>) {
-        dataStore.updateData {
-            QueueModel(
-                currentVideoIndex = 0,
-                queue = videos,
-            )
+    override fun addToQueue(vararg video: VideoItem) {
+        scope.launch {
+            dataStore.updateData {
+                val currentQueueModel = queueModel.first()
+                currentQueueModel.copy(queue = currentQueueModel.queue + video)
+            }
         }
     }
     
-    override suspend fun addToQueue(vararg video: VideoItem) {
-        dataStore.updateData {
-            val currentQueueModel = queueModel.first()
-            val newQueue = currentQueueModel.queue.toMutableList().apply { addAll(video) }
-            currentQueueModel.copy(queue = newQueue)
+    override fun playNext(newVideo: VideoItem) {
+        scope.launch {
+            dataStore.updateData {
+                val currentQueueModel = queueModel.first()
+                val newQueue = currentQueueModel.queue.toMutableList()
+                newQueue.add(currentQueueModel.currentVideoIndex?.plus(1) ?: 0, newVideo)
+                currentQueueModel.copy(queue = newQueue)
+            }
         }
     }
     
-    override suspend fun playNext(newVideo: VideoItem) {
-        dataStore.updateData {
-            val currentQueueModel = queueModel.first()
-            
-            val newQueue = currentQueueModel.queue.toMutableList()
-                .apply {
-                    val newVideoIndex = currentQueueModel.currentVideoIndex?.let { it + 1 } ?: 0
-                    add(newVideoIndex, newVideo)
-                }
-            
-            currentQueueModel.copy(queue = newQueue)
+    override fun playFrom(index: Int) {
+        scope.launch {
+            dataStore.updateData {
+                queueModel.first().copy(index)
+            }
         }
     }
-    
-    override suspend fun playFrom(index: Int) {
-        dataStore.updateData {
-            queueModel.first().copy(index)
+
+    override fun toggleShuffleMode() {
+        scope.launch { 
+            dataStore.updateData { 
+                val currentQueueModel = queueModel.first()
+                currentQueueModel.copy(isShuffleEnabled = !currentQueueModel.isShuffleEnabled)
+            }
+        }
+    }
+
+    override fun toggleRepeatModel() {
+        scope.launch { 
+            dataStore.updateData { 
+                val currentQueueModel = queueModel.first()
+                currentQueueModel.copy(repeatMode = currentQueueModel.repeatMode.next())
+            }
         }
     }
 }

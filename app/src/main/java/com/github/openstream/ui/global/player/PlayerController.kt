@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 
 sealed interface PlayerAction {
-    data class Start(val video: VideoItem) : PlayerAction
+    data class Start(val videos: List<VideoItem>, val index: Int = 0) : PlayerAction
     data class SeekTo(val ms: Long) : PlayerAction
     data class SetRepeatMode(val repeatMode: PlayerRepeatMode) : PlayerAction
     data class SetPlaybackSpeed(val speed: Float) : PlayerAction

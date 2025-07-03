@@ -17,18 +17,21 @@ import kotlinx.coroutines.supervisorScope
 class OfflineFirstVideoRepository(
     private val db: OpenStreamDatabase,
 ) : VideoRepository {
-    override fun fetchVideo(url: String): Flow<Resource<MediaItem>> =
-        flow {
+    override suspend fun fetchVideo(url: String): Resource<MediaItem> {
+        try {
             val video = VideoRemoteDataSource.fetchVideo(url)
             val videoId = db.videoDao().get(url)?.videoId
 
-            if (videoId == null) emit(video)
+            if (videoId == null) return Resource.Success(video)
             else {
                 val videoData = video.getVideoData().copy(id = videoId)
                 db.videoDao().upsert(videoData.toDataItem().toEntity())
-                emit(video.buildUpon().setTag(videoData).build())
+                return Resource.Success(video.buildUpon().setTag(videoData).build())
             }
-        }.asResult(Dispatchers.IO)
+        } catch (e: Exception) {
+            return Resource.Error(e.message)
+        }
+    }
 
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
         flow {

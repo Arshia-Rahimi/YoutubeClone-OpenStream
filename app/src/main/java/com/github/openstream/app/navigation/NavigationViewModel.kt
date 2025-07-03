@@ -3,7 +3,6 @@ package com.github.openstream.app.navigation
 import androidx.lifecycle.ViewModel
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.app.navigation.routes.Tabs.Library
-import com.github.openstream.app.navigation.routes.Tabs.Queue
 import com.github.openstream.app.navigation.routes.Tabs.Search
 import com.github.openstream.app.navigation.routes.Tabs.Settings
 import com.github.openstream.app.navigation.routes.Tabs.Subscriptions
@@ -18,7 +17,6 @@ class NavigationViewModel : ViewModel() {
             Search,
             Library,
             Subscriptions,
-            Queue,
             Settings,
         )
     }

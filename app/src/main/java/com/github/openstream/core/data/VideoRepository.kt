@@ -6,7 +6,7 @@ import com.github.openstream.core.common.util.Success
 import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
-    fun fetchVideo(url: String): Flow<Resource<MediaItem>>
+    suspend fun fetchVideo(url: String): Resource<MediaItem>
 
     fun deleteLocalVideoHistory(): Flow<Resource<Success>>
 }
