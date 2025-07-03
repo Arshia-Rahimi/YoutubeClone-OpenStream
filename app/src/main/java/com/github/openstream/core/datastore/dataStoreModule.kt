@@ -22,14 +22,14 @@ val dataStoreModule = module {
         )
     }
 
-    single<DataStore<PlayerConfigModel>>(named(KoinQualifiers.PLAYER_CONFIG)) {
+    single<DataStore<PlayerDataModel>>(named(KoinQualifiers.PLAYER_CONFIG)) {
         DataStoreFactory.create(
             serializer = GenericDataStoreSerializer(
-                defaultValue = PlayerConfigModel(),
-                serializer = PlayerConfigModel.serializer(),
+                defaultValue = PlayerDataModel(),
+                serializer = PlayerDataModel.serializer(),
             ),
             produceFile = { androidContext().dataStoreFile("${KoinQualifiers.PLAYER_CONFIG}.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { PlayerConfigModel() },
+            corruptionHandler = ReplaceFileCorruptionHandler { PlayerDataModel() },
         )
     }
 

@@ -1,21 +1,9 @@
 package com.github.openstream.core.data
 
 import com.github.openstream.core.datastore.QueueModel
-import com.github.openstream.core.model.dataitem.VideoItem
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 interface QueueRepository {
-    val queueModel: SharedFlow<QueueModel>
+    val queueModel: StateFlow<QueueModel>
     
-    fun replaceQueue(videos: List<VideoItem>, startIndex: Int)
-    
-    fun addToQueue(vararg video: VideoItem)
-    
-    fun playNext(newVideo: VideoItem)
-    
-    fun playFrom(index: Int)
-    
-    fun toggleShuffleMode()
-    
-    fun toggleRepeatModel()
 }

@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.supervisorScope
 
-class OfflineFirstVideoRepository(
+class OnlineVideoRepository(
     private val db: OpenStreamDatabase,
 ) : VideoRepository {
     override suspend fun fetchVideo(url: String): Resource<MediaItem> {

@@ -1,19 +1,19 @@
 package com.github.openstream.core.data.di
 
 import com.github.openstream.core.data.ChannelRepository
-import com.github.openstream.core.data.PlayerConfigRepository
+import com.github.openstream.core.data.PlayerDataRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.PreferencesRepository
 import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.data.impl.DataStorePlayerConfigRepository
 import com.github.openstream.core.data.impl.DataStorePreferencesRepository
 import com.github.openstream.core.data.impl.OfflineFirstChannelRepository
 import com.github.openstream.core.data.impl.OfflineFirstPlaylistRepository
-import com.github.openstream.core.data.impl.OfflineFirstVideoRepository
+import com.github.openstream.core.data.impl.OfflinePlayerDataRepository
 import com.github.openstream.core.data.impl.OfflineQueueRepository
 import com.github.openstream.core.data.impl.OnlineSearchRepository
+import com.github.openstream.core.data.impl.OnlineVideoRepository
 import com.github.openstream.core.shared.KoinQualifiers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -26,7 +26,7 @@ val dataModule = module {
     
     factoryOf(::OfflineFirstChannelRepository) { bind<ChannelRepository>() }
 
-    factoryOf(::OfflineFirstVideoRepository) { bind<VideoRepository>() }
+    factoryOf(::OnlineVideoRepository) { bind<VideoRepository>() }
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
 
@@ -38,10 +38,10 @@ val dataModule = module {
     } binds arrayOf(PreferencesRepository::class)
 
     factory {
-        DataStorePlayerConfigRepository(
+        OfflinePlayerDataRepository(
             dataStore = get(named(KoinQualifiers.PLAYER_CONFIG)),
         )
-    } binds arrayOf(PlayerConfigRepository::class)
+    } binds arrayOf(PlayerDataRepository::class)
 
     factory {
         OfflineQueueRepository(

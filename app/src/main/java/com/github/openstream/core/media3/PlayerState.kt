@@ -1,6 +1,9 @@
 package com.github.openstream.core.media3
 
+import androidx.media3.common.MediaItem
+
 data class PlayerState(
+    val currentMediaItem: MediaItem? = null,
     val playingStatus: PlayingStatus = PlayingStatus.PAUSED,
     val playerError: String? = null,
     val repeatMode: Int = PlayerRepeatMode.OFF.ordinal,

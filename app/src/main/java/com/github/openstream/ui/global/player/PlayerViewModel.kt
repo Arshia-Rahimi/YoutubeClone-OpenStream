@@ -6,11 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.MainActivity
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.data.QueueRepository
-import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.datastore.QueueModel
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
-import com.github.openstream.core.media3.PlayingStatus
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.ui.global.player.components.PlayerSheetState
@@ -28,19 +24,8 @@ import kotlinx.coroutines.flow.stateIn
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
-    private val videoRepo: VideoRepository,
     private val playlistRepo: PlaylistRepository,
-    private val queueRepo: QueueRepository,
 ) : ViewModel() {
-    
-    sealed interface UiState {
-        data object Loading : UiState
-        data class Error(val message: String? = null) : UiState
-        data object Success : UiState
-    }
-    
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
     
     val playlistsState = _uiState.flatMapLatest {
         if (it !is UiState.Success || it.data.id == null) flow { emit(VideoPlaylistsState()) }
@@ -71,8 +56,6 @@ class PlayerViewModel(
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     
-    private val queueModel = queueRepo.queueModel
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), QueueModel())
     
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.videos, action.index)
@@ -82,26 +65,13 @@ class PlayerViewModel(
         is PlayerAction.Previous -> player.previous()
         is PlayerAction.SeekBackward -> player.seekBackward()
         is PlayerAction.SeekForward -> player.seekForward()
-        is PlayerAction.ToggleShuffleMode -> queueRepo.toggleShuffleMode()
-        is PlayerAction.SetRepeatMode -> queueRepo.toggleRepeatModel()
-        is PlayerAction.TogglePlay ->
-            when (playerState.value.playingStatus) {
-                PlayingStatus.PLAYING -> player.pause()
-                PlayingStatus.PAUSED -> player.resume()
-                else -> Unit
-            }
+        is PlayerAction.ToggleShuffleMode -> player.toggleShuffleMode()
+        is PlayerAction.ChangeRepeatMode -> player.changeRepeatMode()
+        is PlayerAction.TogglePlay -> player.toggleIsPlaying()
     }
 
     private fun start(videos: List<VideoItem>, index: Int) {
         _showMiniPlayer.value = true
-        player.clear()
-        queueRepo.replaceQueue(videos, index)
-        player.resume()
-    }
-
-    fun dispose() {
-        _showMiniPlayer.value = false
-        player.clear()
     }
     
     fun toggleVideoWatchLater() {
