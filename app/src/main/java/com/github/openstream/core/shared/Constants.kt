@@ -8,7 +8,6 @@ const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
 object KoinQualifiers {
     const val PREFERENCES = "preferences"
     const val PLAYER_CONFIG = "player_config"
-    const val QUEUE = "queue"
 }
 
 object DefaultPlaylists {

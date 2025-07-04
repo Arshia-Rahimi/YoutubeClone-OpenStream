@@ -56,8 +56,9 @@ import androidx.media3.common.Player
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.media3.PlayerState
-import com.github.openstream.core.media3.PlayingStatus
+import com.github.openstream.core.datastore.PlayerDataModel
+import com.github.openstream.core.media3.OpenStreamMediaPlayer
+import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
 import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
@@ -80,10 +81,12 @@ fun PlayerSheet(
 ) {
     val viewModel = koinViewModel<PlayerViewModel>()
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
+    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
@@ -114,13 +117,15 @@ fun PlayerSheet(
             sheetDragProgress = sheetDragProgress,
             toChannelScreen = toChannelScreen,
             currentPosition = currentPosition,
-            uiState = uiState,
+            fetchingState = fetchingState,
             playerState = playerState,
+            isPlaying = isPlaying,
             dispose = { viewModel.dispose() },
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoPlaylistsState = playlistsState,
+            currentVideo = currentVideo,
         )
     }
 }
@@ -133,9 +138,11 @@ private fun PlayerSheet(
     playerWidth: Float,
     sheetDragProgress: Float,
     currentPosition: Long,
-    uiState: PlayerViewModel.UiState,
-    playerState: PlayerState,
+    fetchingState: OpenStreamMediaPlayer.FetchingState,
+    playerState: PlayerDataModel,
+    isPlaying: Boolean,
     isSheetExpanded: Boolean,
+    currentVideo: VideoData?,
     videoPlaylistsState: VideoPlaylistsState,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
@@ -195,8 +202,8 @@ private fun PlayerSheet(
                         .background(MaterialTheme.colorScheme.tertiaryContainer),
                     contentAlignment = Alignment.Center,
                 ) {
-                    when (uiState) {
-                        is PlayerViewModel.UiState.Success -> {
+                    when (fetchingState) {
+                        is OpenStreamMediaPlayer.FetchingState.Success -> {
                             PlayerView(
                                 player = player,
                                 modifier = Modifier.matchParentSize(),
@@ -204,8 +211,8 @@ private fun PlayerSheet(
                             )
                         }
 
-                        is PlayerViewModel.UiState.Loading -> CircularProgressIndicator()
-                        is PlayerViewModel.UiState.Error -> {}
+                        is OpenStreamMediaPlayer.FetchingState.Loading -> CircularProgressIndicator()
+                        is OpenStreamMediaPlayer.FetchingState.Error -> {}
                     }
                 }
 
@@ -217,28 +224,28 @@ private fun PlayerSheet(
                             .alpha(miniPlayerContentAlpha),
                         verticalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        if (uiState is PlayerViewModel.UiState.Success) {
+                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                             Text(
-                                text = uiState.data.name,
+                                text = currentVideo?.name ?: "",
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                             )
                             Text(
-                                text = currentPosition.toTime() + " / " + uiState.data.length.toTime(),
+                                text = currentPosition.toTime() + " / " + currentVideo?.length?.toTime(),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 maxLines = 1,
                             )
                         }
                     }
-                    if (uiState is PlayerViewModel.UiState.Success) {
+                    if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                         IconButton(
                             onClick = PlayerAction.TogglePlay::send,
                             enabled = sheetDragProgress == 0f,
                             modifier = Modifier.alpha(miniPlayerContentAlpha),
                         ) {
                             Icon(
-                                painter = painterResource(if (playerState.playingStatus == PlayingStatus.PAUSED) R.drawable.play else R.drawable.pause),
+                                painter = painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
                                 contentDescription = "toggle play",
                                 tint = Color.White,
                             )
@@ -266,8 +273,8 @@ private fun PlayerSheet(
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         )
         LaunchedEffect(currentPosition) {
-            progress = if (uiState is PlayerViewModel.UiState.Success) {
-                currentPosition.toFloat() / uiState.data.length.toFloat()
+            progress = if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
+                currentPosition.toFloat() / (currentVideo?.length?.toFloat() ?: 1f)
             } else 0f
         }
 
@@ -290,18 +297,20 @@ private fun PlayerSheet(
                     .alpha(sheetDragProgress)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                if (uiState is PlayerViewModel.UiState.Success) {
-                    SheetBody(
-                        modifier = Modifier.matchParentSize(),
-                        videoData = uiState.data,
-                        scrollState = rememberScrollState(),
-                        scope = scope,
-                        toChannelScreen = toChannelScreen,
-                        shareVideo = {},
-                        likeVideo = { toggleVideoLiked() },
-                        addToWatchLater = { toggleVideoWatchLater() },
-                        videoPlaylistsState = videoPlaylistsState,
-                    )
+                if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
+                    currentVideo?.let {
+                        SheetBody(
+                            modifier = Modifier.matchParentSize(),
+                            videoData = it,
+                            scrollState = rememberScrollState(),
+                            scope = scope,
+                            toChannelScreen = toChannelScreen,
+                            shareVideo = {},
+                            likeVideo = { toggleVideoLiked() },
+                            addToWatchLater = { toggleVideoWatchLater() },
+                            videoPlaylistsState = videoPlaylistsState,
+                        )
+                    }
                 }
             }
         }

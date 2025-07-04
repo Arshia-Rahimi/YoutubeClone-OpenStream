@@ -56,7 +56,7 @@ class OpenStreamMediaPlayer(
     }
 
     val playerState = playerDataRepo.playerData
-    val currentVideo = playerState.map { it.currentVideoIndex?.let { index -> it.queue[index] } }
+    private val currentVideo = playerState.map { it.currentVideoIndex?.let { index -> it.queue[index] } }
         .onEach { currentVideo ->
             if (currentVideo == null) return@onEach
             if (currentVideoData.value?.toDataItem() == currentVideo) return@onEach

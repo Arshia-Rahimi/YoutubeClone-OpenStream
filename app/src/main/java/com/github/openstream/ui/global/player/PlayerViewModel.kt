@@ -27,9 +27,15 @@ class PlayerViewModel(
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
 
+    val playerInstance = player.player
+    
     val fetchingState = player.fetchingState
-    val currentVideo = player.currentVideo
-
+    val currentVideo = player.currentVideoData
+    val playerState = player.playerState
+    val isPlaying = player.isPlaying
+    val currentPosition = player.playerPosition
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
+    
     val playlistsState = fetchingState.flatMapLatest {
         val currentVideoId = currentVideo.value?.id
         if (it !is OpenStreamMediaPlayer.FetchingState.Success || currentVideoId == null)
@@ -41,12 +47,6 @@ class PlayerViewModel(
             VideoPlaylistsState(isInWatchLater, isLiked)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoPlaylistsState())
-
-    val playerInstance = player.player
-
-    val playerState = player.playerState
-    val currentPosition = player.playerPosition
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
 
     val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
     private val _showMiniPlayer = MutableStateFlow(false)
@@ -88,12 +88,12 @@ class PlayerViewModel(
 
         when (playlistsState.value.isInWatchLater) {
             true -> playlistRepo.removeFromPlaylist(
-                listOf(currentVideo),
+                listOf(currentVideo.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
             )
 
             false -> playlistRepo.addToPlaylist(
-                listOf(currentVideo),
+                listOf(currentVideo.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
             )
         }.launchIn(viewModelScope)
@@ -105,12 +105,12 @@ class PlayerViewModel(
 
         when (playlistsState.value.isLiked) {
             true -> playlistRepo.removeFromPlaylist(
-                listOf(currentVideo),
+                listOf(currentVideo.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
             )
 
             false -> playlistRepo.addToPlaylist(
-                listOf(currentVideo),
+                listOf(currentVideo.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
             )
         }.launchIn(viewModelScope)

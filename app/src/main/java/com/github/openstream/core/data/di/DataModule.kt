@@ -4,14 +4,12 @@ import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlayerDataRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.PreferencesRepository
-import com.github.openstream.core.data.QueueRepository
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.data.impl.DataStorePreferencesRepository
 import com.github.openstream.core.data.impl.OfflineFirstChannelRepository
 import com.github.openstream.core.data.impl.OfflineFirstPlaylistRepository
 import com.github.openstream.core.data.impl.OfflinePlayerDataRepository
-import com.github.openstream.core.data.impl.OfflineQueueRepository
 import com.github.openstream.core.data.impl.OnlineSearchRepository
 import com.github.openstream.core.data.impl.OnlineVideoRepository
 import com.github.openstream.core.shared.KoinQualifiers
@@ -33,21 +31,15 @@ val dataModule = module {
     factory {
         DataStorePreferencesRepository(
             dataStore = get(named(KoinQualifiers.PREFERENCES)),
-            scope = get()
+            scope = get(),
         )
     } binds arrayOf(PreferencesRepository::class)
 
     factory {
         OfflinePlayerDataRepository(
             dataStore = get(named(KoinQualifiers.PLAYER_CONFIG)),
+            scope = get(),
         )
     } binds arrayOf(PlayerDataRepository::class)
 
-    factory {
-        OfflineQueueRepository(
-            dataStore = get(named(KoinQualifiers.QUEUE)),
-            scope = get(),
-        )
-    } binds arrayOf(QueueRepository::class)
-    
 }
