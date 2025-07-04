@@ -80,7 +80,10 @@ class PlayerViewModel(
         player.start(videos, index)
     }
     
-    fun dispose() = player.clear()
+    fun dispose() {
+        player.clear()
+        _showMiniPlayer.value = false
+    }
 
     fun toggleVideoWatchLater() {
         if (fetchingState.value != OpenStreamMediaPlayer.FetchingState.Success) return

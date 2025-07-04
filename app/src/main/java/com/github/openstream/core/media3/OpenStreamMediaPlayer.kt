@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.core.qualifier.qualifier
 
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
@@ -55,16 +56,20 @@ class OpenStreamMediaPlayer(
         data class Error(val message: String? = null) : FetchingState
     }
 
-    val playerState = playerDataRepo.playerData
-    private val currentVideo = playerState.map { it.currentVideoIndex?.let { index -> it.queue[index] } }
-        .onEach { currentVideo ->
+    val playerState = playerDataRepo.playerData.apply {
+        onEach { data ->
+            val currentVideo = data.currentVideoIndex?.let { data.queue[it] }
             if (currentVideo == null) return@onEach
             if (currentVideoData.value?.toDataItem() == currentVideo) return@onEach
-            
-            fetchVideo(currentVideo)
-            if (isPlaying.value) resume()
-        }.stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
 
+            fetchVideo(currentVideo)
+            if (isPlaying.value) {
+                // todo not super clean fix this
+                withContext(Dispatchers.Main) { player.play() }
+            }
+        }.launchIn(scope)
+    }
+    
     private val _currentVideoData: MutableStateFlow<VideoData?> = MutableStateFlow(null)
     val currentVideoData = _currentVideoData.asStateFlow()
 
@@ -123,12 +128,16 @@ class OpenStreamMediaPlayer(
         _currentVideoData.value = null
     }
 
-    fun resume() { _isPlaying.value = true }
+    fun resume() {
+        _isPlaying.value = true
+    }
 
-    fun pause() { _isPlaying.value = false }
+    fun pause() {
+        _isPlaying.value = false
+    }
 
     fun toggleIsPlaying() = if (player.isPlaying) player.pause() else player.play()
-    
+
     // todo add next and previous methods and support shuffling
 
     fun seekTo(ms: Long) = player.seekTo(ms)
