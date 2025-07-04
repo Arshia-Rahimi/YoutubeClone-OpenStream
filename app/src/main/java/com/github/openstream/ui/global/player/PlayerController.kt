@@ -15,7 +15,6 @@ sealed interface PlayerAction {
     data object Previous : PlayerAction
     data object SeekForward : PlayerAction
     data object SeekBackward : PlayerAction
-    data object ToggleShuffleMode : PlayerAction
     
     fun send() = PlayerController.sendAction(this)
 }

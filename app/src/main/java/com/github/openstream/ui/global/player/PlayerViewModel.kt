@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.MainActivity
+import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.VideoItem
@@ -28,11 +29,13 @@ class PlayerViewModel(
 ) : ViewModel() {
 
     val playerInstance = player.player
-    
+
+    val queue = player.queue.collectToSnapShotStateList(viewModelScope)
     val fetchingState = player.fetchingState
     val currentVideo = player.currentVideoData
-    val playerState = player.playerState
     val isPlaying = player.isPlaying
+    val playbackSpeed = player.playbackSpeed
+    val repeatMode = player.repeatMode
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
     
@@ -66,11 +69,10 @@ class PlayerViewModel(
         is PlayerAction.Start -> start(action.videos, action.index)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
         is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed)
-        is PlayerAction.Next -> Unit // todo
-        is PlayerAction.Previous -> Unit
+        is PlayerAction.Next -> player.next()
+        is PlayerAction.Previous -> player.previous()
         is PlayerAction.SeekBackward -> player.seekBackward()
         is PlayerAction.SeekForward -> player.seekForward()
-        is PlayerAction.ToggleShuffleMode -> player.toggleShuffleMode()
         is PlayerAction.ChangeRepeatMode -> player.changeRepeatMode()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()
     }

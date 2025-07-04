@@ -56,8 +56,8 @@ import androidx.media3.common.Player
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.datastore.PlayerDataModel
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
+import com.github.openstream.core.media3.PlayerRepeatMode
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
 import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
@@ -83,9 +83,10 @@ fun PlayerSheet(
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
-    val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    val playbackSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
+    val repeatMode by viewModel.repeatMode.collectAsStateWithLifecycle()
     val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
     val density = LocalDensity.current
     val config = LocalConfiguration.current
@@ -118,7 +119,6 @@ fun PlayerSheet(
             toChannelScreen = toChannelScreen,
             currentPosition = currentPosition,
             fetchingState = fetchingState,
-            playerState = playerState,
             isPlaying = isPlaying,
             dispose = { viewModel.dispose() },
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
@@ -126,6 +126,8 @@ fun PlayerSheet(
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoPlaylistsState = playlistsState,
             currentVideo = currentVideo,
+            playbackSpeed = playbackSpeed,
+            repeatMode = repeatMode,
         )
     }
 }
@@ -139,7 +141,8 @@ private fun PlayerSheet(
     sheetDragProgress: Float,
     currentPosition: Long,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
-    playerState: PlayerDataModel,
+    playbackSpeed: Float,
+    repeatMode: PlayerRepeatMode,
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
     currentVideo: VideoData?,

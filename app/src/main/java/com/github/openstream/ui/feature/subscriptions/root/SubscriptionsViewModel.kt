@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.SnackBarController
+import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
@@ -24,15 +25,10 @@ class SubscriptionsViewModel(
 
     val isRefreshing = MutableStateFlow(false)
 
-    val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
-        .apply {
-            channelRepo.subscribedVideos.onEach {
-                val sortedVideos = it.sortedByDescending { it.uploadDate }
-                videos.clear()
-                videos.addAll(sortedVideos)
-            }.launchIn(viewModelScope)
-        }
-    
+    val videos = channelRepo.subscribedVideos.collectToSnapShotStateList(viewModelScope) {
+        it.sortedByDescending { video -> video.uploadDate }
+    }
+
     val subscriptions: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>().apply {
         channelRepo.subscriptions.onEach {
             val sortedList = it.sortedBy { it.name }
@@ -40,7 +36,7 @@ class SubscriptionsViewModel(
             subscriptions.addAll(sortedList)
         }.launchIn(viewModelScope)
     }
-    
+
     fun unSubscribe(channel: ChannelItem.OfflineFirstChannelItem) {
         channelRepo.unSubscribe(channel.id).onEach {
             when (it) {
@@ -50,18 +46,18 @@ class SubscriptionsViewModel(
             }
         }.launchIn(viewModelScope)
     }
-    
+
     fun updateSubscriptions() {
         channelRepo.updateSubscriptions().onEach {
-                when (it) {
-                    is Resource.Loading -> isRefreshing.value = true
-                    is Resource.Error -> {
-                        isRefreshing.value = false
-                        SnackBarController.sendEvent("failed to update subscriptions")
-                    }
-
-                    is Resource.Success -> isRefreshing.value = false
+            when (it) {
+                is Resource.Loading -> isRefreshing.value = true
+                is Resource.Error -> {
+                    isRefreshing.value = false
+                    SnackBarController.sendEvent("failed to update subscriptions")
                 }
+
+                is Resource.Success -> isRefreshing.value = false
+            }
         }.launchIn(viewModelScope)
     }
 
