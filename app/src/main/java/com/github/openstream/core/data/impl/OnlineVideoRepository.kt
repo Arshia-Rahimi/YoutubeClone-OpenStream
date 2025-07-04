@@ -1,13 +1,12 @@
 package com.github.openstream.core.data.impl
 
-import androidx.media3.common.MediaItem
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.extractor.datasource.VideoRemoteDataSource
-import com.github.openstream.core.shared.getVideoData
+import com.github.openstream.core.model.extractordata.VideoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -17,21 +16,17 @@ import kotlinx.coroutines.supervisorScope
 class OnlineVideoRepository(
     private val db: OpenStreamDatabase,
 ) : VideoRepository {
-    override suspend fun fetchVideo(url: String): Resource<MediaItem> {
-        try {
-            val video = VideoRemoteDataSource.fetchVideo(url)
-            val videoId = db.videoDao().get(url)?.videoId
+    override fun fetchVideo(url: String): Flow<Resource<VideoData>> = flow {
+        val video = VideoRemoteDataSource.fetchVideo(url)
 
-            if (videoId == null) return Resource.Success(video)
-            else {
-                val videoData = video.getVideoData().copy(id = videoId)
-                db.videoDao().upsert(videoData.toDataItem().toEntity())
-                return Resource.Success(video.buildUpon().setTag(videoData).build())
-            }
-        } catch (e: Exception) {
-            return Resource.Error(e.message)
+        // update video data in db if it's found
+        db.videoDao().get(url)?.videoId?.let { id ->
+            val videoData = video.copy(id = id)
+            db.videoDao().upsert(videoData.toDataItem().toEntity())
         }
-    }
+        
+        emit(video)
+    }.asResult(Dispatchers.IO)
 
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
         flow {

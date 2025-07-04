@@ -1,15 +1,14 @@
 package com.github.openstream.core.extractor.datasource
 
-import androidx.media3.common.MediaItem
 import com.github.openstream.core.extractor.YtService
 import com.github.openstream.core.model.extractordata.VideoData
 import org.schabi.newpipe.extractor.stream.StreamType
 
 object VideoRemoteDataSource {
-    fun fetchVideo(url: String): MediaItem {
+    fun fetchVideo(url: String): VideoData {
         val extractor = YtService.getStreamExtractor(url)
         extractor.fetchPage()
-        val data = VideoData(
+        return VideoData(
             name = extractor.name,
             url = extractor.url,
             description = extractor.description.content,
@@ -32,10 +31,5 @@ object VideoRemoteDataSource {
                 else -> com.github.openstream.core.model.dataitem.StreamType.NORMAL
             },
         )
-        val url = data.videoStreams.first().content
-        return MediaItem.Builder()
-            .setTag(data)
-            .setUri(url)
-            .build()
     }
 }

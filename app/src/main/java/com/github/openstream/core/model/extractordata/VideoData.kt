@@ -1,5 +1,6 @@
 package com.github.openstream.core.model.extractordata
 
+import androidx.media3.common.MediaItem
 import com.github.openstream.core.model.dataitem.StreamType
 import com.github.openstream.core.model.dataitem.VideoItem
 import org.schabi.newpipe.extractor.stream.AudioStream
@@ -20,6 +21,7 @@ data class VideoData(
     val channelAvatar: String,
     val subscriberCount: Long,
     val streamType: StreamType,
+    // todo get url and quality from streams
     val audioStreams: List<AudioStream>,
     val videoStreams: List<VideoStream>,
     val videoOnlyStreams: List<VideoStream>,
@@ -42,4 +44,7 @@ data class VideoData(
         viewCount = viewCount,
         uploadDate = uploadDate,
     )
+    
+    fun getMediaItem(streamUrl: String) = MediaItem.Builder().setUri(streamUrl).build()
+    
 }

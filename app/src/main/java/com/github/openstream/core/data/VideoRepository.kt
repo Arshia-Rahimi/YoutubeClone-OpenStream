@@ -1,12 +1,12 @@
 package com.github.openstream.core.data
 
-import androidx.media3.common.MediaItem
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
+import com.github.openstream.core.model.extractordata.VideoData
 import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
-    suspend fun fetchVideo(url: String): Resource<MediaItem>
+    fun fetchVideo(url: String): Flow<Resource<VideoData>>
 
     fun deleteLocalVideoHistory(): Flow<Resource<Success>>
 }

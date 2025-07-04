@@ -56,9 +56,15 @@ class OpenStreamMediaPlayer(
     }
 
     val playerState = playerDataRepo.playerData
-    val currentVideo = playerState.map { it.currentVideoIndex?.let { index -> it.queue[index] } }
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
-    
+    private val currentVideo = playerState.map { it.currentVideoIndex?.let { index -> it.queue[index] } }
+        .onEach { currentVideo ->
+            if (currentVideo == null) return@onEach
+            if (currentVideoData.value?.toDataItem() == currentVideo) return@onEach
+            
+            fetchVideo(currentVideo)
+            if (isPlaying.value) resume()
+        }.stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
+
     private val _currentVideoData: MutableStateFlow<VideoData?> = MutableStateFlow(null)
     val currentVideoData = _currentVideoData.asStateFlow()
 
@@ -66,9 +72,11 @@ class OpenStreamMediaPlayer(
         MutableStateFlow(FetchingState.Loading)
     val fetchingState = _fetchingState.asStateFlow()
 
-    private val _isPlaying = MutableStateFlow(false)
+    private val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false).apply {
+        onEach { if (isPlaying.value) player.play() else player.pause() }.launchIn(mainThreadScope)
+    }
     val isPlaying = _isPlaying.asStateFlow()
-    
+
     val playerPosition = isPlaying.transform {
         if (it) {
             while (true) {
@@ -80,32 +88,31 @@ class OpenStreamMediaPlayer(
         }
     }
 
-    private fun fetchAndPlayVideo(video: VideoItem) {
-        mainThreadScope.launch {
-            _fetchingState.value = FetchingState.Loading
+    private suspend fun fetchVideo(video: VideoItem) {
+        withContext(Dispatchers.Main) {
             player.pause()
             player.clearMediaItems()
-
-            val mediaItem = withContext(Dispatchers.IO) {
-                videoRepo.fetchVideo(video.url)
+        }
+        videoRepo.fetchVideo(video.url).collect {
+            when (it) {
+                is Resource.Loading -> _fetchingState.value = FetchingState.Loading
+                is Resource.Error -> _fetchingState.value = FetchingState.Error(it.message)
+                is Resource.Success -> {
+                    _currentVideoData.value = it.data
+                    withContext(Dispatchers.Main) {
+                        player.setMediaItem(it.data.getMediaItem(it.data.videoStreams.first().content))
+                        player.prepare()
+                    }
+                    _fetchingState.value = FetchingState.Success
+                }
             }
-
-            if (mediaItem is Resource.Error) {
-                _fetchingState.value = FetchingState.Error(mediaItem.message)
-                return@launch
-            }
-
-            mediaItem as Resource.Success
-            player.setMediaItem(mediaItem.data)
-            player.prepare()
-            _fetchingState.value = FetchingState.Success
-            player.play()
         }
     }
 
     fun start(videos: List<VideoItem>, index: Int) {
         scope.launch {
-            playerDataRepo.replaceQueue(videos, index) 
+            playerDataRepo.replaceQueue(videos, index)
+            resume()
         }
     }
 
@@ -113,21 +120,16 @@ class OpenStreamMediaPlayer(
         pause()
         player.clearMediaItems()
         scope.launch { playerDataRepo.clearQueue() }
+        _currentVideoData.value = null
     }
 
-    fun resume() {
-        mainThreadScope.launch { player.play() }
-        _isPlaying.value = true
-    }
+    fun resume() { _isPlaying.value = true }
 
-    fun pause() {
-        mainThreadScope.launch { player.pause() }
-        _isPlaying.value = false
-    }
+    fun pause() { _isPlaying.value = false }
 
-    fun toggleIsPlaying() =
-        if (player.isPlaying) player.pause()
-        else player.play()
+    fun toggleIsPlaying() = if (player.isPlaying) player.pause() else player.play()
+    
+    // todo add next and previous methods and support shuffling
 
     fun seekTo(ms: Long) = player.seekTo(ms)
 
