@@ -1,7 +1,6 @@
 package com.github.openstream.ui.di
 
 import com.github.openstream.app.navigation.NavigationViewModel
-import com.github.openstream.ui.feature.downloads.QueueViewModel
 import com.github.openstream.ui.feature.library.root.LibraryViewModel
 import com.github.openstream.ui.feature.search.root.SearchViewModel
 import com.github.openstream.ui.feature.settings.SettingsViewModel
@@ -20,7 +19,6 @@ val viewModelModule = module {
     // tabs
     viewModelOf(::SubscriptionsViewModel)
     viewModelOf(::SettingsViewModel)
-    viewModelOf(::QueueViewModel)
     viewModelOf(::LibraryViewModel)
     viewModelOf(::SearchViewModel)
 

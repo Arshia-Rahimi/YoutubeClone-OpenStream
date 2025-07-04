@@ -32,15 +32,5 @@ val dataStoreModule = module {
             corruptionHandler = ReplaceFileCorruptionHandler { PlayerDataModel() },
         )
     }
-
-    single<DataStore<QueueModel>>(named(KoinQualifiers.QUEUE)) {
-        DataStoreFactory.create(
-            serializer = GenericDataStoreSerializer(
-                defaultValue = QueueModel(),
-                serializer = QueueModel.serializer(),
-            ),
-            produceFile = { androidContext().dataStoreFile("${KoinQualifiers.QUEUE}.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { QueueModel() },
-        )
-    }
+    
 }

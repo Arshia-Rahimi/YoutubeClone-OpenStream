@@ -58,7 +58,7 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { PlayerAction.Start(item).send() }
+            .clickable { PlayerAction.Start(listOf(item)).send() }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(

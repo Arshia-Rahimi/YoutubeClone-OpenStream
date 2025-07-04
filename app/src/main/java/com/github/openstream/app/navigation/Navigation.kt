@@ -16,7 +16,6 @@ import com.github.openstream.app.navigation.NavigationViewModel.Companion.tabsLi
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
-import com.github.openstream.ui.feature.downloads.QueueScreen
 import com.github.openstream.ui.feature.library.LibraryNavHost
 import com.github.openstream.ui.feature.search.SearchNavHost
 import com.github.openstream.ui.feature.settings.SettingsScreen
@@ -95,9 +94,6 @@ fun Navigation() {
                 SubscriptionsNavHost(
                     navViewModel = navigationViewModel,
                 )
-            }
-            composable<Tabs.Queue> {
-                QueueScreen()
             }
             composable<Tabs.Settings> {
                 SettingsScreen()
