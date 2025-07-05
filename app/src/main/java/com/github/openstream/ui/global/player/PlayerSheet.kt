@@ -18,13 +18,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -58,12 +62,14 @@ import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.PlayerRepeatMode
+import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
 import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
 import com.github.openstream.ui.global.player.components.PlayerSheetState
 import com.github.openstream.ui.global.player.components.SheetBody
+import com.github.openstream.ui.global.player.components.SheetBodyPage
 import com.github.openstream.ui.global.player.components.VideoPlaylistsState
 import com.github.openstream.ui.global.player.view.PlayerView
 import kotlinx.coroutines.CoroutineScope
@@ -112,6 +118,7 @@ fun PlayerSheet(
 
     if (showMiniPlayer) {
         PlayerSheet(
+            queue = viewModel.queue,
             player = viewModel.playerInstance,
             dragState = dragState,
             playerWidth = playerWidth,
@@ -141,6 +148,7 @@ private fun PlayerSheet(
     sheetDragProgress: Float,
     currentPosition: Long,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
+    queue: List<VideoItem>,
     playbackSpeed: Float,
     repeatMode: PlayerRepeatMode,
     isPlaying: Boolean,
@@ -292,30 +300,113 @@ private fun PlayerSheet(
                 .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                 .fillMaxWidth(),
         )
-        if (sheetDragProgress != 0f) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .alpha(sheetDragProgress)
-                    .background(MaterialTheme.colorScheme.background)
+
+        SheetBodyPager(
+            sheetDragProgress = sheetDragProgress,
+            fetchingState = fetchingState,
+            currentVideo = currentVideo,
+            scope = scope,
+            toChannelScreen = toChannelScreen,
+            videoPlaylistsState = videoPlaylistsState,
+            toggleVideoLiked = toggleVideoLiked,
+            toggleVideoWatchLater = toggleVideoWatchLater,
+            queue = queue,
+            playbackSpeed = playbackSpeed,
+            repeatMode = repeatMode,
+            isPlaying = isPlaying,
+        )
+    }
+}
+
+@Composable
+private fun SheetBodyPager(
+    queue: List<VideoItem>,
+    playbackSpeed: Float,
+    repeatMode: PlayerRepeatMode,
+    isPlaying: Boolean,
+    sheetDragProgress: Float,
+    fetchingState: OpenStreamMediaPlayer.FetchingState,
+    currentVideo: VideoData?,
+    scope: CoroutineScope,
+    videoPlaylistsState: VideoPlaylistsState,
+    toChannelScreen: (String) -> Unit,
+    toggleVideoWatchLater: () -> Unit,
+    toggleVideoLiked: () -> Unit,
+) {
+    val pagerState = rememberPagerState { SheetBodyPage.entries.size }
+    if (sheetDragProgress != 0f) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(sheetDragProgress)
+                .background(MaterialTheme.colorScheme.background)
+                .navigationBarsPadding()
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth()
+                    .weight(1f),
+            ) { currentTab ->
+                when (currentTab) {
+                    SheetBodyPage.VideoDescription.ordinal -> {
+                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
+                            currentVideo?.let { currentVideo ->
+                                println(currentVideo)
+                                SheetBody(
+                                    modifier = Modifier.fillMaxSize(),
+                                    videoData = currentVideo,
+                                    scrollState = rememberScrollState(),
+                                    scope = scope,
+                                    toChannelScreen = toChannelScreen,
+                                    shareVideo = {},
+                                    likeVideo = { toggleVideoLiked() },
+                                    addToWatchLater = { toggleVideoWatchLater() },
+                                    videoPlaylistsState = videoPlaylistsState,
+                                )
+                            }
+                        }
+                    }
+
+                    SheetBodyPage.Queue.ordinal -> QueuePage(
+                        isPlaying = isPlaying,
+                        queue = queue,
+                        playbackSpeed = playbackSpeed,
+                        repeatMode = repeatMode,
+                        currentVideo = currentVideo,
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                    currentVideo?.let {
-                        SheetBody(
-                            modifier = Modifier.matchParentSize(),
-                            videoData = it,
-                            scrollState = rememberScrollState(),
-                            scope = scope,
-                            toChannelScreen = toChannelScreen,
-                            shareVideo = {},
-                            likeVideo = { toggleVideoLiked() },
-                            addToWatchLater = { toggleVideoWatchLater() },
-                            videoPlaylistsState = videoPlaylistsState,
+                SheetBodyPage.entries.forEach { tab ->
+                    IconButton(
+                        onClick = { scope.launch { pagerState.scrollToPage(tab.ordinal); println(pagerState.currentPage) } },
+                        modifier = Modifier.weight(0.5f),
+                    ) {
+                        Icon(
+                            painter = painterResource(if(tab.ordinal == pagerState.currentPage) tab.selectedIcon else tab.icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun QueuePage(
+    isPlaying: Boolean,
+    queue: List<VideoItem>,
+    playbackSpeed: Float,
+    repeatMode: PlayerRepeatMode,
+    currentVideo: VideoData?,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+
     }
 }
