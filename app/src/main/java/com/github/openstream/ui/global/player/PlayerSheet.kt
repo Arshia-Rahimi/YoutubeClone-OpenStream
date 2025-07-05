@@ -27,15 +27,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,7 +65,6 @@ import com.github.openstream.R
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
-import com.github.openstream.core.media3.PlayerRepeatMode
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
@@ -92,7 +95,7 @@ fun PlayerSheet(
     val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val playbackSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
-    val repeatMode by viewModel.repeatMode.collectAsStateWithLifecycle()
+    val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
     val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
     val density = LocalDensity.current
     val config = LocalConfiguration.current
@@ -132,9 +135,8 @@ fun PlayerSheet(
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoPlaylistsState = playlistsState,
-            currentVideo = currentVideo,
+            currentVideoData = currentVideoData,
             playbackSpeed = playbackSpeed,
-            repeatMode = repeatMode,
         )
     }
 }
@@ -150,10 +152,9 @@ private fun PlayerSheet(
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     queue: List<VideoItem>,
     playbackSpeed: Float,
-    repeatMode: PlayerRepeatMode,
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
-    currentVideo: VideoData?,
+    currentVideoData: VideoData?,
     videoPlaylistsState: VideoPlaylistsState,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
@@ -237,13 +238,13 @@ private fun PlayerSheet(
                     ) {
                         if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                             Text(
-                                text = currentVideo?.name ?: "",
+                                text = currentVideoData?.name ?: "",
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                             )
                             Text(
-                                text = currentPosition.toTime() + " / " + currentVideo?.length?.toTime(),
+                                text = currentPosition.toTime() + " / " + currentVideoData?.length?.toTime(),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 maxLines = 1,
                             )
@@ -285,7 +286,7 @@ private fun PlayerSheet(
         )
         LaunchedEffect(currentPosition) {
             progress = if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                currentPosition.toFloat() / (currentVideo?.length?.toFloat() ?: 1f)
+                currentPosition.toFloat() / (currentVideoData?.length?.toFloat() ?: 1f)
             } else 0f
         }
 
@@ -304,7 +305,7 @@ private fun PlayerSheet(
         SheetBodyPager(
             sheetDragProgress = sheetDragProgress,
             fetchingState = fetchingState,
-            currentVideo = currentVideo,
+            currentVideoData = currentVideoData,
             scope = scope,
             toChannelScreen = toChannelScreen,
             videoPlaylistsState = videoPlaylistsState,
@@ -312,8 +313,8 @@ private fun PlayerSheet(
             toggleVideoWatchLater = toggleVideoWatchLater,
             queue = queue,
             playbackSpeed = playbackSpeed,
-            repeatMode = repeatMode,
             isPlaying = isPlaying,
+            currentPosition = currentPosition,
         )
     }
 }
@@ -322,11 +323,11 @@ private fun PlayerSheet(
 private fun SheetBodyPager(
     queue: List<VideoItem>,
     playbackSpeed: Float,
-    repeatMode: PlayerRepeatMode,
     isPlaying: Boolean,
     sheetDragProgress: Float,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
-    currentVideo: VideoData?,
+    currentVideoData: VideoData?,
+    currentPosition: Long,
     scope: CoroutineScope,
     videoPlaylistsState: VideoPlaylistsState,
     toChannelScreen: (String) -> Unit,
@@ -344,13 +345,14 @@ private fun SheetBodyPager(
         ) {
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .weight(1f),
             ) { currentTab ->
                 when (currentTab) {
                     SheetBodyPage.VideoDescription.ordinal -> {
                         if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                            currentVideo?.let { currentVideo ->
+                            currentVideoData?.let { currentVideo ->
                                 println(currentVideo)
                                 SheetBody(
                                     modifier = Modifier.fillMaxSize(),
@@ -371,8 +373,9 @@ private fun SheetBodyPager(
                         isPlaying = isPlaying,
                         queue = queue,
                         playbackSpeed = playbackSpeed,
-                        repeatMode = repeatMode,
-                        currentVideo = currentVideo,
+                        currentVideoData = currentVideoData,
+                        fetchingState = fetchingState,
+                        currentPosition = currentPosition,
                     )
                 }
             }
@@ -401,12 +404,46 @@ fun QueuePage(
     isPlaying: Boolean,
     queue: List<VideoItem>,
     playbackSpeed: Float,
-    repeatMode: PlayerRepeatMode,
-    currentVideo: VideoData?,
+    fetchingState: OpenStreamMediaPlayer.FetchingState,
+    currentPosition: Long,
+    currentVideoData: VideoData?,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
-
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+        ) { 
+            items(queue) {
+                
+            }
+        }
+        Column (
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Slider(
+                value = currentPosition.toFloat(),
+                onValueChange = { position: Float -> PlayerAction.SeekTo(position.toLong()).send() },
+                valueRange = 0f..(currentVideoData?.length?.toFloat() ?: 1f),
+                modifier = Modifier
+                    .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
+                    .fillMaxWidth(),
+            )
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+            ) {
+                IconButton(
+                    onClick = { PlayerAction.Previous.send() },
+                ) {
+                    Icon(
+                        painter = painterResource(Icons)
+                    )
+                }
+            }
+        }
     }
 }

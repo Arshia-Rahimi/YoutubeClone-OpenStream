@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.StateFlow
 interface PlayerDataRepository {
     val playerData: StateFlow<PlayerDataModel>
 
-    suspend fun changeRepeatMode()
-
     suspend fun setPlaybackSpeed(speed: Float)
 
     suspend fun setSeekIncrement(seekIncrement: Long)

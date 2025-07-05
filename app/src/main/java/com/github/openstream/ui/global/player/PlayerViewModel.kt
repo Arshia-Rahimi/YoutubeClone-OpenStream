@@ -32,15 +32,14 @@ class PlayerViewModel(
 
     val queue = player.queue.collectToSnapShotStateList(viewModelScope)
     val fetchingState = player.fetchingState
-    val currentVideo = player.currentVideoData
+    val currentVideoData = player.currentVideoData
+    val currentVideo = player.currentVideo
     val isPlaying = player.isPlaying
     val playbackSpeed = player.playbackSpeed
-    val repeatMode = player.repeatMode
     val currentPosition = player.playerPosition
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
     
     val playlistsState = fetchingState.flatMapLatest {
-        val currentVideoId = currentVideo.value?.id
+        val currentVideoId = currentVideoData.value?.id
         if (it !is OpenStreamMediaPlayer.FetchingState.Success || currentVideoId == null)
             flow { emit(VideoPlaylistsState()) }
         else combine(
@@ -73,7 +72,6 @@ class PlayerViewModel(
         is PlayerAction.Previous -> player.previous()
         is PlayerAction.SeekBackward -> player.seekBackward()
         is PlayerAction.SeekForward -> player.seekForward()
-        is PlayerAction.ChangeRepeatMode -> player.changeRepeatMode()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()
     }
 
@@ -89,7 +87,7 @@ class PlayerViewModel(
 
     fun toggleVideoWatchLater() {
         if (fetchingState.value != OpenStreamMediaPlayer.FetchingState.Success) return
-        val currentVideo = currentVideo.value ?: return
+        val currentVideo = currentVideoData.value ?: return
 
         when (playlistsState.value.isInWatchLater) {
             true -> playlistRepo.removeFromPlaylist(
@@ -106,7 +104,7 @@ class PlayerViewModel(
 
     fun toggleVideoLiked() {
         if (fetchingState.value != OpenStreamMediaPlayer.FetchingState.Success) return
-        val currentVideo = currentVideo.value ?: return
+        val currentVideo = currentVideoData.value ?: return
 
         when (playlistsState.value.isLiked) {
             true -> playlistRepo.removeFromPlaylist(

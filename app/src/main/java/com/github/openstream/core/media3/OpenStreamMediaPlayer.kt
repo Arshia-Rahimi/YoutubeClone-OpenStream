@@ -43,20 +43,7 @@ class OpenStreamMediaPlayer(
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState != Player.STATE_ENDED) return
-                val playerRepeatMode = this@OpenStreamMediaPlayer.repeatMode.value
-                if (playerRepeatMode == PlayerRepeatMode.ONE) return
-
-                val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
-                if (currentVideoIndex == -1) return
-
-                var nextVideoIndex = currentVideoIndex + 1
-                if (nextVideoIndex >= queue.value.size) {
-                    nextVideoIndex =
-                        if (playerRepeatMode == PlayerRepeatMode.ALL) 0
-                        else currentVideoIndex
-                }
-
-                _currentVideo.value = queue.value[nextVideoIndex]
+                this@OpenStreamMediaPlayer.next()
             }
         })
     }
@@ -79,16 +66,6 @@ class OpenStreamMediaPlayer(
     val playbackSpeed = playerDataRepo.playerData
         .map { it.playbackSpeed }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 1f)
         .apply { onEach { player.setPlaybackSpeed(it) }.launchIn(mainThreadScope) }
-
-    val repeatMode = playerDataRepo.playerData
-        .map { it.repeatMode }
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), PlayerRepeatMode.ALL)
-        .apply {
-            onEach {
-                player.repeatMode =
-                    if (it == PlayerRepeatMode.ONE) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
-            }.launchIn(mainThreadScope)
-        }
     
     private val seekIncrement = playerDataRepo.playerData
         .map { it.seekIncrement }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 10000L)
@@ -117,7 +94,7 @@ class OpenStreamMediaPlayer(
             emit(player.currentPosition / 1000)
             delay(1000L)
         }
-    }
+    }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 0L)
 
     fun start(videos: List<VideoItem>, index: Int) {
         queue.value = videos
@@ -145,28 +122,20 @@ class OpenStreamMediaPlayer(
     fun toggleIsPlaying() = if (player.isPlaying) player.pause() else player.play()
 
     fun next() {
-        val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
-        if (currentVideoIndex == -1) return
-
-        var nextVideoIndex = currentVideoIndex + 1
-        if (nextVideoIndex >= queue.value.size) {
-            if (repeatMode.value != PlayerRepeatMode.ALL) return
-            nextVideoIndex = 0
-        }
-
+        val nextVideoIndex = queue.value.indexOf(_currentVideo.value)
+            .plus(1).coerceAtMost(queue.value.size-1)
+        
         _currentVideo.value = queue.value[nextVideoIndex]
     }
 
     fun previous() {
-        val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
-        if (currentVideoIndex == -1) return
-
-        val previousVideoIndex = currentVideoIndex - 1
-        if (previousVideoIndex < 0) {
-            player.seekTo(0)
+        if(playerPosition.value >= 5000) {
+            seekTo(0)
             return
         }
-
+        
+        val previousVideoIndex = queue.value.indexOf(_currentVideo.value)
+            .minus(1).coerceAtLeast(0)
         _currentVideo.value = queue.value[previousVideoIndex]
     }
 
@@ -179,8 +148,6 @@ class OpenStreamMediaPlayer(
     fun setPlaybackSpeed(speed: Float) {
         scope.launch { playerDataRepo.setPlaybackSpeed(speed) }
     }
-
-    fun changeRepeatMode() = scope.launch { playerDataRepo.changeRepeatMode() }
 
     private suspend fun fetchVideo(video: VideoItem) {
         withContext(Dispatchers.Main) {
