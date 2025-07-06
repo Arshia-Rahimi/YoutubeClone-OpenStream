@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +34,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +41,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,9 +61,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
+import coil3.compose.AsyncImage
 import com.github.openstream.R
+import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -137,6 +142,7 @@ fun PlayerSheet(
             videoPlaylistsState = playlistsState,
             currentVideoData = currentVideoData,
             playbackSpeed = playbackSpeed,
+            currentVideo = currentVideo,
         )
     }
 }
@@ -155,6 +161,7 @@ private fun PlayerSheet(
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
     currentVideoData: VideoData?,
+    currentVideo: VideoItem?,
     videoPlaylistsState: VideoPlaylistsState,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
@@ -244,7 +251,7 @@ private fun PlayerSheet(
                                 maxLines = 1,
                             )
                             Text(
-                                text = currentPosition.toTime() + " / " + currentVideoData?.length?.toTime(),
+                                text = currentPosition.toTime() + " / " + currentVideoData?.duration?.toTime(),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 maxLines = 1,
                             )
@@ -286,7 +293,7 @@ private fun PlayerSheet(
         )
         LaunchedEffect(currentPosition) {
             progress = if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                currentPosition.toFloat() / (currentVideoData?.length?.toFloat() ?: 1f)
+                currentPosition.toFloat() / (currentVideoData?.duration?.toFloat() ?: 1f)
             } else 0f
         }
 
@@ -315,6 +322,7 @@ private fun PlayerSheet(
             playbackSpeed = playbackSpeed,
             isPlaying = isPlaying,
             currentPosition = currentPosition,
+            currentVideo = currentVideo,
         )
     }
 }
@@ -327,6 +335,7 @@ private fun SheetBodyPager(
     sheetDragProgress: Float,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     currentVideoData: VideoData?,
+    currentVideo: VideoItem?,
     currentPosition: Long,
     scope: CoroutineScope,
     videoPlaylistsState: VideoPlaylistsState,
@@ -353,7 +362,6 @@ private fun SheetBodyPager(
                     SheetBodyPage.VideoDescription.ordinal -> {
                         if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                             currentVideoData?.let { currentVideo ->
-                                println(currentVideo)
                                 SheetBody(
                                     modifier = Modifier.fillMaxSize(),
                                     videoData = currentVideo,
@@ -373,8 +381,7 @@ private fun SheetBodyPager(
                         isPlaying = isPlaying,
                         queue = queue,
                         playbackSpeed = playbackSpeed,
-                        currentVideoData = currentVideoData,
-                        fetchingState = fetchingState,
+                        currentVideo = currentVideo,
                         currentPosition = currentPosition,
                     )
                 }
@@ -384,11 +391,11 @@ private fun SheetBodyPager(
             ) {
                 SheetBodyPage.entries.forEach { tab ->
                     IconButton(
-                        onClick = { scope.launch { pagerState.scrollToPage(tab.ordinal); println(pagerState.currentPage) } },
+                        onClick = { scope.launch { pagerState.scrollToPage(tab.ordinal) } },
                         modifier = Modifier.weight(0.5f),
                     ) {
                         Icon(
-                            painter = painterResource(if(tab.ordinal == pagerState.currentPage) tab.selectedIcon else tab.icon),
+                            painter = painterResource(if (tab.ordinal == pagerState.currentPage) tab.selectedIcon else tab.icon),
                             contentDescription = null,
                             tint = Color.Unspecified,
                         )
@@ -404,9 +411,8 @@ fun QueuePage(
     isPlaying: Boolean,
     queue: List<VideoItem>,
     playbackSpeed: Float,
-    fetchingState: OpenStreamMediaPlayer.FetchingState,
     currentPosition: Long,
-    currentVideoData: VideoData?,
+    currentVideo: VideoItem?,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -414,35 +420,85 @@ fun QueuePage(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-        ) { 
-            items(queue) {
-                
+                .weight(1f)
+                .padding(top = 12.dp),
+        ) {
+            items(queue) { video ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable { PlayerAction.PlayFromItem(video).send() }
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                        .onCondition(video == currentVideo) { background(Color.Gray) },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AsyncImage(
+                        model = video.thumbnail,
+                        contentDescription = "thumbnail",
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .aspectRatio(16 / 9f)
+                    )
+                    Text(
+                        text = video.name,
+                        fontSize = 12.sp,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 4.dp)
+                            .basicMarquee(),
+                    )
+                    Text(
+                        text = video.duration.toTime(),
+                        fontSize = 12.sp,
+                        color = Color.White,
+                    )
+                }
             }
         }
-        Column (
-            modifier = Modifier.fillMaxWidth(),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         ) {
             Slider(
                 value = currentPosition.toFloat(),
-                onValueChange = { position: Float -> PlayerAction.SeekTo(position.toLong()).send() },
-                valueRange = 0f..(currentVideoData?.length?.toFloat() ?: 1f),
+                onValueChange = { position: Float ->
+                    println(position)
+                    PlayerAction.SeekTo(position.toLong() * 1000).send()
+                },
+                valueRange = 0f..(currentVideo?.duration?.toFloat() ?: 1f),
                 modifier = Modifier
                     .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                     .fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    // todo
+                ),
             )
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
-                IconButton(
+                PainterIconButton(
                     onClick = { PlayerAction.Previous.send() },
-                ) {
-                    Icon(
-                        painter = painterResource(Icons)
-                    )
-                }
+                    drawableRes = R.drawable.skip_previous,
+                    tint = Color.White,
+                )
+                PainterIconButton(
+                    onClick = { PlayerAction.TogglePlay.send() },
+                    drawableRes = if (isPlaying) R.drawable.pause else R.drawable.play,
+                    tint = Color.White,
+                )
+                PainterIconButton(
+                    onClick = { PlayerAction.Next.send() },
+                    drawableRes = R.drawable.skip_next,
+                    tint = Color.White,
+                )
             }
         }
     }

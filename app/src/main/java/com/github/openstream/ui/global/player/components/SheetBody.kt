@@ -241,7 +241,7 @@ private fun Preview() {
                     description = "description",
                     channelAvatar = "",
                     isChannelVerified = true,
-                    length = 34324L,
+                    duration = 34324L,
                     viewCount = 454222L,
                     channelUrl = "",
                     channelName = "channel",

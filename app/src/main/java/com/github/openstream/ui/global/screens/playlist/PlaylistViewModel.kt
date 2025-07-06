@@ -35,7 +35,6 @@ class PlaylistViewModel(
 
     val playlist = if (playlist !is PlaylistItem.LocalPlaylistItem) MutableStateFlow(playlist)
     else playlistRepo.getPlaylistItem(playlist.id)
-        .onEach { println(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), playlist)
 
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()

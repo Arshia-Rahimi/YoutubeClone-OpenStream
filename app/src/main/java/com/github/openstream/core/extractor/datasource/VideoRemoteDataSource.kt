@@ -16,7 +16,7 @@ object VideoRemoteDataSource {
             channelName = extractor.uploaderName,
             subscriberCount = extractor.uploaderSubscriberCount,
             isChannelVerified = extractor.isUploaderVerified,
-            length = extractor.length,
+            duration = extractor.length,
             uploadDate = extractor.uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli(),
             viewCount = extractor.viewCount,
             videoStreams = extractor.videoStreams,

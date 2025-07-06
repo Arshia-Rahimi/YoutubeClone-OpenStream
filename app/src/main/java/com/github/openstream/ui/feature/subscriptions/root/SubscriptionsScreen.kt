@@ -21,6 +21,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
 import com.github.openstream.core.model.dataitem.DataItem
@@ -66,7 +67,8 @@ fun SubscriptionsScreen(
                             .weight(0.5f)
                             .clickable {
                                 scope.launch { pagerState.scrollToPage(tab.ordinal) }
-                            },
+                            }
+                            .padding(bottom = 8.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(

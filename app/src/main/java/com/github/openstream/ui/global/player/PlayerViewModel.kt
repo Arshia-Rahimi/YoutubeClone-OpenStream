@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlayerViewModel(
@@ -37,6 +38,7 @@ class PlayerViewModel(
     val isPlaying = player.isPlaying
     val playbackSpeed = player.playbackSpeed
     val currentPosition = player.playerPosition
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
     
     val playlistsState = fetchingState.flatMapLatest {
         val currentVideoId = currentVideoData.value?.id
@@ -63,13 +65,14 @@ class PlayerViewModel(
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-
+    
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.videos, action.index)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
         is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed)
+        is PlayerAction.PlayFromItem -> player.playerFromVideo(action.video)
         is PlayerAction.Next -> player.next()
-        is PlayerAction.Previous -> player.previous()
+        is PlayerAction.Previous -> viewModelScope.launch { player.previous() }
         is PlayerAction.SeekBackward -> player.seekBackward()
         is PlayerAction.SeekForward -> player.seekForward()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()

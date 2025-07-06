@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -66,10 +67,14 @@ class OpenStreamMediaPlayer(
     val playbackSpeed = playerDataRepo.playerData
         .map { it.playbackSpeed }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 1f)
         .apply { onEach { player.setPlaybackSpeed(it) }.launchIn(mainThreadScope) }
-    
+
     private val seekIncrement = playerDataRepo.playerData
         .map { it.seekIncrement }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 10000L)
-        .apply { onEach { player.setSeekParameters(SeekParameters(it, it)) }.launchIn(mainThreadScope) }
+        .apply {
+            onEach { player.setSeekParameters(SeekParameters(it, it)) }.launchIn(
+                mainThreadScope
+            )
+        }
 
 
     sealed interface FetchingState {
@@ -94,7 +99,7 @@ class OpenStreamMediaPlayer(
             emit(player.currentPosition / 1000)
             delay(1000L)
         }
-    }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 0L)
+    }
 
     fun start(videos: List<VideoItem>, index: Int) {
         queue.value = videos
@@ -123,20 +128,26 @@ class OpenStreamMediaPlayer(
 
     fun next() {
         val nextVideoIndex = queue.value.indexOf(_currentVideo.value)
-            .plus(1).coerceAtMost(queue.value.size-1)
-        
+            .plus(1).coerceAtMost(queue.value.size - 1)
+
         _currentVideo.value = queue.value[nextVideoIndex]
     }
 
-    fun previous() {
-        if(playerPosition.value >= 5000) {
+    suspend fun previous() = withContext(Dispatchers.Main) {
+        if (playerPosition.first() >= 5000) {
             seekTo(0)
-            return
+            return@withContext
         }
-        
+
         val previousVideoIndex = queue.value.indexOf(_currentVideo.value)
             .minus(1).coerceAtLeast(0)
         _currentVideo.value = queue.value[previousVideoIndex]
+    }
+
+    fun playerFromVideo(videoItem: VideoItem) {
+        val videoIndex = queue.value.indexOf(videoItem)
+        if (videoIndex == -1) return
+        _currentVideo.value = videoItem
     }
 
     fun seekTo(ms: Long) = player.seekTo(ms)
