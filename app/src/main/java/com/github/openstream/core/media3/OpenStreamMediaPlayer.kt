@@ -5,9 +5,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.SeekParameters
 import com.github.openstream.core.common.util.Resource
-import com.github.openstream.core.data.PlayerDataRepository
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
@@ -16,13 +14,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,7 +26,6 @@ import kotlinx.coroutines.withContext
 class OpenStreamMediaPlayer(
     context: Context,
     private val videoRepo: VideoRepository,
-    private val playerDataRepo: PlayerDataRepository,
     private val scope: CoroutineScope,
 ) {
     private val mainThreadScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -63,19 +57,6 @@ class OpenStreamMediaPlayer(
             }.launchIn(scope)
         }
     val currentVideo = _currentVideo.asStateFlow()
-
-    val playbackSpeed = playerDataRepo.playerData
-        .map { it.playbackSpeed }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 1f)
-        .apply { onEach { player.setPlaybackSpeed(it) }.launchIn(mainThreadScope) }
-
-    private val seekIncrement = playerDataRepo.playerData
-        .map { it.seekIncrement }.stateIn(scope, SharingStarted.WhileSubscribed(5000), 10000L)
-        .apply {
-            onEach { player.setSeekParameters(SeekParameters(it, it)) }.launchIn(
-                mainThreadScope
-            )
-        }
-
 
     sealed interface FetchingState {
         data object Loading : FetchingState
@@ -155,10 +136,6 @@ class OpenStreamMediaPlayer(
     fun seekForward() = player.seekForward()
 
     fun seekBackward() = player.seekBack()
-
-    fun setPlaybackSpeed(speed: Float) {
-        scope.launch { playerDataRepo.setPlaybackSpeed(speed) }
-    }
 
     private suspend fun fetchVideo(video: VideoItem) {
         withContext(Dispatchers.Main) {

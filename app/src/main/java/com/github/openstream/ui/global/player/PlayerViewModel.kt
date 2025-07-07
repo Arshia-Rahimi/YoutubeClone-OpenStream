@@ -36,7 +36,6 @@ class PlayerViewModel(
     val currentVideoData = player.currentVideoData
     val currentVideo = player.currentVideo
     val isPlaying = player.isPlaying
-    val playbackSpeed = player.playbackSpeed
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
     
@@ -69,7 +68,6 @@ class PlayerViewModel(
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.videos, action.index)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
-        is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed)
         is PlayerAction.PlayFromItem -> player.playerFromVideo(action.video)
         is PlayerAction.Next -> player.next()
         is PlayerAction.Previous -> viewModelScope.launch { player.previous() }

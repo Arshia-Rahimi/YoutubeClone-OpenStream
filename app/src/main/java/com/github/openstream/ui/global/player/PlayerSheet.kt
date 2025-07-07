@@ -85,6 +85,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
+// todo: refactor
 // migrate deprecated screenWidth -boxWithConstraints in recommended
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalFoundationApi::class)
@@ -99,7 +100,6 @@ fun PlayerSheet(
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
-    val playbackSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
     val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
     val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
     val density = LocalDensity.current
@@ -141,7 +141,6 @@ fun PlayerSheet(
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoPlaylistsState = playlistsState,
             currentVideoData = currentVideoData,
-            playbackSpeed = playbackSpeed,
             currentVideo = currentVideo,
         )
     }
@@ -157,7 +156,6 @@ private fun PlayerSheet(
     currentPosition: Long,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     queue: List<VideoItem>,
-    playbackSpeed: Float,
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
     currentVideoData: VideoData?,
@@ -319,7 +317,6 @@ private fun PlayerSheet(
             toggleVideoLiked = toggleVideoLiked,
             toggleVideoWatchLater = toggleVideoWatchLater,
             queue = queue,
-            playbackSpeed = playbackSpeed,
             isPlaying = isPlaying,
             currentPosition = currentPosition,
             currentVideo = currentVideo,
@@ -330,7 +327,6 @@ private fun PlayerSheet(
 @Composable
 private fun SheetBodyPager(
     queue: List<VideoItem>,
-    playbackSpeed: Float,
     isPlaying: Boolean,
     sheetDragProgress: Float,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
@@ -344,76 +340,80 @@ private fun SheetBodyPager(
     toggleVideoLiked: () -> Unit,
 ) {
     val pagerState = rememberPagerState { SheetBodyPage.entries.size }
-    if (sheetDragProgress != 0f) {
-        Column(
+    if (sheetDragProgress != 0f) Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(sheetDragProgress)
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding()
+    ) {
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
-                .fillMaxSize()
-                .alpha(sheetDragProgress)
-                .background(MaterialTheme.colorScheme.background)
-                .navigationBarsPadding()
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-            ) { currentTab ->
-                when (currentTab) {
-                    SheetBodyPage.VideoDescription.ordinal -> {
-                        when(fetchingState) {
-                            is OpenStreamMediaPlayer.FetchingState.Success ->
-                                currentVideoData?.let { currentVideo ->
-                                    SheetBody(
-                                        modifier = Modifier.fillMaxSize(),
-                                        videoData = currentVideo,
-                                        scrollState = rememberScrollState(),
-                                        scope = scope,
-                                        toChannelScreen = toChannelScreen,
-                                        shareVideo = {},
-                                        likeVideo = { toggleVideoLiked() },
-                                        addToWatchLater = { toggleVideoWatchLater() },
-                                        videoPlaylistsState = videoPlaylistsState,
-                                    )
-                                }
-                            is OpenStreamMediaPlayer.FetchingState.Loading -> CircularProgressIndicator()
-                            is OpenStreamMediaPlayer.FetchingState.Error -> Text(fetchingState.message ?: "")
+                .fillMaxWidth()
+                .weight(1f),
+        ) { currentTab ->
+            when (currentTab) {
+                SheetBodyPage.VideoDescription.ordinal -> {
+                    when (fetchingState) {
+                        is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
+                            SheetBody(
+                                modifier = Modifier.fillMaxSize(),
+                                videoData = currentVideo,
+                                scrollState = rememberScrollState(),
+                                scope = scope,
+                                toChannelScreen = toChannelScreen,
+                                shareVideo = {},
+                                likeVideo = { toggleVideoLiked() },
+                                addToWatchLater = { toggleVideoWatchLater() },
+                                videoPlaylistsState = videoPlaylistsState,
+                            )
                         }
-                    }
 
-                    SheetBodyPage.Queue.ordinal -> QueuePage(
-                        isPlaying = isPlaying,
-                        queue = queue,
-                        playbackSpeed = playbackSpeed,
-                        currentVideo = currentVideo,
-                        currentPosition = currentPosition,
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                SheetBodyPage.entries.forEach { tab ->
-                    IconButton(
-                        onClick = { scope.launch { pagerState.scrollToPage(tab.ordinal) } },
-                        modifier = Modifier.weight(0.5f),
-                    ) {
-                        Icon(
-                            painter = painterResource(if (tab.ordinal == pagerState.currentPage) tab.selectedIcon else tab.icon),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                        )
+                        is OpenStreamMediaPlayer.FetchingState.Loading ->
+                            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+
+                        is OpenStreamMediaPlayer.FetchingState.Error ->
+                            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                                Text(fetchingState.message ?: "")
+                            }
                     }
+                }
+
+                SheetBodyPage.Queue.ordinal -> QueuePage(
+                    isPlaying = isPlaying,
+                    queue = queue,
+                    currentVideo = currentVideo,
+                    currentPosition = currentPosition,
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            SheetBodyPage.entries.forEach { tab ->
+                IconButton(
+                    onClick = { scope.launch { pagerState.scrollToPage(tab.ordinal) } },
+                    modifier = Modifier.weight(0.5f),
+                ) {
+                    Icon(
+                        painter = painterResource(if (tab.ordinal == pagerState.currentPage) tab.selectedIcon else tab.icon),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                    )
                 }
             }
         }
     }
 }
 
+
 @Composable
 fun QueuePage(
     isPlaying: Boolean,
     queue: List<VideoItem>,
-    playbackSpeed: Float,
     currentPosition: Long,
     currentVideo: VideoItem?,
 ) {

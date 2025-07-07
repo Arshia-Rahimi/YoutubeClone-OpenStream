@@ -40,28 +40,41 @@ fun SettingsScreen() {
                 .padding(ip),
         ) {
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 12.dp)
-                        .height(48.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = "clear local video history",
-                        fontSize = 16.sp,
-                    )
-                    Button(
-                        onClick = viewModel::clearLocalVideoHistory,
-                        enabled = !viewModel.localVideoHistoryLoading,
-                        modifier = Modifier.fillMaxHeight(),
-                    ) {
-                        if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
-                        else Text("clear", fontSize = 16.sp)
+                SettingsItem(
+                    title = "clear local video history",
+                    actionComposable = {
+                        Button(
+                            onClick = viewModel::clearLocalVideoHistory,
+                            enabled = !viewModel.localVideoHistoryLoading,
+                            modifier = Modifier.fillMaxHeight(),
+                        ) {
+                            if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
+                            else Text("clear", fontSize = 16.sp)
+                        }
                     }
-                }
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun SettingsItem(
+    title: String,
+    actionComposable: @Composable () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 12.dp)
+            .height(48.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = "clear local video history",
+            fontSize = 16.sp,
+        )
+        actionComposable()
     }
 }

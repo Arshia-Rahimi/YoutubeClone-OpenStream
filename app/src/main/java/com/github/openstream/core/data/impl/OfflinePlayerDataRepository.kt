@@ -15,12 +15,4 @@ class OfflinePlayerDataRepository(
     override val playerData = dataStore.data
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), PlayerDataModel())
 
-    override suspend fun setPlaybackSpeed(speed: Float) {
-        dataStore.updateData { it.copy(playbackSpeed = speed) }
-    }
-
-    override suspend fun setSeekIncrement(seekIncrement: Long) {
-        dataStore.updateData { it.copy(seekIncrement = seekIncrement) }
-    }
-
 }
