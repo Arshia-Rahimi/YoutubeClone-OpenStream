@@ -360,20 +360,23 @@ private fun SheetBodyPager(
             ) { currentTab ->
                 when (currentTab) {
                     SheetBodyPage.VideoDescription.ordinal -> {
-                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                            currentVideoData?.let { currentVideo ->
-                                SheetBody(
-                                    modifier = Modifier.fillMaxSize(),
-                                    videoData = currentVideo,
-                                    scrollState = rememberScrollState(),
-                                    scope = scope,
-                                    toChannelScreen = toChannelScreen,
-                                    shareVideo = {},
-                                    likeVideo = { toggleVideoLiked() },
-                                    addToWatchLater = { toggleVideoWatchLater() },
-                                    videoPlaylistsState = videoPlaylistsState,
-                                )
-                            }
+                        when(fetchingState) {
+                            is OpenStreamMediaPlayer.FetchingState.Success ->
+                                currentVideoData?.let { currentVideo ->
+                                    SheetBody(
+                                        modifier = Modifier.fillMaxSize(),
+                                        videoData = currentVideo,
+                                        scrollState = rememberScrollState(),
+                                        scope = scope,
+                                        toChannelScreen = toChannelScreen,
+                                        shareVideo = {},
+                                        likeVideo = { toggleVideoLiked() },
+                                        addToWatchLater = { toggleVideoWatchLater() },
+                                        videoPlaylistsState = videoPlaylistsState,
+                                    )
+                                }
+                            is OpenStreamMediaPlayer.FetchingState.Loading -> CircularProgressIndicator()
+                            is OpenStreamMediaPlayer.FetchingState.Error -> Text(fetchingState.message ?: "")
                         }
                     }
 

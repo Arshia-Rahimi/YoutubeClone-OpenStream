@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.github.openstream.ui.designsystem.components.dataitem
 
 import android.annotation.SuppressLint
@@ -39,6 +41,7 @@ fun DataItemList(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
+    isPlaylist: Boolean = false,
     shouldViewChannel: Boolean = true,
     scrollToTopTab: Tabs? = null,
     toChannelScreen: (String) -> Unit = {},
@@ -93,6 +96,7 @@ fun DataItemList(
                         .padding(horizontal = 8.dp)
                         .padding(bottom = 8.dp)
                         .animateItem(),
+                    playlist = (if(isPlaylist) items.toList() else null) as List<VideoItem>?,
                     shouldViewChannel = shouldViewChannel,
                     item = it,
                     toChannelScreen = toChannelScreen,
@@ -118,6 +122,7 @@ fun DataItemList(
     items: SnapshotStateList<DataItem>,
     modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
+    isPlaylist: Boolean = false,
     shouldViewChannel: Boolean = true,
     scrollToTopTab: Tabs? = null,
     toChannelScreen: (String) -> Unit = {},
@@ -168,6 +173,7 @@ fun DataItemList(
                     .padding(horizontal = 8.dp)
                     .padding(bottom = 8.dp)
                     .animateItem(),
+                playlist = (if(isPlaylist) items.toList() else null) as List<VideoItem>?,
                 shouldViewChannel = shouldViewChannel,
                 item = it,
                 toChannelScreen = toChannelScreen,

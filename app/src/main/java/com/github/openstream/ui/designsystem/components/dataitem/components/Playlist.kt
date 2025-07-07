@@ -113,7 +113,7 @@ fun Playlist(
             ) {
                 if (item is PlaylistItem.YoutubePlaylistItem) {
                     SubText(text = item.channelName)
-                    if (item.isChannelVerified == true) {
+                    if (item.isChannelVerified) {
                         Icon(
                             modifier = Modifier.padding(start = 4.dp, end = 8.dp),
                             painter = painterResource(R.drawable.verified),

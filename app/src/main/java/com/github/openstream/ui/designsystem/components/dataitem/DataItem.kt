@@ -14,6 +14,7 @@ import com.github.openstream.ui.designsystem.components.dataitem.components.Vide
 fun DataItem(
     modifier: Modifier,
     item: DataItem,
+    playlist: List<VideoItem>? = null,
     shouldViewChannel: Boolean = true,
     toChannelScreen: (String) -> Unit,
     toPlaylistScreen: (PlaylistItem) -> Unit,
@@ -27,6 +28,7 @@ fun DataItem(
         is VideoItem -> Video(
             modifier = modifier,
             item = item,
+            playlist = playlist,
             toChannelScreen = toChannelScreen,
             shouldViewChannel = shouldViewChannel,
             saveToWatchLater = addToWatchLater,

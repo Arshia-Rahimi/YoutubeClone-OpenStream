@@ -48,6 +48,7 @@ fun Video(
     modifier: Modifier,
     item: VideoItem,
     shouldViewChannel: Boolean,
+    playlist: List<VideoItem>? = null,
     toChannelScreen: (String) -> Unit,
     saveToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
@@ -58,7 +59,11 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { PlayerAction.Start(listOf(item)).send() }
+            .clickable { 
+                playlist?.let {
+                    PlayerAction.Start(it, it.indexOf(item)).send()
+                } ?: PlayerAction.Start(listOf(item)).send()
+            }
             .clip(RoundedCornerShape(12.dp)),
     ) {
         Box(
