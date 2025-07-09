@@ -43,6 +43,7 @@ import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
+import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
 import com.github.openstream.ui.global.player.PlayerAction
 import kotlinx.coroutines.CoroutineScope
@@ -62,6 +63,7 @@ fun SheetBodyPager(
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
+    switchPlaybackQuality: (VideoOption) -> Unit,
 ) {
     val pagerState = rememberPagerState { SheetBodyPage.entries.size }
     if (sheetDragProgress != 0f) Column(
@@ -87,6 +89,7 @@ fun SheetBodyPager(
                         toggleVideoWatchLater = toggleVideoWatchLater,
                         toggleVideoLiked = toggleVideoLiked,
                         videoPlaylistsState = videoPlaylistsState,
+                        switchPlaybackQuality = switchPlaybackQuality,
                     )
 
                 SheetBodyPage.Queue.ordinal ->
@@ -126,6 +129,7 @@ private fun VideoDescriptionPage(
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
     videoPlaylistsState: VideoPlaylistsState,
+    switchPlaybackQuality: (VideoOption) -> Unit,
 ) {
     when (fetchingState) {
         is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
@@ -139,6 +143,7 @@ private fun VideoDescriptionPage(
                 likeVideo = { toggleVideoLiked() },
                 addToWatchLater = { toggleVideoWatchLater() },
                 videoPlaylistsState = videoPlaylistsState,
+                switchPlaybackQuality = switchPlaybackQuality,
             )
         }
 

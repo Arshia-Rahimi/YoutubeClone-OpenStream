@@ -9,6 +9,7 @@ import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.ui.global.player.components.PlayerSheetState
 import com.github.openstream.ui.global.player.components.VideoPlaylistsState
@@ -75,6 +76,9 @@ class PlayerViewModel(
         is PlayerAction.SeekForward -> player.seekForward()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()
     }
+    
+    fun switchPlaybackQuality(videoOption: VideoOption) = 
+        player.switchPlaybackQuality(videoOption)
 
     private fun start(videos: List<VideoItem>, index: Int) {
         _showMiniPlayer.value = true

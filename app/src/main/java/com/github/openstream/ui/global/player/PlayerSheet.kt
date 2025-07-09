@@ -58,6 +58,7 @@ import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
+import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
 import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
@@ -126,6 +127,7 @@ fun PlayerSheet(
             videoPlaylistsState = playlistsState,
             currentVideoData = currentVideoData,
             currentVideo = currentVideo,
+            switchPlaybackQuality = viewModel::switchPlaybackQuality
         )
     }
 }
@@ -150,6 +152,7 @@ private fun PlayerSheet(
     dispose: () -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
+    switchPlaybackQuality: (VideoOption) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -293,6 +296,7 @@ private fun PlayerSheet(
 
         SheetBodyPager(
             sheetDragProgress = sheetDragProgress,
+            switchPlaybackQuality = switchPlaybackQuality,
             fetchingState = fetchingState,
             currentVideoData = currentVideoData,
             scope = scope,

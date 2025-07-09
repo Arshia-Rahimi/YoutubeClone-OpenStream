@@ -87,6 +87,22 @@ class OpenStreamMediaPlayer(
             delay(1000L)
         }
     }
+    
+    fun switchPlaybackQuality(videoOption: VideoOption) {
+        mainThreadScope.launch {
+            val wasPlaying = isPlaying.value
+            val currentVideoData = _currentVideoData.value ?: return@launch
+            if (wasPlaying) pause()
+
+            val currentPosition = player.currentPosition
+            val mediaSource = currentVideoData.getMediaSource(videoOption)
+            player.setMediaSource(mediaSource)
+            player.prepare()
+            player.seekTo(currentPosition)
+
+            if (wasPlaying) resume()
+        }
+    }
 
     fun start(videos: List<VideoItem>, index: Int) {
         queue.value = videos
@@ -163,7 +179,6 @@ class OpenStreamMediaPlayer(
             }
         }
     }
-
 
     private fun VideoData.getMediaSource(videoOption: VideoOption): MediaSource {
         val videoItem = MediaItem.Builder().setUri(videoOption.content).build()

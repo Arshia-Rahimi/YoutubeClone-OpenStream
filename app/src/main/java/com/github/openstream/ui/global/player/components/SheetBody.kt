@@ -42,6 +42,7 @@ import com.github.openstream.core.model.dataitem.ChannelItem
 import com.github.openstream.core.model.dataitem.StreamType
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
+import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.global.popups.PopupController
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +59,7 @@ fun SheetBody(
     shareVideo: (VideoItem) -> Unit,
     likeVideo: () -> Unit,
     addToWatchLater: () -> Unit,
+    switchPlaybackQuality: (VideoOption) -> Unit,
 ) {
     val rowScroll = rememberScrollState()
     var showDescription by remember { mutableStateOf(false) }
@@ -260,6 +262,7 @@ private fun Preview() {
                 modifier = Modifier,
                 scope = rememberCoroutineScope(),
                 videoPlaylistsState = VideoPlaylistsState(),
+                switchPlaybackQuality = {},
             )
         }
     }
