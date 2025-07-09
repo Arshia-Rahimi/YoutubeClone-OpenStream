@@ -23,7 +23,7 @@ import com.github.openstream.ui.feature.subscriptions.SubscriptionsNavHost
 import com.github.openstream.ui.global.OpenStreamScaffold
 import com.github.openstream.ui.global.player.PlayerController
 import com.github.openstream.ui.global.player.PlayerViewModel
-import com.github.openstream.ui.global.player.view.FullScreenPlayerView
+import com.github.openstream.ui.global.player.components.playerview.FullScreenPlayerView
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

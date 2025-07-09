@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.player.view
+package com.github.openstream.ui.global.player.components.playerview
 
 import android.annotation.SuppressLint
 import android.app.Activity

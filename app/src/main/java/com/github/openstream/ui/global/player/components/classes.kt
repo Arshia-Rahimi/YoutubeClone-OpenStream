@@ -21,3 +21,7 @@ enum class SheetBodyPage(
         selectedIcon = R.drawable.queue_selected,
     ),
 }
+
+enum class PlayerSheetState {
+    MINI_PLAYER, EXPANDED,
+}

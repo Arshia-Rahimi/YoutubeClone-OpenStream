@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.player.view
+package com.github.openstream.ui.global.player.components.playerview
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
