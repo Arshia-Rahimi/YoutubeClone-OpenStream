@@ -1,5 +1,7 @@
 package com.github.openstream.core.model.extractordata
 
+import androidx.annotation.DrawableRes
+import com.github.openstream.R
 import com.github.openstream.core.model.dataitem.StreamType
 import com.github.openstream.core.model.dataitem.VideoItem
 
@@ -44,5 +46,35 @@ data class VideoData(
    
 data class VideoOption(
     val content: String,
-    val quality: String,
+    val quality: VideoQuality
 )
+
+enum class VideoQuality(
+    @param:DrawableRes val icon: Int,
+    val quality: Int,
+) {
+    Q144p(
+        icon = R.drawable.quality_144,
+        quality = 144,
+    ),
+    Q240p(
+        icon = R.drawable.quality_240,
+        quality = 240,
+    ),
+    Q360p(
+        icon = R.drawable.quality_360,
+        quality = 360,
+    ),
+    Q480p(
+        icon = R.drawable.quality_480,
+        quality = 480,
+    ),
+    Q720p(
+        icon = R.drawable.quality_720,
+        quality = 720,
+    ),
+    Q1080p(
+        icon = R.drawable.quality_1080,
+        quality = 1080,
+    )
+}

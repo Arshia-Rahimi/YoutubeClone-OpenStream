@@ -1,8 +1,6 @@
 package com.github.openstream.ui.global.player.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,18 +42,18 @@ import com.github.openstream.core.model.dataitem.StreamType
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
+import com.github.openstream.core.model.extractordata.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.global.popups.PopupController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun SheetBody(
     modifier: Modifier,
     videoData: VideoData,
     scrollState: ScrollState,
-    scope: CoroutineScope,
     videoPlaylistsState: VideoPlaylistsState,
+    currentQuality: VideoQuality?,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
     likeVideo: () -> Unit,
@@ -62,7 +61,6 @@ fun SheetBody(
     switchPlaybackQuality: (VideoOption) -> Unit,
 ) {
     val rowScroll = rememberScrollState()
-    var showDescription by remember { mutableStateOf(false) }
     val videoItem = remember { videoData.toDataItem() }
     Column(
         modifier = modifier,
@@ -71,31 +69,19 @@ fun SheetBody(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp)
-                .clickable { scope.launch { showDescription = !showDescription } },
+                .padding(top = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Row(
+            Text(
+                text = videoData.name,
+                fontSize = 20.sp,
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = videoData.name,
-                    fontSize = 20.sp,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                Icon(
-                    painter = painterResource(if (showDescription) R.drawable.condense else R.drawable.expand),
-                    contentDescription = "description sheet",
-                    tint = MaterialTheme.colorScheme.onTertiary,
-                )
-            }
+            )
             Row(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -122,22 +108,6 @@ fun SheetBody(
                 )
             }
         }
-        AnimatedVisibility(
-            visible = showDescription,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .weight(1f),
-            enter = expandVertically(),
-            exit = shrinkVertically(),
-        ) {
-            Text(
-                text = videoData.description,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.verticalScroll(scrollState),
-            )
-        }
         Channel(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
@@ -158,13 +128,38 @@ fun SheetBody(
                 .horizontalScroll(rowScroll),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF292929))
-                    .padding(end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            var showQualityOptions by remember { mutableStateOf(false) }
+            OptionsRowItem(
+                modifier = Modifier.clickable {
+                    showQualityOptions = true
+                }
             ) {
+                currentQuality?.let {
+                    Icon(
+                        painter = painterResource(currentQuality.icon),
+                        contentDescription = "video quality: ${currentQuality.quality}",
+                        tint = Color.White,
+                    )
+                    DropdownMenu(
+                        expanded = showQualityOptions,
+                        onDismissRequest = { showQualityOptions = false },
+                    ) {
+                        videoData.videoOptions.forEach { q ->
+                            DropdownMenuItem(
+                                text = {
+                                    Icon(
+                                        painter = painterResource(q.quality.icon),
+                                        contentDescription = q.quality.quality.toString(),
+                                        tint = Color.White,
+                                    )
+                                },
+                                onClick = { switchPlaybackQuality(q) }
+                            )
+                        }
+                    }
+                }
+            }
+            OptionsRowItem {
                 IconButton(
                     onClick = likeVideo,
                 ) {
@@ -179,12 +174,7 @@ fun SheetBody(
                     color = Color.White,
                 )
             }
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF292929)),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            OptionsRowItem {
                 IconButton(
                     onClick = { shareVideo(videoItem) },
                 ) {
@@ -195,12 +185,7 @@ fun SheetBody(
                     )
                 }
             }
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF292929)),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            OptionsRowItem {
                 IconButton(
                     onClick = addToWatchLater,
                 ) {
@@ -211,12 +196,7 @@ fun SheetBody(
                     )
                 }
             }
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFF292929)),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            OptionsRowItem {
                 IconButton(
                     onClick = { PopupController.openSaveVideoToPlaylistModal(videoItem) },
                 ) {
@@ -228,6 +208,27 @@ fun SheetBody(
                 }
             }
         }
+        Text(
+            text = videoData.description,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.verticalScroll(scrollState),
+        )
+    }
+}
+
+@Composable
+private fun OptionsRowItem(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFF292929)),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        content()
     }
 }
 
@@ -260,9 +261,9 @@ private fun Preview() {
                 shareVideo = {},
                 addToWatchLater = {},
                 modifier = Modifier,
-                scope = rememberCoroutineScope(),
                 videoPlaylistsState = VideoPlaylistsState(),
                 switchPlaybackQuality = {},
+                currentQuality = VideoQuality.Q144p,
             )
         }
     }

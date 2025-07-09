@@ -44,6 +44,7 @@ import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
+import com.github.openstream.core.model.extractordata.VideoQuality
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
 import com.github.openstream.ui.global.player.PlayerAction
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +58,7 @@ fun SheetBodyPager(
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     currentVideoData: VideoData?,
     currentVideo: VideoItem?,
+    currentQuality: VideoQuality?,
     currentPosition: Long,
     scope: CoroutineScope,
     videoPlaylistsState: VideoPlaylistsState,
@@ -90,6 +92,7 @@ fun SheetBodyPager(
                         toggleVideoLiked = toggleVideoLiked,
                         videoPlaylistsState = videoPlaylistsState,
                         switchPlaybackQuality = switchPlaybackQuality,
+                        currentQuality = currentQuality,
                     )
 
                 SheetBodyPage.Queue.ordinal ->
@@ -125,6 +128,7 @@ private fun VideoDescriptionPage(
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     currentVideoData: VideoData?,
     scope: CoroutineScope,
+    currentQuality: VideoQuality?,
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
@@ -137,7 +141,7 @@ private fun VideoDescriptionPage(
                 modifier = Modifier.fillMaxSize(),
                 videoData = currentVideo,
                 scrollState = rememberScrollState(),
-                scope = scope,
+                currentQuality = currentQuality,
                 toChannelScreen = toChannelScreen,
                 shareVideo = {},
                 likeVideo = { toggleVideoLiked() },

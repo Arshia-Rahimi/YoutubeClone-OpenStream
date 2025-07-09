@@ -3,6 +3,7 @@ package com.github.openstream.core.extractor.datasource
 import com.github.openstream.core.extractor.YtService
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
+import com.github.openstream.core.model.extractordata.VideoQuality
 import org.schabi.newpipe.extractor.stream.StreamType
 
 object VideoRemoteDataSource {
@@ -22,8 +23,9 @@ object VideoRemoteDataSource {
             viewCount = extractor.viewCount,
             videoOptions = extractor.videoOnlyStreams.map {
                 VideoOption(
-                    it.content,
-                    it.height.toString()
+                    content = it.content,
+                    // todo
+                    quality = VideoQuality.entries.firstOrNull { entry -> entry.quality == it.height } ?: VideoQuality.Q1080p,
                 )
             },
             audioStream = extractor.audioStreams.first().content,

@@ -59,6 +59,8 @@ class OpenStreamMediaPlayer(
 
                 fetchVideo(currentVideo)
                 if (isPlaying.value) resume()
+                // todo 
+                _currentQuality.value = _currentVideoData.value?.videoOptions?.first()
 
             }.launchIn(scope)
         }
@@ -74,6 +76,9 @@ class OpenStreamMediaPlayer(
         MutableStateFlow(FetchingState.Loading)
     val fetchingState = _fetchingState.asStateFlow()
 
+    private val _currentQuality: MutableStateFlow<VideoOption?> = MutableStateFlow(null)
+    val currentQuality = _currentQuality.asStateFlow()
+    
     private val _currentVideoData: MutableStateFlow<VideoData?> = MutableStateFlow(null)
     val currentVideoData = _currentVideoData.asStateFlow()
 
@@ -90,6 +95,8 @@ class OpenStreamMediaPlayer(
     
     fun switchPlaybackQuality(videoOption: VideoOption) {
         mainThreadScope.launch {
+            _currentQuality.value = videoOption
+            
             val wasPlaying = isPlaying.value
             val currentVideoData = _currentVideoData.value ?: return@launch
             if (wasPlaying) pause()

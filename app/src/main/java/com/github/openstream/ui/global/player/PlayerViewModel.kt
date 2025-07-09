@@ -36,6 +36,7 @@ class PlayerViewModel(
     val fetchingState = player.fetchingState
     val currentVideoData = player.currentVideoData
     val currentVideo = player.currentVideo
+    val currentQuality = player.currentQuality
     val isPlaying = player.isPlaying
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)

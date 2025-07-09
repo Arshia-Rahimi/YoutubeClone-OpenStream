@@ -59,6 +59,7 @@ import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
+import com.github.openstream.core.model.extractordata.VideoQuality
 import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
 import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
@@ -83,6 +84,7 @@ fun PlayerSheet(
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
+    val currentQuality by viewModel.currentQuality.collectAsStateWithLifecycle()
     val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
@@ -115,6 +117,7 @@ fun PlayerSheet(
             player = viewModel.playerInstance,
             dragState = dragState,
             playerWidth = playerWidth,
+            currentQuality = currentQuality?.quality,
             sheetDragProgress = sheetDragProgress,
             toChannelScreen = toChannelScreen,
             currentPosition = currentPosition,
@@ -144,6 +147,7 @@ private fun PlayerSheet(
     queue: List<VideoItem>,
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
+    currentQuality: VideoQuality?,
     currentVideoData: VideoData?,
     currentVideo: VideoItem?,
     videoPlaylistsState: VideoPlaylistsState,
@@ -296,6 +300,7 @@ private fun PlayerSheet(
 
         SheetBodyPager(
             sheetDragProgress = sheetDragProgress,
+            currentQuality = currentQuality,
             switchPlaybackQuality = switchPlaybackQuality,
             fetchingState = fetchingState,
             currentVideoData = currentVideoData,
