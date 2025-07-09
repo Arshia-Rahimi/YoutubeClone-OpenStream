@@ -2,13 +2,19 @@ package com.github.openstream.core.media3
 
 import android.content.Context
 import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
+import com.github.openstream.core.model.extractordata.VideoOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -24,7 +30,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
-    context: Context,
+    private val context: Context,
     private val videoRepo: VideoRepository,
     private val scope: CoroutineScope,
 ) {
@@ -149,13 +155,27 @@ class OpenStreamMediaPlayer(
                 is Resource.Success -> {
                     _currentVideoData.value = it.data
                     withContext(Dispatchers.Main) {
-                        player.setMediaItem(it.data.getMediaItem(it.data.videoStreams.first().content))
+                        player.setMediaSource(it.data.getMediaSource(it.data.videoOptions.first()))
                         player.prepare()
                     }
                     _fetchingState.value = FetchingState.Success
                 }
             }
         }
+    }
+
+
+    private fun VideoData.getMediaSource(videoOption: VideoOption): MediaSource {
+        val videoItem = MediaItem.Builder().setUri(videoOption.content).build()
+        val audioItem = MediaItem.Builder().setUri(audioStream).build()
+        val dataSourceFactory = DefaultDataSource.Factory(context)
+
+        val videoSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(videoItem)
+        val audioSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(audioItem)
+
+        return MergingMediaSource(true, true, videoSource, audioSource)
     }
 
 }
