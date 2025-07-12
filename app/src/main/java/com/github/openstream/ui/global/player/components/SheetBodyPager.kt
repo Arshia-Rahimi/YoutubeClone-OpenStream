@@ -41,6 +41,7 @@ import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
+import com.github.openstream.core.model.dataitem.ChannelItem
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
@@ -61,11 +62,12 @@ fun SheetBodyPager(
     currentQuality: VideoQuality?,
     currentPosition: Long,
     scope: CoroutineScope,
-    videoPlaylistsState: VideoPlaylistsState,
+    videoLocalState: VideoLocalState,
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
 ) {
     val pagerState = rememberPagerState { SheetBodyPage.entries.size }
     if (sheetDragProgress != 0f) Column(
@@ -84,13 +86,14 @@ fun SheetBodyPager(
             when (currentTab) {
                 SheetBodyPage.VideoDescription.ordinal ->
                     VideoDescriptionPage(
+                        subscribe = subscribe,
                         fetchingState = fetchingState,
                         currentVideoData = currentVideoData,
                         toChannelScreen = toChannelScreen,
                         scope = scope,
                         toggleVideoWatchLater = toggleVideoWatchLater,
                         toggleVideoLiked = toggleVideoLiked,
-                        videoPlaylistsState = videoPlaylistsState,
+                        videoLocalState = videoLocalState,
                         switchPlaybackQuality = switchPlaybackQuality,
                         currentQuality = currentQuality,
                     )
@@ -132,8 +135,9 @@ private fun VideoDescriptionPage(
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
-    videoPlaylistsState: VideoPlaylistsState,
+    videoLocalState: VideoLocalState,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
 ) {
     when (fetchingState) {
         is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
@@ -145,8 +149,9 @@ private fun VideoDescriptionPage(
                 shareVideo = {},
                 likeVideo = { toggleVideoLiked() },
                 addToWatchLater = { toggleVideoWatchLater() },
-                videoPlaylistsState = videoPlaylistsState,
+                videoLocalState = videoLocalState,
                 switchPlaybackQuality = switchPlaybackQuality,
+                subscribe = subscribe,
             )
         }
 
@@ -157,7 +162,7 @@ private fun VideoDescriptionPage(
 
         is OpenStreamMediaPlayer.FetchingState.Error ->
             Box(Modifier.fillMaxSize(), Alignment.Center) {
-                Text(fetchingState.message ?: "")
+                Text(fetchingState.message ?: "", color = Color.White)
             }
     }
 }

@@ -54,13 +54,14 @@ import com.github.openstream.ui.global.popups.PopupController
 fun VideoDescription(
     videoData: VideoData,
     scrollState: ScrollState,
-    videoPlaylistsState: VideoPlaylistsState,
+    videoLocalState: VideoLocalState,
     currentQuality: VideoQuality?,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
     likeVideo: () -> Unit,
     addToWatchLater: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
 ) {
     val videoItem = remember { videoData.toDataItem() }
 
@@ -114,10 +115,16 @@ fun VideoDescription(
         Channel(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
-            subscribe = {
-                // todo
-            },
-            item = ChannelItem.OnlineChannelItem(
+            subscribe = subscribe,
+            item = if (videoLocalState.isChannelSubscribed) ChannelItem.OfflineFirstChannelItem(
+                url = videoData.channelUrl,
+                name = videoData.channelName,
+                isVerified = videoData.isChannelVerified,
+                subscriberCount = videoData.subscriberCount,
+                description = "",
+                avatar = videoData.channelAvatar,
+                id = 1, // todo this is unneeded
+            ) else ChannelItem.OnlineChannelItem(
                 url = videoData.channelUrl,
                 name = videoData.channelName,
                 isVerified = videoData.isChannelVerified,
@@ -175,7 +182,7 @@ fun VideoDescription(
                             modifier = Modifier.fillMaxHeight(),
                         ) {
                             Icon(
-                                painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like_filled else R.drawable.like),
+                                painter = painterResource(if (videoLocalState.isLiked) R.drawable.like_filled else R.drawable.like),
                                 contentDescription = "like video",
                                 tint = Color.White,
                             )
@@ -207,7 +214,7 @@ fun VideoDescription(
                         onClick = addToWatchLater,
                     ) {
                         Icon(
-                            painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
+                            painter = painterResource(if (videoLocalState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
                             contentDescription = "add to watch later",
                             tint = Color.White,
                         )
@@ -285,9 +292,10 @@ private fun Preview() {
                 likeVideo = {},
                 shareVideo = {},
                 addToWatchLater = {},
-                videoPlaylistsState = VideoPlaylistsState(),
+                videoLocalState = VideoLocalState(),
                 switchPlaybackQuality = {},
                 currentQuality = VideoQuality.Q144p,
+                subscribe = {},
             )
         }
     }

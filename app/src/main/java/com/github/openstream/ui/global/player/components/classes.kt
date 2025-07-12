@@ -3,9 +3,10 @@ package com.github.openstream.ui.global.player.components
 import androidx.annotation.DrawableRes
 import com.github.openstream.R
 
-data class VideoPlaylistsState(
+data class VideoLocalState(
     val isInWatchLater: Boolean = false,
     val isLiked: Boolean = false,
+    val isChannelSubscribed: Boolean = false,
 )
 
 enum class SheetBodyPage(

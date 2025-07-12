@@ -49,4 +49,9 @@ interface ChannelDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun upsertChannelVideos(vararg channelVideos: ChannelVideoCrossRef)
+
+
+    @Query("SELECT EXISTS(SELECT 1 FROM channels WHERE url = :channelUrl)")
+    fun isChannelSubscribed(channelUrl: String): Flow<Boolean>
+    
 }

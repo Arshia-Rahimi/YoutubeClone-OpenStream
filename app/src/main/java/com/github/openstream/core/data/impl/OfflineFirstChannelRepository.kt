@@ -137,4 +137,7 @@ class OfflineFirstChannelRepository(
             }
         }.asResult(Dispatchers.IO)
 
+    override fun isChannelsubscribed(channelUrl: String) =
+        db.channelDao().isChannelSubscribed(channelUrl)
+
 }

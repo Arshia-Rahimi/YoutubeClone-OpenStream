@@ -56,6 +56,7 @@ import com.github.openstream.R
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
+import com.github.openstream.core.model.dataitem.ChannelItem
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
@@ -65,7 +66,7 @@ import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
 import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
 import com.github.openstream.ui.global.player.components.PlayerSheetState
 import com.github.openstream.ui.global.player.components.SheetBodyPager
-import com.github.openstream.ui.global.player.components.VideoPlaylistsState
+import com.github.openstream.ui.global.player.components.VideoLocalState
 import com.github.openstream.ui.global.player.components.playerview.PlayerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -113,6 +114,7 @@ fun PlayerSheet(
 
     if (showMiniPlayer) {
         PlayerSheet(
+            subscribe = viewModel::subscribe,
             queue = viewModel.queue,
             player = viewModel.playerInstance,
             dragState = dragState,
@@ -123,11 +125,11 @@ fun PlayerSheet(
             currentPosition = currentPosition,
             fetchingState = fetchingState,
             isPlaying = isPlaying,
-            dispose = { viewModel.dispose() },
+            dispose = viewModel::dispose,
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
-            videoPlaylistsState = playlistsState,
+            videoLocalState = playlistsState,
             currentVideoData = currentVideoData,
             currentVideo = currentVideo,
             switchPlaybackQuality = viewModel::switchPlaybackQuality
@@ -150,13 +152,14 @@ private fun PlayerSheet(
     currentQuality: VideoQuality?,
     currentVideoData: VideoData?,
     currentVideo: VideoItem?,
-    videoPlaylistsState: VideoPlaylistsState,
+    videoLocalState: VideoLocalState,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -306,13 +309,14 @@ private fun PlayerSheet(
             currentVideoData = currentVideoData,
             scope = scope,
             toChannelScreen = toChannelScreen,
-            videoPlaylistsState = videoPlaylistsState,
+            videoLocalState = videoLocalState,
             toggleVideoLiked = toggleVideoLiked,
             toggleVideoWatchLater = toggleVideoWatchLater,
             queue = queue,
             isPlaying = isPlaying,
             currentPosition = currentPosition,
             currentVideo = currentVideo,
+            subscribe = subscribe,
         )
     }
 }
