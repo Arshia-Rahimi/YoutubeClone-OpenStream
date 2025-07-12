@@ -137,8 +137,7 @@ private fun VideoDescriptionPage(
 ) {
     when (fetchingState) {
         is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
-            SheetBody(
-                modifier = Modifier.fillMaxSize(),
+            VideoDescription(
                 videoData = currentVideo,
                 scrollState = rememberScrollState(),
                 currentQuality = currentQuality,

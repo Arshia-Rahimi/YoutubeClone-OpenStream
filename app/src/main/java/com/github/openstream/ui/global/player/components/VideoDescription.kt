@@ -3,7 +3,6 @@ package com.github.openstream.ui.global.player.components
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -33,8 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,8 +51,7 @@ import com.github.openstream.ui.designsystem.components.dataitem.components.Chan
 import com.github.openstream.ui.global.popups.PopupController
 
 @Composable
-fun SheetBody(
-    modifier: Modifier,
+fun VideoDescription(
     videoData: VideoData,
     scrollState: ScrollState,
     videoPlaylistsState: VideoPlaylistsState,
@@ -65,17 +62,17 @@ fun SheetBody(
     addToWatchLater: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
 ) {
-    val rowScroll = rememberScrollState()
     val videoItem = remember { videoData.toDataItem() }
-    
+
     Column(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 12.dp),
+                .padding(top = 12.dp)
+                .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
@@ -129,27 +126,26 @@ fun SheetBody(
                 avatar = videoData.channelAvatar,
             )
         )
-        Row(
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-                .horizontalScroll(rowScroll),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            var showQualityOptions by remember { mutableStateOf(false) }
-            OptionsRowItem(
-                modifier = Modifier.clickable {
-                    showQualityOptions = true
-                }
-            ) {
+            item {
                 currentQuality?.let {
-                    Icon(
-                        painter = painterResource(currentQuality.icon),
-                        contentDescription = "video quality: ${currentQuality.quality}",
-                        tint = Color.White,
-                        modifier = Modifier.matchParentSize()
-                            .padding(horizontal = 4.dp),
-                    )
+                    var showQualityOptions by remember { mutableStateOf(false) }
+                    OptionsRowItem(
+                        modifier = Modifier.clickable {
+                            showQualityOptions = true
+                        }
+                    ) {
+                        Text(
+                            text = "${it.quality}p",
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                        )
+                    }
                     DropdownMenu(
                         expanded = showQualityOptions,
                         onDismissRequest = { showQualityOptions = false },
@@ -157,14 +153,10 @@ fun SheetBody(
                         videoData.videoOptions.forEach { q ->
                             DropdownMenuItem(
                                 text = {
-                                    Icon(
-                                        painter = painterResource(q.quality.icon),
-                                        contentDescription = q.quality.quality.toString(),
-                                        tint = Color.White,
-                                    )
+                                    Text(q.quality.quality.toString())
                                 },
-                                onClick = { 
-                                    switchPlaybackQuality(q) 
+                                onClick = {
+                                    switchPlaybackQuality(q)
                                     showQualityOptions = false
                                 }
                             )
@@ -172,63 +164,67 @@ fun SheetBody(
                     }
                 }
             }
-            OptionsRowItem {
-                Row(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
-                ) {
+            item {
+                OptionsRowItem {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround,
+                    ) {
+                        IconButton(
+                            onClick = likeVideo,
+                            modifier = Modifier.fillMaxHeight(),
+                        ) {
+                            Icon(
+                                painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like_filled else R.drawable.like),
+                                contentDescription = "like video",
+                                tint = Color.White,
+                            )
+                        }
+                        Text(
+                            text = videoData.likeCount.toShortForm(),
+                            color = Color.White,
+                            modifier = Modifier.padding(end = 12.dp),
+                        )
+                    }
+                }
+            }
+            item {
+                OptionsRowItem {
                     IconButton(
-                        onClick = likeVideo,
-                        modifier = Modifier.fillMaxHeight(),
+                        onClick = { shareVideo(videoItem) },
                     ) {
                         Icon(
-                            painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like_filled else R.drawable.like),
-                            contentDescription = "like video",
+                            painter = painterResource(R.drawable.share),
+                            contentDescription = "share video",
                             tint = Color.White,
                         )
                     }
-                    Text(
-                        text = videoData.likeCount.toShortForm(),
-                        color = Color.White,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
                 }
             }
-            OptionsRowItem {
-                IconButton(
-                    onClick = { shareVideo(videoItem) },
-                    modifier = Modifier.matchParentSize(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.share),
-                        contentDescription = "share video",
-                        tint = Color.White,
-                    )
+            item {
+                OptionsRowItem {
+                    IconButton(
+                        onClick = addToWatchLater,
+                    ) {
+                        Icon(
+                            painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
+                            contentDescription = "add to watch later",
+                            tint = Color.White,
+                        )
+                    }
                 }
             }
-            OptionsRowItem {
-                IconButton(
-                    onClick = addToWatchLater,
-                    modifier = Modifier.matchParentSize(),
-                ) {
-                    Icon(
-                        painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
-                        contentDescription = "add to watch later",
-                        tint = Color.White,
-                    )
-                }
-            }
-            OptionsRowItem {
-                IconButton(
-                    onClick = { PopupController.openSaveVideoToPlaylistModal(videoItem) },
-                    modifier = Modifier.matchParentSize(),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.addtoplaylist),
-                        contentDescription = "add to playlist",
-                        tint = Color.White,
-                    )
+            item {
+                OptionsRowItem {
+                    IconButton(
+                        onClick = { PopupController.openSaveVideoToPlaylistModal(videoItem) },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.addtoplaylist),
+                            contentDescription = "add to playlist",
+                            tint = Color.White,
+                        )
+                    }
                 }
             }
         }
@@ -236,7 +232,10 @@ fun SheetBody(
             text = videoData.description,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.verticalScroll(scrollState),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .verticalScroll(scrollState),
         )
     }
 }
@@ -263,7 +262,7 @@ private fun OptionsRowItem(
 private fun Preview() {
     MaterialTheme {
         Column(Modifier.fillMaxSize()) {
-            SheetBody(
+            VideoDescription(
                 toChannelScreen = {},
                 videoData = VideoData(
                     name = "name",
@@ -286,7 +285,6 @@ private fun Preview() {
                 likeVideo = {},
                 shareVideo = {},
                 addToWatchLater = {},
-                modifier = Modifier,
                 videoPlaylistsState = VideoPlaylistsState(),
                 switchPlaybackQuality = {},
                 currentQuality = VideoQuality.Q144p,
