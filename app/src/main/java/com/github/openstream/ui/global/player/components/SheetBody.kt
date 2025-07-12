@@ -1,16 +1,20 @@
 package com.github.openstream.ui.global.player.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +52,6 @@ import com.github.openstream.core.model.extractordata.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.global.popups.PopupController
 
-@SuppressLint("RememberReturnType")
 @Composable
 fun SheetBody(
     modifier: Modifier,
@@ -62,6 +67,7 @@ fun SheetBody(
 ) {
     val rowScroll = rememberScrollState()
     val videoItem = remember { videoData.toDataItem() }
+    
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -111,7 +117,9 @@ fun SheetBody(
         Channel(
             modifier = Modifier,
             toChannelScreen = toChannelScreen,
-            subscribe = {},
+            subscribe = {
+                // todo
+            },
             item = ChannelItem.OnlineChannelItem(
                 url = videoData.channelUrl,
                 name = videoData.channelName,
@@ -139,6 +147,8 @@ fun SheetBody(
                         painter = painterResource(currentQuality.icon),
                         contentDescription = "video quality: ${currentQuality.quality}",
                         tint = Color.White,
+                        modifier = Modifier.matchParentSize()
+                            .padding(horizontal = 4.dp),
                     )
                     DropdownMenu(
                         expanded = showQualityOptions,
@@ -153,30 +163,42 @@ fun SheetBody(
                                         tint = Color.White,
                                     )
                                 },
-                                onClick = { switchPlaybackQuality(q) }
+                                onClick = { 
+                                    switchPlaybackQuality(q) 
+                                    showQualityOptions = false
+                                }
                             )
                         }
                     }
                 }
             }
             OptionsRowItem {
-                IconButton(
-                    onClick = likeVideo,
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
                 ) {
-                    Icon(
-                        painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like_filled else R.drawable.like),
-                        contentDescription = "like video",
-                        tint = Color.White,
+                    IconButton(
+                        onClick = likeVideo,
+                        modifier = Modifier.fillMaxHeight(),
+                    ) {
+                        Icon(
+                            painter = painterResource(if (videoPlaylistsState.isLiked) R.drawable.like_filled else R.drawable.like),
+                            contentDescription = "like video",
+                            tint = Color.White,
+                        )
+                    }
+                    Text(
+                        text = videoData.likeCount.toShortForm(),
+                        color = Color.White,
+                        modifier = Modifier.padding(end = 8.dp)
                     )
                 }
-                Text(
-                    text = videoData.likeCount.toShortForm(),
-                    color = Color.White,
-                )
             }
             OptionsRowItem {
                 IconButton(
                     onClick = { shareVideo(videoItem) },
+                    modifier = Modifier.matchParentSize(),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.share),
@@ -188,6 +210,7 @@ fun SheetBody(
             OptionsRowItem {
                 IconButton(
                     onClick = addToWatchLater,
+                    modifier = Modifier.matchParentSize(),
                 ) {
                     Icon(
                         painter = painterResource(if (videoPlaylistsState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
@@ -199,6 +222,7 @@ fun SheetBody(
             OptionsRowItem {
                 IconButton(
                     onClick = { PopupController.openSaveVideoToPlaylistModal(videoItem) },
+                    modifier = Modifier.matchParentSize(),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.addtoplaylist),
@@ -220,13 +244,15 @@ fun SheetBody(
 @Composable
 private fun OptionsRowItem(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    Row(
+    Box(
         modifier = modifier
+            .height(40.dp)
+            .widthIn(min = 40.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color(0xFF292929)),
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
         content()
     }

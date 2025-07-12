@@ -70,7 +70,9 @@ fun Navigation() {
                 else -> navigationViewModel.tabClick(destination)
             }
         },
-        toChannelScreen = {},
+        toChannelScreen = {
+            // todo
+        },
     ) { ip ->
         NavHost(
             modifier = Modifier
