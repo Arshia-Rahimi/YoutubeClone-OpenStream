@@ -79,6 +79,9 @@ class OpenStreamMediaPlayer(
     private val _currentQuality: MutableStateFlow<VideoOption?> = MutableStateFlow(null)
     val currentQuality = _currentQuality.asStateFlow()
     
+    private val _isAudioOnlyModeEnabled = MutableStateFlow(false)
+    val isAudioOnlyModeEnabled = _isAudioOnlyModeEnabled.asStateFlow()
+    
     private val _currentVideoData: MutableStateFlow<VideoData?> = MutableStateFlow(null)
     val currentVideoData = _currentVideoData.asStateFlow()
 
@@ -97,8 +100,8 @@ class OpenStreamMediaPlayer(
         mainThreadScope.launch {
             _currentQuality.value = videoOption
             
-            val wasPlaying = isPlaying.value
             val currentVideoData = _currentVideoData.value ?: return@launch
+            val wasPlaying = isPlaying.value
             if (wasPlaying) pause()
 
             val currentPosition = player.currentPosition
@@ -109,6 +112,28 @@ class OpenStreamMediaPlayer(
 
             if (wasPlaying) resume()
         }
+    }
+    
+    fun toggleAudioOnlyMode() {
+        val currentVideoData = _currentVideoData.value ?: return
+        val currentQuality = _currentQuality.value ?: return
+        val currentPosition = player.currentPosition
+        
+        val wasPlaying = isPlaying.value
+        if (wasPlaying) pause()
+        
+        val isAudioOnly = _isAudioOnlyModeEnabled.value
+        _isAudioOnlyModeEnabled.value = !isAudioOnly
+        
+        if (isAudioOnly) {
+            player.setMediaItem(currentVideoData.getAudioOnlyMediaItem())
+        } else {
+            player.setMediaSource(currentVideoData.getMediaSource(currentQuality))
+        }
+        
+        player.prepare()
+        player.seekTo(currentPosition)
+        if (wasPlaying) resume()
     }
 
     fun start(videos: List<VideoItem>, index: Int) {
@@ -177,10 +202,16 @@ class OpenStreamMediaPlayer(
                 is Resource.Error -> _fetchingState.value = FetchingState.Error(it.message)
                 is Resource.Success -> {
                     _currentVideoData.value = it.data
+                    
                     withContext(Dispatchers.Main) {
-                        player.setMediaSource(it.data.getMediaSource(it.data.videoOptions.first()))
+                        if (_isAudioOnlyModeEnabled.value) {
+                            player.setMediaItem(it.data.getAudioOnlyMediaItem())
+                        } else {
+                            player.setMediaSource(it.data.getMediaSource(it.data.videoOptions.first()))
+                        }
                         player.prepare()
                     }
+                    
                     _fetchingState.value = FetchingState.Success
                 }
             }
@@ -199,5 +230,8 @@ class OpenStreamMediaPlayer(
 
         return MergingMediaSource(true, true, videoSource, audioSource)
     }
+    
+    private fun VideoData.getAudioOnlyMediaItem() =
+        MediaItem.Builder().setUri(url).build()
 
 }

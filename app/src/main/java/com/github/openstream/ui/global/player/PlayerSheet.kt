@@ -88,6 +88,7 @@ fun PlayerSheet(
     val currentQuality by viewModel.currentQuality.collectAsStateWithLifecycle()
     val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
     val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
     val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
     val density = LocalDensity.current
@@ -132,7 +133,8 @@ fun PlayerSheet(
             videoLocalState = playlistsState,
             currentVideoData = currentVideoData,
             currentVideo = currentVideo,
-            switchPlaybackQuality = viewModel::switchPlaybackQuality
+            switchPlaybackQuality = viewModel::switchPlaybackQuality,
+            isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
         )
     }
 }
@@ -153,6 +155,7 @@ private fun PlayerSheet(
     currentVideoData: VideoData?,
     currentVideo: VideoItem?,
     videoLocalState: VideoLocalState,
+    isAudioOnlyModeEnabled: Boolean,
     scope: CoroutineScope = rememberCoroutineScope(),
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
@@ -303,6 +306,7 @@ private fun PlayerSheet(
 
         SheetBodyPager(
             sheetDragProgress = sheetDragProgress,
+            isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
             currentQuality = currentQuality,
             switchPlaybackQuality = switchPlaybackQuality,
             fetchingState = fetchingState,

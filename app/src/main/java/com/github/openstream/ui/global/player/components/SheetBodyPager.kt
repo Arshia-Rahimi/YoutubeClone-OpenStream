@@ -63,6 +63,7 @@ fun SheetBodyPager(
     currentPosition: Long,
     scope: CoroutineScope,
     videoLocalState: VideoLocalState,
+    isAudioOnlyModeEnabled: Boolean,
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
@@ -90,6 +91,7 @@ fun SheetBodyPager(
                         fetchingState = fetchingState,
                         currentVideoData = currentVideoData,
                         toChannelScreen = toChannelScreen,
+                        isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
                         scope = scope,
                         toggleVideoWatchLater = toggleVideoWatchLater,
                         toggleVideoLiked = toggleVideoLiked,
@@ -132,6 +134,7 @@ private fun VideoDescriptionPage(
     currentVideoData: VideoData?,
     scope: CoroutineScope,
     currentQuality: VideoQuality?,
+    isAudioOnlyModeEnabled: Boolean,
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
@@ -152,6 +155,7 @@ private fun VideoDescriptionPage(
                 videoLocalState = videoLocalState,
                 switchPlaybackQuality = switchPlaybackQuality,
                 subscribe = subscribe,
+                isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
             )
         }
 
@@ -229,7 +233,6 @@ private fun QueuePage(
             Slider(
                 value = currentPosition.toFloat(),
                 onValueChange = { position: Float ->
-                    println(position)
                     PlayerAction.SeekTo(position.toLong() * 1000).send()
                 },
                 valueRange = 0f..(currentVideo?.duration?.toFloat() ?: 1f),
@@ -246,17 +249,17 @@ private fun QueuePage(
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 PainterIconButton(
-                    onClick = { PlayerAction.Previous.send() },
+                    onClick = PlayerAction.Previous::send,
                     drawableRes = R.drawable.skip_previous,
                     tint = Color.White,
                 )
                 PainterIconButton(
-                    onClick = { PlayerAction.TogglePlay.send() },
+                    onClick = PlayerAction.TogglePlay::send,
                     drawableRes = if (isPlaying) R.drawable.pause else R.drawable.play,
                     tint = Color.White,
                 )
                 PainterIconButton(
-                    onClick = { PlayerAction.Next.send() },
+                    onClick = PlayerAction.Next::send,
                     drawableRes = R.drawable.skip_next,
                     tint = Color.White,
                 )

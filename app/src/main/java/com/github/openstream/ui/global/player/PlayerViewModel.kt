@@ -5,9 +5,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.app.MainActivity
-import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.compose.collectToSnapShotStateList
-import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -26,7 +24,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -45,6 +42,7 @@ class PlayerViewModel(
     val currentVideo = player.currentVideo
     val currentQuality = player.currentQuality
     val isPlaying = player.isPlaying
+    val isAudioOnlyModeEnabled = player.isAudioOnlyModeEnabled
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
     
@@ -84,6 +82,7 @@ class PlayerViewModel(
         is PlayerAction.SeekBackward -> player.seekBackward()
         is PlayerAction.SeekForward -> player.seekForward()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()
+        is PlayerAction.ToggleAudioOnlyMode -> player.toggleAudioOnlyMode()
     }
     
     fun switchPlaybackQuality(videoOption: VideoOption) = 

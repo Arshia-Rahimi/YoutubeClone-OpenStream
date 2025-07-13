@@ -48,6 +48,7 @@ import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.model.extractordata.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
+import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.popups.PopupController
 
 @Composable
@@ -56,6 +57,7 @@ fun VideoDescription(
     scrollState: ScrollState,
     videoLocalState: VideoLocalState,
     currentQuality: VideoQuality?,
+    isAudioOnlyModeEnabled: Boolean,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
     likeVideo: () -> Unit,
@@ -139,6 +141,18 @@ fun VideoDescription(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            item {
+                OptionsRowItem {
+                    IconButton(
+                        onClick = PlayerAction.ToggleAudioOnlyMode::send,
+                    ) {
+                        Icon(
+                            painter = painterResource(if (isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled),
+                            contentDescription = "audio only mode",
+                        )
+                    }
+                }
+            }
             item {
                 currentQuality?.let {
                     var showQualityOptions by remember { mutableStateOf(false) }
@@ -296,6 +310,7 @@ private fun Preview() {
                 switchPlaybackQuality = {},
                 currentQuality = VideoQuality.Q144p,
                 subscribe = {},
+                isAudioOnlyModeEnabled = false,
             )
         }
     }
