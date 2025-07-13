@@ -125,7 +125,7 @@ fun VideoDescription(
                 subscriberCount = videoData.subscriberCount,
                 description = "",
                 avatar = videoData.channelAvatar,
-                id = 1, // todo this is unneeded
+                id = Long.MIN_VALUE, // id is not used in the composable, this is a placeholder
             ) else ChannelItem.OnlineChannelItem(
                 url = videoData.channelUrl,
                 name = videoData.channelName,

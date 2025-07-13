@@ -59,7 +59,7 @@ class OpenStreamMediaPlayer(
 
                 fetchVideo(currentVideo)
                 if (isPlaying.value) resume()
-                // todo 
+                
                 _currentQuality.value = _currentVideoData.value?.videoOptions?.first()
 
             }.launchIn(scope)

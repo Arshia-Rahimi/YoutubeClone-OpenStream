@@ -24,8 +24,7 @@ object VideoRemoteDataSource {
             videoOptions = extractor.videoOnlyStreams.map {
                 VideoOption(
                     content = it.content,
-                    // todo
-                    quality = VideoQuality.entries.firstOrNull { entry -> entry.quality == it.height } ?: VideoQuality.Q1080p,
+                    quality = VideoQuality.entries.firstOrNull { entry -> entry.quality == it.height } ?: VideoQuality.Q144p,
                 )
             },
             audioStream = extractor.audioStreams.first().content,

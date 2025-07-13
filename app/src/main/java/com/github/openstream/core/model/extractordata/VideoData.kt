@@ -17,10 +17,8 @@ data class VideoData(
     val channelAvatar: String,
     val subscriberCount: Long,
     val streamType: StreamType,
-    // todo get url and quality from streams
     val audioStream: String,
     val videoOptions: List<VideoOption>,
-//    val subtitles: List<SubtitlesStream>,
     val id: Long? = null,
 ) {
     fun toDataItem() = VideoItem(
