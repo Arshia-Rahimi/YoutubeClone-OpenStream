@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.settings
+package com.github.openstream.ui.feature.settings.root
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

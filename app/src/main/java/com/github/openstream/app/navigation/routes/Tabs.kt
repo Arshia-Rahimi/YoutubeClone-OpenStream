@@ -65,6 +65,15 @@ sealed class Tabs(
         title = R.string.settings,
         icon = R.drawable.settings,
         selectedIcon = R.drawable.settings_selected,
-    )
+    ) {
+        @Serializable
+        data object Root
+
+        @Serializable
+        data class Channel(val url: String)
+
+        @Serializable
+        data class Playlist(val playlist: PlaylistItem)
+    }
 
 }

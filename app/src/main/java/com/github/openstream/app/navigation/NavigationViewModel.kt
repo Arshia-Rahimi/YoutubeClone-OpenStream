@@ -36,4 +36,11 @@ class NavigationViewModel : ViewModel() {
     fun tabClick(tab: Tabs) {
         _tabClickAction.trySend(tab)
     }
+    
+    private val _navigateToChannelScreenFromSheetEvent = Channel<Pair<Tabs, String>>(1)
+    val navigateToChannelScreenFromSheetEvent = _navigateToChannelScreenFromSheetEvent.receiveAsFlow()
+    
+    fun navigateToChannelScreen(channelUrl: String) {
+        _navigateToChannelScreenFromSheetEvent.trySend(currentTab.value to channelUrl)
+    }
 }

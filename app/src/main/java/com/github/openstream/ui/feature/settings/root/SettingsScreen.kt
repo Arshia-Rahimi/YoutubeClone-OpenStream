@@ -1,4 +1,4 @@
-package com.github.openstream.ui.feature.settings
+package com.github.openstream.ui.feature.settings.root
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -72,7 +72,7 @@ private fun SettingsItem(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = "clear local video history",
+            text = title,
             fontSize = 16.sp,
         )
         actionComposable()

@@ -33,6 +33,13 @@ fun SearchNavHost(
                 }
             }
     }
+    LaunchedEffect(Unit) {
+        navViewModel.navigateToChannelScreenFromSheetEvent
+            .collect {
+                if (it.first == Tabs.Search)
+                    navController.navigate(Tabs.Search.Channel(it.second))
+            }
+    }
 
     NavHost(
         navController = navController,
@@ -40,15 +47,15 @@ fun SearchNavHost(
     ) {
         composable<Tabs.Search.Root> {
             SearchScreen(
-                toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
-                toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
+                toChannelScreen = { url -> navController.navigate(Tabs.Search.Channel(url)) },
+                toPlaylistScreen = { url -> navController.navigate(Tabs.Search.Playlist(url)) },
             )
         }
         composable<Tabs.Search.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Search.Channel>().url,
                 navigateBack = { navController.popBackStack() },
-                toPlaylistScreen = { navController.navigate(Tabs.Search.Playlist(it)) },
+                toPlaylistScreen = { url -> navController.navigate(Tabs.Search.Playlist(url)) },
             )
         }
         composable<Tabs.Search.Playlist>(
@@ -58,7 +65,7 @@ fun SearchNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
-                toChannelScreen = { navController.navigate(Tabs.Search.Channel(it)) },
+                toChannelScreen = { url -> navController.navigate(Tabs.Search.Channel(url)) },
                 navigateBack = { navController.navigateUp() },
             )
         }

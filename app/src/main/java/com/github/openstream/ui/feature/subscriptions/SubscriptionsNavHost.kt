@@ -33,6 +33,13 @@ fun SubscriptionsNavHost(
                 }
             }
     }
+    LaunchedEffect(Unit) {
+        navViewModel.navigateToChannelScreenFromSheetEvent
+            .collect {
+                if (it.first == Tabs.Subscriptions)
+                    navController.navigate(Tabs.Subscriptions.Channel(it.second))
+            }
+    }
 
     NavHost(
         navController = navController,
@@ -40,15 +47,15 @@ fun SubscriptionsNavHost(
     ) {
         composable<Tabs.Subscriptions.Root> {
             SubscriptionsScreen(
-                toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
-                toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
+                toChannelScreen = { url -> navController.navigate(Tabs.Subscriptions.Channel(url)) },
+                toPlaylistScreen = { url -> navController.navigate(Tabs.Subscriptions.Playlist(url)) },
             )
         }
         composable<Tabs.Subscriptions.Channel> {
             ChannelScreen(
                 url = it.toRoute<Tabs.Subscriptions.Channel>().url,
                 navigateBack = { navController.popBackStack() },
-                toPlaylistScreen = { navController.navigate(Tabs.Subscriptions.Playlist(it)) },
+                toPlaylistScreen = { url -> navController.navigate(Tabs.Subscriptions.Playlist(url)) },
             )
         }
         composable<Tabs.Subscriptions.Playlist>(
@@ -58,7 +65,7 @@ fun SubscriptionsNavHost(
         ) {
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Subscriptions.Playlist>().playlist,
-                toChannelScreen = { navController.navigate(Tabs.Subscriptions.Channel(it)) },
+                toChannelScreen = { url -> navController.navigate(Tabs.Subscriptions.Channel(url)) },
                 navigateBack = { navController.navigateUp() },
             )
         }
