@@ -145,6 +145,7 @@ fun VideoDescription(
                 OptionsRowItem {
                     IconButton(
                         onClick = PlayerAction.ToggleAudioOnlyMode::send,
+                        modifier = Modifier.fillMaxHeight(),
                     ) {
                         Icon(
                             painter = painterResource(if (isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled),
