@@ -61,9 +61,7 @@ import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.model.extractordata.VideoQuality
-import com.github.openstream.core.shared.MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD
-import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
-import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
+import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.ui.global.player.components.PlayerSheetState
 import com.github.openstream.ui.global.player.components.SheetBodyPager
 import com.github.openstream.ui.global.player.components.VideoLocalState
@@ -95,14 +93,14 @@ fun PlayerSheet(
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp.dp
     val miniPlayerHeight =
-        with(density) { (screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
+        with(density) { (screenWidth * MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
     val miniPlayerOffset =
-        navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+        navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
     val dragState = viewModel.dragState
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
-        ((1 - MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO) *
+        ((1 - MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
 
     LaunchedEffect(miniPlayerOffset) {
@@ -184,14 +182,14 @@ private fun PlayerSheet(
             ),
     ) {
         val miniPlayerContentAlpha =
-            (-sheetDragProgress / MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) + 1f
+            (-sheetDragProgress / MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) + 1f
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onCondition(sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+                    .onCondition(sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
                         background(
                             MaterialTheme.colorScheme.tertiaryContainer.copy(
                                 miniPlayerContentAlpha
@@ -232,7 +230,7 @@ private fun PlayerSheet(
                     }
                 }
 
-                if (sheetDragProgress < MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD) {
+                if (sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -302,7 +300,7 @@ private fun PlayerSheet(
             color = Color(0xFFBBBBBB),
             progress = { animatedProgress },
             modifier = Modifier
-                .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
+                .height(MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                 .fillMaxWidth(),
         )
 

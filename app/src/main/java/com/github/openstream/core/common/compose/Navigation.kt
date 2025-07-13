@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 
-class GenericNavType<T>(
+class Navigation<T>(
     private val serializer: KSerializer<T>,
     nullable: Boolean = false,
 ) : NavType<T?>(nullable) {

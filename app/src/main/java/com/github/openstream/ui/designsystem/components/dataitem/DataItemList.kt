@@ -28,7 +28,7 @@ import com.github.openstream.core.model.dataitem.ChannelItem
 import com.github.openstream.core.model.dataitem.DataItem
 import com.github.openstream.core.model.dataitem.PlaylistItem
 import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.shared.MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO
+import com.github.openstream.core.shared.MiniPlayerConfig
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -109,7 +109,7 @@ fun DataItemList(
                 )
             }
             item {
-                if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
+                if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
             }
         }
     }
@@ -186,7 +186,7 @@ fun DataItemList(
             )
         }
         item {
-            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
+            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
         }
     }
 }

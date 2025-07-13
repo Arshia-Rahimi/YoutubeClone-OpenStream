@@ -1,9 +1,10 @@
 package com.github.openstream.core.shared
 
-// mini player config
-const val MINI_PLAYER_WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
-const val MINI_PLAYER_CONTENT_VISIBILITY_THRESHOLD = 1f
-const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
+object MiniPlayerConfig {
+    const val WIDTH_TO_SCREEN_WIDTH_RATIO = 0.3f
+    const val CONTENT_VISIBILITY_THRESHOLD = 1f
+    const val VIDEO_PROGRESS_INDICATOR_THICKNESS = 2
+}
 
 object KoinQualifiers {
     const val PREFERENCES = "preferences"

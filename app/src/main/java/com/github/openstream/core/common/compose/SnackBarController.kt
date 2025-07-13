@@ -12,7 +12,7 @@ data class SnackBarAction(
 
 data class SnackBarEvent(
     val message: String,
-    @StringRes val resMessage: Int? = null,
+    @param:StringRes val resMessage: Int? = null,
     val action: SnackBarAction? = null,
     val isImmediate: Boolean = false,
     val duration: SnackbarDuration = SnackbarDuration.Long,
