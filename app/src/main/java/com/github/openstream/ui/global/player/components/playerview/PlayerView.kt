@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -37,21 +38,21 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
+import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.media3.PlayerState
 import com.github.openstream.core.media3.PlayingStatus
 import com.github.openstream.ui.designsystem.components.noRippleClickable
+import com.github.openstream.ui.global.player.PlayerAction
 
 @OptIn(UnstableApi::class)
 @Composable
 fun PlayerView(
-//    currentPosition: Long,
-//    length: Long,
     modifier: Modifier = Modifier,
     player: Player,
     isSheetExpanded: Boolean,
-//    isInSheet: Boolean = true,
-//    playerState: PlayerState,
+    isAudioModeEnabled: Boolean,
+    videoThumbnail: String,
 ) {
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -62,53 +63,51 @@ fun PlayerView(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-//    if (isInSheet) {
-//        LaunchedEffect(controllerVisible) {
-//            delay(3000L)
-//            controllerVisible = false
-//        }
-//    }
-
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            PlayerView(context).also {
-                it.player = player
-                it.useController = false
-                it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
-                it.setFullscreenButtonState(false)
-                it.setFullscreenButtonClickListener {
-                    (context as Activity).requestedOrientation =
-                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+    if(isAudioModeEnabled) {
+        AsyncImage(
+            model = videoThumbnail,
+            contentDescription = "thumbnail",
+            modifier = modifier,
+        )
+        Icon(
+            painter = painterResource(R.drawable.play),
+            contentDescription = "play",
+            modifier = modifier.clickable { PlayerAction.ToggleAudioOnlyMode.send() },
+        )
+        
+    } else {
+        AndroidView(
+            modifier = modifier,
+            factory = { context ->
+                PlayerView(context).also {
+                    it.player = player
+                    it.useController = false
+                    it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+                    it.setFullscreenButtonState(false)
+                    it.setFullscreenButtonClickListener {
+                        (context as Activity).requestedOrientation =
+                            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    }
                 }
-            }
-        },
-        update = {
-            it.useController = isSheetExpanded
+            },
+            update = {
+                it.useController = isSheetExpanded
 
-            when (lifecycle) {
-                Lifecycle.Event.ON_PAUSE -> {
-                    it.onPause()
-                    it.player?.pause()
+                when (lifecycle) {
+                    Lifecycle.Event.ON_PAUSE -> {
+                        it.onPause()
+                        it.player?.pause()
+                    }
+
+                    Lifecycle.Event.ON_RESUME -> {
+                        it.onResume()
+                    }
+
+                    else -> Unit
                 }
-
-                Lifecycle.Event.ON_RESUME -> {
-                    it.onResume()
-                }
-
-                else -> Unit
-            }
-        },
-    )
-//        if (isInSheet) {
-//            PlayerController(
-//                controllerVisible = controllerVisible,
-//                currentPosition = currentPosition,
-//                length = length,
-//                player = player,
-//                playerState = playerState,
-//            )
-//        }
+            },
+        )
+    }
 }
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)

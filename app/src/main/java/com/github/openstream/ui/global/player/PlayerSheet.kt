@@ -222,6 +222,8 @@ private fun PlayerSheet(
                                 player = player,
                                 modifier = Modifier.matchParentSize(),
                                 isSheetExpanded = isSheetExpanded,
+                                isAudioModeEnabled = isAudioOnlyModeEnabled,
+                                videoThumbnail = currentVideo?.thumbnail ?: "",
                             )
                         }
 
