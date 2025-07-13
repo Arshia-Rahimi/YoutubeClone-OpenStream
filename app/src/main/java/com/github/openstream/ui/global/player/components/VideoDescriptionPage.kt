@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -35,21 +36,59 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
+import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.StreamType
 import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.model.extractordata.VideoData
 import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.model.extractordata.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
-import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.popups.PopupController
+
+@Composable
+fun VideoDescriptionPage(
+    fetchingState: OpenStreamMediaPlayer.FetchingState,
+    currentVideoData: VideoData?,
+    currentQuality: VideoQuality?,
+    toChannelScreen: (String) -> Unit,
+    toggleVideoWatchLater: () -> Unit,
+    toggleVideoLiked: () -> Unit,
+    videoLocalState: VideoLocalState,
+    switchPlaybackQuality: (VideoOption) -> Unit,
+    subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+) {
+    when (fetchingState) {
+        is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
+            VideoDescription(
+                videoData = currentVideo,
+                scrollState = rememberScrollState(),
+                currentQuality = currentQuality,
+                toChannelScreen = toChannelScreen,
+                shareVideo = {},
+                likeVideo = toggleVideoLiked,
+                addToWatchLater = toggleVideoWatchLater,
+                videoLocalState = videoLocalState,
+                switchPlaybackQuality = switchPlaybackQuality,
+                subscribe = subscribe,
+            )
+        }
+
+        is OpenStreamMediaPlayer.FetchingState.Loading ->
+            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                CircularProgressIndicator()
+            }
+
+        is OpenStreamMediaPlayer.FetchingState.Error ->
+            Box(Modifier.fillMaxSize(), Alignment.Center) {
+                Text(fetchingState.message ?: "", color = Color.White)
+            }
+    }
+}
 
 @Composable
 fun VideoDescription(
@@ -57,7 +96,6 @@ fun VideoDescription(
     scrollState: ScrollState,
     videoLocalState: VideoLocalState,
     currentQuality: VideoQuality?,
-    isAudioOnlyModeEnabled: Boolean,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
     likeVideo: () -> Unit,
@@ -141,19 +179,6 @@ fun VideoDescription(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            item {
-                OptionsRowItem {
-                    IconButton(
-                        onClick = PlayerAction.ToggleAudioOnlyMode::send,
-                        modifier = Modifier.fillMaxHeight(),
-                    ) {
-                        Icon(
-                            painter = painterResource(if (isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled),
-                            contentDescription = "audio only mode",
-                        )
-                    }
-                }
-            }
             item {
                 currentQuality?.let {
                     var showQualityOptions by remember { mutableStateOf(false) }
@@ -276,43 +301,5 @@ private fun OptionsRowItem(
         contentAlignment = Alignment.Center,
     ) {
         content()
-    }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    MaterialTheme {
-        Column(Modifier.fillMaxSize()) {
-            VideoDescription(
-                toChannelScreen = {},
-                videoData = VideoData(
-                    name = "name",
-                    description = "description",
-                    channelAvatar = "",
-                    isChannelVerified = true,
-                    duration = 34324L,
-                    viewCount = 454222L,
-                    channelUrl = "",
-                    channelName = "channel",
-                    url = "",
-                    videoOptions = emptyList(),
-                    audioStream = "",
-                    streamType = StreamType.NORMAL,
-                    subscriberCount = 454321L,
-                    likeCount = 3234L,
-                    uploadDate = null,
-                ),
-                scrollState = rememberScrollState(),
-                likeVideo = {},
-                shareVideo = {},
-                addToWatchLater = {},
-                videoLocalState = VideoLocalState(),
-                switchPlaybackQuality = {},
-                currentQuality = VideoQuality.Q144p,
-                subscribe = {},
-                isAudioOnlyModeEnabled = false,
-            )
-        }
     }
 }
