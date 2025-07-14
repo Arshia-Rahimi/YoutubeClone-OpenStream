@@ -102,6 +102,7 @@ fun PlayerSheet(
     val playerWidth =
         ((1 - MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
@@ -117,6 +118,8 @@ fun PlayerSheet(
             queue = viewModel.queue,
             player = viewModel.playerInstance,
             dragState = dragState,
+            collapseMiniPlayer = { scope.launch { dragState.animateTo(PlayerSheetState.MINI_PLAYER) } },
+            scope = scope,
             playerWidth = playerWidth,
             currentQuality = currentQuality?.quality,
             sheetDragProgress = sheetDragProgress,
@@ -154,13 +157,14 @@ private fun PlayerSheet(
     currentVideo: VideoItem?,
     videoLocalState: VideoLocalState,
     isAudioOnlyModeEnabled: Boolean,
-    scope: CoroutineScope = rememberCoroutineScope(),
+    scope: CoroutineScope,
     toChannelScreen: (String) -> Unit,
     dispose: () -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    collapseMiniPlayer: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -321,6 +325,7 @@ private fun PlayerSheet(
             currentPosition = currentPosition,
             currentVideo = currentVideo,
             subscribe = subscribe,
+            collapseMiniPlayer = collapseMiniPlayer,
         )
     }
 }

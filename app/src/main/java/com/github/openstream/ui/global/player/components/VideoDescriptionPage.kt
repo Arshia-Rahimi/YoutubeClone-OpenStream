@@ -61,6 +61,7 @@ fun VideoDescriptionPage(
     videoLocalState: VideoLocalState,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    collapseMiniPlayer: () -> Unit,
 ) {
     when (fetchingState) {
         is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
@@ -75,6 +76,7 @@ fun VideoDescriptionPage(
                 videoLocalState = videoLocalState,
                 switchPlaybackQuality = switchPlaybackQuality,
                 subscribe = subscribe,
+                collapseMiniPlayer = collapseMiniPlayer,
             )
         }
 
@@ -102,6 +104,7 @@ fun VideoDescription(
     addToWatchLater: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    collapseMiniPlayer: () -> Unit,
 ) {
     val videoItem = remember { videoData.toDataItem() }
 
@@ -154,7 +157,10 @@ fun VideoDescription(
         }
         Channel(
             modifier = Modifier,
-            toChannelScreen = toChannelScreen,
+            toChannelScreen = {
+                toChannelScreen(it)
+                collapseMiniPlayer()
+            },
             subscribe = subscribe,
             item = if (videoLocalState.isChannelSubscribed) ChannelItem.OfflineFirstChannelItem(
                 url = videoData.channelUrl,

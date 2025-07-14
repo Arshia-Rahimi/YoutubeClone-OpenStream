@@ -43,6 +43,7 @@ fun SheetBodyPager(
     toggleVideoLiked: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    collapseMiniPlayer: () -> Unit,
 ) {
     val pagerState = rememberPagerState { SheetBodyPage.entries.size }
     if (sheetDragProgress != 0f) Column(
@@ -62,6 +63,7 @@ fun SheetBodyPager(
                 SheetBodyPage.VideoDescription.ordinal ->
                     VideoDescriptionPage(
                         subscribe = subscribe,
+                        collapseMiniPlayer = collapseMiniPlayer,
                         fetchingState = fetchingState,
                         currentVideoData = currentVideoData,
                         toChannelScreen = toChannelScreen,
