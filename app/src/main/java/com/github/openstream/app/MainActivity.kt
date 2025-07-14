@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import com.github.openstream.app.navigation.Navigation
-import com.github.openstream.core.extractor.OkHttpDownloader
+import com.github.openstream.core.extractor.NewPipeDownloader
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
@@ -33,8 +33,5 @@ class MainActivity : ComponentActivity() {
         }
     }
     
-    private fun loadNewPipeConfig() {
-        val downloader = OkHttpDownloader.init(null)
-        NewPipe.init(downloader, Localization("en", "US"))
-    }
+    private fun loadNewPipeConfig() = NewPipe.init(NewPipeDownloader, Localization("en", "US"))
 }
