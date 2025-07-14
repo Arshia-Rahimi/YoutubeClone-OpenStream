@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -51,6 +52,7 @@ fun PlayerView(
         Icon(
             painter = painterResource(R.drawable.play),
             contentDescription = "play",
+            tint = Color.White,
             modifier = modifier.clickable { PlayerAction.ToggleAudioOnlyMode.send() },
         )
         

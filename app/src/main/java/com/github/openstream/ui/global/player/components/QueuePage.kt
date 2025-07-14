@@ -30,7 +30,7 @@ import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.shared.VIDEO_PROGRESS_INDICATOR_THICKNESS
+import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.ui.global.player.PlayerAction
 
 @Composable
@@ -99,7 +99,7 @@ fun QueuePage(
                 },
                 valueRange = 0f..(currentVideo?.duration?.toFloat() ?: 1f),
                 modifier = Modifier
-                    .height(VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
+                    .height(MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
                     .fillMaxWidth(),
                 colors = SliderDefaults.colors(
                     // todo
@@ -127,9 +127,9 @@ fun QueuePage(
                 )
                 PainterIconButton(
                     onClick = PlayerAction.ToggleAudioOnlyMode::send,
-                    modifier = Modifier.fillMaxHeight(),
                     drawableRes = if (isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled,
                     contentDescription = "audio only mode",
+                    tint = Color.Unspecified,
                 )
             }
         }
