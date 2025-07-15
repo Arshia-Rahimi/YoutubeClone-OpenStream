@@ -76,20 +76,20 @@ class ChannelViewModel(
         if (tabItems[index].isNotEmpty()) return
         
         channelRepo.getTabFirstPage(channelItem, channelExtractor, tab.toChannelTab())
-            .onEach {
-                when (it) {
+            .onEach { response ->
+                when (response) {
                     is Resource.Loading -> tabs.replaceFirstWith(tab.copy(isLoading = true)) { it == tab }
                     is Resource.Error ->
                         tabs.replaceFirstWith(
                             tab.copy(
                                 isLoading = false,
-                                error = it.message
+                                error = response.message
                             )
                         ) { it == tab }
 
                     is Resource.Success -> {
                         tabs.replaceFirstWith(tab.copy(isLoading = false)) { it == tab }
-                        tabItems[index].addAll(it.data ?: emptyList())
+                        tabItems[index].addAll(response.data ?: emptyList())
                     }
                 }
             }.launchIn(viewModelScope)
