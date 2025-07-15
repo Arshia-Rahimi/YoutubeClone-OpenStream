@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import com.github.openstream.app.navigation.Navigation
 import com.github.openstream.core.extractor.OkHttpDownloader
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
+import com.github.openstream.ui.navigation.Navigation
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 

@@ -49,7 +49,7 @@ import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.global.player.model.VideoLocalState
-import com.github.openstream.ui.global.popups.PopupController
+import com.github.openstream.ui.global.reusable.popups.PopupController
 
 @Composable
 fun VideoDescriptionPage(

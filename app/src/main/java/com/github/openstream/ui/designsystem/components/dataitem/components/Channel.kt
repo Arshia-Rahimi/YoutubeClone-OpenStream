@@ -31,8 +31,8 @@ import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.shared.dataitem.ChannelItem
-import com.github.openstream.ui.global.popups.PopupController
-import com.github.openstream.ui.global.popups.confirmationdialog.model.UnsubscribeItem
+import com.github.openstream.ui.global.reusable.popups.PopupController
+import com.github.openstream.ui.global.reusable.popups.confirmationdialog.model.Confirmation
 
 @Composable
 fun Channel(
@@ -116,7 +116,13 @@ fun Channel(
 
             is ChannelItem.OfflineFirstChannelItem -> {
                 Button(
-                    onClick = { PopupController.openConfirmationDialog(UnsubscribeItem(item)) },
+                    onClick = {
+                        PopupController.openConfirmationDialog(
+                            Confirmation.UnsubscribeItem(
+                                item
+                            )
+                        )
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF242424),
                     )

@@ -37,8 +37,8 @@ import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.core.shared.dataitem.PlaylistItem
-import com.github.openstream.ui.global.popups.PopupController
-import com.github.openstream.ui.global.popups.confirmationdialog.model.DeletePlaylistItem
+import com.github.openstream.ui.global.reusable.popups.PopupController
+import com.github.openstream.ui.global.reusable.popups.confirmationdialog.model.Confirmation
 
 @Composable
 fun Playlist(
@@ -151,7 +151,11 @@ fun Playlist(
                             text = { Text(stringResource(R.string.delete_playlist)) },
                             onClick = {
                                 isDropDownExpanded = false
-                                PopupController.openConfirmationDialog(DeletePlaylistItem(item))
+                                PopupController.openConfirmationDialog(
+                                    Confirmation.DeletePlaylistItem(
+                                        item
+                                    )
+                                )
                             }
                         )
                     }

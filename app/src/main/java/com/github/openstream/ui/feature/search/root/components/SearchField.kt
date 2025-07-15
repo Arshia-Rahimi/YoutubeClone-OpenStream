@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
-import com.github.openstream.app.navigation.NavigationViewModel
-import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.ui.designsystem.components.NoRippleIconButton
+import com.github.openstream.ui.navigation.NavigationViewModel
+import com.github.openstream.ui.navigation.routes.Tabs
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

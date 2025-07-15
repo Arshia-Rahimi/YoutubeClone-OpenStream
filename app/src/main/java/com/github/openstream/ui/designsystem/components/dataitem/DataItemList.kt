@@ -22,13 +22,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.github.openstream.app.navigation.NavigationViewModel
-import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.ui.navigation.NavigationViewModel
+import com.github.openstream.ui.navigation.routes.Tabs
 import org.koin.androidx.compose.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 

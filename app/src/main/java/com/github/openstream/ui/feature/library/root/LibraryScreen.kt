@@ -25,9 +25,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
-import com.github.openstream.ui.global.popups.PopupController
-import com.github.openstream.ui.global.popups.inputdialog.model.CreatePlaylist
-import com.github.openstream.ui.global.popups.inputdialog.model.SearchPlaylist
+import com.github.openstream.ui.global.reusable.popups.PopupController
+import com.github.openstream.ui.global.reusable.popups.inputdialog.model.InputType
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +48,7 @@ fun LibraryScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { PopupController.openInputDialog(CreatePlaylist()) },
+                        onClick = { PopupController.openInputDialog(InputType.CreatePlaylist()) },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.plus),
@@ -57,7 +56,7 @@ fun LibraryScreen(
                         )
                     }
                     IconButton(
-                        onClick = { PopupController.openInputDialog(SearchPlaylist()) },
+                        onClick = { PopupController.openInputDialog(InputType.SearchPlaylist()) },
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.link),
