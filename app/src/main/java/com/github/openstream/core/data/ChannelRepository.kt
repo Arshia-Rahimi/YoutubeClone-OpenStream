@@ -2,11 +2,11 @@ package com.github.openstream.core.data
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractor.ChannelExtractor
-import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.ChannelExtractor
+import com.github.openstream.core.shared.extractor.data.ChannelTab
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 

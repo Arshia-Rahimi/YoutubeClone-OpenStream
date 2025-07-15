@@ -11,7 +11,7 @@ import com.github.openstream.app.navigation.isInTabRoot
 import com.github.openstream.app.navigation.routes.OpenStreamNavTypes
 import com.github.openstream.app.navigation.routes.Tabs
 import com.github.openstream.core.common.compose.popToRoot
-import com.github.openstream.core.model.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.feature.search.root.SearchScreen
 import com.github.openstream.ui.global.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.screens.playlist.PlaylistScreen

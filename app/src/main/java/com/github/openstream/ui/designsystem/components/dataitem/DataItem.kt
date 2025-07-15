@@ -2,10 +2,10 @@ package com.github.openstream.ui.designsystem.components.dataitem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.designsystem.components.dataitem.components.Playlist
 import com.github.openstream.ui.designsystem.components.dataitem.components.Video

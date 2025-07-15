@@ -7,6 +7,10 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.ui.global.popups.PopupController
+import com.github.openstream.ui.global.popups.confirmationdialog.model.Confirmation
+import com.github.openstream.ui.global.popups.confirmationdialog.model.DeletePlaylistItem
+import com.github.openstream.ui.global.popups.confirmationdialog.model.SavePlaylistItem
+import com.github.openstream.ui.global.popups.confirmationdialog.model.UnsubscribeItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 

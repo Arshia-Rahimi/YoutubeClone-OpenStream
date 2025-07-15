@@ -20,7 +20,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.app.navigation.routes.Tabs
-import com.github.openstream.core.model.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.feature.search.root.components.SearchField
 import org.koin.androidx.compose.koinViewModel

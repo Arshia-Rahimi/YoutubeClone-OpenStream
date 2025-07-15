@@ -3,8 +3,8 @@ package com.github.openstream.core.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.extractor.OpenStreamEntity
+import com.github.openstream.core.shared.dataitem.OpenStreamEntity
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 
 @Entity("playlists")
 data class PlaylistEntity(

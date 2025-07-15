@@ -1,4 +1,4 @@
-package com.github.openstream.core.model.extractor
+package com.github.openstream.core.shared.dataitem
 
 interface OpenStreamEntity
 

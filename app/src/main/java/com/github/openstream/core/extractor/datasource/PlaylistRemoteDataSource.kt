@@ -1,11 +1,11 @@
 package com.github.openstream.core.extractor.datasource
 
 import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.dataitem.toListOfVideos
-import com.github.openstream.core.model.extractor.OnlinePlaylistExtractor
-import com.github.openstream.core.model.extractor.PlaylistExtractor
+import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.dataitem.toListOfVideos
+import com.github.openstream.core.shared.extractor.OnlinePlaylistExtractor
+import com.github.openstream.core.shared.extractor.PlaylistExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 
 object PlaylistRemoteDataSource {

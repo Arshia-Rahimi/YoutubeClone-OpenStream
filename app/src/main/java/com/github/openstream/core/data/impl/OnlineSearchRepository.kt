@@ -5,11 +5,11 @@ import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.extractor.datasource.SearchRemoteDataSource
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractordata.SearchResult
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.data.SearchResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

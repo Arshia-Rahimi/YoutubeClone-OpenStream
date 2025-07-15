@@ -17,11 +17,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractordata.VideoData
-import com.github.openstream.core.model.extractordata.VideoOption
-import com.github.openstream.core.model.extractordata.VideoQuality
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.data.VideoData
+import com.github.openstream.core.shared.extractor.data.VideoOption
+import com.github.openstream.core.shared.extractor.data.VideoQuality
+import com.github.openstream.ui.global.player.model.SheetBodyPage
+import com.github.openstream.ui.global.player.model.VideoLocalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

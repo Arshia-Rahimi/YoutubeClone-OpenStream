@@ -1,6 +1,6 @@
 package com.github.openstream.core.datastore
 
-import com.github.openstream.core.model.enums.LibrarySortType
+import com.github.openstream.core.shared.enums.LibrarySortType
 import kotlinx.serialization.Serializable
 
 @Serializable

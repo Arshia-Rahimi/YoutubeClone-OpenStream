@@ -7,11 +7,11 @@ import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.crossrefs.ChannelVideoCrossRef
 import com.github.openstream.core.extractor.datasource.ChannelRemoteDataSource
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractor.ChannelExtractor
-import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.ChannelExtractor
+import com.github.openstream.core.shared.extractor.data.ChannelTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

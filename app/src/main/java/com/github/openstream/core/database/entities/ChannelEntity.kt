@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.extractor.OpenStreamEntity
-import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.OpenStreamEntity
+import com.github.openstream.core.shared.extractor.data.ChannelTab
 
 @Entity("channels", indices = [Index(value = ["url"], unique = true)])
 data class ChannelEntity(

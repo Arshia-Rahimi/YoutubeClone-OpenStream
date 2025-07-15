@@ -42,12 +42,13 @@ import com.github.openstream.R
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractordata.VideoData
-import com.github.openstream.core.model.extractordata.VideoOption
-import com.github.openstream.core.model.extractordata.VideoQuality
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.data.VideoData
+import com.github.openstream.core.shared.extractor.data.VideoOption
+import com.github.openstream.core.shared.extractor.data.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
+import com.github.openstream.ui.global.player.model.VideoLocalState
 import com.github.openstream.ui.global.popups.PopupController
 
 @Composable

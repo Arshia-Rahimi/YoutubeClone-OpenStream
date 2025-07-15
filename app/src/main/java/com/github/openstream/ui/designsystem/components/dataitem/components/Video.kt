@@ -38,8 +38,8 @@ import com.github.openstream.R
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.model.dataitem.StreamType
-import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.shared.dataitem.StreamType
+import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.popups.PopupController
 
@@ -59,7 +59,7 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { 
+            .clickable {
                 playlist?.let {
                     PlayerAction.Start(it, it.indexOf(item)).send()
                 } ?: PlayerAction.Start(listOf(item)).send()

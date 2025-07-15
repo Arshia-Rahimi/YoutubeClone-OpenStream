@@ -1,9 +1,9 @@
-package com.github.openstream.ui.global.popups.confirmationdialog
+package com.github.openstream.ui.global.popups.confirmationdialog.model
 
 import androidx.annotation.StringRes
 import com.github.openstream.R
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 
 sealed interface Confirmation {
     val confirmButton: Int

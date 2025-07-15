@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.model.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.ChannelItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

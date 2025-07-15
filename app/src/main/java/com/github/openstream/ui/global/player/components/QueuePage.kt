@@ -29,8 +29,8 @@ import com.github.openstream.R
 import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.shared.MiniPlayerConfig
+import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.ui.global.player.PlayerAction
 
 @Composable

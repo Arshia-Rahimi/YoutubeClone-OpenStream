@@ -1,9 +1,9 @@
 package com.github.openstream.core.extractor.datasource
 
 import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.model.extractordata.VideoData
-import com.github.openstream.core.model.extractordata.VideoOption
-import com.github.openstream.core.model.extractordata.VideoQuality
+import com.github.openstream.core.shared.extractor.data.VideoData
+import com.github.openstream.core.shared.extractor.data.VideoOption
+import com.github.openstream.core.shared.extractor.data.VideoQuality
 import org.schabi.newpipe.extractor.stream.StreamType
 
 object VideoRemoteDataSource {
@@ -31,9 +31,9 @@ object VideoRemoteDataSource {
             likeCount = extractor.likeCount,
             channelAvatar = extractor.uploaderAvatars.first().url,
             streamType = when (extractor.streamType) {
-                StreamType.LIVE_STREAM -> com.github.openstream.core.model.dataitem.StreamType.LIVE_STREAM
-                StreamType.POST_LIVE_STREAM -> com.github.openstream.core.model.dataitem.StreamType.POST_LIVE_STREAM
-                else -> com.github.openstream.core.model.dataitem.StreamType.NORMAL
+                StreamType.LIVE_STREAM -> com.github.openstream.core.shared.dataitem.StreamType.LIVE_STREAM
+                StreamType.POST_LIVE_STREAM -> com.github.openstream.core.shared.dataitem.StreamType.POST_LIVE_STREAM
+                else -> com.github.openstream.core.shared.dataitem.StreamType.NORMAL
             },
         )
     }

@@ -2,11 +2,11 @@ package com.github.openstream.core.data
 
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
-import com.github.openstream.core.model.extractor.OnlinePlaylistExtractor
-import com.github.openstream.core.model.extractor.PlaylistExtractor
+import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.OfflineFirstPlaylistExtractor
+import com.github.openstream.core.shared.extractor.OnlinePlaylistExtractor
+import com.github.openstream.core.shared.extractor.PlaylistExtractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 

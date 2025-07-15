@@ -6,7 +6,7 @@ import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.extractor.datasource.VideoRemoteDataSource
-import com.github.openstream.core.model.extractordata.VideoData
+import com.github.openstream.core.shared.extractor.data.VideoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow

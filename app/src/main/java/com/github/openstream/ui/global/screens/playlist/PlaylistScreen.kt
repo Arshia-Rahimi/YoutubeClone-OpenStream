@@ -9,10 +9,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.common.compose.ObserveForEvents
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.dataitem.VideoItem
 import com.github.openstream.core.shared.DefaultPlaylists
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.global.screens.playlist.components.PlaylistTopBar
 import org.koin.androidx.compose.koinViewModel

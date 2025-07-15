@@ -1,8 +1,8 @@
 package com.github.openstream.ui.global.popups
 
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.ui.global.popups.confirmationdialog.Confirmation
-import com.github.openstream.ui.global.popups.inputdialog.InputType
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.ui.global.popups.confirmationdialog.model.Confirmation
+import com.github.openstream.ui.global.popups.inputdialog.model.InputType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

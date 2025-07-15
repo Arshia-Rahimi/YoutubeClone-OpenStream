@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
-import com.github.openstream.core.model.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.ui.global.popups.PopupController
-import com.github.openstream.ui.global.popups.confirmationdialog.UnsubscribeItem
+import com.github.openstream.ui.global.popups.confirmationdialog.model.UnsubscribeItem
 
 @Composable
 fun Channel(

@@ -1,7 +1,7 @@
-package com.github.openstream.core.model.extractor
+package com.github.openstream.core.shared.extractor
 
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.extractor.data.ChannelTab
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 

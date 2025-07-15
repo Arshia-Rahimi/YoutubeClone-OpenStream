@@ -1,7 +1,7 @@
-package com.github.openstream.core.model.extractordata
+package com.github.openstream.core.shared.extractor.data
 
-import com.github.openstream.core.model.dataitem.StreamType
-import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.shared.dataitem.StreamType
+import com.github.openstream.core.shared.dataitem.VideoItem
 
 data class VideoData(
     val name: String,

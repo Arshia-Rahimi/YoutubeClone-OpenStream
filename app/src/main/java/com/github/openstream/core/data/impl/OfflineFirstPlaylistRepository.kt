@@ -8,12 +8,12 @@ import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.crossrefs.PlaylistVideoCrossRef
 import com.github.openstream.core.extractor.datasource.PlaylistRemoteDataSource
-import com.github.openstream.core.model.dataitem.PlaylistItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractor.OfflineFirstPlaylistExtractor
-import com.github.openstream.core.model.extractor.OnlinePlaylistExtractor
-import com.github.openstream.core.model.extractor.PlaylistExtractor
 import com.github.openstream.core.shared.DefaultPlaylists
+import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.OfflineFirstPlaylistExtractor
+import com.github.openstream.core.shared.extractor.OnlinePlaylistExtractor
+import com.github.openstream.core.shared.extractor.PlaylistExtractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

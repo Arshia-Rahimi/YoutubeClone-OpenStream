@@ -1,6 +1,6 @@
-package com.github.openstream.ui.global.screens.channel.components
+package com.github.openstream.ui.global.screens.channel.model
 
-import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.shared.extractor.data.ChannelTab
 
 data class ChannelTabView(
     val name: String,

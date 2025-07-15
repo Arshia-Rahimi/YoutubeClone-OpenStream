@@ -1,11 +1,11 @@
 package com.github.openstream.core.extractor.datasource
 
 import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.toListOfDataItem
-import com.github.openstream.core.model.extractor.ChannelExtractor
-import com.github.openstream.core.model.extractordata.ChannelTab
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.toListOfDataItem
+import com.github.openstream.core.shared.extractor.ChannelExtractor
+import com.github.openstream.core.shared.extractor.data.ChannelTab
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabExtractor
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeChannelTabExtractor

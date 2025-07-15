@@ -1,7 +1,8 @@
-package com.github.openstream.core.model.extractor
+package com.github.openstream.core.shared.extractor
 
 import com.github.openstream.core.database.entities.PlaylistEntity
-import com.github.openstream.core.model.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.Entityable
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubePlaylistExtractor
 

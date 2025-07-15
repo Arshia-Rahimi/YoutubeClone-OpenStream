@@ -21,11 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
-import com.github.openstream.core.model.dataitem.PlaylistItem
 import com.github.openstream.core.shared.DefaultPlaylists
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.global.popups.PopupController
-import com.github.openstream.ui.global.popups.confirmationdialog.DeletePlaylistItem
-import com.github.openstream.ui.global.popups.confirmationdialog.SavePlaylistItem
+import com.github.openstream.ui.global.popups.confirmationdialog.model.DeletePlaylistItem
+import com.github.openstream.ui.global.popups.confirmationdialog.model.SavePlaylistItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

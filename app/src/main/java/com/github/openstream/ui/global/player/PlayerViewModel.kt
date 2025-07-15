@@ -9,12 +9,12 @@ import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
-import com.github.openstream.core.model.dataitem.ChannelItem
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractordata.VideoOption
 import com.github.openstream.core.shared.DefaultPlaylists
-import com.github.openstream.ui.global.player.components.PlayerSheetState
-import com.github.openstream.ui.global.player.components.VideoLocalState
+import com.github.openstream.core.shared.dataitem.ChannelItem
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.data.VideoOption
+import com.github.openstream.ui.global.player.model.PlayerSheetState
+import com.github.openstream.ui.global.player.model.VideoLocalState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

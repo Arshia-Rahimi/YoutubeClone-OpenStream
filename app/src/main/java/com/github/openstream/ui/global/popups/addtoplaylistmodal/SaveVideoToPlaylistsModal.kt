@@ -21,9 +21,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
-import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.ui.global.popups.PopupController
-import com.github.openstream.ui.global.popups.inputdialog.CreatePlaylist
+import com.github.openstream.ui.global.popups.inputdialog.model.CreatePlaylist
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 

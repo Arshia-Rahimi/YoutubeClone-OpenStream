@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.player.components
+package com.github.openstream.ui.global.player.model
 
 import androidx.annotation.DrawableRes
 import com.github.openstream.R

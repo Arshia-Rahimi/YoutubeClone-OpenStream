@@ -1,10 +1,10 @@
-package com.github.openstream.core.model.enums
+package com.github.openstream.core.shared.enums
 
 import androidx.annotation.StringRes
 import com.github.openstream.R
 
 enum class LibrarySortType(
-    @StringRes val string: Int,
+    @param:StringRes val string: Int,
 ) {
     CREATED_AT_ASC(
         string = R.string.sort_by_created_at_asc,

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.github.openstream.R
 import com.github.openstream.ui.designsystem.components.OpenStreamDialog
 import com.github.openstream.ui.global.popups.PopupController
+import com.github.openstream.ui.global.popups.inputdialog.model.InputType
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 

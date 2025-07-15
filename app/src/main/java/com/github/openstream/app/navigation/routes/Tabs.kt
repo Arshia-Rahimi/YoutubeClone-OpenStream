@@ -3,7 +3,7 @@ package com.github.openstream.app.navigation.routes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.github.openstream.R
-import com.github.openstream.core.model.dataitem.PlaylistItem
+import com.github.openstream.core.shared.dataitem.PlaylistItem
 import kotlinx.serialization.Serializable
 
 @Serializable

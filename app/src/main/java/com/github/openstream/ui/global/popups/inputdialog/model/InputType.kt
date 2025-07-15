@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.popups.inputdialog
+package com.github.openstream.ui.global.popups.inputdialog.model
 
 import com.github.openstream.R
 

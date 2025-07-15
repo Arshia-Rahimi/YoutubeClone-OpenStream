@@ -12,9 +12,9 @@ import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.model.dataitem.VideoItem
-import com.github.openstream.core.model.extractordata.VideoData
-import com.github.openstream.core.model.extractordata.VideoOption
+import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.core.shared.extractor.data.VideoData
+import com.github.openstream.core.shared.extractor.data.VideoOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

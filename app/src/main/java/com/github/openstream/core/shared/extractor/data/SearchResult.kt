@@ -1,6 +1,6 @@
-package com.github.openstream.core.model.extractordata
+package com.github.openstream.core.shared.extractor.data
 
-import com.github.openstream.core.model.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.DataItem
 import org.schabi.newpipe.extractor.Page
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 

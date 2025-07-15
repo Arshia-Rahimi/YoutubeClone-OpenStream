@@ -1,6 +1,6 @@
 package com.github.openstream.ui.global.player
 
-import com.github.openstream.core.model.dataitem.VideoItem
+import com.github.openstream.core.shared.dataitem.VideoItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 

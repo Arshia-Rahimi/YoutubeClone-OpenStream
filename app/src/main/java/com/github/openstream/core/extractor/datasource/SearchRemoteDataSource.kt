@@ -1,9 +1,9 @@
 package com.github.openstream.core.extractor.datasource
 
 import com.github.openstream.core.extractor.YtService
-import com.github.openstream.core.model.dataitem.DataItem
-import com.github.openstream.core.model.dataitem.toListOfDataItem
-import com.github.openstream.core.model.extractordata.SearchResult
+import com.github.openstream.core.shared.dataitem.DataItem
+import com.github.openstream.core.shared.dataitem.toListOfDataItem
+import com.github.openstream.core.shared.extractor.data.SearchResult
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeSearchExtractor
 
 object SearchRemoteDataSource {

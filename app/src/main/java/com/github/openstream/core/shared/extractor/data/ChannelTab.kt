@@ -1,4 +1,4 @@
-package com.github.openstream.core.model.extractordata
+package com.github.openstream.core.shared.extractor.data
 
 import kotlinx.serialization.Serializable
 
