@@ -41,21 +41,21 @@ class ChannelViewModel(
         get() = channelExtractor.channelItem
 
     val uiState = channelRepo.getChannel(url)
-        .map {
-            when (it) {
-                is Resource.Error -> UiState.Error(it.message)
+        .map { response ->
+            when (response) {
+                is Resource.Error -> UiState.Error(response.message)
                 is Resource.Loading -> UiState.Loading
                 is Resource.Success -> {
                     tabs.clear()
                     tabItems.clear()
                     tabs.addAll(
-                        it.data.tabs
+                        response.data.tabs
                             .map { ChannelTabView(it.name, it.url, true) }
                     )
-                    repeat(it.data.tabs.size) {
+                    repeat(response.data.tabs.size) {
                         tabItems.add(mutableStateListOf())
                     }
-                    UiState.Success(it.data)
+                    UiState.Success(response.data)
                 }
             }
         }.stateIn(
@@ -98,11 +98,11 @@ class ChannelViewModel(
     fun getTabNextPage(tab: ChannelTabView) {
         if (uiState.value !is UiState.Success) return
         channelRepo.getTabNextPage(channelItem, channelExtractor, tab.toChannelTab())
-            .onEach {
-                when (it) {
+            .onEach { response ->
+                when (response) {
                     is Resource.Success -> {
                         val index = tabs.indexOfFirst { it.url == tab.url }
-                        tabItems[index].addAll(it.data ?: emptyList())
+                        tabItems[index].addAll(response.data ?: emptyList())
                     }
 
                     else -> Unit
