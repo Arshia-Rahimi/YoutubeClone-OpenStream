@@ -38,7 +38,7 @@ import com.github.openstream.R
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
-import com.github.openstream.core.shared.dataitem.StreamType
+import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.popups.PopupController

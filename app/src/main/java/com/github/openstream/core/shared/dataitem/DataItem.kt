@@ -3,15 +3,12 @@ package com.github.openstream.core.shared.dataitem
 import com.github.openstream.core.database.entities.ChannelEntity
 import com.github.openstream.core.database.entities.PlaylistEntity
 import com.github.openstream.core.database.entities.VideoEntity
+import com.github.openstream.core.shared.StreamType
 import kotlinx.serialization.Serializable
 
 sealed interface DataItem : Entityable {
     val name: String
     val key: String
-}
-
-enum class StreamType {
-    NORMAL, LIVE_STREAM, POST_LIVE_STREAM
 }
 
 @Serializable

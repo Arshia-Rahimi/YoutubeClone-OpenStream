@@ -1,6 +1,6 @@
 package com.github.openstream.core.shared.extractor.data
 
-import com.github.openstream.core.shared.dataitem.StreamType
+import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.VideoItem
 
 data class VideoData(

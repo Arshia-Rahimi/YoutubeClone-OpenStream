@@ -52,9 +52,9 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         channelName = uploaderName,
         uploadDate = uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli(),
         streamType = when (streamType) {
-            StreamType.LIVE_STREAM -> com.github.openstream.core.shared.dataitem.StreamType.LIVE_STREAM
-            StreamType.POST_LIVE_STREAM -> com.github.openstream.core.shared.dataitem.StreamType.POST_LIVE_STREAM
-            else -> com.github.openstream.core.shared.dataitem.StreamType.NORMAL
+            StreamType.LIVE_STREAM -> com.github.openstream.core.shared.StreamType.LIVE_STREAM
+            StreamType.POST_LIVE_STREAM -> com.github.openstream.core.shared.StreamType.POST_LIVE_STREAM
+            else -> com.github.openstream.core.shared.StreamType.NORMAL
         },
     )
 

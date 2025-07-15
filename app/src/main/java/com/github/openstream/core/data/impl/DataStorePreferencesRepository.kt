@@ -3,7 +3,7 @@ package com.github.openstream.core.data.impl
 import androidx.datastore.core.DataStore
 import com.github.openstream.core.data.PreferencesRepository
 import com.github.openstream.core.datastore.PreferencesModel
-import com.github.openstream.core.shared.enums.LibrarySortType
+import com.github.openstream.core.shared.LibrarySortType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first

@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.OpenStreamEntity
-import com.github.openstream.core.shared.dataitem.StreamType
 import com.github.openstream.core.shared.dataitem.VideoItem
 
 @Entity("videos", indices = [Index(value = ["url"], unique = true)])

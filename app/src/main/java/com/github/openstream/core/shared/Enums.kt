@@ -1,7 +1,11 @@
-package com.github.openstream.core.shared.enums
+package com.github.openstream.core.shared
 
 import androidx.annotation.StringRes
 import com.github.openstream.R
+
+enum class StreamType {
+    NORMAL, LIVE_STREAM, POST_LIVE_STREAM
+}
 
 enum class LibrarySortType(
     @param:StringRes val string: Int,
