@@ -27,9 +27,11 @@ val viewModelModule = module {
     viewModelOf(::SearchViewModel)
 
     // reusable
+    
     //// screens
     viewModelOf(::ChannelViewModel)
     viewModelOf(::PlaylistViewModel)
+    
     //// components
     viewModelOf(::SaveVideoToPlaylistsViewModel)
     viewModelOf(::InputDialogViewModel)
