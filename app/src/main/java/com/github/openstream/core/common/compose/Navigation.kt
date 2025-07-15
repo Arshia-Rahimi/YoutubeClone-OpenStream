@@ -2,6 +2,7 @@ package com.github.openstream.core.common.compose
 
 import android.net.Uri
 import android.os.Bundle
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -24,4 +25,15 @@ class GenericNavType<T>(
     override fun parseValue(value: String): T? =
         Json.decodeFromString(serializer, Uri.decode(value))
     
+}
+
+fun NavController.getCurrentRouteClassName() =
+    currentBackStackEntry?.destination?.route?.split(".")?.last()
+
+fun NavController.popToRoot() {
+    val root = graph.startDestinationRoute ?: return
+    popBackStack(
+        route = root,
+        inclusive = false,
+    )
 }

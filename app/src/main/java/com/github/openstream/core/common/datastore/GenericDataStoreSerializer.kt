@@ -1,4 +1,4 @@
-package com.github.openstream.core.common.util
+package com.github.openstream.core.common.datastore
 
 import android.util.Log
 import androidx.datastore.core.Serializer
@@ -12,20 +12,20 @@ class GenericDataStoreSerializer<T : @Serializable Any>(
     override val defaultValue: T,
     private val serializer: KSerializer<T>,
 ) : Serializer<T> {
-
+    
     override suspend fun readFrom(input: InputStream): T =
         try {
-            Json.decodeFromString(
+            Json.Default.decodeFromString(
                 deserializer = serializer,
                 string = input.readBytes().decodeToString()
             )
         } catch (e: Exception) {
             defaultValue.also { Log.e("DataStoreSerializer", e.localizedMessage ?: "error") }
         }
-
+    
     override suspend fun writeTo(t: T, output: OutputStream) =
         output.write(
-            Json.encodeToString(
+            Json.Default.encodeToString(
                 serializer = serializer,
                 value = t,
             ).encodeToByteArray()

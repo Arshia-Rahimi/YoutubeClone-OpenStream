@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStoreFile
-import com.github.openstream.core.common.util.GenericDataStoreSerializer
+import com.github.openstream.core.common.datastore.GenericDataStoreSerializer
 import com.github.openstream.core.shared.KoinQualifiers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
