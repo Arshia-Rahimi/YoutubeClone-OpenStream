@@ -101,6 +101,7 @@ fun QueuePage(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .weight(0.1f)
                 .padding(horizontal = 16.dp),
         ) {
             val progress = (currentPosition.toFloat()/(currentVideo?.duration?.toFloat() ?: 1f)).coerceIn(0f, 1f)
@@ -145,7 +146,7 @@ fun QueuePage(
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxSize()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
@@ -157,7 +158,7 @@ fun QueuePage(
                 )
                 PainterIconButton(
                     onClick = PlayerAction.Previous::send,
-                    drawableRes = R.drawable.skip_previous,
+                    drawableRes = R.drawable.previous,
                     tint = Color.White,
                 )
                 PainterIconButton(
@@ -167,7 +168,7 @@ fun QueuePage(
                 )
                 PainterIconButton(
                     onClick = PlayerAction.Next::send,
-                    drawableRes = R.drawable.skip_next,
+                    drawableRes = R.drawable.next,
                     tint = Color.White,
                 )
             }
