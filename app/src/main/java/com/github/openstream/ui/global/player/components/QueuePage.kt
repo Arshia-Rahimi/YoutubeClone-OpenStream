@@ -59,6 +59,7 @@ fun QueuePage(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(bottom = 8.dp)
                 .weight(1f),
         ) {
             items(queue) { video ->
@@ -101,14 +102,15 @@ fun QueuePage(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.1f)
                 .padding(horizontal = 16.dp),
         ) {
-            val progress = (currentPosition.toFloat()/(currentVideo?.duration?.toFloat() ?: 1f)).coerceIn(0f, 1f)
+            val progress = (currentPosition.toFloat() / (currentVideo?.duration?.toFloat() ?: 1f))
+                .coerceIn(0f, 1f)
             Slider(
                 track = {
                     Canvas(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .height(4.dp)
                             .clip(RoundedCornerShape(2.dp))
                             .background(Color.Gray),
@@ -126,7 +128,7 @@ fun QueuePage(
                 thumb = {
                     Canvas(
                         modifier = Modifier.size(16.dp),
-                    ) { 
+                    ) {
                         drawCircle(
                             color = Color(0xFFCC2849),
                             radius = 16f,
@@ -144,10 +146,11 @@ fun QueuePage(
                     thumbColor = Color.White,
                 ),
             )
-
+            
             Row(
-                modifier = Modifier.fillMaxSize()
-                    .padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 PainterIconButton(
@@ -182,9 +185,9 @@ private fun Preview() {
     OpenStreamTheme {
         QueuePage(
             isPlaying = false,
-            queue = listOf(
+            queue = List(20) {
                 VideoItem(
-                    name = "video",
+                    name = "video $it",
                     thumbnail = "",
                     url = "",
                     streamType = StreamType.NORMAL,
@@ -199,7 +202,7 @@ private fun Preview() {
                     channelAvatars = "",
                     id = null,
                 )
-            ),
+            },
             currentPosition = 10000,
             currentVideo = VideoItem(
                 name = "video",
