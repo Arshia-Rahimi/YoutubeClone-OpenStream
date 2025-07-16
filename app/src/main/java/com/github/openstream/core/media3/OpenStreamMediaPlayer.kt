@@ -43,8 +43,9 @@ class OpenStreamMediaPlayer(
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState != Player.STATE_ENDED) return
-                this@OpenStreamMediaPlayer.next()
+                if (playbackState == Player.STATE_ENDED) {
+                    this@OpenStreamMediaPlayer.next()
+                }
             }
         })
     }
@@ -190,6 +191,16 @@ class OpenStreamMediaPlayer(
     fun seekForward() = player.seekForward()
 
     fun seekBackward() = player.seekBack()
+    
+    fun playNext(video: VideoItem) {
+        val currentVideo = currentVideo.value ?: return
+        val newQueue = queue.value.toMutableList()
+        val currentVideoIndex = newQueue.indexOf(currentVideo)
+        if (currentVideoIndex == -1) return
+        
+        newQueue.add(currentVideoIndex + 1, video)
+        queue.value = newQueue
+    }
 
     private suspend fun fetchVideo(video: VideoItem) {
         withContext(Dispatchers.Main) {

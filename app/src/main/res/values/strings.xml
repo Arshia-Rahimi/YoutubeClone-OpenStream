@@ -17,6 +17,7 @@
     <string name="save_playlist">save playlist</string>
     <string name="delete_playlist">delete playlist</string>
     <string name="view_channel">view channel</string>
+    <string name="play_next">play next</string>
     <string name="sort_by_created_at_asc">oldest</string>
     <string name="sort_by_created_at_desc">newest</string>
     <string name="sort_by_name_asc">a-z</string>

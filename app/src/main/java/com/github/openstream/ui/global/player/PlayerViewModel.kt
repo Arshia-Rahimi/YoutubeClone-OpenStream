@@ -80,6 +80,7 @@ class PlayerViewModel(
         is PlayerAction.Start -> start(action.videos, action.index)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
         is PlayerAction.PlayFromItem -> player.playerFromVideo(action.video)
+        is PlayerAction.PlayNext -> player.playNext(action.video)
         is PlayerAction.Next -> player.next()
         is PlayerAction.Previous -> viewModelScope.launch { player.previous() }
         is PlayerAction.SeekBackward -> player.seekBackward()

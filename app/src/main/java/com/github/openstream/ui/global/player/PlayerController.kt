@@ -9,6 +9,7 @@ sealed interface PlayerAction {
     data class Start(val videos: List<VideoItem>, val index: Int = 0) : PlayerAction
     data class SeekTo(val ms: Long) : PlayerAction
     data class PlayFromItem(val video: VideoItem): PlayerAction
+    data class PlayNext(val video: VideoItem) : PlayerAction
     data object TogglePlay : PlayerAction
     data object Next : PlayerAction
     data object Previous : PlayerAction

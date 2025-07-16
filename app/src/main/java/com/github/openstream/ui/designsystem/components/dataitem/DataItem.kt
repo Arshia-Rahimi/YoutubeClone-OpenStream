@@ -14,6 +14,7 @@ import com.github.openstream.ui.designsystem.components.dataitem.components.Vide
 fun DataItem(
     modifier: Modifier,
     item: DataItem,
+    shouldShowPlayNext: Boolean = false,
     playlist: List<VideoItem>? = null,
     shouldViewChannel: Boolean = true,
     toChannelScreen: (String) -> Unit,
@@ -34,6 +35,7 @@ fun DataItem(
             saveToWatchLater = addToWatchLater,
             removeFromWatchLater = removeFromWatchLater,
             removeFromPlaylist = removeFromPlaylist,
+            shouldShowPlayNext = shouldShowPlayNext,
         )
 
         is PlaylistItem -> Playlist(
