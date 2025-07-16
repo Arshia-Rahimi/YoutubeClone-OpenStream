@@ -86,7 +86,7 @@ fun PlayerSheet(
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val currentQuality by viewModel.currentQuality.collectAsStateWithLifecycle()
-    val playlistsState by viewModel.playlistsState.collectAsStateWithLifecycle()
+    val videoLocalState by viewModel.videoLocalState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
     val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
@@ -144,7 +144,7 @@ fun PlayerSheet(
             isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
-            videoLocalState = playlistsState,
+            videoLocalState = videoLocalState,
             currentVideoData = currentVideoData,
             currentVideo = currentVideo,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
