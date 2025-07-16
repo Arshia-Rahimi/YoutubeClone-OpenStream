@@ -2,6 +2,7 @@ package com.github.openstream.ui.global.player.components
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,18 +37,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
+import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
+import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
 import com.github.openstream.ui.global.player.model.VideoLocalState
 import com.github.openstream.ui.global.reusable.popups.PopupController
 
@@ -128,7 +132,8 @@ fun VideoDescription(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 8.dp)
+                    .basicMarquee(),
             )
             Row(
                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -308,5 +313,41 @@ private fun OptionsRowItem(
         contentAlignment = Alignment.Center,
     ) {
         content()
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    OpenStreamTheme {
+        VideoDescriptionPage(
+            fetchingState = OpenStreamMediaPlayer.FetchingState.Success,
+            currentVideoData =
+                VideoData(
+                    likeCount = 1000,
+                    name = "video",
+                    channelAvatar = "",
+                    url = "",
+                    streamType = StreamType.NORMAL,
+                    channelName = "channel",
+                    description = "description",
+                    uploadDate = null,
+                    viewCount = 40000L,
+                    duration = 50000,
+                    channelUrl = "",
+                    isChannelVerified = true,
+                    audioStream = "",
+                    videoOptions = emptyList(),
+                    subscriberCount = 435627L,
+                ),
+            currentQuality = VideoQuality.Q144p,
+            toChannelScreen = {},
+            toggleVideoLiked = {},
+            videoLocalState = VideoLocalState(),
+            switchPlaybackQuality = {},
+            toggleVideoWatchLater = {},
+            subscribe = {},
+            collapseMiniPlayer = {},
+        )
     }
 }
