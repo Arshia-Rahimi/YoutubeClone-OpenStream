@@ -1,7 +1,6 @@
 package com.github.openstream.core.common.util
 
-import android.util.Log
-import com.github.openstream.BuildConfig
+import com.github.openstream.core.log.getLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
@@ -22,7 +21,7 @@ fun <T> Flow<T>.asResult(dispatcher: CoroutineDispatcher = Dispatchers.Default):
     map<T, Resource<T>> { Resource.Success(it) }
         .onStart { emit(Resource.Loading) }
         .catch {
-            if (BuildConfig.DEBUG) Log.d("Resource", "${it.cause}: ${it.localizedMessage}")
+            getLogger().log("${it.cause}: ${it.localizedMessage}")
             coroutineContext.ensureActive()
             emit(Resource.Error(it.message))
         }.flowOn(dispatcher)

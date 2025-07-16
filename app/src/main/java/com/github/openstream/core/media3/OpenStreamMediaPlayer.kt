@@ -3,6 +3,7 @@ package com.github.openstream.core.media3
 import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
@@ -12,6 +13,7 @@ import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
+import com.github.openstream.core.log.Logger
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
@@ -33,6 +35,7 @@ class OpenStreamMediaPlayer(
     private val context: Context,
     private val videoRepo: VideoRepository,
     private val scope: CoroutineScope,
+    private val logger: Logger,
 ) {
     private val mainThreadScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
@@ -46,6 +49,11 @@ class OpenStreamMediaPlayer(
                 if (playbackState == Player.STATE_ENDED) {
                     this@OpenStreamMediaPlayer.next()
                 }
+            }
+            
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                logger.log(error.localizedMessage ?: "player error")
             }
         })
     }
@@ -207,6 +215,7 @@ class OpenStreamMediaPlayer(
             player.pause()
             player.clearMediaItems()
         }
+        logger.log("fetching video: $video")
         videoRepo.fetchVideo(video.url).collect {
             when (it) {
                 is Resource.Loading -> _fetchingState.value = FetchingState.Loading

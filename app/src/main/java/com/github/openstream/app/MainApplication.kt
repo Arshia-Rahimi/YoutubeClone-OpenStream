@@ -4,6 +4,7 @@ import android.app.Application
 import com.github.openstream.core.data.di.dataModule
 import com.github.openstream.core.database.di.databaseModule
 import com.github.openstream.core.datastore.dataStoreModule
+import com.github.openstream.core.log.di.logModule
 import com.github.openstream.core.media3.di.media3Module
 import com.github.openstream.ui.di.viewModelModule
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,7 @@ class MainApplication : Application(), KoinStartup {
             databaseModule,
             media3Module,
             dataStoreModule,
+            logModule,
             appModule,
         )
     }
