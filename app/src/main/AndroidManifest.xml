@@ -18,6 +18,7 @@
         <activity
             android:name="com.github.openstream.app.MainActivity"
             android:exported="true"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.OpenStream">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

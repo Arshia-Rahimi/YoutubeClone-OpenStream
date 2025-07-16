@@ -1,10 +1,8 @@
 package com.github.openstream.ui.global.player
 
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.openstream.app.MainActivity
+import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
@@ -59,17 +57,22 @@ class PlayerViewModel(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoLocalState())
 
-    val dragState = AnchoredDraggableState(PlayerSheetState.MINI_PLAYER)
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
-    val sheetState = snapshotFlow { dragState.settledValue }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PlayerSheetState.MINI_PLAYER)
+    
+    private val _sheetState = MutableStateFlow(PlayerSheetState.MINI_PLAYER)
+    val sheetState = _sheetState.asStateFlow()
+    
+    private val _orientation = MutableStateFlow(Orientation.Portrait)
+    val orientation = _orientation.asStateFlow()
+    
     val shouldShowFullscreenPlayer =
         combine(
             showMiniPlayer,
             sheetState,
-        ) { showMiniPlayer, sheetState ->
-            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && MainActivity.isInLandScape
+            orientation,
+        ) { showMiniPlayer, sheetState, orientation ->
+            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && orientation == Orientation.LandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     
@@ -83,6 +86,15 @@ class PlayerViewModel(
         is PlayerAction.SeekForward -> player.seekForward()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()
         is PlayerAction.ToggleAudioOnlyMode -> player.toggleAudioOnlyMode()
+    }
+    
+    // todo: when going back to portrait mode sheet shouldn't collapse
+    fun updateSheetState(sheetState: PlayerSheetState) {
+        _sheetState.value = sheetState
+    }
+    
+    fun onOrientationChanged(orientation: Orientation) {
+        _orientation.value = orientation
     }
     
     fun switchPlaybackQuality(videoOption: VideoOption) = 

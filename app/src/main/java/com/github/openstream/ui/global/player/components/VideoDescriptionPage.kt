@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -85,15 +84,12 @@ fun VideoDescriptionPage(
             )
         }
 
-        is OpenStreamMediaPlayer.FetchingState.Loading ->
-            Box(Modifier.fillMaxSize(), Alignment.Center) {
-                CircularProgressIndicator()
-            }
-
         is OpenStreamMediaPlayer.FetchingState.Error ->
             Box(Modifier.fillMaxSize(), Alignment.Center) {
                 Text(fetchingState.message ?: "", color = Color.White)
             }
+        
+        is OpenStreamMediaPlayer.FetchingState.Loading -> Unit
     }
 }
 

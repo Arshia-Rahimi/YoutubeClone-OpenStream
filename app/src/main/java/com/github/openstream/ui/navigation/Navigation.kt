@@ -1,18 +1,23 @@
 package com.github.openstream.ui.navigation
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.openstream.core.common.compose.ChangeOrientationOnBackButton
 import com.github.openstream.core.common.compose.ObserveForEvents
+import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.ui.feature.library.LibraryNavHost
 import com.github.openstream.ui.feature.search.SearchNavHost
@@ -28,8 +33,17 @@ import org.koin.compose.koinInject
 
 @Composable
 fun Navigation() {
+    val localConfig = LocalConfiguration.current
+    val orientation =
+        if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) Orientation.LandScape
+        else Orientation.Portrait
+    
     val navigationViewModel = koinViewModel<NavigationViewModel>()
     val playerViewModel = koinInject<PlayerViewModel>()
+    
+    LaunchedEffect(orientation) {
+        playerViewModel.onOrientationChanged(orientation)
+    }
     
     val rootNavController = rememberNavController()
         .apply {
@@ -49,8 +63,10 @@ fun Navigation() {
         playerViewModel.processAction(it)
     }
     
-    if (shouldShowFullscreenPlayer) FullScreenPlayerView()
-    else OpenStreamScaffold(
+    if (shouldShowFullscreenPlayer) {
+        ChangeOrientationOnBackButton(Orientation.Portrait)
+        FullScreenPlayerView()
+    } else OpenStreamScaffold(
         currentTab = currentTab,
         navAction = { destination, isDoubleClick ->
             when {

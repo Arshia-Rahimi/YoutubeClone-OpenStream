@@ -54,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.onCondition
+import com.github.openstream.core.common.compose.safeOffset
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.shared.MiniPlayerConfig
@@ -80,6 +81,7 @@ fun PlayerSheet(
     toChannelScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<PlayerViewModel>()
+    val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
@@ -97,13 +99,23 @@ fun PlayerSheet(
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
     val miniPlayerOffset =
         navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
-    val dragState = viewModel.dragState
+    val dragState = remember { AnchoredDraggableState(sheetState) }
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
         ((1 - MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
     val scope = rememberCoroutineScope()
-
+    
+    LaunchedEffect(sheetState) {
+        if (dragState.currentValue != sheetState) {
+            dragState.animateTo(sheetState)
+        }
+    }
+    
+    LaunchedEffect(dragState.targetValue) {
+        viewModel.updateSheetState(dragState.targetValue)
+    }
+    
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
@@ -125,6 +137,7 @@ fun PlayerSheet(
             sheetDragProgress = sheetDragProgress,
             toChannelScreen = toChannelScreen,
             currentPosition = currentPosition,
+            sheetState = sheetState,
             fetchingState = fetchingState,
             isPlaying = isPlaying,
             dispose = viewModel::dispose,
@@ -136,6 +149,7 @@ fun PlayerSheet(
             currentVideo = currentVideo,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+            updateSheetState = viewModel::updateSheetState,
         )
     }
 }
@@ -145,6 +159,7 @@ fun PlayerSheet(
 private fun PlayerSheet(
     player: Player,
     dragState: AnchoredDraggableState<PlayerSheetState>,
+    sheetState: PlayerSheetState,
     playerWidth: Float,
     sheetDragProgress: Float,
     currentPosition: Long,
@@ -165,6 +180,7 @@ private fun PlayerSheet(
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
+    updateSheetState: (PlayerSheetState) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -173,7 +189,7 @@ private fun PlayerSheet(
             .offset {
                 IntOffset(
                     x = 0,
-                    y = dragState.requireOffset().roundToInt(),
+                    y = dragState.safeOffset().roundToInt(),
                 )
             }
             .anchoredDraggable(
@@ -200,9 +216,9 @@ private fun PlayerSheet(
                             )
                         )
                     }
-                    .onCondition(dragState.currentValue == PlayerSheetState.MINI_PLAYER) {
+                    .onCondition(sheetState == PlayerSheetState.MINI_PLAYER) {
                         clickable {
-                            scope.launch { dragState.animateTo(PlayerSheetState.EXPANDED) }
+                            scope.launch { updateSheetState(PlayerSheetState.EXPANDED) }
                         }
                     },
                 horizontalArrangement = Arrangement.spacedBy(

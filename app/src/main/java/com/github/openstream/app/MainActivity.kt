@@ -1,5 +1,6 @@
 package com.github.openstream.app
 
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,13 +14,8 @@ import org.schabi.newpipe.extractor.localization.Localization
 
 class MainActivity : ComponentActivity() {
     
-    companion object {
-        var isInLandScape = false
-    }
-    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isInLandScape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = false
@@ -31,6 +27,11 @@ class MainActivity : ComponentActivity() {
                 Navigation()
             }
         }
+    }
+    
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
     
     private fun loadNewPipeConfig() {
