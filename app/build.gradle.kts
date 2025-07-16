@@ -10,17 +10,17 @@ plugins {
 android {
     namespace = "com.github.openstream"
     compileSdk = 36
-
+    
     defaultConfig {
         applicationId = "com.github.openstream"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "0.2.0"
-
+        
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -44,8 +44,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlin {
-        jvmToolchain(8)
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true

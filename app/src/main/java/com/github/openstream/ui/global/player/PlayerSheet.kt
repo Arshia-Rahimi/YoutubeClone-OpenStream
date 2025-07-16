@@ -106,12 +106,6 @@ fun PlayerSheet(
                 screenWidth.value
     val scope = rememberCoroutineScope()
     
-    LaunchedEffect(sheetState) {
-        if (dragState.currentValue != sheetState) {
-            dragState.animateTo(sheetState)
-        }
-    }
-    
     LaunchedEffect(dragState.targetValue) {
         viewModel.updateSheetState(dragState.targetValue)
     }
@@ -149,7 +143,6 @@ fun PlayerSheet(
             currentVideo = currentVideo,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
-            updateSheetState = viewModel::updateSheetState,
         )
     }
 }
@@ -180,7 +173,6 @@ private fun PlayerSheet(
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
-    updateSheetState: (PlayerSheetState) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -218,7 +210,7 @@ private fun PlayerSheet(
                     }
                     .onCondition(sheetState == PlayerSheetState.MINI_PLAYER) {
                         clickable {
-                            scope.launch { updateSheetState(PlayerSheetState.EXPANDED) }
+                            scope.launch { dragState.animateTo(PlayerSheetState.EXPANDED) }
                         }
                     },
                 horizontalArrangement = Arrangement.spacedBy(
