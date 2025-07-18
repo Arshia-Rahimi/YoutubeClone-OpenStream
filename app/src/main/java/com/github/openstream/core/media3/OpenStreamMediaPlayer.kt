@@ -39,21 +39,30 @@ class OpenStreamMediaPlayer(
 ) {
     private val mainThreadScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
+    private var isManuallyChangingMedia = true
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
         addListener(object : Player.Listener {
+            private var currentMediaItemIndex = -1
+            
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 _isPlaying.value = isPlaying
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == Player.STATE_ENDED) {
-                    this@OpenStreamMediaPlayer.next()
+                if (playbackState == Player.STATE_ENDED && !isManuallyChangingMedia) {
+                    this@OpenStreamMediaPlayer.next(true)
                 }
             }
             
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 logger.log(error.localizedMessage ?: "player error")
+                println(error.localizedMessage ?: "error")
+            }
+
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                super.onMediaItemTransition(mediaItem, reason)
+                currentMediaItemIndex = (mediaItem?.mediaMetadata?.extras?.getInt("index") ?: -1)
             }
         })
     }
@@ -63,14 +72,11 @@ class OpenStreamMediaPlayer(
     private val _currentVideo = MutableStateFlow<VideoItem?>(null)
         .apply {
             onEach { currentVideo ->
+                println("video: $currentVideo")
                 if (currentVideo == null) return@onEach
-                if (currentVideoData.value?.toDataItem() == currentVideo) return@onEach
+                if (currentVideoData.value?.url == currentVideo.url) return@onEach
 
                 fetchVideo(currentVideo)
-                if (isPlaying.value) resume()
-                
-                _currentQuality.value = _currentVideoData.value?.videoOptions?.first()
-
             }.launchIn(scope)
         }
     val currentVideo = _currentVideo.asStateFlow()
@@ -145,9 +151,9 @@ class OpenStreamMediaPlayer(
         if (wasPlaying) resume()
     }
 
-    fun start(videos: List<VideoItem>, index: Int) {
+    fun start(videos: List<VideoItem>, videoItem: VideoItem) {
         queue.value = videos
-        _currentVideo.value = videos[index]
+        _currentVideo.value = videoItem
         resume()
     }
 
@@ -170,10 +176,12 @@ class OpenStreamMediaPlayer(
 
     fun toggleIsPlaying() = if (player.isPlaying) player.pause() else player.play()
 
-    fun next() {
-        val nextVideoIndex = queue.value.indexOf(_currentVideo.value)
-            .plus(1).coerceAtMost(queue.value.size - 1)
-
+    fun next(isCalledByListener: Boolean = false) {
+        isManuallyChangingMedia = !isCalledByListener
+        val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
+        println(currentVideoIndex)
+        if(currentVideoIndex == -1) return
+        val nextVideoIndex = currentVideoIndex+1
         _currentVideo.value = queue.value[nextVideoIndex]
     }
 
@@ -183,14 +191,15 @@ class OpenStreamMediaPlayer(
             return@withContext
         }
 
-        val previousVideoIndex = queue.value.indexOf(_currentVideo.value)
-            .minus(1).coerceAtLeast(0)
+        val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
+        if(currentVideoIndex == -1) return@withContext
+        
+        val previousVideoIndex = if(currentVideoIndex == 0) queue.value.lastIndex else currentVideoIndex-1
         _currentVideo.value = queue.value[previousVideoIndex]
     }
 
     fun playerFromVideo(videoItem: VideoItem) {
-        val videoIndex = queue.value.indexOf(videoItem)
-        if (videoIndex == -1) return
+        if(videoItem !in queue.value) return
         _currentVideo.value = videoItem
     }
 
@@ -215,7 +224,6 @@ class OpenStreamMediaPlayer(
             player.pause()
             player.clearMediaItems()
         }
-        logger.log("fetching video: $video")
         videoRepo.fetchVideo(video.url).collect {
             when (it) {
                 is Resource.Loading -> _fetchingState.value = FetchingState.Loading
@@ -227,9 +235,12 @@ class OpenStreamMediaPlayer(
                         if (_isAudioOnlyModeEnabled.value) {
                             player.setMediaItem(it.data.getAudioOnlyMediaItem())
                         } else {
-                            player.setMediaSource(it.data.getMediaSource(it.data.videoOptions.first()))
+                            _currentQuality.value = _currentVideoData.value?.videoOptions?.last()
+                            _currentQuality.value?.let { videoOption -> player.setMediaSource(it.data.getMediaSource(videoOption)) }
                         }
                         player.prepare()
+                        if (isPlaying.value) resume()
+                        isManuallyChangingMedia = false
                     }
                     
                     _fetchingState.value = FetchingState.Success

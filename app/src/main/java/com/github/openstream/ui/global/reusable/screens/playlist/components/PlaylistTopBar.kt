@@ -96,7 +96,7 @@ fun PlaylistTopBar(
                             }
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.cross),
+                                painter = painterResource(R.drawable.trash),
                                 contentDescription = "delete playlist"
                             )
                         }

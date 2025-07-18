@@ -77,7 +77,7 @@ class PlayerViewModel(
 
     
     fun processAction(action: PlayerAction) = when (action) {
-        is PlayerAction.Start -> start(action.videos, action.index)
+        is PlayerAction.Start -> start(action.videos, action.videoItem)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
         is PlayerAction.PlayFromItem -> player.playerFromVideo(action.video)
         is PlayerAction.PlayNext -> player.playNext(action.video)
@@ -101,9 +101,10 @@ class PlayerViewModel(
     fun switchPlaybackQuality(videoOption: VideoOption) = 
         player.switchPlaybackQuality(videoOption)
 
-    private fun start(videos: List<VideoItem>, index: Int) {
+    private fun start(videos: List<VideoItem>, videoItem: VideoItem) {
+        if(videoItem !in videos) return
         _showMiniPlayer.value = true
-        player.start(videos, index)
+        player.start(videos, videoItem)
     }
     
     fun dispose() {

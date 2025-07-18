@@ -61,9 +61,10 @@ fun Video(
             .fillMaxWidth()
             .height(80.dp)
             .clickable {
+                println(playlist)
                 playlist?.let {
-                    PlayerAction.Start(it, it.indexOf(item)).send()
-                } ?: PlayerAction.Start(listOf(item)).send()
+                    PlayerAction.Start(it, item).send()
+                } ?: PlayerAction.Start(listOf(item), item).send()
             }
             .clip(RoundedCornerShape(12.dp)),
     ) {
