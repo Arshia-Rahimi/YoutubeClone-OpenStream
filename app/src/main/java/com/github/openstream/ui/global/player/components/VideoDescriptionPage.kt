@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
+import com.github.openstream.core.common.compose.HtmlText
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -285,6 +286,16 @@ fun VideoDescription(
         }
         Text(
             text = videoData.description,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .verticalScroll(scrollState),
+        )
+        HtmlText(
+            html = videoData.description,
+            onLinkClicked = {
+                // todo
+            },
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
