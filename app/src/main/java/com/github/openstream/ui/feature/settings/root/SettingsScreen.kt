@@ -54,6 +54,21 @@ fun SettingsScreen() {
                     }
                 )
             }
+            item {
+                SettingsItem(
+                    title = "clear disk image cache",
+                    actionComposable = {
+                        Button(
+                            onClick = viewModel::clearDiskImageCache,
+                            enabled = !viewModel.diskImageCacheLoading,
+                            modifier = Modifier.fillMaxHeight(),
+                        ) {
+                            if (viewModel.diskImageCacheLoading) CircularProgressIndicator()
+                            else Text("clear", fontSize = 16.sp)
+                        }
+                    }
+                )
+            }
         }
     }
 }

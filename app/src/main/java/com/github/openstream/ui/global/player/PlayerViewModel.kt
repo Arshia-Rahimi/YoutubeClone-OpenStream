@@ -87,6 +87,7 @@ class PlayerViewModel(
         is PlayerAction.SeekForward -> player.seekForward()
         is PlayerAction.TogglePlay -> player.toggleIsPlaying()
         is PlayerAction.ToggleAudioOnlyMode -> player.toggleAudioOnlyMode()
+        is PlayerAction.Retry -> player.retry()
     }
     
     // todo: when going back to portrait mode sheet shouldn't collapse

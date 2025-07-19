@@ -21,11 +21,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,17 +72,17 @@ class OpenStreamMediaPlayer(
 
     val queue = MutableStateFlow<List<VideoItem>>(emptyList())
 
-    private val _currentVideo = MutableStateFlow<VideoItem?>(null)
+    private val _currentVideo = MutableSharedFlow<VideoItem?>()
         .apply {
             onEach { currentVideo ->
-                println("video: $currentVideo")
+                println(currentVideo)
                 if (currentVideo == null) return@onEach
                 if (currentVideoData.value?.url == currentVideo.url) return@onEach
 
                 fetchVideo(currentVideo)
             }.launchIn(scope)
         }
-    val currentVideo = _currentVideo.asStateFlow()
+    val currentVideo = _currentVideo.stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
 
     sealed interface FetchingState {
         data object Loading : FetchingState
@@ -152,9 +155,11 @@ class OpenStreamMediaPlayer(
     }
 
     fun start(videos: List<VideoItem>, videoItem: VideoItem) {
-        queue.value = videos
-        _currentVideo.value = videoItem
-        resume()
+        scope.launch {
+            queue.value = videos
+            _currentVideo.emit(videoItem)
+            resume()
+        }
     }
 
     fun clear() {
@@ -178,11 +183,13 @@ class OpenStreamMediaPlayer(
 
     fun next(isCalledByListener: Boolean = false) {
         isManuallyChangingMedia = !isCalledByListener
-        val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
-        println(currentVideoIndex)
+        val currentVideoIndex = queue.value.indexOf(currentVideo.value)
         if(currentVideoIndex == -1) return
-        val nextVideoIndex = currentVideoIndex+1
-        _currentVideo.value = queue.value[nextVideoIndex]
+        
+        val nextVideoIndex = if(currentVideoIndex == queue.value.lastIndex) 0 else currentVideoIndex+1
+        scope.launch {
+            _currentVideo.emit(queue.value[nextVideoIndex])
+        }
     }
 
     suspend fun previous() = withContext(Dispatchers.Main) {
@@ -191,16 +198,21 @@ class OpenStreamMediaPlayer(
             return@withContext
         }
 
-        val currentVideoIndex = queue.value.indexOf(_currentVideo.value)
-        if(currentVideoIndex == -1) return@withContext
+        val currentVideoIndex = queue.value.indexOf(currentVideo.value)
+        when(currentVideoIndex) {
+            -1 -> return@withContext
+             0 -> seekTo(0)
+        }
         
-        val previousVideoIndex = if(currentVideoIndex == 0) queue.value.lastIndex else currentVideoIndex-1
-        _currentVideo.value = queue.value[previousVideoIndex]
+        val previousVideoIndex = currentVideoIndex-1
+        _currentVideo.emit(queue.value[previousVideoIndex])
     }
 
     fun playerFromVideo(videoItem: VideoItem) {
         if(videoItem !in queue.value) return
-        _currentVideo.value = videoItem
+        scope.launch {
+            _currentVideo.emit(videoItem)
+        }
     }
 
     fun seekTo(ms: Long) = player.seekTo(ms)
@@ -217,6 +229,13 @@ class OpenStreamMediaPlayer(
         
         newQueue.add(currentVideoIndex + 1, video)
         queue.value = newQueue
+    }
+    
+    fun retry() {
+        scope.launch {
+            _currentVideoData.value = null
+            _currentVideo.emit(currentVideo.value)
+        }
     }
 
     private suspend fun fetchVideo(video: VideoItem) {

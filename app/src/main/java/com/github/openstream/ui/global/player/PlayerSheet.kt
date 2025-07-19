@@ -238,7 +238,13 @@ private fun PlayerSheet(
                         }
 
                         is OpenStreamMediaPlayer.FetchingState.Loading -> CircularProgressIndicator()
-                        is OpenStreamMediaPlayer.FetchingState.Error -> {}
+                        is OpenStreamMediaPlayer.FetchingState.Error -> {
+                            Icon(
+                                painter = painterResource(R.drawable.cross),
+                                contentDescription = "",
+                                tint = Color.White,
+                            )
+                        }
                     }
                 }
 

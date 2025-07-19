@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
+import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.player.model.VideoLocalState
 import com.github.openstream.ui.global.reusable.popups.PopupController
 
@@ -86,8 +89,17 @@ fun VideoDescriptionPage(
         }
 
         is OpenStreamMediaPlayer.FetchingState.Error ->
-            Box(Modifier.fillMaxSize(), Alignment.Center) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(fetchingState.message ?: "", color = Color.White)
+                Button(
+                    onClick = PlayerAction.Retry::send,
+                ) { 
+                    Text(stringResource(R.string.retry))
+                }
             }
         
         is OpenStreamMediaPlayer.FetchingState.Loading -> Unit

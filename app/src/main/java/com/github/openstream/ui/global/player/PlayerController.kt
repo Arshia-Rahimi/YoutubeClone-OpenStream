@@ -16,6 +16,7 @@ sealed interface PlayerAction {
     data object SeekForward : PlayerAction
     data object SeekBackward : PlayerAction
     data object ToggleAudioOnlyMode : PlayerAction
+    data object Retry: PlayerAction
     
     fun send() = PlayerController.sendAction(this)
 }
