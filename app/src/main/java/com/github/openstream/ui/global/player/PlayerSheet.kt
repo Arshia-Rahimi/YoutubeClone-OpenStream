@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,6 +52,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -85,8 +88,7 @@ fun PlayerSheet(
     toChannelScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<PlayerViewModel>()
-    val localConfig = LocalConfiguration.current
-    val orientation = localConfig.orientation
+    
     val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
@@ -97,21 +99,31 @@ fun PlayerSheet(
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
     val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
     val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
+    
+    val localConfig = LocalConfiguration.current
     val density = LocalDensity.current
     val config = LocalConfiguration.current
+    
+    val orientation = localConfig.orientation
     val screenWidth = config.screenWidthDp.dp
+    val widthToScreenWidthRatio = if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+        MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
+    
     val miniPlayerHeight =
-        with(density) { (screenWidth * MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).toPx() }
+        with(density) { (screenWidth * widthToScreenWidthRatio * 9 / 16).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
     val miniPlayerOffset =
         navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+    
     val dragState = rememberSaveable(
         saver = AnchoredDraggableState.Saver(),
     ) { AnchoredDraggableState(PlayerSheetState.MINI_PLAYER) }
+    
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
-        ((1 - MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) *
+        ((1 - widthToScreenWidthRatio) * sheetDragProgress + widthToScreenWidthRatio) *
                 screenWidth.value
+    
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(dragState) {
@@ -143,6 +155,8 @@ fun PlayerSheet(
     if (showMiniPlayer) {
         PlayerSheet(
             subscribe = viewModel::subscribe,
+            density = density,
+            screenWidth = screenWidth,
             queue = viewModel.queue,
             player = viewModel.playerInstance,
             dragState = dragState,
@@ -176,6 +190,8 @@ private fun PlayerSheet(
     dragState: AnchoredDraggableState<PlayerSheetState>,
     sheetState: PlayerSheetState,
     playerWidth: Float,
+    density: Density,
+    screenWidth: Dp,
     sheetDragProgress: Float,
     currentPosition: Long,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
@@ -196,13 +212,18 @@ private fun PlayerSheet(
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
 ) {
+    val xOffset = with(density) {
+        if(screenWidth <= 600.dp) 0
+        else ((screenWidth - 600.dp).toPx() / 2).roundToInt()
+    }
     Column(
         modifier = Modifier
             .statusBarsPadding()
+            .widthIn(max = 600.dp)
             .fillMaxWidth()
             .offset {
                 IntOffset(
-                    x = 0,
+                    x = xOffset,
                     y = dragState.safeOffset().roundToInt(),
                 )
             }

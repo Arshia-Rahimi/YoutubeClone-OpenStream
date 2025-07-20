@@ -3,6 +3,7 @@
 package com.github.openstream.ui.designsystem.components.dataitem
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -101,7 +102,7 @@ fun DataItemList(
                         .padding(horizontal = 8.dp)
                         .padding(bottom = 8.dp)
                         .animateItem(),
-                    playlist = (if(isPlaylist) items.toList() else null) as List<VideoItem>?,
+                    playlist = (if (isPlaylist) items.toList() else null) as List<VideoItem>?,
                     shouldViewChannel = shouldViewChannel,
                     item = it,
                     toChannelScreen = toChannelScreen,
@@ -115,7 +116,11 @@ fun DataItemList(
                 )
             }
             item {
-                if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
+                val localConfig = LocalConfiguration.current
+                val widthToScreenWidthRatio =
+                    if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
+                    else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
+                if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * widthToScreenWidthRatio * 9 / 16).dp))
             }
         }
     }
@@ -182,7 +187,7 @@ fun DataItemList(
                     .padding(horizontal = 8.dp)
                     .padding(bottom = 8.dp)
                     .animateItem(),
-                playlist = (if(isPlaylist) items.toList() else null) as List<VideoItem>?,
+                playlist = (if (isPlaylist) items.toList() else null) as List<VideoItem>?,
                 shouldViewChannel = shouldViewChannel,
                 item = it,
                 toChannelScreen = toChannelScreen,
@@ -196,7 +201,11 @@ fun DataItemList(
             )
         }
         item {
-            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO * 9 / 16).dp))
+            val localConfig = LocalConfiguration.current
+            val widthToScreenWidthRatio =
+                if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
+                else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
+            if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * widthToScreenWidthRatio * 9 / 16).dp))
         }
     }
 }
