@@ -1,6 +1,7 @@
 package com.github.openstream.ui.global.player
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -38,7 +39,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -68,6 +71,7 @@ import com.github.openstream.ui.global.player.components.playerview.PlayerView
 import com.github.openstream.ui.global.player.model.PlayerSheetState
 import com.github.openstream.ui.global.player.model.VideoLocalState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
@@ -81,6 +85,8 @@ fun PlayerSheet(
     toChannelScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<PlayerViewModel>()
+    val localConfig = LocalConfiguration.current
+    val orientation = localConfig.orientation
     val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
@@ -99,23 +105,39 @@ fun PlayerSheet(
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
     val miniPlayerOffset =
         navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
-    val dragState = remember { AnchoredDraggableState(sheetState) }
+    val dragState = rememberSaveable(
+        saver = AnchoredDraggableState.Saver(),
+    ) { AnchoredDraggableState(PlayerSheetState.MINI_PLAYER) }
     val sheetDragProgress = (-dragState.offset / miniPlayerOffset) + 1
     val playerWidth =
         ((1 - MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) * sheetDragProgress + MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO) *
                 screenWidth.value
     val scope = rememberCoroutineScope()
-    
-    LaunchedEffect(dragState.targetValue) {
-        viewModel.updateSheetState(dragState.targetValue)
+
+    LaunchedEffect(dragState) {
+        snapshotFlow { dragState.currentValue }
+            .distinctUntilChanged()
+            .collect { viewModel.updateSheetState(it) }
     }
-    
+
+    LaunchedEffect(orientation) {
+        (if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            com.github.openstream.core.common.compose.Orientation.LandScape
+        else com.github.openstream.core.common.compose.Orientation.Portrait)
+            .let { viewModel.onOrientationChanged(it) }
+    }
+
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
             PlayerSheetState.EXPANDED at 0f
         })
-        dragState.snapTo(PlayerSheetState.MINI_PLAYER)
+        // miniPlayerOffset is negative before composition
+        if (miniPlayerOffset > 0 && !viewModel.isInitialSnapDone.value) {
+            println("snap")
+            dragState.snapTo(PlayerSheetState.MINI_PLAYER)
+            viewModel.isInitialSnapDone.value = true
+        }
     }
 
     if (showMiniPlayer) {

@@ -61,7 +61,6 @@ fun Video(
             .fillMaxWidth()
             .height(80.dp)
             .clickable {
-                println(playlist)
                 playlist?.let {
                     PlayerAction.Start(it, item).send()
                 } ?: PlayerAction.Start(listOf(item), item).send()

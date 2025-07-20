@@ -65,6 +65,8 @@ class PlayerViewModel(
     
     private val _orientation = MutableStateFlow(Orientation.Portrait)
     val orientation = _orientation.asStateFlow()
+
+    val isInitialSnapDone = MutableStateFlow(false)
     
     val shouldShowFullscreenPlayer =
         combine(
@@ -74,7 +76,6 @@ class PlayerViewModel(
         ) { showMiniPlayer, sheetState, orientation ->
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && orientation == Orientation.LandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
     
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.videos, action.videoItem)

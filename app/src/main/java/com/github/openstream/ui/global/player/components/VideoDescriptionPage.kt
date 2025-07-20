@@ -305,11 +305,9 @@ fun VideoDescription(
         )
         HtmlText(
             html = videoData.description,
-            onLinkClicked = {
-                // todo
-            },
+            onLinkClicked = ::onLinkClicked,
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)

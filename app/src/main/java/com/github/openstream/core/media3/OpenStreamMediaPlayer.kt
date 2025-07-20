@@ -60,7 +60,6 @@ class OpenStreamMediaPlayer(
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 logger.log(error.localizedMessage ?: "player error")
-                println(error.localizedMessage ?: "error")
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -75,7 +74,6 @@ class OpenStreamMediaPlayer(
     private val _currentVideo = MutableSharedFlow<VideoItem?>()
         .apply {
             onEach { currentVideo ->
-                println(currentVideo)
                 if (currentVideo == null) return@onEach
                 if (currentVideoData.value?.url == currentVideo.url) return@onEach
 
