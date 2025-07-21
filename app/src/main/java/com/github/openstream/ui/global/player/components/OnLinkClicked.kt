@@ -1,5 +1,8 @@
 package com.github.openstream.ui.global.player.components
 
+import android.content.Context
+import android.content.Intent
+import androidx.core.net.toUri
 import androidx.core.text.isDigitsOnly
 import com.github.openstream.ui.global.player.PlayerAction
 import java.net.URI
@@ -17,8 +20,25 @@ private fun String.getUrlParam(paramName: String): String? {
         }.toMap()[paramName]
 }
 
-fun onLinkClicked(currentVideoUrl: String, link: String) {
-    // todo: add external deep link if authority isn't youtube.com
+private fun getBaseUrl(url: String): String {
+    val uri = URI(url)
+    val portPart = if (uri.port != -1 && uri.port != uri.defaultPort()) ":${uri.port}" else ""
+    return "${uri.scheme}://${uri.host}$portPart"
+}
+
+private fun URI.defaultPort(): Int = when (scheme) {
+    "http" -> 80
+    "https" -> 443
+    else -> -1
+}
+
+fun onLinkClicked(currentVideoUrl: String, context: Context, link: String) {
+    val baseUrl = getBaseUrl(link)
+    if (baseUrl != "https://youtube.com") {
+        val intent = Intent(Intent.ACTION_VIEW, link.toUri())
+        context.startActivity(intent)
+    }
+    
     val path = link.getPath()
     when (path) {
         "/watch" -> {
