@@ -26,7 +26,6 @@ private fun String.getBaseUrl(): String {
 }
 
 fun onLinkClicked(currentVideoUrl: String, context: Context, link: String) {
-    println(link.getBaseUrl())
     if (link.getBaseUrl() != "https://www.youtube.com") {
         val intent = Intent(Intent.ACTION_VIEW, link.toUri())
         context.startActivity(intent)
