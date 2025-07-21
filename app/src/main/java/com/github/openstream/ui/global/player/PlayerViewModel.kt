@@ -91,7 +91,6 @@ class PlayerViewModel(
         is PlayerAction.Retry -> player.retry()
     }
     
-    // todo: when going back to portrait mode sheet shouldn't collapse
     fun updateSheetState(sheetState: PlayerSheetState) {
         _sheetState.value = sheetState
     }
