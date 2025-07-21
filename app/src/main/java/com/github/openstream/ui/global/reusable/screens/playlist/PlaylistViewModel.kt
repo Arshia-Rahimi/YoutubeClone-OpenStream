@@ -32,11 +32,14 @@ class PlaylistViewModel(
     playlist: PlaylistItem,
     private val playlistRepo: PlaylistRepository,
 ) : ViewModel() {
-
-    val playlist = if (playlist !is PlaylistItem.LocalPlaylistItem) MutableStateFlow(playlist)
-    else playlistRepo.getPlaylistItem(playlist.id)
+    
+    private val _playlist = MutableStateFlow(playlist)
+    val playlist =
+        if (playlist !is PlaylistItem.LocalPlaylistItem) _playlist.asStateFlow() else playlistRepo.getPlaylistItem(
+            playlist.id
+        )
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), playlist)
-
+    
     val videos: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>()
         .apply {
             when (playlist) {
@@ -44,14 +47,14 @@ class PlaylistViewModel(
                 is PlaylistItem.LocalPlaylistItem -> getLocalPlaylistInitialData()
             }
         }
-
+    
     var playlistObject: PlaylistExtractor? = null
     private val _navBack = Channel<Unit>()
     val navBack = _navBack.receiveAsFlow()
-
+    
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
-
+    
     fun getNextPage() {
         when (playlistObject) {
             null -> Unit
@@ -61,12 +64,12 @@ class PlaylistViewModel(
                         when (it) {
                             is Resource.Success ->
                                 videos.addAll(it.data)
-
+                            
                             else -> Unit
                         }
                     }.launchIn(viewModelScope)
             }
-
+            
             is OfflineFirstPlaylistExtractor -> {
                 playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylistExtractor).data)
                     .onEach { newVideos ->
@@ -76,7 +79,7 @@ class PlaylistViewModel(
             }
         }
     }
-
+    
     fun syncPlaylist() {
         if (playlist.value !is PlaylistItem.OfflineFirstPlaylistItem) return
         playlistRepo.getPlaylist(playlist.value as PlaylistItem.YoutubePlaylistItem)
@@ -88,14 +91,14 @@ class PlaylistViewModel(
                         playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
                             .collect { }
                     }
-
+                    
                     else -> Unit
                 }
             }
             .onCompletion { _isRefreshing.value = false }
             .launchIn(viewModelScope)
     }
-
+    
     private fun getOnlinePlaylistInitialData() {
         suspend fun getFirstPage() =
             playlistRepo.getPlaylistFirstPage(playlistObject as OnlinePlaylistExtractor)
@@ -104,25 +107,26 @@ class PlaylistViewModel(
                         is Resource.Success -> {
                             videos.addAll(it.data)
                         }
-
+                        
                         else -> Unit
                     }
                 }
-
+        
         playlistRepo.getPlaylist(playlist.value as PlaylistItem.OnlinePlaylistItem)
             .onEach {
                 when (it) {
                     is Resource.Success -> {
                         playlistObject = it.data
+                        _playlist.value = it.data.data
                         getFirstPage()
                     }
-
+                    
                     else -> Unit
                 }
             }.launchIn(viewModelScope)
-
+        
     }
-
+    
     private fun getLocalPlaylistInitialData() {
         suspend fun getFirstPage() =
             playlistRepo.getPlaylistFirstPage(playlistObject as OfflineFirstPlaylistExtractor)
@@ -132,7 +136,7 @@ class PlaylistViewModel(
                         else -> Unit
                     }
                 }
-
+        
         playlistRepo.getPlaylistSavedVideos(playlist.value as PlaylistItem.LocalPlaylistItem)
             .onEach { newVideos ->
                 videos.clear()
@@ -147,14 +151,14 @@ class PlaylistViewModel(
                                     playlistObject = it.data
                                     getFirstPage()
                                 }
-
+                                
                                 else -> Unit
                             }
                         }
                 }
             }.launchIn(viewModelScope)
     }
-
+    
     fun addToWatchLater(video: VideoItem) {
         playlistRepo.addToPlaylist(listOf(video), DefaultPlaylists.WATCH_LATER_ID)
             .onEach {
@@ -162,19 +166,19 @@ class PlaylistViewModel(
                     is Resource.Success -> {
                         SnackBarController.sendEvent(R.string.added_to_watch_later)
                     }
-
+                    
                     else -> {}
                 }
             }.launchIn(viewModelScope)
     }
-
+    
     fun removeFromPlaylist(videoItem: VideoItem) {
         if (playlist.value !is PlaylistItem.LocalOnlyPlaylistItem) return
-
+        
         playlistRepo.removeFromPlaylist(
             listOf(videoItem),
             (playlist.value as PlaylistItem.LocalOnlyPlaylistItem).id
         ).launchIn(viewModelScope)
     }
-
+    
 }
