@@ -70,12 +70,14 @@ fun VideoDescriptionPage(
     videoLocalState: VideoLocalState,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    toPlaylistScreen: (String) -> Unit,
     collapseMiniPlayer: () -> Unit,
 ) {
     when (fetchingState) {
         is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
             VideoDescription(
                 videoData = currentVideo,
+                toPlaylistScreen = toPlaylistScreen,
                 scrollState = rememberScrollState(),
                 currentQuality = currentQuality,
                 toChannelScreen = toChannelScreen,
@@ -88,7 +90,7 @@ fun VideoDescriptionPage(
                 collapseMiniPlayer = collapseMiniPlayer,
             )
         }
-
+        
         is OpenStreamMediaPlayer.FetchingState.Error ->
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -98,7 +100,7 @@ fun VideoDescriptionPage(
                 Text(fetchingState.message ?: "", color = Color.White)
                 Button(
                     onClick = PlayerAction.Retry::send,
-                ) { 
+                ) {
                     Text(stringResource(R.string.retry))
                 }
             }
@@ -118,11 +120,12 @@ fun VideoDescription(
     likeVideo: () -> Unit,
     addToWatchLater: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    toPlaylistScreen: (String) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
 ) {
     val videoItem = remember { videoData.toDataItem() }
-
+    
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -300,7 +303,17 @@ fun VideoDescription(
         val context = LocalContext.current
         HtmlText(
             html = videoData.description,
-            onLinkClicked = { onLinkClicked(videoData.url, context, it) },
+            onLinkClicked = {
+                onLinkClicked(
+                    currentVideoUrl = videoData.url,
+                    context = context,
+                    link = it,
+                    toPlaylistScreen = { playlistUrl ->
+                        toPlaylistScreen(playlistUrl)
+                        collapseMiniPlayer()
+                    },
+                )
+            },
             color = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
@@ -360,6 +373,7 @@ private fun Preview() {
             toggleVideoWatchLater = {},
             subscribe = {},
             collapseMiniPlayer = {},
+            toPlaylistScreen = {},
         )
     }
 }

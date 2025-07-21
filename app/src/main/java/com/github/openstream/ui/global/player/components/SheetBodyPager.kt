@@ -43,6 +43,7 @@ fun SheetBodyPager(
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
+    toPlaylistScreen: (String) -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
@@ -66,6 +67,7 @@ fun SheetBodyPager(
                     VideoDescriptionPage(
                         subscribe = subscribe,
                         collapseMiniPlayer = collapseMiniPlayer,
+                        toPlaylistScreen = toPlaylistScreen,
                         fetchingState = fetchingState,
                         currentVideoData = currentVideoData,
                         toChannelScreen = toChannelScreen,

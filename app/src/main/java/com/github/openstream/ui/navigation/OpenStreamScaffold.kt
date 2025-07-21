@@ -43,6 +43,7 @@ fun OpenStreamScaffold(
     currentTab: Tabs,
     navAction: (Tabs, Boolean) -> Unit,
     toChannelScreen: (String) -> Unit,
+    toPlaylistScreen: (String) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -95,6 +96,7 @@ fun OpenStreamScaffold(
     PlayerSheet(
         navBarOffset = navBarOffset,
         toChannelScreen = toChannelScreen,
+        toPlaylistScreen = toPlaylistScreen,
     )
 }
 

@@ -86,6 +86,7 @@ import kotlin.math.roundToInt
 fun PlayerSheet(
     navBarOffset: Float,
     toChannelScreen: (String) -> Unit,
+    toPlaylistScreen: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<PlayerViewModel>()
     
@@ -167,6 +168,7 @@ fun PlayerSheet(
             toChannelScreen = toChannelScreen,
             currentPosition = currentPosition,
             sheetState = sheetState,
+            toPlaylistScreen = toPlaylistScreen,
             fetchingState = fetchingState,
             isPlaying = isPlaying,
             dispose = viewModel::dispose,
@@ -210,6 +212,7 @@ private fun PlayerSheet(
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
+    toPlaylistScreen: (String) -> Unit,
 ) {
     val xOffset = with(density) {
         if(screenWidth <= 600.dp) 0
@@ -366,6 +369,7 @@ private fun PlayerSheet(
 
         SheetBodyPager(
             sheetDragProgress = sheetDragProgress,
+            toPlaylistScreen = toPlaylistScreen,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
             currentQuality = currentQuality,
             switchPlaybackQuality = switchPlaybackQuality,

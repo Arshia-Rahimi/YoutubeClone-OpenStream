@@ -43,4 +43,12 @@ class NavigationViewModel : ViewModel() {
     fun navigateToChannelScreen(channelUrl: String) {
         _navigateToChannelScreenFromSheetEvent.trySend(currentTab.value to channelUrl)
     }
+    
+    private val _navigateToPlaylistScreenFromSheetEvent = Channel<Pair<Tabs, String>>(1)
+    val navigateToPlaylistScreenFromSheetEvent =
+        _navigateToPlaylistScreenFromSheetEvent.receiveAsFlow()
+    
+    fun navigateToPlaylistScreen(playlistUrl: String) {
+        _navigateToPlaylistScreenFromSheetEvent.trySend(currentTab.value to playlistUrl)
+    }
 }

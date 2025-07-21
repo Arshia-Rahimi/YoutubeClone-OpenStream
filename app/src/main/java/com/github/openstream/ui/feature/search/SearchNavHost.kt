@@ -40,6 +40,25 @@ fun SearchNavHost(
                     navController.navigate(Tabs.Search.Channel(it.second))
             }
     }
+    LaunchedEffect(Unit) {
+        navViewModel.navigateToPlaylistScreenFromSheetEvent
+            .collect {
+                if (it.first == Tabs.Search)
+                    navController.navigate(
+                        Tabs.Search.Playlist(
+                            PlaylistItem.OnlinePlaylistItem(
+                                "",
+                                null,
+                                0L,
+                                "",
+                                "",
+                                false,
+                                it.second
+                            )
+                        )
+                    )
+            }
+    }
 
     NavHost(
         navController = navController,

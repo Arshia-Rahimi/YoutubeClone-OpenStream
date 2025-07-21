@@ -40,6 +40,25 @@ fun SubscriptionsNavHost(
                     navController.navigate(Tabs.Subscriptions.Channel(it.second))
             }
     }
+    LaunchedEffect(Unit) {
+        navViewModel.navigateToPlaylistScreenFromSheetEvent
+            .collect {
+                if (it.first == Tabs.Subscriptions)
+                    navController.navigate(
+                        Tabs.Subscriptions.Playlist(
+                            PlaylistItem.OnlinePlaylistItem(
+                                "",
+                                null,
+                                0L,
+                                "",
+                                "",
+                                false,
+                                it.second
+                            )
+                        )
+                    )
+            }
+    }
 
     NavHost(
         navController = navController,

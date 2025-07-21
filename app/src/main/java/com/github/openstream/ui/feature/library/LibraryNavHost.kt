@@ -40,6 +40,25 @@ fun LibraryNavHost(
                     navController.navigate(Tabs.Library.Channel(it.second))
             }
     }
+    LaunchedEffect(Unit) {
+        navViewModel.navigateToPlaylistScreenFromSheetEvent
+            .collect {
+                if (it.first == Tabs.Library)
+                    navController.navigate(
+                        Tabs.Library.Playlist(
+                            PlaylistItem.OnlinePlaylistItem(
+                                "",
+                                null,
+                                0L,
+                                "",
+                                "",
+                                false,
+                                it.second
+                            )
+                        )
+                    )
+            }
+    }
 
     NavHost(
         navController = navController,

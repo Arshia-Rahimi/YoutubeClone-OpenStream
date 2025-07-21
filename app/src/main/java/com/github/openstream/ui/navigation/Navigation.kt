@@ -86,6 +86,7 @@ fun Navigation() {
             }
         },
         toChannelScreen = navigationViewModel::navigateToChannelScreen,
+        toPlaylistScreen = navigationViewModel::navigateToPlaylistScreen,
     ) { ip ->
         NavHost(
             modifier = Modifier

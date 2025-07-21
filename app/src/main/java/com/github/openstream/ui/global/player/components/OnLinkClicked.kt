@@ -25,7 +25,12 @@ private fun String.getBaseUrl(): String {
     return "${uri.scheme}://${uri.host}"
 }
 
-fun onLinkClicked(currentVideoUrl: String, context: Context, link: String) {
+fun onLinkClicked(
+    currentVideoUrl: String,
+    context: Context,
+    link: String,
+    toPlaylistScreen: (String) -> Unit,
+) {
     if (link.getBaseUrl() != "https://www.youtube.com") {
         val intent = Intent(Intent.ACTION_VIEW, link.toUri())
         context.startActivity(intent)
@@ -41,7 +46,7 @@ fun onLinkClicked(currentVideoUrl: String, context: Context, link: String) {
                 PlayerAction.SeekTo(time).send()
             }
         }
-        // todo: add all paths
+        "/playlist" -> toPlaylistScreen(link)
         else -> return
     }
 }
