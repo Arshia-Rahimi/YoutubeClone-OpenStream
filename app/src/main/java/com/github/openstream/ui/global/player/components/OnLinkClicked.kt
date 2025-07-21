@@ -20,8 +20,8 @@ private fun String.getUrlParam(paramName: String): String? {
         }.toMap()[paramName]
 }
 
-private fun getBaseUrl(url: String): String {
-    val uri = URI(url)
+private fun String.getBaseUrl(): String {
+    val uri = URI(this)
     val portPart = if (uri.port != -1 && uri.port != uri.defaultPort()) ":${uri.port}" else ""
     return "${uri.scheme}://${uri.host}$portPart"
 }
@@ -33,8 +33,7 @@ private fun URI.defaultPort(): Int = when (scheme) {
 }
 
 fun onLinkClicked(currentVideoUrl: String, context: Context, link: String) {
-    val baseUrl = getBaseUrl(link)
-    if (baseUrl != "https://youtube.com") {
+    if (link.getBaseUrl() != "https://youtube.com") {
         val intent = Intent(Intent.ACTION_VIEW, link.toUri())
         context.startActivity(intent)
     }
