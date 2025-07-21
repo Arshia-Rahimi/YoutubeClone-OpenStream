@@ -29,7 +29,7 @@ fun ConfirmationDialog(
     )
 
     OpenStreamDialog(
-        dismiss = { PopupController.dismissConfirmationDialog() },
+        dismiss = PopupController::dismissConfirmationDialog,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(
@@ -47,7 +47,7 @@ fun ConfirmationDialog(
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
                 Button(
-                    onClick = { PopupController.dismissConfirmationDialog() },
+                    onClick = PopupController::dismissConfirmationDialog,
                 ) {
                     Text(stringResource(R.string.dismiss))
                 }

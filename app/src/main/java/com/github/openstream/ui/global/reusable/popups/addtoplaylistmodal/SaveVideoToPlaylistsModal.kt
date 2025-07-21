@@ -39,7 +39,7 @@ fun SaveVideoToPlaylistsModal(
         )
 
     ModalBottomSheet(
-        onDismissRequest = { PopupController.dismissSaveVideoToPlaylistModal() },
+        onDismissRequest = PopupController::dismissSaveVideoToPlaylistModal,
     ) {
         LazyColumn(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
@@ -85,9 +85,7 @@ fun SaveVideoToPlaylistsModal(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     Button(
-                        onClick = {
-                            viewModel.saveVideoToPlaylists()
-                        }
+                        onClick = viewModel::saveVideoToPlaylists,
                     ) {
                         Text(stringResource(R.string.done), fontSize = 12.sp)
                     }
