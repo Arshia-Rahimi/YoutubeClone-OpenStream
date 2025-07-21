@@ -146,7 +146,6 @@ fun PlayerSheet(
         })
         // miniPlayerOffset is negative before composition
         if (miniPlayerOffset > 0 && !viewModel.isInitialSnapDone.value) {
-            println("snap")
             dragState.snapTo(PlayerSheetState.MINI_PLAYER)
             viewModel.isInitialSnapDone.value = true
         }

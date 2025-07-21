@@ -296,22 +296,15 @@ fun VideoDescription(
                 }
             }
         }
-        Text(
-            text = videoData.description,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .verticalScroll(scrollState),
-        )
         HtmlText(
             html = videoData.description,
-            onLinkClicked = ::onLinkClicked,
-            fontSize = 16.sp,
+            onLinkClicked = { onLinkClicked(videoData.url, it) },
             color = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
                 .verticalScroll(scrollState),
+            fontSize = 16.sp,
         )
     }
 }
