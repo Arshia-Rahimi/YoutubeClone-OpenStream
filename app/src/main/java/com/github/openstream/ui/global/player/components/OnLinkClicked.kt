@@ -14,26 +14,20 @@ private fun String.getUrlParam(paramName: String): String? {
     val query = uri.query ?: return null
     
     return query.split("&")
-        .mapNotNull {
+        .associate {
             val parts = it.split("=", limit = 2)
-            if (parts.size == 2) parts[0] to parts[1] else null
-        }.toMap()[paramName]
+            parts[0] to parts[1]
+        }[paramName]
 }
 
 private fun String.getBaseUrl(): String {
     val uri = URI(this)
-    val portPart = if (uri.port != -1 && uri.port != uri.defaultPort()) ":${uri.port}" else ""
-    return "${uri.scheme}://${uri.host}$portPart"
-}
-
-private fun URI.defaultPort(): Int = when (scheme) {
-    "http" -> 80
-    "https" -> 443
-    else -> -1
+    return "${uri.scheme}://${uri.host}"
 }
 
 fun onLinkClicked(currentVideoUrl: String, context: Context, link: String) {
-    if (link.getBaseUrl() != "https://youtube.com") {
+    println(link.getBaseUrl())
+    if (link.getBaseUrl() != "https://www.youtube.com") {
         val intent = Intent(Intent.ACTION_VIEW, link.toUri())
         context.startActivity(intent)
     }
