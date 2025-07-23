@@ -2,6 +2,7 @@ package com.github.openstream.ui.di
 
 import com.github.openstream.ui.feature.library.root.LibraryViewModel
 import com.github.openstream.ui.feature.search.root.SearchViewModel
+import com.github.openstream.ui.feature.settings.log.LogViewModel
 import com.github.openstream.ui.feature.settings.root.SettingsViewModel
 import com.github.openstream.ui.feature.subscriptions.root.SubscriptionsViewModel
 import com.github.openstream.ui.global.player.PlayerViewModel
@@ -21,13 +22,17 @@ val viewModelModule = module {
     singleOf(::PlayerViewModel)
     
     // tabs
-    viewModelOf(::SubscriptionsViewModel)
-    viewModelOf(::SettingsViewModel)
-    viewModelOf(::LibraryViewModel)
     viewModelOf(::SearchViewModel)
+    
+    viewModelOf(::LibraryViewModel)
+    
+    viewModelOf(::SubscriptionsViewModel)
+    
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::LogViewModel)
+    
 
     // reusable
-    
     //// screens
     viewModelOf(::ChannelViewModel)
     viewModelOf(::PlaylistViewModel)

@@ -11,9 +11,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.github.openstream.core.common.util.Logger
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.log.Logger
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption

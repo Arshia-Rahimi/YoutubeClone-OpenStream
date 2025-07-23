@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.shared.dataitem.PlaylistItem
+import com.github.openstream.ui.feature.settings.log.LogScreen
 import com.github.openstream.ui.feature.settings.root.SettingsScreen
 import com.github.openstream.ui.global.reusable.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.reusable.screens.playlist.PlaylistScreen
@@ -83,6 +84,11 @@ fun SettingsNavHost(
                 playlist = it.toRoute<Tabs.Settings.Playlist>().playlist,
                 toChannelScreen = { url -> navController.navigate(Tabs.Settings.Channel(url)) },
                 navigateBack = { navController.navigateUp() },
+            )
+        }
+        composable<Tabs.Settings.Log> {
+            LogScreen(
+                navigateBack = { navController.popBackStack() },
             )
         }
     }

@@ -1,6 +1,5 @@
 package com.github.openstream.core.common.util
 
-import com.github.openstream.core.log.getLogger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
