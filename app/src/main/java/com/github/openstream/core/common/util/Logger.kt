@@ -21,8 +21,8 @@ interface Logger {
 }
 
 class LoggerImp(
-    private val logFileName: String,
     private val scope: CoroutineScope,
+    logFileName: String,
     context: Context,
 ) : Logger {
     
