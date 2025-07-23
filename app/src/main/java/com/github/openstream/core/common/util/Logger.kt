@@ -4,11 +4,18 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.get
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 
 interface Logger {
     
@@ -29,10 +36,23 @@ class LoggerImp(
     private val logFile: File = File(context.filesDir, logFileName)
     
     override val logStream = flow {
-        logFile.useLines { lines ->
-            lines.forEach { emit(it) }
+        while (!logFile.exists()) delay(1000)
+        
+        // emit existing lines
+        logFile.readLines().joinToString("\n").let { emit(it) }
+        
+        BufferedReader(FileReader(logFile)).use { reader ->
+            // Skip existing lines
+            repeat(logFile.readLines().size) {
+                reader.readLine()
+            }
+            
+            while (currentCoroutineContext().isActive) {
+                reader.readLine()?.let { emit(it) }
+                delay(1000)
+            }
         }
-    }
+    }.flowOn(Dispatchers.IO)
     
     init {
         scope.launch {
@@ -61,14 +81,14 @@ class LoggerImp(
         scope.launch {
             logFile.appendText("tag: $tag, message: $message\n")
         }
-        Log.i(tag, message)
+        Log.i("log-$tag", message)
     }
     
     override fun e(tag: String, message: String, throwable: Throwable?) {
         scope.launch {
             logFile.appendText("tag: $tag, message: $message, throwable: { trace: ${throwable?.stackTrace}, cause: ${throwable?.cause}, errorMessage: ${throwable?.localizedMessage} }\n")
         }
-        Log.e(tag, message, throwable)
+        Log.e("log-$tag", message, throwable)
     }
     
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,9 +26,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    toLogScreen: () -> Unit,
+) {
     val viewModel = koinViewModel<SettingsViewModel>()
-
+    
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -36,60 +39,69 @@ fun SettingsScreen() {
     ) { ip ->
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(ip),
+                .padding(ip)
+                .fillMaxSize(),
         ) {
-            item {
-                SettingsItem(
-                    title = "clear local video history",
-                    actionComposable = {
-                        Button(
-                            onClick = viewModel::clearLocalVideoHistory,
-                            enabled = !viewModel.localVideoHistoryLoading,
-                            modifier = Modifier.fillMaxHeight(),
-                        ) {
-                            if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
-                            else Text("clear", fontSize = 16.sp)
-                        }
+            settingsItem(
+                title = "clear local video history",
+                action = {
+                    Button(
+                        onClick = viewModel::clearLocalVideoHistory,
+                        enabled = !viewModel.localVideoHistoryLoading,
+                        modifier = it,
+                    ) {
+                        if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
+                        else Text("clear", fontSize = 16.sp)
                     }
-                )
-            }
-            item {
-                SettingsItem(
-                    title = "clear disk image cache",
-                    actionComposable = {
-                        Button(
-                            onClick = viewModel::clearDiskImageCache,
-                            enabled = !viewModel.diskImageCacheLoading,
-                            modifier = Modifier.fillMaxHeight(),
-                        ) {
-                            if (viewModel.diskImageCacheLoading) CircularProgressIndicator()
-                            else Text("clear", fontSize = 16.sp)
-                        }
+                }
+            )
+            settingsItem(
+                title = "clear disk image cache",
+                action = {
+                    Button(
+                        onClick = viewModel::clearDiskImageCache,
+                        enabled = !viewModel.diskImageCacheLoading,
+                        modifier = it,
+                    ) {
+                        if (viewModel.diskImageCacheLoading) CircularProgressIndicator()
+                        else Text("clear", fontSize = 16.sp)
                     }
-                )
-            }
+                }
+            )
+            settingsItem(
+                title = "log screen",
+                action = {
+                    Button(
+                        onClick = toLogScreen,
+                        modifier = it,
+                    ) {
+                        Text("view logs", fontSize = 16.sp)
+                    }
+                }
+            )
         }
     }
 }
 
-@Composable
-private fun SettingsItem(
+private fun LazyListScope.settingsItem(
     title: String,
-    actionComposable: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    action: @Composable (Modifier) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 12.dp)
-            .height(48.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            text = title,
-            fontSize = 16.sp,
-        )
-        actionComposable()
+    item {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp, horizontal = 12.dp)
+                .height(48.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = title,
+                fontSize = 16.sp,
+            )
+            action(modifier.fillMaxHeight())
+        }
     }
 }

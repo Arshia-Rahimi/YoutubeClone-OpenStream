@@ -75,7 +75,7 @@ class ChannelViewModel(
         // it's checked here for config changes
         if (tabItems[index].isNotEmpty()) return
         
-        channelRepo.getTabFirstPage(channelItem, channelExtractor, tab.toChannelTab())
+        channelRepo.getTabFirstPage(channelItem, tab.toChannelTab(), channelExtractor)
             .onEach { response ->
                 when (response) {
                     is Resource.Loading -> tabs.replaceFirstWith(tab.copy(isLoading = true)) { it == tab }
@@ -97,7 +97,7 @@ class ChannelViewModel(
 
     fun getTabNextPage(tab: ChannelTabView) {
         if (uiState.value !is UiState.Success) return
-        channelRepo.getTabNextPage(channelItem, channelExtractor, tab.toChannelTab())
+        channelRepo.getTabNextPage(channelItem, tab.toChannelTab(), channelExtractor)
             .onEach { response ->
                 when (response) {
                     is Resource.Success -> {

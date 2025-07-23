@@ -116,9 +116,8 @@ fun DataItemList(
                 )
             }
             item {
-                val localConfig = LocalConfiguration.current
                 val widthToScreenWidthRatio =
-                    if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
+                    if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
                     else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
                 if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * widthToScreenWidthRatio * 9 / 16).dp))
             }
@@ -201,9 +200,8 @@ fun DataItemList(
             )
         }
         item {
-            val localConfig = LocalConfiguration.current
             val widthToScreenWidthRatio =
-                if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
+                if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
                 else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
             if (items.isNotEmpty()) Spacer(Modifier.height((screenWidth * widthToScreenWidthRatio * 9 / 16).dp))
         }
