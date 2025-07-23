@@ -18,10 +18,14 @@ sealed interface Resource<out T> {
 
 fun <T> Flow<T>.asResult(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    caller: String? = null
+    caller: String? = null,
+    message: String? = null,
 ): Flow<Resource<T>> =
     map<T, Resource<T>> { Resource.Success(it) }
-        .onStart { emit(Resource.Loading) }
+        .onStart {
+            getLogger().i("Resource: $caller", "$message")
+            emit(Resource.Loading)
+        }
         .catch {
             getLogger().e("Resource: $caller", "resource error", it)
             coroutineContext.ensureActive()

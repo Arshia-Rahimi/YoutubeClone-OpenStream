@@ -43,7 +43,7 @@ class OfflineFirstChannelRepository(
         flow {
             val id = db.channelDao().insert(channel.toEntity())
             emit(channel.toOfflineFirstChannelItem(id))
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe: $channel")
     
     override fun unSubscribe(channelId: Long): Flow<Resource<Success>> =
         flow {
@@ -54,16 +54,16 @@ class OfflineFirstChannelRepository(
                 d2.await()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe: $channelId")
     
     override fun getChannel(url: String): Flow<Resource<ChannelExtractor>> = flow {
         emit(ChannelRemoteDataSource.getChannelData(url))
-    }.asResult(Dispatchers.IO)
+    }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel: $url")
     
     override fun getTabFirstPage(
         channel: ChannelItem,
-        channelExtractor: ChannelExtractor,
         tab: ChannelTab,
+        channelExtractor: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
             val nextPage = ChannelRemoteDataSource.fetchTab(channelExtractor, tab)
@@ -82,12 +82,12 @@ class OfflineFirstChannelRepository(
                     )
             }
             emit(nextPage)
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage: $channel, $tab")
     
     override fun getTabNextPage(
         channel: ChannelItem,
-        channelExtractor: ChannelExtractor,
         tab: ChannelTab,
+        channelExtractor: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>> =
         flow {
             val nextPage = ChannelRemoteDataSource.fetchNextPage(channelExtractor, tab)
@@ -106,7 +106,7 @@ class OfflineFirstChannelRepository(
                     )
             }
             emit(nextPage)
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage: $channel, $tab")
     
     override fun updateSubscriptions(): Flow<Resource<Success>> =
         flow {
@@ -134,9 +134,9 @@ class OfflineFirstChannelRepository(
                 }.awaitAll()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions")
     
-    override fun isChannelsubscribed(channelUrl: String) =
+    override fun isChannelSubscribed(channelUrl: String) =
         db.channelDao().isChannelSubscribed(channelUrl)
     
 }

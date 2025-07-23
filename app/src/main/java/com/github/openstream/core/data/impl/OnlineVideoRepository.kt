@@ -26,7 +26,7 @@ class OnlineVideoRepository(
         }
         
         emit(video)
-    }.asResult(Dispatchers.IO)
+    }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo: $url")
 
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
         flow {
@@ -39,5 +39,5 @@ class OnlineVideoRepository(
                 d3.await()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory")
 }

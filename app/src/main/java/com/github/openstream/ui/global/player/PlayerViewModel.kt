@@ -51,7 +51,7 @@ class PlayerViewModel(
         else combine(
             playlistRepo.isInPlaylist(currentVideoId, DefaultPlaylists.WATCH_LATER_ID),
             playlistRepo.isInPlaylist(currentVideoId, DefaultPlaylists.LIKED_VIDEOS_ID),
-            channelRepo.isChannelsubscribed(currentVideoData.value?.channelUrl ?: ""),
+            channelRepo.isChannelSubscribed(currentVideoData.value?.channelUrl ?: ""),
         ) { isInWatchLater, isLiked, isChannelSubscribed ->
             VideoLocalState(isInWatchLater, isLiked, isChannelSubscribed)
         }

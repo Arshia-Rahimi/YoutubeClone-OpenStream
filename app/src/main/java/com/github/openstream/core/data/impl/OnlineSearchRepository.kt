@@ -27,14 +27,18 @@ class OnlineSearchRepository(
             SearchRemoteDataSource.fetchSearchResult(query, contentFilter, sortFilter)
         val firstPage = syncDataItemsWithDB(searchResult.items)
         emit(searchResult.copy(items = firstPage))
-    }.asResult(Dispatchers.IO)
+    }.asResult(
+        Dispatchers.IO,
+        this::class.simpleName,
+        "search: $query, $contentFilter, $sortFilter"
+    )
 
     override fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>> =
         flow {
             val result = SearchRemoteDataSource.fetchNextPage(currentSearch)
             val nextPage = syncDataItemsWithDB(result)
             emit(nextPage)
-        }.asResult(Dispatchers.IO)
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage: $currentSearch")
 
     suspend fun syncDataItemsWithDB(dataItemList: List<DataItem>): List<DataItem> =
         buildList {

@@ -23,18 +23,18 @@ interface ChannelRepository {
     
     fun getTabFirstPage(
         channel: ChannelItem,
-        channelExtractor: ChannelExtractor,
         tab: ChannelTab,
+        channelExtractor: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>>
     
     fun getTabNextPage(
         channel: ChannelItem,
-        channelExtractor: ChannelExtractor,
         tab: ChannelTab,
+        channelExtractor: ChannelExtractor,
     ): Flow<Resource<List<DataItem>?>>
 
     fun updateSubscriptions(): Flow<Resource<Success>>
     
-    fun isChannelsubscribed(channelUrl: String): Flow<Boolean>
+    fun isChannelSubscribed(channelUrl: String): Flow<Boolean>
     
 }
