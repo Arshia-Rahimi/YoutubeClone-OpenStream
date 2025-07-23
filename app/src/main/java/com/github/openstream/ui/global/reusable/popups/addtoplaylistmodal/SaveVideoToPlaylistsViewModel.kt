@@ -21,10 +21,10 @@ class SaveVideoToPlaylistsViewModel(
     val localPlaylists = mutableStateMapOf<PlaylistItem.LocalOnlyPlaylistItem, Boolean>()
         .apply {
             playlistRepo.playlists
-                .onEach {
+                .onEach { playlists ->
                     val currentPlaylists = mapKeys { it.key.id }
                     clear()
-                    it.filterIsInstance<PlaylistItem.LocalOnlyPlaylistItem>()
+                    playlists.filterIsInstance<PlaylistItem.LocalOnlyPlaylistItem>()
                         .filter { it.id != DefaultPlaylists.LIKED_VIDEOS_ID }
                         .sortedBy { it.id }
                         .forEach { playlist ->
@@ -38,7 +38,7 @@ class SaveVideoToPlaylistsViewModel(
             .onEach {
                 when (it) {
                     is Resource.Error -> SnackBarController.sendEvent(
-                        it.message ?: "failed to save to playlist"
+                        it.error?.localizedMessage ?: "failed to save to playlist"
                     )
                     
                     is Resource.Success -> {

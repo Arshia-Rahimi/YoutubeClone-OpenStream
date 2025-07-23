@@ -59,7 +59,7 @@ class OpenStreamMediaPlayer(
             
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
-                logger.log(error.localizedMessage ?: "player error")
+                logger.e("OpenStreamMediaPlayer", "player error", error)
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -205,8 +205,8 @@ class OpenStreamMediaPlayer(
         val previousVideoIndex = currentVideoIndex-1
         _currentVideo.emit(queue.value[previousVideoIndex])
     }
-
-    fun playerFromVideo(videoItem: VideoItem) {
+    
+    fun playFromVideo(videoItem: VideoItem) {
         if(videoItem !in queue.value) return
         scope.launch {
             _currentVideo.emit(videoItem)
@@ -237,6 +237,7 @@ class OpenStreamMediaPlayer(
     }
 
     private suspend fun fetchVideo(video: VideoItem) {
+        logger.i("OpenStreamMediaPlayer", "fetching video: $video")
         withContext(Dispatchers.Main) {
             player.pause()
             player.clearMediaItems()
@@ -244,7 +245,10 @@ class OpenStreamMediaPlayer(
         videoRepo.fetchVideo(video.url).collect {
             when (it) {
                 is Resource.Loading -> _fetchingState.value = FetchingState.Loading
-                is Resource.Error -> _fetchingState.value = FetchingState.Error(it.message)
+                is Resource.Error -> {
+                    logger.e("OpenStreamMediaPlayer", "error in fetching video: $video", it.error)
+                    _fetchingState.value = FetchingState.Error(it.error?.localizedMessage ?: "")
+                }
                 is Resource.Success -> {
                     _currentVideoData.value = it.data
                     

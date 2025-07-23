@@ -67,7 +67,7 @@ fun QueuePage(
                     Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .clickable { PlayerAction.PlayFromItem(video).send() }
+                        .clickable { PlayerAction.PlayFromVideoItem(video).send() }
                         .onCondition(video == currentVideo) { background(Color.Gray) }
                         .padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,

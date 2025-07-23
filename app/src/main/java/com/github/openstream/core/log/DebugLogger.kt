@@ -4,18 +4,12 @@ import android.util.Log
 
 class DebugLogger : Logger {
     
-    override fun log(content: String) {
-        Log.d(getCallerInfo(), content)
+    override fun i(tag: String, message: String) {
+        Log.i(tag, message)
     }
     
-    private fun getCallerInfo(): String {
-        val stackTrace = Thread.currentThread().stackTrace
-        for (element in stackTrace) {
-            if (!element.className.contains(Logger::class.java.name)) {
-                return "${element.className}.${element.methodName}():${element.lineNumber}"
-            }
-        }
-        return "Unknown"
+    override fun e(tag: String, message: String, throwable: Throwable?) {
+        Log.e(tag, message, throwable)
     }
     
 }

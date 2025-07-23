@@ -18,3 +18,5 @@ object DefaultPlaylists {
     const val WATCH_LATER_ID = 0L
     const val LIKED_VIDEOS_ID = 1L
 }
+
+const val LOG_FILENAME = "openstream-log.txt"

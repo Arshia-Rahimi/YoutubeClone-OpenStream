@@ -43,7 +43,7 @@ class ChannelViewModel(
     val uiState = channelRepo.getChannel(url)
         .map { response ->
             when (response) {
-                is Resource.Error -> UiState.Error(response.message)
+                is Resource.Error -> UiState.Error(response.error?.message ?: "error")
                 is Resource.Loading -> UiState.Loading
                 is Resource.Success -> {
                     tabs.clear()
@@ -83,7 +83,7 @@ class ChannelViewModel(
                         tabs.replaceFirstWith(
                             tab.copy(
                                 isLoading = false,
-                                error = response.message
+                                error = response.error?.message ?: "error"
                             )
                         ) { it == tab }
 

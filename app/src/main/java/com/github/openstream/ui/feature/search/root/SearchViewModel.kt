@@ -46,7 +46,7 @@ class SearchViewModel(
                 .onEach {
                     _uiState.value = when (it) {
                         is Resource.Loading -> UiState.Loading
-                        is Resource.Error -> UiState.Error(it.message)
+                        is Resource.Error -> UiState.Error(it.error?.localizedMessage ?: "error")
                         is Resource.Success -> {
                             items.clear()
                             items.addAll(it.data.items)

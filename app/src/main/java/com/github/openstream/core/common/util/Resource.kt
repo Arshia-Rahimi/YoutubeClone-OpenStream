@@ -13,17 +13,20 @@ import kotlin.coroutines.coroutineContext
 
 sealed interface Resource<out T> {
     data class Success<T>(val data: T) : Resource<T>
-    data class Error(val message: String? = null) : Resource<Nothing>
+    data class Error(val error: Throwable? = null) : Resource<Nothing>
     data object Loading : Resource<Nothing>
 }
 
-fun <T> Flow<T>.asResult(dispatcher: CoroutineDispatcher = Dispatchers.Default): Flow<Resource<T>> =
+fun <T> Flow<T>.asResult(
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    caller: String? = null
+): Flow<Resource<T>> =
     map<T, Resource<T>> { Resource.Success(it) }
         .onStart { emit(Resource.Loading) }
         .catch {
-            getLogger().log("${it.cause}: ${it.localizedMessage}")
+            getLogger().e("Resource: $caller", "resource error", it)
             coroutineContext.ensureActive()
-            emit(Resource.Error(it.message))
+            emit(Resource.Error(it))
         }.flowOn(dispatcher)
 
 data object Success

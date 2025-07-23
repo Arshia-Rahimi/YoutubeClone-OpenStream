@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 sealed interface PlayerAction {
     data class Start(val videos: List<VideoItem>, val videoItem: VideoItem) : PlayerAction
     data class SeekTo(val ms: Long) : PlayerAction
-    data class PlayFromItem(val video: VideoItem): PlayerAction
+    data class PlayFromVideoItem(val video: VideoItem) : PlayerAction
     data class PlayNext(val video: VideoItem) : PlayerAction
     data object TogglePlay : PlayerAction
     data object Next : PlayerAction

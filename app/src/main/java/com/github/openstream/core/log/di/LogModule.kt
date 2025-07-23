@@ -10,6 +10,6 @@ val logModule = module {
     
     single<Logger> {
         if (BuildConfig.DEBUG) DebugLogger()
-        else OpenStreamLogger()
+        else OpenStreamLogger(get(), get())
     }
 }
