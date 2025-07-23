@@ -11,7 +11,6 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.shared.DefaultPlaylists
-import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.VideoItem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,16 +33,6 @@ class SubscriptionsViewModel(
             val sortedList = it.sortedBy { it.name }
             subscriptions.clear()
             subscriptions.addAll(sortedList)
-        }.launchIn(viewModelScope)
-    }
-
-    fun unSubscribe(channel: ChannelItem.OfflineFirstChannelItem) {
-        channelRepo.unSubscribe(channel.id).onEach {
-            when (it) {
-                is Resource.Success -> SnackBarController.sendEvent("unsubscribed from ${channel.name}")
-                is Resource.Error -> SnackBarController.sendEvent("failed to unsubscribe from ${channel.name}")
-                else -> Unit
-            }
         }.launchIn(viewModelScope)
     }
 
