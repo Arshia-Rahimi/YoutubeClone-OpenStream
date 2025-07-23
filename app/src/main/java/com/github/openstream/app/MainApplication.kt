@@ -1,10 +1,11 @@
 package com.github.openstream.app
 
 import android.app.Application
+import com.github.openstream.core.common.util.Logger
+import com.github.openstream.core.common.util.LoggerImp
 import com.github.openstream.core.data.di.dataModule
 import com.github.openstream.core.database.di.databaseModule
 import com.github.openstream.core.datastore.dataStoreModule
-import com.github.openstream.core.log.di.logModule
 import com.github.openstream.core.media3.di.media3Module
 import com.github.openstream.ui.di.viewModelModule
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +14,8 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
 import org.koin.androix.startup.KoinStartup
 import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinConfiguration
 import org.koin.dsl.module
 
@@ -27,7 +30,6 @@ class MainApplication : Application(), KoinStartup {
             databaseModule,
             media3Module,
             dataStoreModule,
-            logModule,
             appModule,
         )
     }
@@ -37,5 +39,7 @@ class MainApplication : Application(), KoinStartup {
             factory {
                 CoroutineScope(Dispatchers.IO + SupervisorJob())
             }
+            
+            singleOf(::LoggerImp) { bind<Logger>() }
         }
 }
