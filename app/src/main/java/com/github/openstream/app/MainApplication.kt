@@ -2,7 +2,7 @@ package com.github.openstream.app
 
 import android.app.Application
 import com.github.openstream.core.common.util.Logger
-import com.github.openstream.core.common.util.LoggerImp
+import com.github.openstream.core.common.util.LoggerImpl
 import com.github.openstream.core.data.di.dataModule
 import com.github.openstream.core.database.di.databaseModule
 import com.github.openstream.core.datastore.dataStoreModule
@@ -40,7 +40,7 @@ class MainApplication : Application(), KoinStartup {
             }
             
             single<Logger> {
-                LoggerImp(get(), LOG_FILENAME, get())
+                LoggerImpl(get(), LOG_FILENAME, get())
             }
         }
 }
