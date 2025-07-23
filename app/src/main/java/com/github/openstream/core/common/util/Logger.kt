@@ -3,7 +3,6 @@ package com.github.openstream.core.common.util
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import com.github.openstream.core.shared.LOG_FILENAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,11 +21,12 @@ interface Logger {
 }
 
 class LoggerImp(
+    private val logFileName: String,
     private val scope: CoroutineScope,
     context: Context,
 ) : Logger {
     
-    private val logFile: File = File(context.filesDir, LOG_FILENAME)
+    private val logFile: File = File(context.filesDir, logFileName)
     
     override val logStream = flow {
         logFile.useLines { lines ->
