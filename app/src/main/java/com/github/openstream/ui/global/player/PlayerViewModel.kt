@@ -111,7 +111,6 @@ class PlayerViewModel(
     }
     
     fun dispose() {
-        logger.i("PlayerViewModel", "dispose player")
         player.clear()
         _showMiniPlayer.value = false
     }
