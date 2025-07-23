@@ -21,16 +21,4 @@ val dataStoreModule = module {
             corruptionHandler = ReplaceFileCorruptionHandler { PreferencesModel() },
         )
     }
-
-    single<DataStore<PlayerDataModel>>(named(KoinQualifiers.PLAYER_CONFIG)) {
-        DataStoreFactory.create(
-            serializer = GenericDataStoreSerializer(
-                defaultValue = PlayerDataModel(),
-                serializer = PlayerDataModel.serializer(),
-            ),
-            produceFile = { androidContext().dataStoreFile("${KoinQualifiers.PLAYER_CONFIG}.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { PlayerDataModel() },
-        )
-    }
-    
 }

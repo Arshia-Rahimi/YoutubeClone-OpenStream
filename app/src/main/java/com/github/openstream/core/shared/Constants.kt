@@ -9,7 +9,6 @@ object MiniPlayerConfig {
 
 object KoinQualifiers {
     const val PREFERENCES = "preferences"
-    const val PLAYER_CONFIG = "player_config"
 }
 
 object DefaultPlaylists {
