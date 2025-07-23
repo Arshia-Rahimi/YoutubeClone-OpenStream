@@ -21,6 +21,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -39,13 +42,15 @@ fun LogScreen(
     val viewModel = koinViewModel<LogViewModel>()
     val log by viewModel.log.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
-    
-    LaunchedEffect(Unit) {
-        scrollState.scrollTo(scrollState.maxValue)
-    }
+    var isFirstScroll by remember { mutableStateOf(true) }
     
     LaunchedEffect(log) {
-        scrollState.animateScrollTo(scrollState.maxValue)
+        if (isFirstScroll) {
+            scrollState.scrollTo(scrollState.maxValue)
+            isFirstScroll = false
+        } else {
+            scrollState.animateScrollTo(scrollState.maxValue)
+        }
     }
     
     Scaffold(
