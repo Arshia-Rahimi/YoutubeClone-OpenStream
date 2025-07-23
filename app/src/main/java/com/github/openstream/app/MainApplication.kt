@@ -40,7 +40,7 @@ class MainApplication : Application(), KoinStartup {
             }
             
             single<Logger> {
-                LoggerImp(LOG_FILENAME, get(), get())
+                LoggerImp(get(), LOG_FILENAME, get())
             }
         }
 }
