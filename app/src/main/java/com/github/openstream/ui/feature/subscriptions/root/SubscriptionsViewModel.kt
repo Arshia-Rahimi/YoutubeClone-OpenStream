@@ -1,7 +1,5 @@
 package com.github.openstream.ui.feature.subscriptions.root
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.R
@@ -11,7 +9,6 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.shared.DefaultPlaylists
-import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.VideoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -28,13 +25,10 @@ class SubscriptionsViewModel(
         it.sortedByDescending { video -> video.uploadDate }
     }
 
-    val subscriptions: SnapshotStateList<DataItem> = mutableStateListOf<DataItem>().apply {
-        channelRepo.subscriptions.onEach {
-            val sortedList = it.sortedBy { it.name }
-            subscriptions.clear()
-            subscriptions.addAll(sortedList)
-        }.launchIn(viewModelScope)
-    }
+    val subscriptions = channelRepo.subscriptions
+        .collectToSnapShotStateList(viewModelScope) {
+            it.sortedBy { channel -> channel.name }
+        }
 
     fun updateSubscriptions() {
         channelRepo.updateSubscriptions().onEach {
