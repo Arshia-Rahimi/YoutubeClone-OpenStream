@@ -13,12 +13,11 @@ class LogViewModel(
 ) : ViewModel() {
     
     private val _log = MutableStateFlow("")
+        .apply {
+            logger.logStream.onEach { newLine ->
+                value = value + newLine
+            }.launchIn(viewModelScope)
+        }
     val log = _log.asStateFlow()
-    
-    init {
-        logger.logStream.onEach {
-            _log.value = _log.value + it
-        }.launchIn(viewModelScope)
-    }
     
 }
