@@ -60,18 +60,19 @@ fun Video(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(80.dp)
             .clickable {
                 playlist?.let {
                     PlayerAction.Start(it, item).send()
                 } ?: PlayerAction.Start(listOf(item), item).send()
-            },
+            }
+            .padding(horizontal = 4.dp),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.4f)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(12.dp)),
         ) {
             AsyncImage(
                 model = item.thumbnail,
@@ -94,7 +95,9 @@ fun Video(
             }
         }
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .padding(start = 4.dp) 
+                .weight(1f),
             verticalArrangement = Arrangement.Top,
         ) {
             Text(

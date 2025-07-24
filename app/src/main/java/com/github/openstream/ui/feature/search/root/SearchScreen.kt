@@ -34,7 +34,7 @@ fun SearchScreen(
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val searchQuery by viewModel.searchQuery
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchFieldInteractionSource = remember { MutableInteractionSource() }
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
@@ -47,7 +47,7 @@ fun SearchScreen(
             SearchField(
                 searchQuery = searchQuery,
                 focusManager = focusManager,
-                setSearchQuery = { viewModel.searchQuery.value = it },
+                setSearchQuery = viewModel::setSearchQuery,
                 isSearchFieldFocused = isSearchFieldFocused,
                 searchFieldInteractionSource = searchFieldInteractionSource,
                 search = viewModel::search,

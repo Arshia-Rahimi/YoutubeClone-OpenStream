@@ -1,7 +1,6 @@
 package com.github.openstream.ui.feature.search.root
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.R
@@ -39,7 +38,12 @@ class SearchViewModel(
     val uiState = _uiState.asStateFlow()
     val items = mutableStateListOf<DataItem>()
 
-    var searchQuery = mutableStateOf("")
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+    
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
 
     fun search() {
             searchRepo.search(searchQuery.value)

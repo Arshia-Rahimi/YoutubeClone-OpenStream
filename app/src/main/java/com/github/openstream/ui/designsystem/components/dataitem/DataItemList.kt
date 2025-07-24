@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,6 +19,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -90,7 +90,7 @@ fun DataItemList(
         LazyColumn(
             state = lazyColumnState,
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
         ) {
             items(
                 items,
@@ -99,8 +99,6 @@ fun DataItemList(
             ) {
                 DataItem(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .padding(bottom = 8.dp)
                         .animateItem(),
                     playlist = (if (isPlaylist) items.toList() else null) as List<VideoItem>?,
                     shouldViewChannel = shouldViewChannel,
@@ -174,17 +172,15 @@ fun DataItemList(
         state = lazyColumnState,
         modifier = modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
     ) {
         items(
             items,
             key = { it.key + lazyListUniqueId },
-            contentType = { it }
+            contentType = { it },
         ) {
             DataItem(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .padding(bottom = 8.dp)
                     .animateItem(),
                 playlist = (if (isPlaylist) items.toList() else null) as List<VideoItem>?,
                 shouldViewChannel = shouldViewChannel,

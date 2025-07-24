@@ -46,7 +46,7 @@ fun Channel(
             .fillMaxWidth()
             .height(60.dp)
             .clickable { toChannelScreen(item.url) }
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -66,6 +66,7 @@ fun Channel(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
+                .padding(start = 4.dp)
                 .weight(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,

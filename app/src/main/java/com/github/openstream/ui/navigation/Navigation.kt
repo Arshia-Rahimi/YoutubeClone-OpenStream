@@ -1,6 +1,7 @@
 package com.github.openstream.ui.navigation
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -37,14 +38,14 @@ fun Navigation() {
     val orientation =
         if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) Orientation.LandScape
         else Orientation.Portrait
-    
+
     val navigationViewModel = koinViewModel<NavigationViewModel>()
     val playerViewModel = koinInject<PlayerViewModel>()
-    
+
     LaunchedEffect(orientation) {
         playerViewModel.onOrientationChanged(orientation)
     }
-    
+
     val rootNavController = rememberNavController()
         .apply {
             addOnDestinationChangedListener { controller, _, _ ->
@@ -55,59 +56,63 @@ fun Navigation() {
                 }
             }
         }
-    
+
     val currentTab by navigationViewModel.currentTab.collectAsStateWithLifecycle()
     val shouldShowFullscreenPlayer by playerViewModel.shouldShowFullscreenPlayer.collectAsStateWithLifecycle()
-    
+
     ObserveForEvents(PlayerController.events) {
         playerViewModel.processAction(it)
     }
-    
-    if (shouldShowFullscreenPlayer) {
-        ChangeOrientationOnBackButton(Orientation.Portrait)
-        FullScreenPlayerView()
-    } else OpenStreamScaffold(
-        currentTab = currentTab,
-        navAction = { destination, isDoubleClick ->
-            when {
-                currentTab != destination -> {
-                    rootNavController.navigate(destination) {
-                        popUpTo(rootNavController.graph.findStartDestination().id) {
-                            saveState = true
-                            inclusive = false
+
+    Box(Modifier.fillMaxSize()) {
+        OpenStreamScaffold(
+            currentTab = currentTab,
+            navAction = { destination, isDoubleClick ->
+                when {
+                    currentTab != destination -> {
+                        rootNavController.navigate(destination) {
+                            popUpTo(rootNavController.graph.findStartDestination().id) {
+                                saveState = true
+                                inclusive = false
+                            }
+                            restoreState = true
+                            launchSingleTop = true
                         }
-                        restoreState = true
-                        launchSingleTop = true
                     }
+
+                    isDoubleClick -> navigationViewModel.tabDoubleClick(destination)
+                    else -> navigationViewModel.tabClick(destination)
                 }
-                
-                isDoubleClick -> navigationViewModel.tabDoubleClick(destination)
-                else -> navigationViewModel.tabClick(destination)
+            },
+            toChannelScreen = navigationViewModel::navigateToChannelScreen,
+            toPlaylistScreen = navigationViewModel::navigateToPlaylistScreen,
+        ) { ip ->
+            NavHost(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(ip)
+                    .consumeWindowInsets(ip),
+                navController = rootNavController,
+                startDestination = Tabs.Subscriptions,
+            ) {
+                composable<Tabs.Search> {
+                    SearchNavHost(navigationViewModel)
+                }
+                composable<Tabs.Library> {
+                    LibraryNavHost(navigationViewModel)
+                }
+                composable<Tabs.Subscriptions> {
+                    SubscriptionsNavHost(navigationViewModel)
+                }
+                composable<Tabs.Settings> {
+                    SettingsNavHost(navigationViewModel)
+                }
             }
-        },
-        toChannelScreen = navigationViewModel::navigateToChannelScreen,
-        toPlaylistScreen = navigationViewModel::navigateToPlaylistScreen,
-    ) { ip ->
-        NavHost(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(ip)
-                .consumeWindowInsets(ip),
-            navController = rootNavController,
-            startDestination = Tabs.Subscriptions,
-        ) {
-            composable<Tabs.Search> {
-                SearchNavHost(navigationViewModel)
-            }
-            composable<Tabs.Library> {
-                LibraryNavHost(navigationViewModel)
-            }
-            composable<Tabs.Subscriptions> {
-                SubscriptionsNavHost(navigationViewModel)
-            }
-            composable<Tabs.Settings> {
-                SettingsNavHost(navigationViewModel)
-            }
+        }
+
+        if (shouldShowFullscreenPlayer) {
+            ChangeOrientationOnBackButton(Orientation.Portrait)
+            FullScreenPlayerView()
         }
     }
 }
