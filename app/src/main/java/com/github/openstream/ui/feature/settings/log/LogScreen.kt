@@ -25,9 +25,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
 import com.github.openstream.core.shared.MiniPlayerConfig
@@ -81,6 +85,9 @@ fun LogScreen(
                     .weight(1f)
                     .verticalScroll(scrollState),
                 text = log,
+                fontSize = 8.sp,
+                color = Color.White,
+                lineHeight = TextUnit(10f, TextUnitType.Sp),
             )
             val localConfig = LocalConfiguration.current
             val widthToScreenWidthRatio =

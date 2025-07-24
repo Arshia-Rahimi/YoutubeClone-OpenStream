@@ -43,7 +43,7 @@ class OfflineFirstChannelRepository(
         flow {
             val id = db.channelDao().insert(channel.toEntity())
             emit(channel.toOfflineFirstChannelItem(id))
-        }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe: $channel")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe()")
     
     override fun unSubscribe(channelId: Long): Flow<Resource<Success>> =
         flow {
@@ -54,11 +54,11 @@ class OfflineFirstChannelRepository(
                 d2.await()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe: $channelId")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe()")
     
     override fun getChannel(url: String): Flow<Resource<ChannelExtractor>> = flow {
         emit(ChannelRemoteDataSource.getChannelData(url))
-    }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel: $url")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel()")
     
     override fun getTabFirstPage(
         channel: ChannelItem,
@@ -82,7 +82,7 @@ class OfflineFirstChannelRepository(
                     )
             }
             emit(nextPage)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage: $channel, $tab")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage()")
     
     override fun getTabNextPage(
         channel: ChannelItem,
@@ -106,7 +106,7 @@ class OfflineFirstChannelRepository(
                     )
             }
             emit(nextPage)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage: $channel, $tab")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage()")
     
     override fun updateSubscriptions(): Flow<Resource<Success>> =
         flow {
@@ -134,7 +134,7 @@ class OfflineFirstChannelRepository(
                 }.awaitAll()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions()")
     
     override fun isChannelSubscribed(channelUrl: String) =
         db.channelDao().isChannelSubscribed(channelUrl)

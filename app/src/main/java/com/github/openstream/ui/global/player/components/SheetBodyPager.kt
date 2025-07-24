@@ -83,7 +83,7 @@ fun SheetBodyPager(
                         isPlaying = isPlaying,
                         queue = queue,
                         currentVideo = currentVideo,
-                        currentPosition = currentPosition,
+//                        currentPosition = currentPosition,
                         isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
                     )
             }

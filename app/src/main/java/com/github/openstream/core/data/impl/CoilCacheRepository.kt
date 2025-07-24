@@ -16,5 +16,5 @@ class CoilCacheRepository(
         val imageLoader = context.imageLoader
         imageLoader.diskCache?.clear()
         emit(Success)
-    }.asResult(Dispatchers.IO, this::class.simpleName, "clearDiskImageCache")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "clearDiskImageCache()")
 }

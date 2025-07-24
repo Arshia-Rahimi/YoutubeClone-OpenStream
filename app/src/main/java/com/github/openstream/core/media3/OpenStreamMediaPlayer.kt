@@ -127,6 +127,7 @@ class OpenStreamMediaPlayer(
             player.seekTo(currentPosition)
 
             if (wasPlaying) resume()
+            logger.i(this::class.simpleName, "switched playback quality")
         }
     }
     
@@ -138,12 +139,14 @@ class OpenStreamMediaPlayer(
         val wasPlaying = isPlaying.value
         if (wasPlaying) pause()
         
-        val isAudioOnly = _isAudioOnlyModeEnabled.value
-        _isAudioOnlyModeEnabled.value = !isAudioOnly
+        val isAudioOnly = !_isAudioOnlyModeEnabled.value
+        _isAudioOnlyModeEnabled.value = isAudioOnly
         
         if (isAudioOnly) {
+            logger.i(this::class.simpleName, "switch to audio only")
             player.setMediaItem(currentVideoData.getAudioOnlyMediaItem())
         } else {
+            logger.i(this::class.simpleName, "switch to video and audio")
             player.setMediaSource(currentVideoData.getMediaSource(currentQuality))
         }
         
@@ -153,6 +156,7 @@ class OpenStreamMediaPlayer(
     }
 
     fun start(videos: List<VideoItem>, videoItem: VideoItem) {
+        logger.i(this::class.simpleName, "start player")
         scope.launch {
             queue.value = videos
             _currentVideo.emit(videoItem)
@@ -161,6 +165,7 @@ class OpenStreamMediaPlayer(
     }
 
     fun clear() {
+        logger.i(this::class.simpleName, "clear player")
         pause()
         player.clearMediaItems()
         queue.value = emptyList()
@@ -180,6 +185,7 @@ class OpenStreamMediaPlayer(
     fun toggleIsPlaying() = if (player.isPlaying) player.pause() else player.play()
 
     fun next(isCalledByListener: Boolean = false) {
+        logger.i(this::class.simpleName, "next")
         isManuallyChangingMedia = !isCalledByListener
         val currentVideoIndex = queue.value.indexOf(currentVideo.value)
         if(currentVideoIndex == -1) return
@@ -192,9 +198,11 @@ class OpenStreamMediaPlayer(
 
     suspend fun previous() = withContext(Dispatchers.Main) {
         if (playerPosition.first() >= 5000) {
+            logger.i(this::class.simpleName, "previous, seek to start")
             seekTo(0)
             return@withContext
         }
+        logger.i(this::class.simpleName, "previous")
 
         val currentVideoIndex = queue.value.indexOf(currentVideo.value)
         when(currentVideoIndex) {
@@ -237,7 +245,7 @@ class OpenStreamMediaPlayer(
     }
 
     private suspend fun fetchVideo(video: VideoItem) {
-        logger.i("OpenStreamMediaPlayer", "fetching video: $video")
+        logger.i(this::class.simpleName, "fetching video")
         withContext(Dispatchers.Main) {
             player.pause()
             player.clearMediaItems()
@@ -246,7 +254,7 @@ class OpenStreamMediaPlayer(
             when (it) {
                 is Resource.Loading -> _fetchingState.value = FetchingState.Loading
                 is Resource.Error -> {
-                    logger.e("OpenStreamMediaPlayer", "error in fetching video: $video", it.error)
+                    logger.e("OpenStreamMediaPlayer", "error in fetching video", it.error)
                     _fetchingState.value = FetchingState.Error(it.error?.localizedMessage ?: "")
                 }
                 is Resource.Success -> {
@@ -284,6 +292,6 @@ class OpenStreamMediaPlayer(
     }
     
     private fun VideoData.getAudioOnlyMediaItem() =
-        MediaItem.Builder().setUri(url).build()
+        MediaItem.Builder().setUri(audioStream).build()
 
 }

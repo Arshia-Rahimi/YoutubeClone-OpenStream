@@ -96,7 +96,7 @@ fun SubscriptionsScreen(
                     
                     SubscriptionsPage.CHANNELS.ordinal ->
                         DataItemList(
-                            items = viewModel.subscriptions,
+                            items = viewModel.subscriptions as SnapshotStateList<DataItem>,
                             toChannelScreen = toChannelScreen,
                         )
                 }
