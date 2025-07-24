@@ -33,7 +33,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         url = url,
         name = name,
         avatar = thumbnails.first().url,
-        description = description,
+        description = description ?: "",
         subscriberCount = subscriberCount,
         isVerified = isVerified,
     )
@@ -44,7 +44,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         thumbnail = thumbnails.first().url,
         channelUrl = uploaderUrl,
         viewCount = viewCount,
-        shortDescription = shortDescription,
+        shortDescription = shortDescription ?: "",
         duration = duration,
         isChannelVerified = isUploaderVerified,
         isShort = isShortFormContent,

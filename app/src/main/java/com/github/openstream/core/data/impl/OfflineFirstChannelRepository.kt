@@ -35,16 +35,16 @@ class OfflineFirstChannelRepository(
             started = SharingStarted.Lazily,
             replay = 1,
         )
-    
+
     override val subscribedVideos = db.channelDao().getAllChannelVideos()
         .map { list -> list.map { video -> video.toDataItem() } }
-    
+
     override fun subscribe(channel: ChannelItem.OnlineChannelItem): Flow<Resource<ChannelItem.OfflineFirstChannelItem>> =
         flow {
             val id = db.channelDao().insert(channel.toEntity())
             emit(channel.toOfflineFirstChannelItem(id))
         }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe()")
-    
+
     override fun unSubscribe(channelId: Long): Flow<Resource<Success>> =
         flow {
             supervisorScope {
@@ -55,11 +55,11 @@ class OfflineFirstChannelRepository(
                 emit(Success)
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe()")
-    
+
     override fun getChannel(url: String): Flow<Resource<ChannelExtractor>> = flow {
         emit(ChannelRemoteDataSource.getChannelData(url))
     }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel()")
-    
+
     override fun getTabFirstPage(
         channel: ChannelItem,
         tab: ChannelTab,
@@ -83,7 +83,7 @@ class OfflineFirstChannelRepository(
             }
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage()")
-    
+
     override fun getTabNextPage(
         channel: ChannelItem,
         tab: ChannelTab,
@@ -107,7 +107,7 @@ class OfflineFirstChannelRepository(
             }
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage()")
-    
+
     override fun updateSubscriptions(): Flow<Resource<Success>> =
         flow {
             supervisorScope {
@@ -115,28 +115,29 @@ class OfflineFirstChannelRepository(
                 subscriptions.map { channel ->
                     async {
                         val extractor = ChannelRemoteDataSource.getChannelData(channel.url)
-                        val videosTab = extractor.tabs.firstOrNull { it.name == "videos" }
-                            ?: return@async
-                        val nextPage = ChannelRemoteDataSource.fetchTab(extractor, videosTab)
-                        val ids = db.videoDao()
-                            .upsertAndReturnIds(
-                                *nextPage?.filterIsInstance<VideoItem>()
-                                    ?.map { it.toEntity() }
-                                    ?.toTypedArray() ?: emptyArray()
-                            )
-                        db.channelDao()
-                            .upsertChannelVideos(
-                                *ids
-                                    .map { ChannelVideoCrossRef(channel.id, it) }
-                                    .toTypedArray()
-                            )
+                        val tabs = extractor.tabs.filter {
+                            it.name in listOf("videos", "livestreams")
+                        }
+
+                        val videos = buildList {
+                            tabs.forEach { tab ->
+                                ChannelRemoteDataSource.fetchTab(extractor, tab)
+                                    ?.filterIsInstance<VideoItem>()
+                                    ?.map { videoItem -> videoItem.toEntity() }
+                                    ?.let { videos -> addAll(videos) }
+                            }
+                        }
+                        val ids = db.videoDao().upsertAndReturnIds(*videos.toTypedArray())
+                        db.channelDao().upsertChannelVideos(
+                            *ids.map { ChannelVideoCrossRef(channel.id, it) }.toTypedArray()
+                        )
                     }
                 }.awaitAll()
                 emit(Success)
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions()")
-    
+
     override fun isChannelSubscribed(channelUrl: String) =
         db.channelDao().isChannelSubscribed(channelUrl)
-    
+
 }
