@@ -1,6 +1,7 @@
 package com.github.openstream.ui.designsystem.components.dataitem.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,19 +60,17 @@ fun Video(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(60.dp)
             .clickable {
                 playlist?.let {
                     PlayerAction.Start(it, item).send()
                 } ?: PlayerAction.Start(listOf(item), item).send()
-            }
-            .clip(RoundedCornerShape(12.dp)),
+            },
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.4f)
-                .padding(end = 8.dp)
                 .clip(RoundedCornerShape(16.dp)),
         ) {
             AsyncImage(
@@ -95,7 +94,7 @@ fun Video(
             }
         }
         Column(
-            modifier = Modifier.weight(0.6f),
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Top,
         ) {
             Text(
@@ -109,6 +108,7 @@ fun Video(
                     .padding(top = 4.dp)
                     .fillMaxWidth()
                     .weight(1f)
+                    .basicMarquee(),
             )
             Row(
                 horizontalArrangement = Arrangement.Start,
@@ -131,7 +131,7 @@ fun Video(
         Box(
             modifier = Modifier
                 .align(Alignment.Top)
-                .width(24.dp)
+                .width(24.dp),
         ) {
             IconButton(
                 modifier = Modifier,
