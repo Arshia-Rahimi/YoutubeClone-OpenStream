@@ -51,7 +51,7 @@ fun SettingsScreen(
                         modifier = it,
                     ) {
                         if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
-                        else Text("clear", fontSize = 16.sp)
+                        else Text("clear", fontSize = 12.sp)
                     }
                 }
             )
@@ -64,7 +64,7 @@ fun SettingsScreen(
                         modifier = it,
                     ) {
                         if (viewModel.diskImageCacheLoading) CircularProgressIndicator()
-                        else Text("clear", fontSize = 16.sp)
+                        else Text("clear", fontSize = 12.sp)
                     }
                 }
             )
@@ -75,7 +75,7 @@ fun SettingsScreen(
                         onClick = toLogScreen,
                         modifier = it,
                     ) {
-                        Text("view logs", fontSize = 16.sp)
+                        Text("view logs", fontSize = 12.sp)
                     }
                 }
             )

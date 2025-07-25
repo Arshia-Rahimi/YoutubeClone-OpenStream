@@ -48,11 +48,11 @@ fun Channel(
             .clickable { toChannelScreen(item.url) }
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Box(
             modifier = Modifier
-                .fillMaxHeight()
-                .padding(end = 4.dp),
+                .fillMaxHeight(),
             contentAlignment = Alignment.Center,
         ) {
             AsyncImage(
@@ -66,8 +66,7 @@ fun Channel(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(start = 4.dp)
-                .weight(1f),
+                .weight(0.7f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
         ) {
@@ -102,6 +101,7 @@ fun Channel(
         when (item) {
             is ChannelItem.OnlineChannelItem -> {
                 Button(
+                    modifier = Modifier.weight(0.3f),
                     onClick = { subscribe(item) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFCC2849),
@@ -110,12 +110,14 @@ fun Channel(
                     Text(
                         text = stringResource(R.string.subscribe),
                         color = Color.White,
+                        fontSize = 8.sp,
                     )
                 }
             }
 
             is ChannelItem.OfflineFirstChannelItem -> {
                 Button(
+                    modifier = Modifier.weight(0.3f),
                     onClick = {
                         PopupController.openConfirmationDialog(
                             Confirmation.UnsubscribeItem(
@@ -130,6 +132,7 @@ fun Channel(
                     Text(
                         text = stringResource(R.string.unsubscribe),
                         color = Color.White,
+                        fontSize = 8.sp,
                     )
                 }
             }
