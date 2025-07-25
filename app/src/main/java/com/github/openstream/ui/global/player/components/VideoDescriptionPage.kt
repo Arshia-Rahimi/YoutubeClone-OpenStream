@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +37,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.HtmlText
+import com.github.openstream.core.common.compose.isRtlText
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -301,26 +306,30 @@ fun VideoDescription(
             }
         }
         val context = LocalContext.current
-        HtmlText(
-            html = videoData.description,
-            onLinkClicked = {
-                onLinkClicked(
-                    currentVideoUrl = videoData.url,
-                    context = context,
-                    link = it,
-                    toPlaylistScreen = { playlistUrl ->
-                        toPlaylistScreen(playlistUrl)
-                        collapseMiniPlayer()
-                    },
-                )
-            },
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .verticalScroll(scrollState),
-            fontSize = 16.sp,
-        )
+        val isRtl = remember(videoData.description) { isRtlText(videoData.description) }
+        CompositionLocalProvider(LocalLayoutDirection provides if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+            HtmlText(
+                html = videoData.description,
+                textAlign = if (isRtl) TextAlign.Right else TextAlign.Left,
+                onLinkClicked = {
+                    onLinkClicked(
+                        currentVideoUrl = videoData.url,
+                        context = context,
+                        link = it,
+                        toPlaylistScreen = { playlistUrl ->
+                            toPlaylistScreen(playlistUrl)
+                            collapseMiniPlayer()
+                        },
+                    )
+                },
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .verticalScroll(scrollState),
+                fontSize = 16.sp,
+            )
+        }
     }
 }
 

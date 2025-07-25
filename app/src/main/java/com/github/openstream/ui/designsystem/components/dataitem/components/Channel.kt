@@ -1,6 +1,5 @@
 package com.github.openstream.ui.designsystem.components.dataitem.components
 
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,7 @@ fun Channel(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(50.dp)
             .clickable { toChannelScreen(item.url) }
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -77,10 +76,9 @@ fun Channel(
             ) {
                 Text(
                     text = item.name,
-                    fontSize = 16.sp,
+                    fontSize = 12.sp,
                     color = Color.White,
                     maxLines = 1,
-                    modifier = Modifier.basicMarquee(),
                 )
                 if (item.isVerified) {
                     Icon(
@@ -95,7 +93,7 @@ fun Channel(
                 text = "${item.subscriberCount.toShortForm()} subscribers",
                 color = MaterialTheme.colorScheme.onTertiary,
                 maxLines = 1,
-                fontSize = 12.sp,
+                fontSize = 10.sp,
             )
         }
         when (item) {

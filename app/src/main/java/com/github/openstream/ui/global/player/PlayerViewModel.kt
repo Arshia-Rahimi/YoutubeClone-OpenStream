@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.common.compose.collectToSnapShotStateList
-import com.github.openstream.core.common.util.Logger
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -31,7 +30,6 @@ class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val playlistRepo: PlaylistRepository,
     private val channelRepo: ChannelRepository,
-    private val logger: Logger,
 ) : ViewModel() {
 
     val playerInstance = player.player

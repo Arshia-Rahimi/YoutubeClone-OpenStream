@@ -2,7 +2,6 @@ package com.github.openstream.ui.global.player
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -30,24 +28,18 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -100,21 +92,21 @@ fun PlayerSheet(
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
     val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
     val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
+    val orientation by viewModel.orientation.collectAsStateWithLifecycle()
     
     val localConfig = LocalConfiguration.current
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     
-    val orientation = localConfig.orientation
+    val orientationC = localConfig.orientation
     val screenWidth = config.screenWidthDp.dp
-    val widthToScreenWidthRatio = if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+    val widthToScreenWidthRatio = if(orientationC == Configuration.ORIENTATION_LANDSCAPE)
         MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
     
     val miniPlayerHeight =
         with(density) { (screenWidth * widthToScreenWidthRatio * 9 / 16).toPx() }
     val statusBarPadding = WindowInsets.statusBars.getTop(density).toFloat()
-    val miniPlayerOffset =
-        navBarOffset - miniPlayerHeight - statusBarPadding - with(density) { MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp.toPx() }
+    val miniPlayerOffset = navBarOffset - miniPlayerHeight - statusBarPadding
     
     val dragState = rememberSaveable(
         saver = AnchoredDraggableState.Saver(),
@@ -133,8 +125,8 @@ fun PlayerSheet(
             .collect { viewModel.updateSheetState(it) }
     }
 
-    LaunchedEffect(orientation) {
-        (if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+    LaunchedEffect(orientationC) {
+        (if (orientationC == Configuration.ORIENTATION_LANDSCAPE)
             com.github.openstream.core.common.compose.Orientation.LandScape
         else com.github.openstream.core.common.compose.Orientation.Portrait)
             .let { viewModel.onOrientationChanged(it) }
@@ -163,6 +155,7 @@ fun PlayerSheet(
             collapseMiniPlayer = { scope.launch { dragState.animateTo(PlayerSheetState.MINI_PLAYER) } },
             scope = scope,
             playerWidth = playerWidth,
+            isFullScreen = orientation == com.github.openstream.core.common.compose.Orientation.LandScape,
             currentQuality = currentQuality?.quality,
             sheetDragProgress = sheetDragProgress,
             toChannelScreen = toChannelScreen,
@@ -189,6 +182,7 @@ fun PlayerSheet(
 private fun PlayerSheet(
     player: Player,
     dragState: AnchoredDraggableState<PlayerSheetState>,
+    isFullScreen: Boolean,
     sheetState: PlayerSheetState,
     playerWidth: Float,
     density: Density,
@@ -274,6 +268,7 @@ private fun PlayerSheet(
                     when (fetchingState) {
                         is OpenStreamMediaPlayer.FetchingState.Success -> {
                             PlayerView(
+                                isFullScreen = isFullScreen,
                                 player = player,
                                 modifier = Modifier.matchParentSize(),
                                 isSheetExpanded = isSheetExpanded,
@@ -344,28 +339,6 @@ private fun PlayerSheet(
                 }
             }
         }
-        var progress by remember { mutableFloatStateOf(0f) }
-        val animatedProgress by animateFloatAsState(
-            targetValue = progress,
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        )
-        LaunchedEffect(currentPosition) {
-            progress = if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                currentPosition.toFloat() / (currentVideoData?.duration?.toFloat() ?: 1f)
-            } else 0f
-        }
-
-        LinearProgressIndicator(
-            drawStopIndicator = {},
-            gapSize = 0.dp,
-            strokeCap = StrokeCap.Square,
-            trackColor = Color(0xFF5D5D5D),
-            color = Color(0xFFBBBBBB),
-            progress = { animatedProgress },
-            modifier = Modifier
-                .height(MiniPlayerConfig.VIDEO_PROGRESS_INDICATOR_THICKNESS.dp)
-                .fillMaxWidth(),
-        )
 
         SheetBodyPager(
             sheetDragProgress = sheetDragProgress,

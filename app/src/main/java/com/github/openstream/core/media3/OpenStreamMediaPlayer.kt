@@ -107,6 +107,7 @@ class OpenStreamMediaPlayer(
     val playerPosition = isPlaying.transform { isPlaying ->
         emit(player.currentPosition / 1000)
         while (isPlaying) {
+            println(player.currentPosition)
             emit(player.currentPosition / 1000)
             delay(1000L)
         }

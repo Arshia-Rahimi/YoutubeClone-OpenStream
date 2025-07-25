@@ -33,6 +33,7 @@ fun PlayerView(
     isSheetExpanded: Boolean,
     isAudioModeEnabled: Boolean,
     videoThumbnail: String,
+    isFullScreen: Boolean,
 ) {
     var lifecycle by remember { mutableStateOf(Lifecycle.Event.ON_CREATE) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -64,7 +65,7 @@ fun PlayerView(
                     it.player = player
                     it.useController = false
                     it.setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
-                    it.setFullscreenButtonState(false)
+                    it.setFullscreenButtonState(isFullScreen)
                     it.setFullscreenButtonClickListener {
                         (context as Activity).requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE

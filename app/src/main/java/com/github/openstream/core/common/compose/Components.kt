@@ -69,6 +69,7 @@ fun HtmlText(
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
+    textAlign: TextAlign = TextAlign.Unspecified,
 ) {
     val annotatedString = remember(html) {
         buildAnnotatedString {
@@ -97,6 +98,7 @@ fun HtmlText(
     
     Text(
         text = annotatedString,
+        textAlign = textAlign,
         modifier = modifier
             .pointerInput(Unit) {
                 detectTapGestures { offsetPosition ->
