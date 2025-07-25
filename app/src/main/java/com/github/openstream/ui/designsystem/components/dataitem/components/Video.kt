@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -72,7 +72,7 @@ fun Video(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.4f)
+                .aspectRatio(16 / 9f)
                 .clip(RoundedCornerShape(4.dp)),
         ) {
             AsyncImage(
@@ -80,42 +80,33 @@ fun Video(
                 contentDescription = "thumbnail",
                 modifier = Modifier.matchParentSize(),
             )
-            if(item.streamType == StreamType.LIVE_STREAM) {
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 4.dp, end = 4.dp)
-                        .align(Alignment.BottomEnd)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(MaterialTheme.colorScheme.primary.copy(0.5f))
-                ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
-                        text = stringResource(R.string.live),
-                        fontSize = 12.sp,
-                        color = Color.White,
-                    )
-                }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 4.dp, end = 4.dp)
-                        .align(Alignment.BottomEnd)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(Color.Black.copy(0.5f))
-                ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
-                        text = item.duration.toTime(),
-                        fontSize = 12.sp,
-                        color = Color.White,
-                    )
-                }
+            val text = when (item.streamType) {
+                StreamType.LIVE_STREAM -> stringResource(R.string.live)
+                else -> item.duration.toTime()
+            }
+            val color = when (item.streamType) {
+                StreamType.LIVE_STREAM -> MaterialTheme.colorScheme.primary.copy(0.5f)
+                else -> Color.Black.copy(0.5f)
+            }
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 2.dp, end = 2.dp)
+                    .align(Alignment.BottomEnd)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(color),
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp),
+                    text = text,
+                    fontSize = 12.sp,
+                    color = Color.White,
+                )
             }
         }
         Column(
             modifier = Modifier
                 .padding(start = 4.dp)
-                .weight(1f),
+                .weight(0.9f),
             verticalArrangement = Arrangement.Top,
         ) {
             Text(
@@ -152,7 +143,7 @@ fun Video(
         Box(
             modifier = Modifier
                 .align(Alignment.Top)
-                .width(24.dp),
+                .weight(0.1f),
         ) {
             IconButton(
                 modifier = Modifier,
