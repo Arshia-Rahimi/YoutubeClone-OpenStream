@@ -27,6 +27,7 @@ import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.global.reusable.popups.PopupController
 import com.github.openstream.ui.global.reusable.popups.inputdialog.model.InputType
+import com.github.openstream.ui.navigation.routes.Tabs
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,6 +94,7 @@ fun LibraryScreen(
             }
             DataItemList(
                 items = playlists,
+                scrollToTopTab = Tabs.Library,
                 toChannelScreen = toChannelScreen,
                 toPlaylistScreen = toPlaylistScreen,
             )

@@ -28,6 +28,7 @@ import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.designsystem.components.dataitem.DataItemList
 import com.github.openstream.ui.feature.subscriptions.root.model.SubscriptionsPage
+import com.github.openstream.ui.navigation.routes.Tabs
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -86,6 +87,7 @@ fun SubscriptionsScreen(
                 when (page) {
                     SubscriptionsPage.VIDEOS.ordinal ->
                         DataItemList(
+                            scrollToTopTab = Tabs.Subscriptions,
                             items = viewModel.videos as SnapshotStateList<DataItem>,
                             toChannelScreen = toChannelScreen,
                             toPlaylistScreen = toPlaylistScreen,
@@ -98,6 +100,7 @@ fun SubscriptionsScreen(
                         DataItemList(
                             items = viewModel.subscriptions as SnapshotStateList<DataItem>,
                             toChannelScreen = toChannelScreen,
+                            scrollToTopTab = Tabs.Subscriptions,
                         )
                 }
             }

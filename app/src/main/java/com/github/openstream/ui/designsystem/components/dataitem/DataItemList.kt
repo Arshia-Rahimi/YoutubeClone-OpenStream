@@ -152,6 +152,7 @@ fun DataItemList(
     }
     val config = LocalConfiguration.current
     val screenWidth = config.screenWidthDp
+    
     LaunchedEffect(shouldLoadNextPage) {
         if (shouldLoadNextPage) loadNextPage()
     }
