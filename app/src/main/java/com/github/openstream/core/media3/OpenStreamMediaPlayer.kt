@@ -132,15 +132,15 @@ class OpenStreamMediaPlayer(
     }
     
     fun toggleAudioOnlyMode() {
+        val isAudioOnly = !_isAudioOnlyModeEnabled.value
+        _isAudioOnlyModeEnabled.value = isAudioOnly
+        
         val currentVideoData = _currentVideoData.value ?: return
         val currentQuality = _currentQuality.value ?: return
         val currentPosition = player.currentPosition
         
         val wasPlaying = isPlaying.value
         if (wasPlaying) pause()
-        
-        val isAudioOnly = !_isAudioOnlyModeEnabled.value
-        _isAudioOnlyModeEnabled.value = isAudioOnly
         
         if (isAudioOnly) {
             logger.i(this::class.simpleName, "switch to audio only")
