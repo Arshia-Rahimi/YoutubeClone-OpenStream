@@ -1,7 +1,6 @@
 package com.github.openstream.ui.designsystem.components.dataitem.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -62,7 +62,7 @@ fun Video(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(70.dp)
             .clickable {
                 playlist?.let {
                     PlayerAction.Start(it, item).send()
@@ -97,9 +97,9 @@ fun Video(
                     .background(color),
             ) {
                 Text(
-                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp),
+                    modifier = Modifier.padding(horizontal = 2.dp),
                     text = text,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     color = Color.White,
                 )
             }
@@ -107,27 +107,31 @@ fun Video(
         Column(
             modifier = Modifier
                 .padding(start = 4.dp)
-                .weight(0.9f),
+                .weight(1f),
             verticalArrangement = Arrangement.Top,
         ) {
-            
             DirectionalText(
                 text = item.name,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 color = Color.White,
                 maxLines = 2,
+                lineHeight = 20.sp,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .padding(top = 4.dp)
-                    .fillMaxWidth()
                     .weight(1f)
-                    .basicMarquee(),
+                    .fillMaxWidth(),
             )
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SubText(text = item.channelName)
+                Text(
+                    text = item.channelName,
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
+                    color = Color(0xFFAAAAAA),
+                    maxLines = 1,
+                )
                 if (item.isChannelVerified) {
                     Icon(
                         modifier = Modifier.padding(start = 8.dp),
@@ -137,14 +141,18 @@ fun Video(
                     )
                 }
             }
-            SubText(
-                text = timeString(item)
+            Text(
+                text = timeString(item),
+                fontSize = 10.sp,
+                color = Color(0xFFAAAAAA),
+                lineHeight = 12.sp,
+                maxLines = 1,
             )
         }
         Box(
             modifier = Modifier
                 .align(Alignment.Top)
-                .weight(0.1f),
+                .size(24.dp),
         ) {
             IconButton(
                 modifier = Modifier,

@@ -66,7 +66,7 @@ fun Channel(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.7f),
+                .weight(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
         ) {
@@ -77,7 +77,7 @@ fun Channel(
             ) {
                 Text(
                     text = item.name,
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     color = Color.White,
                     maxLines = 1,
                     modifier = Modifier.basicMarquee(),
@@ -101,7 +101,6 @@ fun Channel(
         when (item) {
             is ChannelItem.OnlineChannelItem -> {
                 Button(
-                    modifier = Modifier.weight(0.3f),
                     onClick = { subscribe(item) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFCC2849),
@@ -110,14 +109,13 @@ fun Channel(
                     Text(
                         text = stringResource(R.string.subscribe),
                         color = Color.White,
-                        fontSize = 8.sp,
+                        fontSize = 12.sp,
                     )
                 }
             }
 
             is ChannelItem.OfflineFirstChannelItem -> {
                 Button(
-                    modifier = Modifier.weight(0.3f),
                     onClick = {
                         PopupController.openConfirmationDialog(
                             Confirmation.UnsubscribeItem(
@@ -132,7 +130,7 @@ fun Channel(
                     Text(
                         text = stringResource(R.string.unsubscribe),
                         color = Color.White,
-                        fontSize = 8.sp,
+                        fontSize = 12.sp,
                     )
                 }
             }
