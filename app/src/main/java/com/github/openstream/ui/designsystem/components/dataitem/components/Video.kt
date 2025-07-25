@@ -41,6 +41,7 @@ import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
 import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.reusable.popups.PopupController
 
@@ -72,31 +73,48 @@ fun Video(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.4f)
-                .clip(RoundedCornerShape(12.dp)),
+                .clip(RoundedCornerShape(4.dp)),
         ) {
             AsyncImage(
                 model = item.thumbnail,
                 contentDescription = "thumbnail",
                 modifier = Modifier.matchParentSize(),
             )
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 4.dp, end = 4.dp)
-                    .align(Alignment.BottomEnd)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.Black.copy(0.5f))
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
-                    text = item.duration.toTime(),
-                    fontSize = 12.sp,
-                    color = Color.White,
-                )
+            if(item.streamType == StreamType.LIVE_STREAM) {
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 4.dp, end = 4.dp)
+                        .align(Alignment.BottomEnd)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(0.5f))
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
+                        text = stringResource(R.string.live),
+                        fontSize = 12.sp,
+                        color = Color.White,
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 4.dp, end = 4.dp)
+                        .align(Alignment.BottomEnd)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color.Black.copy(0.5f))
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
+                        text = item.duration.toTime(),
+                        fontSize = 12.sp,
+                        color = Color.White,
+                    )
+                }
             }
         }
         Column(
             modifier = Modifier
-                .padding(start = 4.dp) 
+                .padding(start = 4.dp)
                 .weight(1f),
             verticalArrangement = Arrangement.Top,
         ) {
@@ -229,7 +247,7 @@ private fun timeString(item: VideoItem) =
 @Preview
 @Composable
 private fun Preview() {
-    MaterialTheme {
+    OpenStreamTheme {
         Video(
             item = VideoItem(
                 name = "name",
@@ -239,7 +257,7 @@ private fun Preview() {
                 viewCount = 545664L,
                 isChannelVerified = true,
                 shortDescription = "description",
-                streamType = StreamType.NORMAL,
+                streamType = StreamType.LIVE_STREAM,
                 channelAvatars = "",
                 url = "",
                 thumbnail = "",
