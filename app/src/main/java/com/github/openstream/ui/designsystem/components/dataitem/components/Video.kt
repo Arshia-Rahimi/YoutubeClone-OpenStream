@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.openstream.R
+import com.github.openstream.core.common.compose.DirectionalText
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.common.util.toTime
@@ -109,10 +110,10 @@ fun Video(
                 .weight(0.9f),
             verticalArrangement = Arrangement.Top,
         ) {
-            Text(
+            
+            DirectionalText(
                 text = item.name,
-                fontSize = 20.sp,
-                lineHeight = 24.sp,
+                fontSize = 12.sp,
                 color = Color.White,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
