@@ -39,7 +39,6 @@ fun SearchScreen(
     val isSearchFieldFocused by searchFieldInteractionSource.collectIsFocusedAsState()
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-    val items = viewModel.items
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -61,9 +60,7 @@ fun SearchScreen(
                 .padding(ip)
                 .pointerInput(Unit) {
                     detectTapGestures(
-                        onPress = {
-                            focusManager.clearFocus()
-                        },
+                        onPress = { focusManager.clearFocus() },
                     )
                 },
         ) {
@@ -81,7 +78,7 @@ fun SearchScreen(
                 )
 
                 is SearchViewModel.UiState.Success -> DataItemList(
-                    items = items,
+                    items = viewModel.items,
                     toPlaylistScreen = toPlaylistScreen,
                     toChannelScreen = toChannelScreen,
                     loadNextPage = viewModel::getNextPage,
