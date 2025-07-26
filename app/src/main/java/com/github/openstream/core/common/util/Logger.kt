@@ -86,7 +86,7 @@ class LoggerImpl(
     
     override fun e(tag: String?, message: String?, throwable: Throwable?) {
         scope.launch {
-            logFile.appendText("tag: $tag, message: $message, throwable: { trace: ${throwable?.stackTrace}, cause: ${throwable?.cause}, errorMessage: ${throwable?.localizedMessage} }\n")
+            logFile.appendText("tag: $tag, message: $message, throwable: { cause: ${throwable?.cause}, errorMessage: ${throwable?.localizedMessage} }\n")
         }
         Log.e("log-$tag", message, throwable)
     }

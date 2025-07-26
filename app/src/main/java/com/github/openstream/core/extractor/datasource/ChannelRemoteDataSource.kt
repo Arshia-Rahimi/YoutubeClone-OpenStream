@@ -27,18 +27,18 @@ object ChannelRemoteDataSource {
             tabs = tabs,
             tabExtractors = buildList<Triple<String, ChannelTabExtractor, Page?>> {
                 tabs.forEach {
-                    try {
-                        val url = "channel/" + channelExtractor.id
-                        var name = it.url.split("/").last().lowercase()
-                            .let { last -> if (last == "streams") "livestreams" else last }
-                        val tab = YoutubeChannelTabExtractor(
-                            YtService,
-                            YoutubeChannelTabLinkHandlerFactory.getInstance()
-                                .fromQuery(url, listOf(name), null)
-                        )
-                        add(Triple(name, tab, null))
-                    } catch (e: Exception) {
+                    val url = "channel/" + channelExtractor.id
+                    val name = when(val n = it.url.split("/").last().lowercase()) {
+                        "streams" -> "livestreams"
+                        "releases" -> "albums"
+                        else -> n
                     }
+                    val tab = YoutubeChannelTabExtractor(
+                        YtService,
+                        YoutubeChannelTabLinkHandlerFactory.getInstance()
+                            .fromQuery(url, listOf(name), null)
+                    )
+                    add(Triple(it.name, tab, null))
                 }
             }.toMutableList(),
             url = url,
@@ -71,7 +71,7 @@ object ChannelRemoteDataSource {
         val tab = channel.tabExtractors.first { it.first == tab.name.lowercase() }
         return tab.third?.let {
             val currentPage = tab.second.getPage(it)
-            val index = channel.tabExtractors.indexOfFirst { it.first == tab.first }
+            val index = channel.tabExtractors.indexOfFirst { tab -> tab.first == tab.first }
             channel.tabExtractors[index] = Triple(tab.first, tab.second, currentPage.nextPage)
             currentPage.items.toListOfDataItem()
         }
