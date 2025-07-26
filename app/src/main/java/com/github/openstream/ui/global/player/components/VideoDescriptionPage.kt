@@ -48,11 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.HtmlText
+import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.isRtlText
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
-import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
@@ -67,8 +67,8 @@ import com.github.openstream.ui.global.reusable.popups.PopupController
 @Composable
 fun VideoDescriptionPage(
     fetchingState: OpenStreamMediaPlayer.FetchingState,
-    currentVideoData: VideoData?,
     currentQuality: VideoQuality?,
+    isAudioOnlyModeEnabled: Boolean,
     toChannelScreen: (String) -> Unit,
     toggleVideoWatchLater: () -> Unit,
     toggleVideoLiked: () -> Unit,
@@ -79,9 +79,9 @@ fun VideoDescriptionPage(
     collapseMiniPlayer: () -> Unit,
 ) {
     when (fetchingState) {
-        is OpenStreamMediaPlayer.FetchingState.Success -> currentVideoData?.let { currentVideo ->
+        is OpenStreamMediaPlayer.FetchingState.Success ->
             VideoDescription(
-                videoData = currentVideo,
+                videoData = fetchingState.video,
                 toPlaylistScreen = toPlaylistScreen,
                 scrollState = rememberScrollState(),
                 currentQuality = currentQuality,
@@ -93,9 +93,10 @@ fun VideoDescriptionPage(
                 switchPlaybackQuality = switchPlaybackQuality,
                 subscribe = subscribe,
                 collapseMiniPlayer = collapseMiniPlayer,
+                isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
             )
-        }
-        
+       
+
         is OpenStreamMediaPlayer.FetchingState.Error ->
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -109,7 +110,7 @@ fun VideoDescriptionPage(
                     Text(stringResource(R.string.retry))
                 }
             }
-        
+
         is OpenStreamMediaPlayer.FetchingState.Loading -> Unit
     }
 }
@@ -119,6 +120,7 @@ fun VideoDescription(
     videoData: VideoData,
     scrollState: ScrollState,
     videoLocalState: VideoLocalState,
+    isAudioOnlyModeEnabled: Boolean,
     currentQuality: VideoQuality?,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
@@ -130,17 +132,17 @@ fun VideoDescription(
     collapseMiniPlayer: () -> Unit,
 ) {
     val videoItem = remember { videoData.toDataItem() }
-    
+
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp)
                 .padding(horizontal = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
                 text = videoData.name,
@@ -207,8 +209,18 @@ fun VideoDescription(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            item {
+                OptionsRowItem {
+                    PainterIconButton(
+                        onClick = PlayerAction.ToggleAudioOnlyMode::send,
+                        drawableRes = if(isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled,
+                        tint = Color.Unspecified,
+                        contentDescription = "audio only mode",
+                    )
+                }
+            }
             item {
                 currentQuality?.let {
                     var showQualityOptions by remember { mutableStateOf(false) }
@@ -257,11 +269,6 @@ fun VideoDescription(
                                 tint = Color.White,
                             )
                         }
-                        Text(
-                            text = videoData.likeCount.toShortForm(),
-                            color = Color.White,
-                            modifier = Modifier.padding(end = 12.dp),
-                        )
                     }
                 }
             }
@@ -355,25 +362,7 @@ private fun OptionsRowItem(
 private fun Preview() {
     OpenStreamTheme {
         VideoDescriptionPage(
-            fetchingState = OpenStreamMediaPlayer.FetchingState.Success,
-            currentVideoData =
-                VideoData(
-                    likeCount = 1000,
-                    name = "video",
-                    channelAvatar = "",
-                    url = "",
-                    streamType = StreamType.NORMAL,
-                    channelName = "channel",
-                    description = "description",
-                    uploadDate = null,
-                    viewCount = 40000L,
-                    duration = 50000,
-                    channelUrl = "",
-                    isChannelVerified = true,
-                    audioStream = "",
-                    videoOptions = emptyList(),
-                    subscriberCount = 435627L,
-                ),
+            fetchingState = OpenStreamMediaPlayer.FetchingState.Loading,
             currentQuality = VideoQuality.Q144p,
             toChannelScreen = {},
             toggleVideoLiked = {},
@@ -383,6 +372,7 @@ private fun Preview() {
             subscribe = {},
             collapseMiniPlayer = {},
             toPlaylistScreen = {},
+            isAudioOnlyModeEnabled = false,
         )
     }
 }

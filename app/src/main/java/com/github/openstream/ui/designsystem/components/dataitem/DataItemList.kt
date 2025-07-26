@@ -23,13 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.core.shared.dataitem.VideoItem
-import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.navigation.NavigationViewModel
 import com.github.openstream.ui.navigation.routes.Tabs
 import org.koin.androidx.compose.koinViewModel
@@ -44,7 +42,6 @@ fun DataItemList(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
-    isPlaylist: Boolean = false,
     shouldViewChannel: Boolean = true,
     scrollToTopTab: Tabs? = null,
     toChannelScreen: (String) -> Unit = {},
@@ -56,9 +53,6 @@ fun DataItemList(
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit = {},
     removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
-    val playerViewModel = koinViewModel<PlayerViewModel>()
-    val currentVideo by playerViewModel.currentVideo.collectAsStateWithLifecycle()
-    val shouldShowPlayNext by remember { derivedStateOf { currentVideo != null } }
     val lazyColumnState = rememberLazyListState()
     val navViewModel = koinViewModel<NavigationViewModel>()
     val shouldLoadNextPage by remember {
@@ -100,7 +94,6 @@ fun DataItemList(
                 DataItem(
                     modifier = Modifier
                         .animateItem(),
-                    playlist = (if (isPlaylist) items.toList() else null) as List<VideoItem>?,
                     shouldViewChannel = shouldViewChannel,
                     item = it,
                     toChannelScreen = toChannelScreen,
@@ -110,7 +103,6 @@ fun DataItemList(
                     removeFromWatchLater = removeFromWatchLater,
                     addToWatchLater = addToWatchLater,
                     removeFromPlaylist = removeFromPlaylist,
-                    shouldShowPlayNext = shouldShowPlayNext,
                 )
             }
             item {
@@ -130,7 +122,6 @@ fun DataItemList(
     items: SnapshotStateList<DataItem>,
     modifier: Modifier = Modifier,
     lazyListUniqueId: String = "",
-    isPlaylist: Boolean = false,
     shouldViewChannel: Boolean = true,
     scrollToTopTab: Tabs? = null,
     toChannelScreen: (String) -> Unit = {},
@@ -142,9 +133,6 @@ fun DataItemList(
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit = {},
     removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
-    val playerViewModel = koinViewModel<PlayerViewModel>()
-    val currentVideo by playerViewModel.currentVideo.collectAsStateWithLifecycle()
-    val shouldShowPlayNext by remember { derivedStateOf { currentVideo != null } }
     val navViewModel = koinViewModel<NavigationViewModel>()
     val lazyColumnState = rememberLazyListState()
     val shouldLoadNextPage by remember {
@@ -183,7 +171,6 @@ fun DataItemList(
             DataItem(
                 modifier = Modifier
                     .animateItem(),
-                playlist = (if (isPlaylist) items.toList() else null) as List<VideoItem>?,
                 shouldViewChannel = shouldViewChannel,
                 item = it,
                 toChannelScreen = toChannelScreen,
@@ -193,7 +180,6 @@ fun DataItemList(
                 addToWatchLater = addToWatchLater,
                 subscribe = subscribe,
                 removeFromPlaylist = removeFromPlaylist,
-                shouldShowPlayNext = shouldShowPlayNext,
             )
         }
         item {

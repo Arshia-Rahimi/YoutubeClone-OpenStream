@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -57,11 +59,9 @@ import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.core.shared.dataitem.ChannelItem
-import com.github.openstream.core.shared.dataitem.VideoItem
-import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
-import com.github.openstream.ui.global.player.components.SheetBodyPager
+import com.github.openstream.ui.global.player.components.VideoDescriptionPage
 import com.github.openstream.ui.global.player.components.playerview.PlayerView
 import com.github.openstream.ui.global.player.model.PlayerSheetState
 import com.github.openstream.ui.global.player.model.VideoLocalState
@@ -90,9 +90,8 @@ fun PlayerSheet(
     val videoLocalState by viewModel.videoLocalState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
-    val currentVideoData by viewModel.currentVideoData.collectAsStateWithLifecycle()
-    val currentVideo by viewModel.currentVideo.collectAsStateWithLifecycle()
     val orientation by viewModel.orientation.collectAsStateWithLifecycle()
+    val isBuffering by viewModel.isBuffering.collectAsStateWithLifecycle()
     
     val localConfig = LocalConfiguration.current
     val density = LocalDensity.current
@@ -147,9 +146,9 @@ fun PlayerSheet(
     if (showMiniPlayer) {
         PlayerSheet(
             subscribe = viewModel::subscribe,
+            isBuffering = isBuffering,
             density = density,
             screenWidth = screenWidth,
-            queue = viewModel.queue,
             player = viewModel.playerInstance,
             dragState = dragState,
             collapseMiniPlayer = { scope.launch { dragState.animateTo(PlayerSheetState.MINI_PLAYER) } },
@@ -169,8 +168,6 @@ fun PlayerSheet(
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoLocalState = videoLocalState,
-            currentVideoData = currentVideoData,
-            currentVideo = currentVideo,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
         )
@@ -188,14 +185,12 @@ private fun PlayerSheet(
     density: Density,
     screenWidth: Dp,
     sheetDragProgress: Float,
+    isBuffering: Boolean,
     currentPosition: Long,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
-    queue: List<VideoItem>,
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
     currentQuality: VideoQuality?,
-    currentVideoData: VideoData?,
-    currentVideo: VideoItem?,
     videoLocalState: VideoLocalState,
     isAudioOnlyModeEnabled: Boolean,
     scope: CoroutineScope,
@@ -273,7 +268,7 @@ private fun PlayerSheet(
                                 modifier = Modifier.matchParentSize(),
                                 isSheetExpanded = isSheetExpanded,
                                 isAudioModeEnabled = isAudioOnlyModeEnabled,
-                                videoThumbnail = currentVideo?.thumbnail ?: "",
+                                videoThumbnail = fetchingState.video.thumbnail ?: "",
                             )
                         }
 
@@ -298,13 +293,13 @@ private fun PlayerSheet(
                     ) {
                         if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                             Text(
-                                text = currentVideoData?.name ?: "",
+                                text = fetchingState.video.name,
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                             )
                             Text(
-                                text = currentPosition.toTime() + " / " + currentVideoData?.duration?.toTime(),
+                                text = currentPosition.toTime() + " / " + fetchingState.video.duration.toTime(),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 maxLines = 1,
                             )
@@ -312,7 +307,10 @@ private fun PlayerSheet(
                     }
                     if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                         IconButton(
-                            onClick = PlayerAction.TogglePlay::send,
+                            onClick = {
+                                if(isPlaying) PlayerAction.Pause.send()
+                                else PlayerAction.Resume.send()
+                            },
                             enabled = sheetDragProgress == 0f,
                             modifier = Modifier.alpha(miniPlayerContentAlpha),
                         ) {
@@ -340,25 +338,26 @@ private fun PlayerSheet(
             }
         }
 
-        SheetBodyPager(
-            sheetDragProgress = sheetDragProgress,
-            toPlaylistScreen = toPlaylistScreen,
-            isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
-            currentQuality = currentQuality,
-            switchPlaybackQuality = switchPlaybackQuality,
-            fetchingState = fetchingState,
-            currentVideoData = currentVideoData,
-            scope = scope,
-            toChannelScreen = toChannelScreen,
-            videoLocalState = videoLocalState,
-            toggleVideoLiked = toggleVideoLiked,
-            toggleVideoWatchLater = toggleVideoWatchLater,
-            queue = queue,
-            isPlaying = isPlaying,
-            currentPosition = currentPosition,
-            currentVideo = currentVideo,
-            subscribe = subscribe,
-            collapseMiniPlayer = collapseMiniPlayer,
-        )
+        if (sheetDragProgress != 0f) Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(sheetDragProgress)
+                .background(MaterialTheme.colorScheme.background)
+                .navigationBarsPadding()
+        ) {
+            VideoDescriptionPage(
+                subscribe = subscribe,
+                isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+                collapseMiniPlayer = collapseMiniPlayer,
+                toPlaylistScreen = toPlaylistScreen,
+                fetchingState = fetchingState,
+                toChannelScreen = toChannelScreen,
+                toggleVideoWatchLater = toggleVideoWatchLater,
+                toggleVideoLiked = toggleVideoLiked,
+                videoLocalState = videoLocalState,
+                switchPlaybackQuality = switchPlaybackQuality,
+                currentQuality = currentQuality,
+            )
+        }
     }
 }

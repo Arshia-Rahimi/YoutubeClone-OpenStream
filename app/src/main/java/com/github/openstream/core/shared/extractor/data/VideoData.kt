@@ -4,6 +4,7 @@ import com.github.openstream.core.shared.StreamType
 import com.github.openstream.core.shared.dataitem.VideoItem
 
 data class VideoData(
+    val thumbnail: String?,
     val name: String,
     val url: String,
     val description: String,

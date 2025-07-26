@@ -3,10 +3,10 @@ package com.github.openstream.ui.global.player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.Orientation
-import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
+import com.github.openstream.core.media3.OpenStreamMediaPlayer.FetchingState
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.VideoItem
@@ -34,24 +34,21 @@ class PlayerViewModel(
 
     val playerInstance = player.player
 
-    val queue = player.queue.collectToSnapShotStateList(viewModelScope)
     val fetchingState = player.fetchingState
-    val currentVideoData = player.currentVideoData
-    val currentVideo = player.currentVideo
     val currentQuality = player.currentQuality
     val isPlaying = player.isPlaying
+    val isBuffering = player.isBuffering
     val isAudioOnlyModeEnabled = player.isAudioOnlyModeEnabled
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
     
     val videoLocalState = fetchingState.flatMapLatest {
-        val currentVideoId = currentVideoData.value?.id
-        if (it !is OpenStreamMediaPlayer.FetchingState.Success || currentVideoId == null)
+        if (it !is FetchingState.Success || it.video.id == null)
             flow { emit(VideoLocalState()) }
         else combine(
-            playlistRepo.isInPlaylist(currentVideoId, DefaultPlaylists.WATCH_LATER_ID),
-            playlistRepo.isInPlaylist(currentVideoId, DefaultPlaylists.LIKED_VIDEOS_ID),
-            channelRepo.isChannelSubscribed(currentVideoData.value?.channelUrl ?: ""),
+            playlistRepo.isInPlaylist(it.video.id, DefaultPlaylists.WATCH_LATER_ID),
+            playlistRepo.isInPlaylist(it.video.id, DefaultPlaylists.LIKED_VIDEOS_ID),
+            channelRepo.isChannelSubscribed(it.video.channelUrl),
         ) { isInWatchLater, isLiked, isChannelSubscribed ->
             VideoLocalState(isInWatchLater, isLiked, isChannelSubscribed)
         }
@@ -78,17 +75,14 @@ class PlayerViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     
     fun processAction(action: PlayerAction) = when (action) {
-        is PlayerAction.Start -> start(action.videos, action.videoItem)
+        is PlayerAction.Start -> start(action.videoItem)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
-        is PlayerAction.PlayFromVideoItem -> player.playFromVideo(action.video)
-        is PlayerAction.PlayNext -> player.playNext(action.video)
-        is PlayerAction.Next -> player.next()
-        is PlayerAction.Previous -> viewModelScope.launch { player.previous() }
         is PlayerAction.SeekBackward -> player.seekBackward()
         is PlayerAction.SeekForward -> player.seekForward()
-        is PlayerAction.TogglePlay -> player.toggleIsPlaying()
         is PlayerAction.ToggleAudioOnlyMode -> player.toggleAudioOnlyMode()
         is PlayerAction.Retry -> player.retry()
+        is PlayerAction.Pause -> player.pause()
+        is PlayerAction.Resume -> player.pause()
     }
     
     fun updateSheetState(sheetState: PlayerSheetState) {
@@ -102,10 +96,9 @@ class PlayerViewModel(
     fun switchPlaybackQuality(videoOption: VideoOption) = 
         player.switchPlaybackQuality(videoOption)
 
-    private fun start(videos: List<VideoItem>, videoItem: VideoItem) {
-        if(videoItem !in videos) return
+    private fun start(videoItem: VideoItem) {
         _showMiniPlayer.value = true
-        player.start(videos, videoItem)
+        player.start(videoItem)
     }
     
     fun dispose() {
@@ -114,34 +107,38 @@ class PlayerViewModel(
     }
 
     fun toggleVideoWatchLater() {
-        if (fetchingState.value != OpenStreamMediaPlayer.FetchingState.Success) return
-        val currentVideo = currentVideoData.value ?: return
+        val videoData = when (fetchingState.value) {
+            is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
+            else -> return
+        }
         
         when (videoLocalState.value.isInWatchLater) {
             true -> playlistRepo.removeFromPlaylist(
-                listOf(currentVideo.toDataItem()),
+                listOf(videoData.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
             )
 
             false -> playlistRepo.addToPlaylist(
-                listOf(currentVideo.toDataItem()),
+                listOf(videoData.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
             )
         }.launchIn(viewModelScope)
     }
 
     fun toggleVideoLiked() {
-        if (fetchingState.value != OpenStreamMediaPlayer.FetchingState.Success) return
-        val currentVideo = currentVideoData.value ?: return
+        val videoData = when (fetchingState.value) {
+            is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
+            else -> return
+        }
         
         when (videoLocalState.value.isLiked) {
             true -> playlistRepo.removeFromPlaylist(
-                listOf(currentVideo.toDataItem()),
+                listOf(videoData.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
             )
 
             false -> playlistRepo.addToPlaylist(
-                listOf(currentVideo.toDataItem()),
+                listOf(videoData.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
             )
         }.launchIn(viewModelScope)

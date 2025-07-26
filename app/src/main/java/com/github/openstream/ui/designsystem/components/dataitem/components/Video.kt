@@ -51,8 +51,6 @@ fun Video(
     modifier: Modifier,
     item: VideoItem,
     shouldViewChannel: Boolean,
-    shouldShowPlayNext: Boolean,
-    playlist: List<VideoItem>? = null,
     toChannelScreen: (String) -> Unit,
     saveToWatchLater: ((VideoItem) -> Unit)? = null,
     removeFromWatchLater: ((VideoItem) -> Unit)? = null,
@@ -63,11 +61,7 @@ fun Video(
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp)
-            .clickable {
-                playlist?.let {
-                    PlayerAction.Start(it, item).send()
-                } ?: PlayerAction.Start(listOf(item), item).send()
-            }
+            .clickable { PlayerAction.Start(item).send() }
             .padding(horizontal = 4.dp),
     ) {
         Box(
@@ -169,15 +163,6 @@ fun Video(
                 onDismissRequest = { isDropDownExpanded = false },
                 tonalElevation = 4.dp,
             ) {
-                if (shouldShowPlayNext) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.play_next)) },
-                        onClick = {
-                            isDropDownExpanded = false
-                            PlayerAction.PlayNext(item).send()
-                        },
-                    )
-                }
                 if (shouldViewChannel) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.view_channel)) },
@@ -267,7 +252,6 @@ private fun Preview() {
             toChannelScreen = {},
             shouldViewChannel = true,
             modifier = Modifier,
-            shouldShowPlayNext = false,
         )
     }
 }

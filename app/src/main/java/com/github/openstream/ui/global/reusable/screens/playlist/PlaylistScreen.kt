@@ -71,7 +71,6 @@ private fun PlaylistScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(ip),
-                    isPlaylist = true,
                     onRefresh = onRefresh,
                     isRefreshing = isRefreshing,
                     items = items,
@@ -90,7 +89,6 @@ private fun PlaylistScreen(
                         toChannelScreen = toChannelScreen,
                         loadNextPage = loadNextPage,
                         removeFromPlaylist = removeFromPlaylist,
-                        isPlaylist = true,
                     )
                 } else {
                     DataItemList(
@@ -102,7 +100,6 @@ private fun PlaylistScreen(
                         loadNextPage = loadNextPage,
                         removeFromPlaylist = removeFromPlaylist,
                         addToWatchLater = addToWatchLater,
-                        isPlaylist = true,
                     )
                 }
             }
@@ -115,7 +112,6 @@ private fun PlaylistScreen(
                     items = items,
                     toChannelScreen = toChannelScreen,
                     loadNextPage = loadNextPage,
-                    isPlaylist = true,
                 )
             }
         }
