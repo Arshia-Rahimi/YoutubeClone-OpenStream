@@ -19,13 +19,13 @@ class ConfirmationDialogViewModel(
 
     fun confirm() = when (type) {
         is Confirmation.UnsubscribeItem -> {
-            channelRepo.unSubscribe(type.channel.id)
+            channelRepo.unSubscribe(type.channelId)
                 .onEach {
                     when (it) {
                         is Resource.Loading -> Unit
-                        is Resource.Error -> SnackBarController.sendEvent("failed to unsubscribe from ${type.channel.name}")
+                        is Resource.Error -> SnackBarController.sendEvent("failed to unsubscribe")
                         is Resource.Success -> {
-                            SnackBarController.sendEvent("unsubscribed from ${type.channel.name}")
+                            SnackBarController.sendEvent("unsubscribed")
                             PopupController.dismissConfirmationDialog()
                         }
                     }

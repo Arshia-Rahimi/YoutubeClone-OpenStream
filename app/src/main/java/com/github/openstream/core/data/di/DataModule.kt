@@ -10,8 +10,8 @@ import com.github.openstream.core.data.impl.CoilCacheRepository
 import com.github.openstream.core.data.impl.DataStorePreferencesRepository
 import com.github.openstream.core.data.impl.OfflineFirstChannelRepository
 import com.github.openstream.core.data.impl.OfflineFirstPlaylistRepository
+import com.github.openstream.core.data.impl.OfflineFirstVideoRepository
 import com.github.openstream.core.data.impl.OnlineSearchRepository
-import com.github.openstream.core.data.impl.OnlineVideoRepository
 import com.github.openstream.core.shared.KoinQualifiers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -24,7 +24,7 @@ val dataModule = module {
     
     factoryOf(::OfflineFirstChannelRepository) { bind<ChannelRepository>() }
 
-    factoryOf(::OnlineVideoRepository) { bind<VideoRepository>() }
+    factoryOf(::OfflineFirstVideoRepository) { bind<VideoRepository>() }
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.openstream.core.common.compose.DirectionalText
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
@@ -56,6 +57,7 @@ fun ChannelScreen(
         key = url,
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val channelId by viewModel.channelId.collectAsStateWithLifecycle()
     val tabResults = viewModel.tabs
 
 
@@ -68,9 +70,11 @@ fun ChannelScreen(
         )
 
         is ChannelViewModel.UiState.Success -> ChannelScreen(
+            channelId = channelId,
             channelItem = viewModel.channelItem,
             tabResults = tabResults,
             tabItems = viewModel.tabItems,
+            subscribe = viewModel::subscribe,
             navigateBack = navigateBack,
             toPlaylistScreen = toPlaylistScreen,
             getTabNextPage = viewModel::getTabNextPage,
@@ -92,7 +96,9 @@ private fun ChannelScreen(
     getTabFirstPage: (ChannelTabView) -> Unit,
     getTabNextPage: (ChannelTabView) -> Unit,
     addToWatchLater: (VideoItem) -> Unit,
+    channelId: Long?,
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit,
+    subscribe: (ChannelItem) -> Unit,
 ) {
     val pagerState = rememberPagerState { tabResults.size }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -106,7 +112,7 @@ private fun ChannelScreen(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier.padding(8.dp)
             ) {
-                Text(text = channelItem.description, fontSize = 16.sp)
+                DirectionalText(text = channelItem.description, fontSize = 16.sp)
             }
         }
     }
@@ -114,7 +120,12 @@ private fun ChannelScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            ChannelTopBar(channelItem) { isBottomSheetVisible = true }
+            ChannelTopBar(
+                item = channelItem,
+                subscribe = subscribe,
+                channelId = channelId,
+                openBottomSheet = { isBottomSheetVisible = true },
+            )
         }
     ) { ip ->
         if (tabResults.isNotEmpty()) {

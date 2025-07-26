@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
+import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.OpenStreamMediaPlayer.FetchingState
 import com.github.openstream.core.shared.DefaultPlaylists
@@ -30,6 +31,7 @@ class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val playlistRepo: PlaylistRepository,
     private val channelRepo: ChannelRepository,
+    private val videoRepo: VideoRepository,
 ) : ViewModel() {
 
     val playerInstance = player.player
@@ -41,30 +43,18 @@ class PlayerViewModel(
     val isAudioOnlyModeEnabled = player.isAudioOnlyModeEnabled
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
-    
-    val videoLocalState = fetchingState.flatMapLatest {
-        if (it !is FetchingState.Success || it.video.id == null)
-            flow { emit(VideoLocalState()) }
-        else combine(
-            playlistRepo.isInPlaylist(it.video.id, DefaultPlaylists.WATCH_LATER_ID),
-            playlistRepo.isInPlaylist(it.video.id, DefaultPlaylists.LIKED_VIDEOS_ID),
-            channelRepo.isChannelSubscribed(it.video.channelUrl),
-        ) { isInWatchLater, isLiked, isChannelSubscribed ->
-            VideoLocalState(isInWatchLater, isLiked, isChannelSubscribed)
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoLocalState())
 
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
-    
+
     private val _sheetState = MutableStateFlow(PlayerSheetState.MINI_PLAYER)
     val sheetState = _sheetState.asStateFlow()
-    
+
     private val _orientation = MutableStateFlow(Orientation.Portrait)
     val orientation = _orientation.asStateFlow()
 
     val isInitialSnapDone = MutableStateFlow(false)
-    
+
     val shouldShowFullscreenPlayer =
         combine(
             showMiniPlayer,
@@ -73,7 +63,21 @@ class PlayerViewModel(
         ) { showMiniPlayer, sheetState, orientation ->
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && orientation == Orientation.LandScape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-    
+
+    val videoLocalState = fetchingState.flatMapLatest {
+        if (it !is FetchingState.Success) flow { emit(VideoLocalState()) }
+        else {
+            val videoId = videoRepo.getVideoId(it.video.url)
+            combine(
+                videoId?.let { id -> playlistRepo.isInPlaylist(id, DefaultPlaylists.WATCH_LATER_ID) } ?: flow { emit(false) },
+                videoId?.let { id -> playlistRepo.isInPlaylist(id, DefaultPlaylists.LIKED_VIDEOS_ID) } ?: flow { emit(false) },
+                channelRepo.getChannelId(it.video.channelUrl),
+            ) { isInWatchLater, isLiked, channelId ->
+                VideoLocalState(isInWatchLater, isLiked, channelId)
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoLocalState())
+
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.videoItem)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
@@ -84,23 +88,23 @@ class PlayerViewModel(
         is PlayerAction.Pause -> player.pause()
         is PlayerAction.Resume -> player.pause()
     }
-    
+
     fun updateSheetState(sheetState: PlayerSheetState) {
         _sheetState.value = sheetState
     }
-    
+
     fun onOrientationChanged(orientation: Orientation) {
         _orientation.value = orientation
     }
-    
-    fun switchPlaybackQuality(videoOption: VideoOption) = 
+
+    fun switchPlaybackQuality(videoOption: VideoOption) =
         player.switchPlaybackQuality(videoOption)
 
     private fun start(videoItem: VideoItem) {
         _showMiniPlayer.value = true
         player.start(videoItem)
     }
-    
+
     fun dispose() {
         player.clear()
         _showMiniPlayer.value = false
@@ -111,7 +115,7 @@ class PlayerViewModel(
             is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
-        
+
         when (videoLocalState.value.isInWatchLater) {
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoData.toDataItem()),
@@ -130,7 +134,7 @@ class PlayerViewModel(
             is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
-        
+
         when (videoLocalState.value.isLiked) {
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoData.toDataItem()),

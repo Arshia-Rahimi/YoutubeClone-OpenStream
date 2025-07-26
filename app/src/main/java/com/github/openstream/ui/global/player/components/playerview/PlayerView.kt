@@ -56,7 +56,6 @@ fun PlayerView(
             tint = Color.White,
             modifier = modifier.clickable { PlayerAction.ToggleAudioOnlyMode.send() },
         )
-        
     } else {
         AndroidView(
             modifier = modifier,

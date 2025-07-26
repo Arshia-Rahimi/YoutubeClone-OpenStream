@@ -9,4 +9,7 @@ interface VideoRepository {
     fun fetchVideo(url: String): Flow<Resource<VideoData>>
 
     fun deleteLocalVideoHistory(): Flow<Resource<Success>>
+    
+    suspend fun getVideoId(url: String): Long?
+    
 }

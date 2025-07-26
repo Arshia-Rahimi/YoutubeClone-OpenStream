@@ -2,7 +2,6 @@ package com.github.openstream.ui.global.reusable.popups.confirmationdialog.model
 
 import androidx.annotation.StringRes
 import com.github.openstream.R
-import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 
 sealed interface Confirmation {
@@ -10,7 +9,7 @@ sealed interface Confirmation {
     val confirmationText: Int
     
     data class UnsubscribeItem(
-        val channel: ChannelItem.OfflineFirstChannelItem,
+        val channelId: Long,
     ) : Confirmation {
         @StringRes
         override val confirmButton = R.string.confirm_unsubscribe

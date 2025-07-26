@@ -2,7 +2,6 @@ package com.github.openstream.ui.feature.settings.root
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,7 +47,6 @@ fun SettingsScreen(
                     Button(
                         onClick = viewModel::clearLocalVideoHistory,
                         enabled = !viewModel.localVideoHistoryLoading,
-                        modifier = it,
                     ) {
                         if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
                         else Text("clear", fontSize = 12.sp)
@@ -61,7 +59,6 @@ fun SettingsScreen(
                     Button(
                         onClick = viewModel::clearDiskImageCache,
                         enabled = !viewModel.diskImageCacheLoading,
-                        modifier = it,
                     ) {
                         if (viewModel.diskImageCacheLoading) CircularProgressIndicator()
                         else Text("clear", fontSize = 12.sp)
@@ -73,7 +70,6 @@ fun SettingsScreen(
                 action = {
                     Button(
                         onClick = toLogScreen,
-                        modifier = it,
                     ) {
                         Text("view logs", fontSize = 12.sp)
                     }
@@ -86,7 +82,7 @@ fun SettingsScreen(
 private fun LazyListScope.settingsItem(
     title: String,
     modifier: Modifier = Modifier,
-    action: @Composable (Modifier) -> Unit,
+    action: @Composable () -> Unit,
 ) {
     item {
         Row(
@@ -101,7 +97,7 @@ private fun LazyListScope.settingsItem(
                 text = title,
                 fontSize = 16.sp,
             )
-            action(modifier.fillMaxHeight())
+            action()
         }
     }
 }

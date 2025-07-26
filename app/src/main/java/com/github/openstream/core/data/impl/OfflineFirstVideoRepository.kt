@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.supervisorScope
 
-class OnlineVideoRepository(
+class OfflineFirstVideoRepository(
     private val db: OpenStreamDatabase,
 ) : VideoRepository {
     override fun fetchVideo(url: String): Flow<Resource<VideoData>> = flow {
@@ -40,4 +40,7 @@ class OnlineVideoRepository(
                 emit(Success)
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory()")
+
+    override suspend fun getVideoId(url: String) = db.videoDao().getVideoId(url)
+    
 }

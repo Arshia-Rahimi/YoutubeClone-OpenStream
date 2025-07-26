@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
+import com.github.openstream.core.common.compose.DirectionalText
 import com.github.openstream.core.common.compose.HtmlText
 import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.isRtlText
@@ -144,7 +145,7 @@ fun VideoDescription(
                 .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
+            DirectionalText(
                 text = videoData.name,
                 fontSize = 20.sp,
                 color = Color.White,
@@ -188,14 +189,14 @@ fun VideoDescription(
                 collapseMiniPlayer()
             },
             subscribe = subscribe,
-            item = if (videoLocalState.isChannelSubscribed) ChannelItem.OfflineFirstChannelItem(
+            item = if (videoLocalState.channelId != null) ChannelItem.OfflineFirstChannelItem(
                 url = videoData.channelUrl,
                 name = videoData.channelName,
                 isVerified = videoData.isChannelVerified,
                 subscriberCount = videoData.subscriberCount,
                 description = "",
                 avatar = videoData.channelAvatar,
-                id = Long.MIN_VALUE, // id is not used in the composable, this is a placeholder
+                id = videoLocalState.channelId,
             ) else ChannelItem.OnlineChannelItem(
                 url = videoData.channelUrl,
                 name = videoData.channelName,

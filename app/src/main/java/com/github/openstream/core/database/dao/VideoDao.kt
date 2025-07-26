@@ -46,4 +46,7 @@ interface VideoDao {
 
     @Query("DELETE FROM videos")
     suspend fun deleteAll()
+
+    @Query("SELECT videoId FROM videos WHERE url == :url")
+    suspend fun getVideoId(url: String): Long?
 }

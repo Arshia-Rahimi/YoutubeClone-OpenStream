@@ -117,7 +117,7 @@ fun Channel(
                     onClick = {
                         PopupController.openConfirmationDialog(
                             Confirmation.UnsubscribeItem(
-                                item
+                                item.id
                             )
                         )
                     },

@@ -35,6 +35,6 @@ interface ChannelRepository {
 
     fun updateSubscriptions(): Flow<Resource<Success>>
     
-    fun isChannelSubscribed(channelUrl: String): Flow<Boolean>
+    fun getChannelId(url: String): Flow<Long?>
     
 }

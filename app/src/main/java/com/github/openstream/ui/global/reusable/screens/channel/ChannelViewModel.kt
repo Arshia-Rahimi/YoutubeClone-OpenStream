@@ -18,10 +18,12 @@ import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.ChannelExtractor
 import com.github.openstream.ui.global.reusable.screens.channel.model.ChannelTabView
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class ChannelViewModel(
     url: String,
@@ -34,6 +36,9 @@ class ChannelViewModel(
         data class Error(val message: String? = null) : UiState
         data class Success(val channelExtractor: ChannelExtractor) : UiState
     }
+    
+    val channelId = channelRepo.getChannelId(url)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     private val channelExtractor: ChannelExtractor
         get() = (uiState.value as UiState.Success).channelExtractor
@@ -132,5 +137,20 @@ class ChannelViewModel(
                     else -> Unit
                 }
             }.launchIn(viewModelScope)
+    }
+
+    fun subscribe(channel: ChannelItem) {
+        viewModelScope.launch {
+            channelRepo.subscribe(
+                ChannelItem.OnlineChannelItem(
+                    name = channel.name, 
+                    url = channel.url, 
+                    avatar = channel.avatar,
+                    description = channel.description,
+                    subscriberCount = channel.subscriberCount,
+                    isVerified = channel.isVerified,
+                )
+            ).collect()
+        }
     }
 }
