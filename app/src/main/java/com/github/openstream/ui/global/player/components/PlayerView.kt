@@ -1,4 +1,4 @@
-package com.github.openstream.ui.global.player.components.playerview
+package com.github.openstream.ui.global.player.components
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,10 +22,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,30 +47,42 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import com.github.openstream.R
+import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
+import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.ui.global.player.PlayerAction
+import com.github.openstream.ui.global.player.PlayerViewModel
+import com.github.openstream.ui.global.player.model.PlayerSheetState
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
-@OptIn(UnstableApi::class)
 @Composable
 fun PlayerView(
-    videoData: VideoData,
     modifier: Modifier = Modifier,
-    player: Player,
-    isAudioModeEnabled: Boolean,
-    isFullScreen: Boolean,
-    isBuffering: Boolean,
-    currentPosition: Long,
-    isPlaying: Boolean,
-    isSheetExpanded: Boolean,
 ) {
+    val viewModel = koinViewModel<PlayerViewModel>()
+    
+    val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
+    val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
+    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    
+    val isBuffering by viewModel.isBuffering.collectAsStateWithLifecycle()
+    val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
+    
+    val orientation by viewModel.orientation.collectAsStateWithLifecycle()
+    val isFullScreen by remember { derivedStateOf { orientation == Orientation.LandScape } }
+    
+    val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
+    val isSheetExpanded by remember { derivedStateOf { sheetState == PlayerSheetState.EXPANDED } }
+    
     var showController by remember { mutableStateOf(false) }
     var width by remember { mutableFloatStateOf(0f) }
     
@@ -79,7 +94,14 @@ fun PlayerView(
     }
     
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
+            .aspectRatio(16 / 9f)
+            .onCondition(
+                condition = fetchingState !is OpenStreamMediaPlayer.FetchingState.Success,
+                onFalse = { background(Color.Black) },
+                onTrue = { background(MaterialTheme.colorScheme.tertiaryContainer) },
+            )
             .onGloballyPositioned {
                 width = it.size.width.toFloat()
             }
@@ -99,35 +121,75 @@ fun PlayerView(
                 }
             },
     ) {
-        if (isAudioModeEnabled) {
-            AsyncImage(
-                model = videoData.thumbnail,
-                contentDescription = "thumbnail",
-                modifier = Modifier.matchParentSize(),
-            )
-        } else {
-            AndroidView(
-                modifier = Modifier.matchParentSize(),
-                factory = { context ->
-                    PlayerView(context).also {
-                        it.player = player
-                        it.useController = false
-                        it.setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
-                    }
-                },
-            )
-        }
-        if (showController && isSheetExpanded) {
-            PlayerController(
-                videoData = videoData,
-                isFullScreen = isFullScreen,
-                isBuffering = isBuffering,
-                isPlaying = isPlaying,
-                currentPosition = currentPosition,
-            )
+        when (fetchingState) {
+            is OpenStreamMediaPlayer.FetchingState.Loading -> CircularProgressIndicator()
+            is OpenStreamMediaPlayer.FetchingState.Error -> {
+                Icon(
+                    painter = painterResource(R.drawable.cross),
+                    contentDescription = "",
+                    tint = Color.White,
+                )
+            }
+            
+            is OpenStreamMediaPlayer.FetchingState.Success -> {
+                PlayerView(
+                    isFullScreen = isFullScreen,
+                    player = viewModel.playerInstance,
+                    isBuffering = isBuffering,
+                    videoData = (fetchingState as OpenStreamMediaPlayer.FetchingState.Success).video,
+                    isPlaying = isPlaying,
+                    currentPosition = currentPosition,
+                    showController = showController,
+                    isSheetExpanded = isSheetExpanded,
+                    isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+                )
+            }
         }
     }
+}
+
+@OptIn(UnstableApi::class)
+@Composable
+private fun BoxScope.PlayerView(
+    showController: Boolean,
+    videoData: VideoData,
+    isAudioOnlyModeEnabled: Boolean,
+    player: Player,
+    isFullScreen: Boolean,
+    isBuffering: Boolean,
+    currentPosition: Long,
+    isPlaying: Boolean,
+    isSheetExpanded: Boolean,
+) {
+    if (isAudioOnlyModeEnabled) {
+        AsyncImage(
+            model = videoData.thumbnail,
+            contentDescription = "thumbnail",
+            modifier = Modifier.matchParentSize(),
+        )
+    } else {
+        AndroidView(
+            modifier = Modifier
+                .matchParentSize(),
+            factory = { context ->
+                PlayerView(context).also {
+                    it.player = player
+                    it.useController = false
+                    it.setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
+                }
+            },
+        )
+    }
     
+    if (showController && isSheetExpanded) {
+        PlayerController(
+            videoData = videoData,
+            isFullScreen = isFullScreen,
+            isBuffering = isBuffering,
+            isPlaying = isPlaying,
+            currentPosition = currentPosition,
+        )
+    }
 }
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)

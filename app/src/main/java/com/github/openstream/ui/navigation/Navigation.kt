@@ -26,7 +26,7 @@ import com.github.openstream.ui.feature.settings.SettingsNavHost
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsNavHost
 import com.github.openstream.ui.global.player.PlayerController
 import com.github.openstream.ui.global.player.PlayerViewModel
-import com.github.openstream.ui.global.player.components.playerview.FullScreenPlayerView
+import com.github.openstream.ui.global.player.components.PlayerView
 import com.github.openstream.ui.navigation.NavigationViewModel.Companion.tabsList
 import com.github.openstream.ui.navigation.routes.Tabs
 import org.koin.androidx.compose.koinViewModel
@@ -112,7 +112,7 @@ fun Navigation() {
 
         if (shouldShowFullscreenPlayer) {
             ChangeOrientationOnBackButton(Orientation.Portrait)
-            FullScreenPlayerView()
+            PlayerView(Modifier.fillMaxSize())
         }
     }
 }

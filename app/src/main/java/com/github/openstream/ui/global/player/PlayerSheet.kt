@@ -13,11 +13,9 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -27,7 +25,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +48,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.Player
 import com.github.openstream.R
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.compose.safeOffset
@@ -61,8 +57,8 @@ import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
+import com.github.openstream.ui.global.player.components.PlayerView
 import com.github.openstream.ui.global.player.components.VideoDescriptionPage
-import com.github.openstream.ui.global.player.components.playerview.PlayerView
 import com.github.openstream.ui.global.player.model.PlayerSheetState
 import com.github.openstream.ui.global.player.model.VideoLocalState
 import kotlinx.coroutines.CoroutineScope
@@ -90,8 +86,6 @@ fun PlayerSheet(
     val videoLocalState by viewModel.videoLocalState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
-    val orientation by viewModel.orientation.collectAsStateWithLifecycle()
-    val isBuffering by viewModel.isBuffering.collectAsStateWithLifecycle()
     
     val localConfig = LocalConfiguration.current
     val density = LocalDensity.current
@@ -99,7 +93,7 @@ fun PlayerSheet(
     
     val orientationC = localConfig.orientation
     val screenWidth = config.screenWidthDp.dp
-    val widthToScreenWidthRatio = if(orientationC == Configuration.ORIENTATION_LANDSCAPE)
+    val widthToScreenWidthRatio = if (orientationC == Configuration.ORIENTATION_LANDSCAPE)
         MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
     
     val miniPlayerHeight =
@@ -117,20 +111,20 @@ fun PlayerSheet(
                 screenWidth.value
     
     val scope = rememberCoroutineScope()
-
+    
     LaunchedEffect(dragState) {
         snapshotFlow { dragState.currentValue }
             .distinctUntilChanged()
             .collect { viewModel.updateSheetState(it) }
     }
-
+    
     LaunchedEffect(orientationC) {
         (if (orientationC == Configuration.ORIENTATION_LANDSCAPE)
             com.github.openstream.core.common.compose.Orientation.LandScape
         else com.github.openstream.core.common.compose.Orientation.Portrait)
             .let { viewModel.onOrientationChanged(it) }
     }
-
+    
     LaunchedEffect(miniPlayerOffset) {
         dragState.updateAnchors(DraggableAnchors {
             PlayerSheetState.MINI_PLAYER at miniPlayerOffset
@@ -142,19 +136,16 @@ fun PlayerSheet(
             viewModel.isInitialSnapDone.value = true
         }
     }
-
+    
     if (showMiniPlayer) {
         PlayerSheet(
             subscribe = viewModel::subscribe,
-            isBuffering = isBuffering,
             density = density,
             screenWidth = screenWidth,
-            player = viewModel.playerInstance,
             dragState = dragState,
             collapseMiniPlayer = { scope.launch { dragState.animateTo(PlayerSheetState.MINI_PLAYER) } },
             scope = scope,
             playerWidth = playerWidth,
-            isFullScreen = orientation == com.github.openstream.core.common.compose.Orientation.LandScape,
             currentQuality = currentQuality?.quality,
             sheetDragProgress = sheetDragProgress,
             toChannelScreen = toChannelScreen,
@@ -169,7 +160,6 @@ fun PlayerSheet(
             videoLocalState = videoLocalState,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
-            isSheetExpanded = sheetState == PlayerSheetState.EXPANDED
         )
     }
 }
@@ -177,17 +167,13 @@ fun PlayerSheet(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PlayerSheet(
-    player: Player,
     dragState: AnchoredDraggableState<PlayerSheetState>,
-    isFullScreen: Boolean,
     sheetState: PlayerSheetState,
     playerWidth: Float,
     density: Density,
     screenWidth: Dp,
     sheetDragProgress: Float,
-    isBuffering: Boolean,
     currentPosition: Long,
-    isSheetExpanded: Boolean,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     isPlaying: Boolean,
     currentQuality: VideoQuality?,
@@ -204,7 +190,7 @@ private fun PlayerSheet(
     toPlaylistScreen: (String) -> Unit,
 ) {
     val xOffset = with(density) {
-        if(screenWidth <= 600.dp) 0
+        if (screenWidth <= 600.dp) 0
         else ((screenWidth - 600.dp).toPx() / 2).roundToInt()
     }
     Column(
@@ -253,114 +239,86 @@ private fun PlayerSheet(
                 ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(
+                PlayerView(
+                    modifier = Modifier.width(playerWidth.dp)
+                )
+            }
+            
+            if (sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
+                Column(
                     modifier = Modifier
-                        .width(playerWidth.dp)
-                        .aspectRatio(16 / 9f)
-                        .background(MaterialTheme.colorScheme.tertiaryContainer),
-                    contentAlignment = Alignment.Center,
+                        .weight(1f)
+                        .padding(4.dp)
+                        .alpha(miniPlayerContentAlpha),
+                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    when (fetchingState) {
-                        is OpenStreamMediaPlayer.FetchingState.Success -> {
-                            PlayerView(
-                                isFullScreen = isFullScreen,
-                                player = player,
-                                modifier = Modifier.matchParentSize(),
-                                isAudioModeEnabled = isAudioOnlyModeEnabled,
-                                isBuffering = isBuffering,
-                                videoData = fetchingState.video,
-                                isPlaying = isPlaying,
-                                currentPosition = currentPosition,
-                                isSheetExpanded = isSheetExpanded,
-                            )
-                        }
-
-                        is OpenStreamMediaPlayer.FetchingState.Loading -> CircularProgressIndicator()
-                        is OpenStreamMediaPlayer.FetchingState.Error -> {
-                            Icon(
-                                painter = painterResource(R.drawable.cross),
-                                contentDescription = "",
-                                tint = Color.White,
-                            )
-                        }
+                    if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
+                        Text(
+                            text = fetchingState.video.name,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                        Text(
+                            text = currentPosition.toTime() + " / " + fetchingState.video.duration.toTime(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            maxLines = 1,
+                        )
                     }
                 }
-
-                if (sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(4.dp)
-                            .alpha(miniPlayerContentAlpha),
-                        verticalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                            Text(
-                                text = fetchingState.video.name,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                            )
-                            Text(
-                                text = currentPosition.toTime() + " / " + fetchingState.video.duration.toTime(),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                maxLines = 1,
-                            )
-                        }
-                    }
-                    if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
-                        IconButton(
-                            onClick = {
-                                if(isPlaying) PlayerAction.Pause.send()
-                                else PlayerAction.Resume.send()
-                            },
-                            enabled = sheetDragProgress == 0f,
-                            modifier = Modifier.alpha(miniPlayerContentAlpha),
-                        ) {
-                            Icon(
-                                painter = painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
-                                contentDescription = "toggle play",
-                                tint = Color.White,
-                            )
-                        }
-                    }
+                if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                     IconButton(
-                        onClick = { dispose() },
+                        onClick = {
+                            if (isPlaying) PlayerAction.Pause.send()
+                            else PlayerAction.Resume.send()
+                        },
                         enabled = sheetDragProgress == 0f,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .alpha(miniPlayerContentAlpha),
+                        modifier = Modifier.alpha(miniPlayerContentAlpha),
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.cross),
-                            contentDescription = "dispose player",
+                            painter = painterResource(if (isPlaying) R.drawable.pause else R.drawable.play),
+                            contentDescription = "toggle play",
                             tint = Color.White,
                         )
                     }
                 }
+                IconButton(
+                    onClick = { dispose() },
+                    enabled = sheetDragProgress == 0f,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .alpha(miniPlayerContentAlpha),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.cross),
+                        contentDescription = "dispose player",
+                        tint = Color.White,
+                    )
+                }
             }
         }
-
-        if (sheetDragProgress != 0f) Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(sheetDragProgress)
-                .background(MaterialTheme.colorScheme.background)
-                .navigationBarsPadding()
-        ) {
-            VideoDescriptionPage(
-                subscribe = subscribe,
-                isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
-                collapseMiniPlayer = collapseMiniPlayer,
-                toPlaylistScreen = toPlaylistScreen,
-                fetchingState = fetchingState,
-                toChannelScreen = toChannelScreen,
-                toggleVideoWatchLater = toggleVideoWatchLater,
-                toggleVideoLiked = toggleVideoLiked,
-                videoLocalState = videoLocalState,
-                switchPlaybackQuality = switchPlaybackQuality,
-                currentQuality = currentQuality,
-            )
-        }
+    }
+    
+    if (sheetDragProgress != 0f) Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(sheetDragProgress)
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding()
+    ) {
+        VideoDescriptionPage(
+            subscribe = subscribe,
+            isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+            collapseMiniPlayer = collapseMiniPlayer,
+            toPlaylistScreen = toPlaylistScreen,
+            fetchingState = fetchingState,
+            toChannelScreen = toChannelScreen,
+            toggleVideoWatchLater = toggleVideoWatchLater,
+            toggleVideoLiked = toggleVideoLiked,
+            videoLocalState = videoLocalState,
+            switchPlaybackQuality = switchPlaybackQuality,
+            currentQuality = currentQuality,
+        )
     }
 }
+
