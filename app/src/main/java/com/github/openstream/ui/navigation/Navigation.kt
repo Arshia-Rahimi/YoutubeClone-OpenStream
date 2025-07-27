@@ -1,5 +1,6 @@
 package com.github.openstream.ui.navigation
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,15 +8,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.github.openstream.core.common.compose.ChangeOrientationOnBackButton
 import com.github.openstream.core.common.compose.ObserveForEvents
-import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.common.compose.getCurrentRouteClassName
 import com.github.openstream.ui.feature.library.LibraryNavHost
 import com.github.openstream.ui.feature.search.SearchNavHost
@@ -23,7 +26,7 @@ import com.github.openstream.ui.feature.settings.SettingsNavHost
 import com.github.openstream.ui.feature.subscriptions.SubscriptionsNavHost
 import com.github.openstream.ui.global.player.PlayerController
 import com.github.openstream.ui.global.player.PlayerViewModel
-import com.github.openstream.ui.global.player.components.PlayerView
+import com.github.openstream.ui.global.player.components.playerview.FullScreenPlayerView
 import com.github.openstream.ui.navigation.NavigationViewModel.Companion.tabsList
 import com.github.openstream.ui.navigation.routes.Tabs
 import org.koin.androidx.compose.koinViewModel
@@ -99,8 +102,16 @@ fun Navigation() {
         }
 
         if (shouldShowFullscreenPlayer) {
-            ChangeOrientationOnBackButton(Orientation.Portrait)
-            PlayerView(Modifier.fillMaxSize())
+            FullScreenPlayerView()
+        } else {
+            // todo: test this
+            val context = LocalContext.current
+            val window = (context as? Activity)?.window
+            val view = LocalView.current
+            
+            window?.let {
+                WindowInsetsControllerCompat(it, view).show(WindowInsetsCompat.Type.statusBars())
+            }
         }
     }
 }

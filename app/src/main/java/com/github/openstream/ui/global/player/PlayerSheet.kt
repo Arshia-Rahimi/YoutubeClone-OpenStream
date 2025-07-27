@@ -57,8 +57,8 @@ import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
-import com.github.openstream.ui.global.player.components.PlayerView
 import com.github.openstream.ui.global.player.components.VideoDescriptionPage
+import com.github.openstream.ui.global.player.components.playerview.PlayerView
 import com.github.openstream.ui.global.player.model.PlayerSheetState
 import com.github.openstream.ui.global.player.model.VideoLocalState
 import kotlinx.coroutines.CoroutineScope
