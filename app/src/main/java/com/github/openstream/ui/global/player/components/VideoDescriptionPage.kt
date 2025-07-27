@@ -219,7 +219,7 @@ fun VideoDescription(
                 }
             }
             item {
-                currentQuality?.let {
+                if (!isAudioOnlyModeEnabled && currentQuality != null) {
                     var showQualityOptions by remember { mutableStateOf(false) }
                     OptionsRowItem(
                         modifier = Modifier.clickable {
@@ -227,7 +227,7 @@ fun VideoDescription(
                         }
                     ) {
                         Text(
-                            text = "${it.quality}p",
+                            text = "${currentQuality.quality}p",
                             color = Color.White,
                             modifier = Modifier.padding(horizontal = 4.dp),
                         )
