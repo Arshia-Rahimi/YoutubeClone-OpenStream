@@ -91,14 +91,14 @@ class OpenStreamMediaPlayer(
         emit(player.currentPosition)
         while (isPlaying) {
             emit(player.currentPosition)
-            delay(1000L)
+            delay(500L)
         }
     }
     
     val bufferedPosition = flow {
         while (true) {
             emit(player.bufferedPosition)
-            delay(1000L)
+            delay(500L)
         }
     }
     
