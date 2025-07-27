@@ -169,6 +169,7 @@ fun PlayerSheet(
             videoLocalState = videoLocalState,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+            isSheetExpanded = sheetState == PlayerSheetState.EXPANDED
         )
     }
 }
@@ -186,6 +187,7 @@ private fun PlayerSheet(
     sheetDragProgress: Float,
     isBuffering: Boolean,
     currentPosition: Long,
+    isSheetExpanded: Boolean,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     isPlaying: Boolean,
     currentQuality: VideoQuality?,
@@ -269,6 +271,7 @@ private fun PlayerSheet(
                                 videoData = fetchingState.video,
                                 isPlaying = isPlaying,
                                 currentPosition = currentPosition,
+                                isSheetExpanded = isSheetExpanded,
                             )
                         }
 
