@@ -86,8 +86,9 @@ fun PlayerView(
             .onCondition(isSheetExpanded) {
                 pointerInput(Unit) {
                     detectTapGestures(
-                        onPress = { showController = !showController },
+                        onPress = { if (isSheetExpanded) showController = !showController },
                         onDoubleTap = { offset ->
+                            if (!isSheetExpanded) return@detectTapGestures
                             when {
                                 offset.x < width / 3f -> PlayerAction.SeekBackward.send()
                                 offset.x > 2 * width / 3f -> PlayerAction.SeekForward.send()
@@ -154,6 +155,7 @@ private fun BoxScope.PlayerController(
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 2.dp)
                 .align(Alignment.Start),
             color = Color.White,
             fontSize = 16.sp,
@@ -168,7 +170,7 @@ private fun BoxScope.PlayerController(
                 onClick = PlayerAction.Pause::send,
             ) {
                 Icon(
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(60.dp),
                     painter = painterResource(R.drawable.pause),
                     contentDescription = "pause",
                     tint = Color.Unspecified,
@@ -182,7 +184,7 @@ private fun BoxScope.PlayerController(
                     painter = painterResource(R.drawable.play),
                     contentDescription = "play",
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(60.dp),
                 )
             }
         }
@@ -232,8 +234,7 @@ private fun BoxScope.PlayerController(
             
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 2.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {

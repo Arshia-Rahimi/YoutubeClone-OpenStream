@@ -159,7 +159,7 @@ fun VideoDescription(
                 )
                 Text(
                     text = videoData.viewCount.toShortForm(),
-                    fontSize = 8.sp,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onTertiary,
                 )
                 Icon(
@@ -169,7 +169,7 @@ fun VideoDescription(
                 )
                 Text(
                     text = videoData.uploadDate?.timeAgo() ?: "",
-                    fontSize = 8.sp,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onTertiary,
                 )
             }
