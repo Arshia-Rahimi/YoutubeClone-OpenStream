@@ -296,7 +296,7 @@ private fun BoxScope.PlayerController(
                         val bufferedWidth =
                             size.width * (bufferedPosition.toFloat() / videoData.duration.toFloat())
                                 .coerceIn(0f, 1f)
-                        val progressWidth = size.width * progress.coerceIn(0f, 1f)
+                        val progressWidth = size.width * sliderProgress.coerceIn(0f, 1f)
                         
                         clipRect {
                             drawRect(
