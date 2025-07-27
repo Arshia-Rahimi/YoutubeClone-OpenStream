@@ -1,6 +1,5 @@
 package com.github.openstream.core.common.compose
 
-import androidx.annotation.StringRes
 import androidx.compose.material3.SnackbarDuration
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -12,7 +11,6 @@ data class SnackBarAction(
 
 data class SnackBarEvent(
     val message: String,
-    @param:StringRes val resMessage: Int? = null,
     val action: SnackBarAction? = null,
     val isImmediate: Boolean = false,
     val duration: SnackbarDuration = SnackbarDuration.Long,
@@ -28,9 +26,5 @@ object SnackBarController {
 
     suspend fun sendEvent(message: String) {
         _events.send(SnackBarEvent(message))
-    }
-
-    suspend fun sendEvent(@StringRes message: Int) {
-        _events.send(SnackBarEvent("", message))
     }
 }

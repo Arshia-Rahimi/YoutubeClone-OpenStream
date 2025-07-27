@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.openstream.R
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.replaceFirstWith
@@ -120,7 +119,7 @@ class ChannelViewModel(
             .onEach {
                 when (it) {
                     is Resource.Success -> {
-                        SnackBarController.sendEvent(R.string.added_to_watch_later)
+                        SnackBarController.sendEvent("added to watch later")
                     }
 
                     else -> {}

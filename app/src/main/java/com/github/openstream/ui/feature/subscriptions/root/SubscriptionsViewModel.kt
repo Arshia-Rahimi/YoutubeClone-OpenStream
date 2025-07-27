@@ -2,7 +2,6 @@ package com.github.openstream.ui.feature.subscriptions.root
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.openstream.R
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.compose.collectToSnapShotStateList
 import com.github.openstream.core.common.util.Resource
@@ -49,7 +48,7 @@ class SubscriptionsViewModel(
             .onEach {
                 when (it) {
                     is Resource.Success -> {
-                        SnackBarController.sendEvent(R.string.added_to_watch_later)
+                        SnackBarController.sendEvent("added to watch later")
                     }
 
                     else -> {}
