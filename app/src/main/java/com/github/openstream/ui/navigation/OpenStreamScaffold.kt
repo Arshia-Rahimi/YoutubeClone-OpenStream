@@ -1,9 +1,12 @@
 package com.github.openstream.ui.navigation
 
+import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,13 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.common.compose.SnackBarController
+import com.github.openstream.core.common.compose.onCondition
+import com.github.openstream.core.shared.MiniPlayerConfig
 import com.github.openstream.ui.global.player.PlayerSheet
+import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.reusable.popups.PopupController
 import com.github.openstream.ui.global.reusable.popups.addtoplaylistmodal.SaveVideoToPlaylistsModal
 import com.github.openstream.ui.global.reusable.popups.confirmationdialog.ConfirmationDialog
@@ -37,7 +45,9 @@ import com.github.openstream.ui.global.reusable.popups.inputdialog.InputDialog
 import com.github.openstream.ui.navigation.NavigationViewModel.Companion.tabsList
 import com.github.openstream.ui.navigation.routes.Tabs
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun OpenStreamScaffold(
     currentTab: Tabs,
@@ -52,6 +62,9 @@ fun OpenStreamScaffold(
     val showSaveVideoToPlaylistsModal by PopupController.showSaveVideoToPlaylistsModal.collectAsStateWithLifecycle()
     val showCreatePlaylistDialog by PopupController.showInputDialog.collectAsStateWithLifecycle()
     val showUnsubscribeDialog by PopupController.showConfirmationDialog.collectAsStateWithLifecycle()
+    
+    val playerViewModel = koinViewModel<PlayerViewModel>()
+    val showMiniPlayer by playerViewModel.showMiniPlayer.collectAsStateWithLifecycle()
 
     ObserveForEvents(SnackBarController.events) { event ->
         scope.launch {
@@ -81,7 +94,14 @@ fun OpenStreamScaffold(
             .fillMaxSize(),
         snackbarHost = {
             SnackbarHost(
-                hostState = snackbarHostState
+                hostState = snackbarHostState,
+                modifier = Modifier.onCondition(showMiniPlayer) {
+                    val localConfig = LocalConfiguration.current
+                    val widthToScreenWidthRatio =
+                        if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
+                        else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
+                    padding(bottom = (localConfig.screenWidthDp * widthToScreenWidthRatio * 9 / 16).dp)
+                }
             )
         },
         bottomBar = {

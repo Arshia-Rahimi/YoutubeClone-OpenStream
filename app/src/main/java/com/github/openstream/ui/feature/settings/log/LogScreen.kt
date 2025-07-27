@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
 import com.github.openstream.core.shared.MiniPlayerConfig
+import com.github.openstream.ui.global.player.PlayerViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("ConfigurationScreenWidthHeight")
@@ -47,6 +48,9 @@ fun LogScreen(
     val log by viewModel.log.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     var isFirstScroll by remember { mutableStateOf(true) }
+    
+    val playerViewModel = koinViewModel<PlayerViewModel>()
+    val showMiniPlayer by playerViewModel.showMiniPlayer.collectAsStateWithLifecycle()
     
     LaunchedEffect(log) {
         if (isFirstScroll) {
@@ -89,15 +93,17 @@ fun LogScreen(
                 color = Color.White,
                 lineHeight = TextUnit(10f, TextUnitType.Sp),
             )
-            val localConfig = LocalConfiguration.current
-            val widthToScreenWidthRatio =
-                if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
-                else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
-            Spacer(
-                Modifier
-                    .fillMaxWidth()
-                    .height((localConfig.screenWidthDp * widthToScreenWidthRatio * 9 / 16).dp)
-            )
+            if (showMiniPlayer) {
+                val localConfig = LocalConfiguration.current
+                val widthToScreenWidthRatio =
+                    if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO
+                    else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
+                Spacer(
+                    Modifier
+                        .fillMaxWidth()
+                        .height((localConfig.screenWidthDp * widthToScreenWidthRatio * 9 / 16).dp)
+                )
+            }
         }
     }
 }
