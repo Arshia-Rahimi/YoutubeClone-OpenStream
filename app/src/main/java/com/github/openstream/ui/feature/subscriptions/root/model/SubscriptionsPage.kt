@@ -6,10 +6,6 @@ import com.github.openstream.R
 enum class SubscriptionsPage(
     @param:StringRes val title: Int,
 ) {
-    VIDEOS(
-        title = R.string.videos,
-    ),
-    CHANNELS(
-        title = R.string.channels,
-    ),
+    VIDEOS(R.string.videos),
+    CHANNELS(R.string.channels),
 }
