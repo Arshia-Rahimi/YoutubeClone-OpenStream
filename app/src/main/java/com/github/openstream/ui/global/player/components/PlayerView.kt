@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import androidx.annotation.OptIn
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -207,9 +208,7 @@ private fun BoxScope.PlayerController(
     currentPosition: Long,
     bufferedPosition: Long,
 ) {
-    // todo: fix last seek position
     // todo: fix player controller in full screen
-    var lastSeekPosition by remember { mutableFloatStateOf(currentPosition / videoData.duration.toFloat()) }
     
     Column(
         modifier = Modifier
@@ -230,22 +229,7 @@ private fun BoxScope.PlayerController(
         )
         
         when {
-            isBuffering -> CircularProgressIndicator(
-                modifier = Modifier.size(40.dp)
-            )
-            
-            isPlaying -> IconButton(
-                onClick = PlayerAction.Pause::send,
-            ) {
-                Icon(
-                    modifier = Modifier.size(60.dp),
-                    painter = painterResource(R.drawable.pause),
-                    contentDescription = "pause",
-                    tint = Color.Unspecified,
-                )
-            }
-            
-            else -> IconButton(
+            !isPlaying -> IconButton(
                 onClick = PlayerAction.Resume::send,
             ) {
                 Icon(
@@ -255,17 +239,51 @@ private fun BoxScope.PlayerController(
                     modifier = Modifier.size(60.dp),
                 )
             }
+            
+            isBuffering -> CircularProgressIndicator(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable {
+                        PlayerAction.Pause.send()
+                    }
+            )
+            
+            else -> IconButton(
+                onClick = PlayerAction.Pause::send,
+            ) {
+                Icon(
+                    modifier = Modifier.size(60.dp),
+                    painter = painterResource(R.drawable.pause),
+                    contentDescription = "pause",
+                    tint = Color.Unspecified,
+                )
+            }
         }
         
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
+            val progress = currentPosition / videoData.duration.toFloat()
+            var sliderProgress by remember { mutableFloatStateOf(0f) }
+            var isUserChangingSliderValue by remember { mutableStateOf(false) }
+            
+            // todo: fix the thumb
+            LaunchedEffect(isBuffering, isUserChangingSliderValue, progress) {
+                if (!isUserChangingSliderValue && !isBuffering) {
+                    sliderProgress = progress
+                }
+            }
+            
             Slider(
                 modifier = Modifier.height(8.dp),
-                value = if (isBuffering) lastSeekPosition else currentPosition / videoData.duration.toFloat(),
+                value = sliderProgress,
                 onValueChange = {
-                    lastSeekPosition = it
-                    PlayerAction.SeekTo(it.toLong() * videoData.duration).send()
+                    isUserChangingSliderValue = true
+                    sliderProgress = it
+                },
+                onValueChangeFinished = {
+                    PlayerAction.SeekTo((sliderProgress * videoData.duration).toLong()).send()
+                    isUserChangingSliderValue = false
                 },
                 track = {
                     Canvas(
@@ -278,9 +296,7 @@ private fun BoxScope.PlayerController(
                         val bufferedWidth =
                             size.width * (bufferedPosition.toFloat() / videoData.duration.toFloat())
                                 .coerceIn(0f, 1f)
-                        val progressWidth =
-                            size.width * (currentPosition.toFloat() / videoData.duration.toFloat())
-                                .coerceIn(0f, 1f)
+                        val progressWidth = size.width * progress.coerceIn(0f, 1f)
                         
                         clipRect {
                             drawRect(
