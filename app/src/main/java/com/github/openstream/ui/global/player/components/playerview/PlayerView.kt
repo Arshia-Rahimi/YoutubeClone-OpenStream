@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -46,7 +49,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import com.github.openstream.R
-import com.github.openstream.core.common.compose.PainterIconButton
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.shared.extractor.data.VideoData
@@ -137,6 +139,7 @@ private fun BoxScope.PlayerController(
     isBuffering: Boolean,
     currentPosition: Long,
 ) {
+    // todo
     var lastSeekPosition by remember { mutableFloatStateOf(currentPosition / videoData.duration.toFloat()) }
     
     Column(
@@ -153,7 +156,7 @@ private fun BoxScope.PlayerController(
                 .fillMaxWidth()
                 .align(Alignment.Start),
             color = Color.White,
-            fontSize = 12.sp,
+            fontSize = 16.sp,
         )
         
         when {
@@ -161,28 +164,34 @@ private fun BoxScope.PlayerController(
                 modifier = Modifier.size(40.dp)
             )
             
-            isPlaying -> PainterIconButton(
-                modifier = Modifier.size(40.dp),
+            isPlaying -> IconButton(
                 onClick = PlayerAction.Pause::send,
-                drawableRes = R.drawable.pause,
-                contentDescription = "pause",
-                tint = Color.Unspecified,
-            )
+            ) {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(R.drawable.pause),
+                    contentDescription = "pause",
+                    tint = Color.Unspecified,
+                )
+            }
             
-            else -> PainterIconButton(
+            else -> IconButton(
                 onClick = PlayerAction.Resume::send,
-                drawableRes = R.drawable.play,
-                contentDescription = "play",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(40.dp),
-            )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.play),
+                    contentDescription = "play",
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(40.dp),
+                )
+            }
         }
         
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Slider(
-                modifier = Modifier.height(16.dp),
+                modifier = Modifier.height(8.dp),
                 value = if (isBuffering) lastSeekPosition else currentPosition / videoData.duration.toFloat(),
                 onValueChange = {
                     lastSeekPosition = it
@@ -215,17 +224,18 @@ private fun BoxScope.PlayerController(
                     ) {
                         drawCircle(
                             color = Color(0xFFCC2849),
-                            radius = 8f,
+                            radius = 12f,
                         )
                     }
                 },
             )
+            
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 4.dp),
+                    .padding(bottom = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = currentPosition.toTime() + " / " + videoData.duration.toTime(),
@@ -234,18 +244,21 @@ private fun BoxScope.PlayerController(
                 )
                 
                 val context = LocalContext.current
-                PainterIconButton(
+                IconButton(
                     onClick = {
                         if (!isFullScreen) (context as Activity).requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                         else (context as Activity).requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    },
-                    contentDescription = "fullscreen",
-                    tint = Color.Unspecified,
-                    drawableRes = if (isFullScreen) R.drawable.fullscreen_enabled else R.drawable.fullscreen_disabled,
-                    modifier = Modifier.height(16.dp),
-                )
+                    }
+                ) {
+                    Icon(
+                        contentDescription = "fullscreen",
+                        tint = Color.Unspecified,
+                        painter = painterResource(if (isFullScreen) R.drawable.fullscreen_enabled else R.drawable.fullscreen_disabled),
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
             }
             
         }
