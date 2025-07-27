@@ -215,34 +215,31 @@ private fun PlayerSheet(
     ) {
         val miniPlayerContentAlpha =
             (-sheetDragProgress / MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) + 1f
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onCondition(sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
-                        background(
-                            MaterialTheme.colorScheme.tertiaryContainer.copy(
-                                miniPlayerContentAlpha
-                            )
+        
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onCondition(sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
+                    background(
+                        MaterialTheme.colorScheme.tertiaryContainer.copy(
+                            miniPlayerContentAlpha
                         )
+                    )
+                }
+                .onCondition(sheetState == PlayerSheetState.MINI_PLAYER) {
+                    clickable {
+                        scope.launch { dragState.animateTo(PlayerSheetState.EXPANDED) }
                     }
-                    .onCondition(sheetState == PlayerSheetState.MINI_PLAYER) {
-                        clickable {
-                            scope.launch { dragState.animateTo(PlayerSheetState.EXPANDED) }
-                        }
-                    },
-                horizontalArrangement = Arrangement.spacedBy(
-                    space = 4.dp,
-                    alignment = Alignment.Start,
-                ),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                PlayerView(
-                    modifier = Modifier.width(playerWidth.dp)
-                )
-            }
+                },
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 4.dp,
+                alignment = Alignment.Start,
+            ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlayerView(
+                modifier = Modifier.width(playerWidth.dp)
+            )
             
             if (sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {
                 Column(
@@ -297,28 +294,29 @@ private fun PlayerSheet(
                 }
             }
         }
+        
+        if (sheetDragProgress != 0f) Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(sheetDragProgress)
+                .background(MaterialTheme.colorScheme.background)
+                .navigationBarsPadding()
+        ) {
+            VideoDescriptionPage(
+                subscribe = subscribe,
+                isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+                collapseMiniPlayer = collapseMiniPlayer,
+                toPlaylistScreen = toPlaylistScreen,
+                fetchingState = fetchingState,
+                toChannelScreen = toChannelScreen,
+                toggleVideoWatchLater = toggleVideoWatchLater,
+                toggleVideoLiked = toggleVideoLiked,
+                videoLocalState = videoLocalState,
+                switchPlaybackQuality = switchPlaybackQuality,
+                currentQuality = currentQuality,
+            )
+        }
     }
     
-    if (sheetDragProgress != 0f) Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .alpha(sheetDragProgress)
-            .background(MaterialTheme.colorScheme.background)
-            .navigationBarsPadding()
-    ) {
-        VideoDescriptionPage(
-            subscribe = subscribe,
-            isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
-            collapseMiniPlayer = collapseMiniPlayer,
-            toPlaylistScreen = toPlaylistScreen,
-            fetchingState = fetchingState,
-            toChannelScreen = toChannelScreen,
-            toggleVideoWatchLater = toggleVideoWatchLater,
-            toggleVideoLiked = toggleVideoLiked,
-            videoLocalState = videoLocalState,
-            switchPlaybackQuality = switchPlaybackQuality,
-            currentQuality = currentQuality,
-        )
-    }
 }
 

@@ -202,7 +202,8 @@ private fun BoxScope.PlayerController(
     isBuffering: Boolean,
     currentPosition: Long,
 ) {
-    // todo
+    // todo: fix last seek position
+    // todo: fix player controller in full screen
     var lastSeekPosition by remember { mutableFloatStateOf(currentPosition / videoData.duration.toFloat()) }
     
     Column(
