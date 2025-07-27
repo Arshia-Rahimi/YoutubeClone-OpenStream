@@ -15,12 +15,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
@@ -47,6 +49,7 @@ fun PlayerView(
     isPlaying: Boolean,
 ) {
     var showController by remember { mutableStateOf(false) }
+    var width by remember { mutableFloatStateOf(0f) }
     
     LaunchedEffect(showController) {
         if (showController) {
@@ -57,11 +60,19 @@ fun PlayerView(
     
     Box(
         modifier = modifier
+            .onGloballyPositioned {
+                width = it.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = { showController = true },
-                    onDoubleTap = {
-                        // todo
+                    onDoubleTap = { offset ->
+                        if (showController) return@detectTapGestures
+                        when {
+                            offset.x < width / 3f -> PlayerAction.SeekBackward::send
+                            offset.x < 2 * width / 3f -> PlayerAction.SeekForward::send
+                            else -> Unit
+                        }
                     },
                 )
             },
