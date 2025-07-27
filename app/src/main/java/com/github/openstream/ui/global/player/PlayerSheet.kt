@@ -164,7 +164,6 @@ fun PlayerSheet(
             fetchingState = fetchingState,
             isPlaying = isPlaying,
             dispose = viewModel::dispose,
-            isSheetExpanded = dragState.settledValue == PlayerSheetState.EXPANDED,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoLocalState = videoLocalState,
@@ -189,7 +188,6 @@ private fun PlayerSheet(
     currentPosition: Long,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     isPlaying: Boolean,
-    isSheetExpanded: Boolean,
     currentQuality: VideoQuality?,
     videoLocalState: VideoLocalState,
     isAudioOnlyModeEnabled: Boolean,
@@ -266,9 +264,11 @@ private fun PlayerSheet(
                                 isFullScreen = isFullScreen,
                                 player = player,
                                 modifier = Modifier.matchParentSize(),
-                                isSheetExpanded = isSheetExpanded,
                                 isAudioModeEnabled = isAudioOnlyModeEnabled,
-                                videoThumbnail = fetchingState.video.thumbnail ?: "",
+                                isBuffering = isBuffering,
+                                videoData = fetchingState.video,
+                                isPlaying = isPlaying,
+                                currentPosition = currentPosition,
                             )
                         }
 
