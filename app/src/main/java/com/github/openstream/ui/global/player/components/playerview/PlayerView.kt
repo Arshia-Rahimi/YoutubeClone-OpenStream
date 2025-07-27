@@ -86,7 +86,7 @@ fun PlayerView(
             .onCondition(isSheetExpanded) {
                 pointerInput(Unit) {
                     detectTapGestures(
-                        onPress = { showController = true },
+                        onPress = { showController = !showController },
                         onDoubleTap = { offset ->
                             when {
                                 offset.x < width / 3f -> PlayerAction.SeekBackward.send()
