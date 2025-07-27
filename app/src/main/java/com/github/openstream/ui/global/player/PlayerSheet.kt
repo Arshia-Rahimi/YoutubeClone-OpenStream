@@ -92,9 +92,9 @@ fun PlayerSheet(
     val density = LocalDensity.current
     val config = LocalConfiguration.current
     
-    val orientationC = localConfig.orientation
+    val orientation = localConfig.orientation
     val screenWidth = config.screenWidthDp.dp
-    val widthToScreenWidthRatio = if (orientationC == Configuration.ORIENTATION_LANDSCAPE)
+    val widthToScreenWidthRatio = if (orientation == Configuration.ORIENTATION_LANDSCAPE)
         MiniPlayerConfig.LANDSCAPE_WIDTH_TO_SCREEN_WIDTH_RATIO else MiniPlayerConfig.WIDTH_TO_SCREEN_WIDTH_RATIO
     
     val miniPlayerHeight =
@@ -119,11 +119,8 @@ fun PlayerSheet(
             .collect { viewModel.updateSheetState(it) }
     }
     
-    LaunchedEffect(orientationC) {
-        (if (orientationC == Configuration.ORIENTATION_LANDSCAPE)
-            com.github.openstream.core.common.compose.Orientation.LandScape
-        else com.github.openstream.core.common.compose.Orientation.Portrait)
-            .let { viewModel.onOrientationChanged(it) }
+    LaunchedEffect(orientation) {
+        viewModel.onOrientationChanged(orientation)
     }
     
     LaunchedEffect(miniPlayerOffset) {

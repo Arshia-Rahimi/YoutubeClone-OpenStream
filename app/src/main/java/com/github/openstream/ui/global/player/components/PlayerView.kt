@@ -53,7 +53,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import com.github.openstream.R
-import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -75,12 +74,9 @@ fun PlayerView(
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
     val bufferedPosition by viewModel.bufferedPosition.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
-    
     val isBuffering by viewModel.isBuffering.collectAsStateWithLifecycle()
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
-    
-    val orientation by viewModel.orientation.collectAsStateWithLifecycle()
-    val isFullScreen by remember { derivedStateOf { orientation == Orientation.LandScape } }
+    val isInLandscape by viewModel.isInLandscape.collectAsStateWithLifecycle()
     
     val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
     val isSheetExpanded by remember { derivedStateOf { sheetState == PlayerSheetState.EXPANDED } }
@@ -135,7 +131,7 @@ fun PlayerView(
             
             is OpenStreamMediaPlayer.FetchingState.Success -> {
                 PlayerView(
-                    isFullScreen = isFullScreen,
+                    isInLandscape = isInLandscape,
                     player = viewModel.playerInstance,
                     isBuffering = isBuffering,
                     videoData = (fetchingState as OpenStreamMediaPlayer.FetchingState.Success).video,
@@ -158,7 +154,7 @@ private fun BoxScope.PlayerView(
     videoData: VideoData,
     isAudioOnlyModeEnabled: Boolean,
     player: Player,
-    isFullScreen: Boolean,
+    isInLandscape: Boolean,
     isBuffering: Boolean,
     currentPosition: Long,
     bufferedPosition: Long,
@@ -188,7 +184,7 @@ private fun BoxScope.PlayerView(
     if (showController && isSheetExpanded) {
         PlayerController(
             videoData = videoData,
-            isFullScreen = isFullScreen,
+            isInLandscape = isInLandscape,
             isBuffering = isBuffering,
             isPlaying = isPlaying,
             currentPosition = currentPosition,
@@ -202,7 +198,7 @@ private fun BoxScope.PlayerView(
 @SuppressLint("SourceLockedOrientationActivity")
 private fun BoxScope.PlayerController(
     videoData: VideoData,
-    isFullScreen: Boolean,
+    isInLandscape: Boolean,
     isPlaying: Boolean,
     isBuffering: Boolean,
     currentPosition: Long,
@@ -340,7 +336,7 @@ private fun BoxScope.PlayerController(
                 val context = LocalContext.current
                 IconButton(
                     onClick = {
-                        if (!isFullScreen) (context as Activity).requestedOrientation =
+                        if (!isInLandscape) (context as Activity).requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                         else (context as Activity).requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -349,7 +345,7 @@ private fun BoxScope.PlayerController(
                     Icon(
                         contentDescription = "fullscreen",
                         tint = Color.Unspecified,
-                        painter = painterResource(if (isFullScreen) R.drawable.fullscreen_enabled else R.drawable.fullscreen_disabled),
+                        painter = painterResource(if (isInLandscape) R.drawable.fullscreen_enabled else R.drawable.fullscreen_disabled),
                         modifier = Modifier.size(16.dp),
                     )
                 }

@@ -1,15 +1,12 @@
 package com.github.openstream.ui.navigation
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,17 +31,8 @@ import org.koin.compose.koinInject
 
 @Composable
 fun Navigation() {
-    val localConfig = LocalConfiguration.current
-    val orientation =
-        if (localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) Orientation.LandScape
-        else Orientation.Portrait
-
     val navigationViewModel = koinViewModel<NavigationViewModel>()
     val playerViewModel = koinInject<PlayerViewModel>()
-
-    LaunchedEffect(orientation) {
-        playerViewModel.onOrientationChanged(orientation)
-    }
 
     val rootNavController = rememberNavController()
         .apply {

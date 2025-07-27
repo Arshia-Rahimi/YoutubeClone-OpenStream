@@ -2,7 +2,6 @@ package com.github.openstream.ui.global.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.openstream.core.common.compose.Orientation
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.VideoRepository
@@ -55,9 +54,9 @@ class PlayerViewModel(
 
     private val _sheetState = MutableStateFlow(PlayerSheetState.MINI_PLAYER)
     val sheetState = _sheetState.asStateFlow()
-
-    private val _orientation = MutableStateFlow(Orientation.Portrait)
-    val orientation = _orientation.asStateFlow()
+    
+    private val _isInLandscape = MutableStateFlow(false)
+    val isInLandscape = _isInLandscape.asStateFlow()
 
     val isInitialSnapDone = MutableStateFlow(false)
 
@@ -65,9 +64,9 @@ class PlayerViewModel(
         combine(
             showMiniPlayer,
             sheetState,
-            orientation,
-        ) { showMiniPlayer, sheetState, orientation ->
-            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && orientation == Orientation.LandScape
+            isInLandscape,
+        ) { showMiniPlayer, sheetState, isInLandscape ->
+            showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && isInLandscape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     val videoLocalState = fetchingState.flatMapLatest {
@@ -99,9 +98,10 @@ class PlayerViewModel(
     fun updateSheetState(sheetState: PlayerSheetState) {
         _sheetState.value = sheetState
     }
-
-    fun onOrientationChanged(orientation: Orientation) {
-        _orientation.value = orientation
+    
+    fun onOrientationChanged(orientation: Int) {
+        _isInLandscape.value =
+            orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     }
 
     fun switchPlaybackQuality(videoOption: VideoOption) =
