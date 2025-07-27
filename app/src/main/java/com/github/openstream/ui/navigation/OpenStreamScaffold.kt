@@ -120,6 +120,7 @@ fun OpenStreamScaffold(
     )
 }
 
+@SuppressLint("SourceLockedOrientationActivity")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BottomBar(

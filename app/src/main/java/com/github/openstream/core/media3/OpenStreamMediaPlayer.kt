@@ -8,7 +8,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -24,9 +23,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+const val SEEK_INCREMENT = 10_000L
 
 @OptIn(UnstableApi::class)
 class OpenStreamMediaPlayer(
@@ -38,7 +40,6 @@ class OpenStreamMediaPlayer(
     private val mainThreadScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
-        setSeekParameters(SeekParameters(10_000_000, 10_000_000))
         addListener(object : Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 super.onPlayWhenReadyChanged(playWhenReady, reason)
@@ -148,11 +149,17 @@ class OpenStreamMediaPlayer(
     }
 
     fun seekForward() {
-        mainThreadScope.launch { player.seekForward() }
+        mainThreadScope.launch { player.seekTo(playerPosition.first() + SEEK_INCREMENT) }
     }
 
     fun seekBackward() {
-        mainThreadScope.launch { player.seekBack() }
+        mainThreadScope.launch {
+            player.seekTo(
+                (playerPosition.first() - SEEK_INCREMENT).coerceAtLeast(
+                    0L
+                )
+            )
+        }
     }
 
     fun switchPlaybackQuality(videoOption: VideoOption) {

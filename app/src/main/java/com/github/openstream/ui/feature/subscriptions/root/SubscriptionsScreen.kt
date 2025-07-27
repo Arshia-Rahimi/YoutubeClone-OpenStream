@@ -81,7 +81,7 @@ fun SubscriptionsScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(2.dp)
+                                .height(1.dp)
                                 .background(if (tab.ordinal == pagerState.currentPage) MaterialTheme.colorScheme.onSecondary else Color.Transparent),
                         )
                     }

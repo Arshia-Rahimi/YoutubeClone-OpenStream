@@ -1,5 +1,8 @@
 package com.github.openstream.ui.global.player.components.playerview
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import androidx.annotation.OptIn
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -8,9 +11,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,10 +22,12 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
@@ -67,10 +72,9 @@ fun PlayerView(
                 detectTapGestures(
                     onPress = { showController = true },
                     onDoubleTap = { offset ->
-                        if (showController) return@detectTapGestures
                         when {
-                            offset.x < width / 3f -> PlayerAction.SeekBackward::send
-                            offset.x < 2 * width / 3f -> PlayerAction.SeekForward::send
+                            offset.x < width / 3f -> PlayerAction.SeekBackward.send()
+                            offset.x > 2 * width / 3f -> PlayerAction.SeekForward.send()
                             else -> Unit
                         }
                     },
@@ -95,18 +99,21 @@ fun PlayerView(
                 },
             )
         }
-        PlayerController(
-            videoData = videoData,
-            isFullScreen = isFullScreen,
-            isBuffering = isBuffering,
-            isPlaying = isPlaying,
-            currentPosition = currentPosition,
-        )
+        if (showController) {
+            PlayerController(
+                videoData = videoData,
+                isFullScreen = isFullScreen,
+                isBuffering = isBuffering,
+                isPlaying = isPlaying,
+                currentPosition = currentPosition,
+            )
+        }
     }
     
 }
 
 @Composable
+@SuppressLint("SourceLockedOrientationActivity")
 private fun BoxScope.PlayerController(
     videoData: VideoData,
     isFullScreen: Boolean,
@@ -115,31 +122,40 @@ private fun BoxScope.PlayerController(
     currentPosition: Long,
 ) {
     Column(
-        modifier = Modifier.matchParentSize(),
+        modifier = Modifier
+            .matchParentSize()
+            .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = videoData.name,
             maxLines = 1,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Start),
+            color = Color.White,
         )
         
         when {
-            isBuffering -> CircularProgressIndicator(Modifier.size(4.dp))
-            isPlaying -> PainterIconButton(
-                onClick = PlayerAction.Resume::send,
-                drawableRes = R.drawable.play,
-                contentDescription = "play",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(40.dp),
+            isBuffering -> CircularProgressIndicator(
+                modifier = Modifier.size(40.dp)
             )
             
-            else -> PainterIconButton(
+            isPlaying -> PainterIconButton(
                 modifier = Modifier.size(40.dp),
                 onClick = PlayerAction.Pause::send,
                 drawableRes = R.drawable.pause,
                 contentDescription = "pause",
                 tint = Color.Unspecified,
+            )
+            
+            else -> PainterIconButton(
+                onClick = PlayerAction.Resume::send,
+                drawableRes = R.drawable.play,
+                contentDescription = "play",
+                tint = Color.Unspecified,
+                modifier = Modifier.size(40.dp),
             )
         }
         
@@ -149,11 +165,17 @@ private fun BoxScope.PlayerController(
         ) {
             Text(
                 text = currentPosition.toTime() + " / " + videoData.duration.toTime(),
-                color = MaterialTheme.colorScheme.onBackground,
+                color = Color.White,
                 maxLines = 1,
             )
+            val context = LocalContext.current
             PainterIconButton(
-                onClick = {},
+                onClick = {
+                    if (!isFullScreen) (context as Activity).requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    else (context as Activity).requestedOrientation =
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                },
                 contentDescription = "fullscreen",
                 tint = Color.Unspecified,
                 drawableRes = if (isFullScreen) R.drawable.fullscreen_enabled else R.drawable.fullscreen_disabled,

@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import com.github.openstream.core.extractor.OkHttpDownloader
+import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
 import com.github.openstream.ui.navigation.Navigation
+import org.koin.android.ext.android.inject
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 
@@ -32,6 +34,12 @@ class MainActivity : ComponentActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        val player by inject<OpenStreamMediaPlayer>()
+        player.player.release()
     }
     
     private fun loadNewPipeConfig() {

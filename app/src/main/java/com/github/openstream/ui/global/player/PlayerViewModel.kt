@@ -86,7 +86,7 @@ class PlayerViewModel(
         is PlayerAction.ToggleAudioOnlyMode -> player.toggleAudioOnlyMode()
         is PlayerAction.Retry -> player.retry()
         is PlayerAction.Pause -> player.pause()
-        is PlayerAction.Resume -> player.pause()
+        is PlayerAction.Resume -> player.resume()
     }
 
     fun updateSheetState(sheetState: PlayerSheetState) {
