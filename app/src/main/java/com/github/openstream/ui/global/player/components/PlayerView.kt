@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import androidx.annotation.OptIn
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +58,7 @@ import com.github.openstream.core.common.compose.onCondition
 import com.github.openstream.core.common.util.toTime
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.shared.extractor.data.VideoData
+import com.github.openstream.ui.designsystem.components.noRippleClickable
 import com.github.openstream.ui.global.player.PlayerAction
 import com.github.openstream.ui.global.player.PlayerViewModel
 import com.github.openstream.ui.global.player.model.PlayerSheetState
@@ -243,9 +243,7 @@ private fun BoxScope.PlayerController(
             isBuffering -> CircularProgressIndicator(
                 modifier = Modifier
                     .size(40.dp)
-                    .clickable {
-                        PlayerAction.Pause.send()
-                    }
+                    .noRippleClickable(PlayerAction.Pause::send)
             )
             
             else -> IconButton(
