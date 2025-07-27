@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.openstream.core.common.compose.DirectionalText
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
@@ -112,7 +111,7 @@ private fun ChannelScreen(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier.padding(8.dp)
             ) {
-                DirectionalText(text = channelItem.description, fontSize = 16.sp)
+                Text(text = channelItem.description, fontSize = 16.sp)
             }
         }
     }

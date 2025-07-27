@@ -2,7 +2,6 @@ package com.github.openstream.ui.global.player.components
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,20 +35,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.openstream.R
-import com.github.openstream.core.common.compose.DirectionalText
 import com.github.openstream.core.common.compose.HtmlText
 import com.github.openstream.core.common.compose.PainterIconButton
-import com.github.openstream.core.common.compose.isRtlText
 import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
@@ -88,15 +81,15 @@ fun VideoDescriptionPage(
                 currentQuality = currentQuality,
                 toChannelScreen = toChannelScreen,
                 shareVideo = {},
-                likeVideo = toggleVideoLiked,
-                addToWatchLater = toggleVideoWatchLater,
+                toggleVideoLiked = toggleVideoLiked,
+                toggleVideoWatchLater = toggleVideoWatchLater,
                 videoLocalState = videoLocalState,
                 switchPlaybackQuality = switchPlaybackQuality,
                 subscribe = subscribe,
                 collapseMiniPlayer = collapseMiniPlayer,
                 isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
             )
-       
+
 
         is OpenStreamMediaPlayer.FetchingState.Error ->
             Column(
@@ -125,8 +118,8 @@ fun VideoDescription(
     currentQuality: VideoQuality?,
     toChannelScreen: (String) -> Unit,
     shareVideo: (VideoItem) -> Unit,
-    likeVideo: () -> Unit,
-    addToWatchLater: () -> Unit,
+    toggleVideoLiked: () -> Unit,
+    toggleVideoWatchLater: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
     toPlaylistScreen: (String) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
@@ -145,7 +138,7 @@ fun VideoDescription(
                 .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            DirectionalText(
+            Text(
                 text = videoData.name,
                 fontSize = 20.sp,
                 color = Color.White,
@@ -153,8 +146,7 @@ fun VideoDescription(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .basicMarquee(),
+                    .padding(horizontal = 8.dp),
             )
             Row(
                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -167,7 +159,7 @@ fun VideoDescription(
                 )
                 Text(
                     text = videoData.viewCount.toShortForm(),
-                    fontSize = 16.sp,
+                    fontSize = 8.sp,
                     color = MaterialTheme.colorScheme.onTertiary,
                 )
                 Icon(
@@ -177,7 +169,7 @@ fun VideoDescription(
                 )
                 Text(
                     text = videoData.uploadDate?.timeAgo() ?: "",
-                    fontSize = 16.sp,
+                    fontSize = 8.sp,
                     color = MaterialTheme.colorScheme.onTertiary,
                 )
             }
@@ -216,7 +208,7 @@ fun VideoDescription(
                 OptionsRowItem {
                     PainterIconButton(
                         onClick = PlayerAction.ToggleAudioOnlyMode::send,
-                        drawableRes = if(isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled,
+                        drawableRes = if (isAudioOnlyModeEnabled) R.drawable.audio_only_enabled else R.drawable.audio_only_disabled,
                         tint = Color.Unspecified,
                         contentDescription = "audio only mode",
                     )
@@ -261,7 +253,7 @@ fun VideoDescription(
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
                         IconButton(
-                            onClick = likeVideo,
+                            onClick = toggleVideoLiked,
                             modifier = Modifier.fillMaxHeight(),
                         ) {
                             Icon(
@@ -289,7 +281,7 @@ fun VideoDescription(
             item {
                 OptionsRowItem {
                     IconButton(
-                        onClick = addToWatchLater,
+                        onClick = toggleVideoWatchLater,
                     ) {
                         Icon(
                             painter = painterResource(if (videoLocalState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),
@@ -314,30 +306,26 @@ fun VideoDescription(
             }
         }
         val context = LocalContext.current
-        val isRtl = remember(videoData.description) { isRtlText(videoData.description) }
-        CompositionLocalProvider(LocalLayoutDirection provides if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
-            HtmlText(
-                html = videoData.description,
-                textAlign = if (isRtl) TextAlign.Right else TextAlign.Left,
-                onLinkClicked = {
-                    onLinkClicked(
-                        currentVideoUrl = videoData.url,
-                        context = context,
-                        link = it,
-                        toPlaylistScreen = { playlistUrl ->
-                            toPlaylistScreen(playlistUrl)
-                            collapseMiniPlayer()
-                        },
-                    )
-                },
-                color = Color.White,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .verticalScroll(scrollState),
-                fontSize = 16.sp,
-            )
-        }
+        HtmlText(
+            html = videoData.description,
+            onLinkClicked = {
+                onLinkClicked(
+                    currentVideoUrl = videoData.url,
+                    context = context,
+                    link = it,
+                    toPlaylistScreen = { playlistUrl ->
+                        toPlaylistScreen(playlistUrl)
+                        collapseMiniPlayer()
+                    },
+                )
+            },
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .verticalScroll(scrollState),
+            fontSize = 16.sp,
+        )
     }
 }
 
