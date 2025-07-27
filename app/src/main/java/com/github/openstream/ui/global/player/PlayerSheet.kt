@@ -86,6 +86,7 @@ fun PlayerSheet(
     val videoLocalState by viewModel.videoLocalState.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
+    val playbackSpeed by viewModel.playbackSpeed.collectAsStateWithLifecycle()
     
     val localConfig = LocalConfiguration.current
     val density = LocalDensity.current
@@ -153,6 +154,7 @@ fun PlayerSheet(
             sheetState = sheetState,
             toPlaylistScreen = toPlaylistScreen,
             fetchingState = fetchingState,
+            playbackSpeed = playbackSpeed,
             isPlaying = isPlaying,
             dispose = viewModel::dispose,
             toggleVideoLiked = viewModel::toggleVideoLiked,
@@ -174,6 +176,7 @@ private fun PlayerSheet(
     screenWidth: Dp,
     sheetDragProgress: Float,
     currentPosition: Long,
+    playbackSpeed: Float,
     fetchingState: OpenStreamMediaPlayer.FetchingState,
     isPlaying: Boolean,
     currentQuality: VideoQuality?,
@@ -257,7 +260,7 @@ private fun PlayerSheet(
                             maxLines = 1,
                         )
                         Text(
-                            text = currentPosition.toTime() + " / " + fetchingState.video.duration.toTime(),
+                            text = (currentPosition / 1000).toTime() + " / " + (fetchingState.video.duration / 1000).toTime(),
                             color = MaterialTheme.colorScheme.onBackground,
                             maxLines = 1,
                         )
@@ -314,6 +317,7 @@ private fun PlayerSheet(
                 videoLocalState = videoLocalState,
                 switchPlaybackQuality = switchPlaybackQuality,
                 currentQuality = currentQuality,
+                playbackSpeed = playbackSpeed,
             )
         }
     }

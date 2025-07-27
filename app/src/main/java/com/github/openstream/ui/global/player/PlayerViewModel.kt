@@ -41,8 +41,14 @@ class PlayerViewModel(
     val isPlaying = player.isPlaying
     val isBuffering = player.isBuffering
     val isAudioOnlyModeEnabled = player.isAudioOnlyModeEnabled
+    
     val currentPosition = player.playerPosition
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
+    val bufferedPosition = player.bufferedPosition
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
+    val playbackSpeed = player.playbackSpeed
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 1f)
+   
 
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
@@ -87,6 +93,7 @@ class PlayerViewModel(
         is PlayerAction.Retry -> player.retry()
         is PlayerAction.Pause -> player.pause()
         is PlayerAction.Resume -> player.resume()
+        is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed.speed)
     }
 
     fun updateSheetState(sheetState: PlayerSheetState) {

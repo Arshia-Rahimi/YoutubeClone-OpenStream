@@ -1,6 +1,7 @@
 package com.github.openstream.ui.global.player
 
 import com.github.openstream.core.shared.dataitem.VideoItem
+import com.github.openstream.ui.global.player.model.PlaybackSpeed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 sealed interface PlayerAction {
     data class Start(val videoItem: VideoItem) : PlayerAction
     data class SeekTo(val ms: Long) : PlayerAction
+    data class SetPlaybackSpeed(val speed: PlaybackSpeed) : PlayerAction
     data object Resume : PlayerAction
     data object Pause : PlayerAction
     data object SeekForward : PlayerAction

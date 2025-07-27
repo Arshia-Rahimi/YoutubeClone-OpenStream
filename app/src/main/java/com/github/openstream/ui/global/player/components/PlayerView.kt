@@ -72,6 +72,7 @@ fun PlayerView(
     
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
     val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
+    val bufferedPosition by viewModel.bufferedPosition.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     
     val isBuffering by viewModel.isBuffering.collectAsStateWithLifecycle()
@@ -108,7 +109,7 @@ fun PlayerView(
             .onCondition(isSheetExpanded) {
                 pointerInput(Unit) {
                     detectTapGestures(
-                        onPress = { if (isSheetExpanded) showController = !showController },
+                        onTap = { if (isSheetExpanded) showController = !showController },
                         onDoubleTap = { offset ->
                             if (!isSheetExpanded) return@detectTapGestures
                             when {
@@ -141,6 +142,7 @@ fun PlayerView(
                     currentPosition = currentPosition,
                     showController = showController,
                     isSheetExpanded = isSheetExpanded,
+                    bufferedPosition = bufferedPosition,
                     isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
                 )
             }
@@ -158,6 +160,7 @@ private fun BoxScope.PlayerView(
     isFullScreen: Boolean,
     isBuffering: Boolean,
     currentPosition: Long,
+    bufferedPosition: Long,
     isPlaying: Boolean,
     isSheetExpanded: Boolean,
 ) {
@@ -188,6 +191,7 @@ private fun BoxScope.PlayerView(
             isBuffering = isBuffering,
             isPlaying = isPlaying,
             currentPosition = currentPosition,
+            bufferedPosition = bufferedPosition,
         )
     }
 }
@@ -201,6 +205,7 @@ private fun BoxScope.PlayerController(
     isPlaying: Boolean,
     isBuffering: Boolean,
     currentPosition: Long,
+    bufferedPosition: Long,
 ) {
     // todo: fix last seek position
     // todo: fix player controller in full screen
@@ -268,11 +273,22 @@ private fun BoxScope.PlayerController(
                             .fillMaxWidth()
                             .height(2.dp)
                             .clip(RoundedCornerShape(1.dp))
-                            .background(Color.Gray),
+                            .background(Color(0xFF808080)),
                     ) {
+                        val bufferedWidth =
+                            size.width * (bufferedPosition.toFloat() / videoData.duration.toFloat())
+                                .coerceIn(0f, 1f)
                         val progressWidth =
                             size.width * (currentPosition.toFloat() / videoData.duration.toFloat())
                                 .coerceIn(0f, 1f)
+                        
+                        clipRect {
+                            drawRect(
+                                color = Color(0xFFCACACA),
+                                topLeft = Offset(0f, 0f),
+                                size = Size(bufferedWidth, size.height),
+                            )
+                        }
                         
                         clipRect {
                             drawRect(
@@ -302,7 +318,7 @@ private fun BoxScope.PlayerController(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = currentPosition.toTime() + " / " + videoData.duration.toTime(),
+                    text = (currentPosition / 1000).toTime() + " / " + (videoData.duration / 1000).toTime(),
                     color = Color.White,
                     maxLines = 1,
                 )

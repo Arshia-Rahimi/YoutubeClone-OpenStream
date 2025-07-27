@@ -55,6 +55,7 @@ import com.github.openstream.core.shared.extractor.data.VideoQuality
 import com.github.openstream.ui.designsystem.components.dataitem.components.Channel
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
 import com.github.openstream.ui.global.player.PlayerAction
+import com.github.openstream.ui.global.player.model.PlaybackSpeed
 import com.github.openstream.ui.global.player.model.VideoLocalState
 import com.github.openstream.ui.global.reusable.popups.PopupController
 
@@ -68,6 +69,7 @@ fun VideoDescriptionPage(
     toggleVideoLiked: () -> Unit,
     videoLocalState: VideoLocalState,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    playbackSpeed: Float,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     toPlaylistScreen: (String) -> Unit,
     collapseMiniPlayer: () -> Unit,
@@ -88,6 +90,7 @@ fun VideoDescriptionPage(
                 subscribe = subscribe,
                 collapseMiniPlayer = collapseMiniPlayer,
                 isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
+                playbackSpeed = playbackSpeed,
             )
 
 
@@ -112,6 +115,7 @@ fun VideoDescriptionPage(
 @Composable
 fun VideoDescription(
     videoData: VideoData,
+    playbackSpeed: Float,
     scrollState: ScrollState,
     videoLocalState: VideoLocalState,
     isAudioOnlyModeEnabled: Boolean,
@@ -248,6 +252,38 @@ fun VideoDescription(
             }
             item {
                 OptionsRowItem {
+                    var showPlaybackSpeed by remember { mutableStateOf(false) }
+                    OptionsRowItem(
+                        modifier = Modifier.clickable {
+                            showPlaybackSpeed = true
+                        }
+                    ) {
+                        Text(
+                            text = "x$playbackSpeed",
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showPlaybackSpeed,
+                        onDismissRequest = { showPlaybackSpeed = false },
+                    ) {
+                        PlaybackSpeed.entries.forEach { s ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(s.string)
+                                },
+                                onClick = {
+                                    PlayerAction.SetPlaybackSpeed(s).send()
+                                    showPlaybackSpeed = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            item {
+                OptionsRowItem {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround,
@@ -361,6 +397,7 @@ private fun Preview() {
             subscribe = {},
             collapseMiniPlayer = {},
             toPlaylistScreen = {},
+            playbackSpeed = 1f,
             isAudioOnlyModeEnabled = false,
         )
     }

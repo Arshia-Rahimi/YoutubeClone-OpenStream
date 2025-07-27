@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
@@ -24,6 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,6 +57,11 @@ class OpenStreamMediaPlayer(
                 super.onPlayerError(error)
                 logger.e("OpenStreamMediaPlayer", "player error", error)
             }
+            
+            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+                super.onPlaybackParametersChanged(playbackParameters)
+                _playbackSpeed.value = playbackParameters.speed
+            }
         })
     }
     
@@ -81,12 +88,22 @@ class OpenStreamMediaPlayer(
     val isPlaying = _isPlaying.asStateFlow()
     
     val playerPosition = isPlaying.transform { isPlaying ->
-        emit(player.currentPosition / 1000)
+        emit(player.currentPosition)
         while (isPlaying) {
-            emit(player.currentPosition / 1000)
+            emit(player.currentPosition)
             delay(1000L)
         }
     }
+    
+    val bufferedPosition = flow {
+        while (true) {
+            emit(player.bufferedPosition)
+            delay(1000L)
+        }
+    }
+    
+    private val _playbackSpeed = MutableStateFlow(1f)
+    val playbackSpeed = _playbackSpeed.asStateFlow()
     
     fun start(video: VideoItem) {
         logger.i(this::class.simpleName, "start player")
@@ -133,6 +150,12 @@ class OpenStreamMediaPlayer(
         mainThreadScope.launch {
             player.pause()
             player.clearMediaItems()
+        }
+    }
+    
+    fun setPlaybackSpeed(speed: Float) {
+        mainThreadScope.launch {
+            player.setPlaybackSpeed(speed)
         }
     }
     
@@ -215,6 +238,7 @@ class OpenStreamMediaPlayer(
     
     private fun VideoData.getMediaSource(videoOption: VideoOption? = null): MediaSource {
         val option = videoOption ?: this.videoOptions.last()
+        _currentQuality.value = option
         
         val videoItem = MediaItem.Builder().setUri(option.content).build()
         val audioItem = MediaItem.Builder().setUri(audioStream).build()
