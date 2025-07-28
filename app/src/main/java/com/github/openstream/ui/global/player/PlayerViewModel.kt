@@ -74,10 +74,19 @@ class PlayerViewModel(
     val videoLocalState = fetchingState.flatMapLatest {
         if (it !is FetchingState.Success) flow { emit(VideoLocalState()) }
         else {
-            val videoId = videoRepo.getVideoId(it.video.url)
             combine(
-                videoId?.let { id -> playlistRepo.isInPlaylist(id, DefaultPlaylists.WATCH_LATER_ID) } ?: flow { emit(false) },
-                videoId?.let { id -> playlistRepo.isInPlaylist(id, DefaultPlaylists.LIKED_VIDEOS_ID) } ?: flow { emit(false) },
+                it.video.id?.let { id ->
+                    playlistRepo.isInPlaylist(
+                        id,
+                        DefaultPlaylists.WATCH_LATER_ID
+                    )
+                } ?: flow { emit(false) },
+                it.video.id?.let { id ->
+                    playlistRepo.isInPlaylist(
+                        id,
+                        DefaultPlaylists.LIKED_VIDEOS_ID
+                    )
+                } ?: flow { emit(false) },
                 channelRepo.getChannelId(it.video.channelUrl),
             ) { isInWatchLater, isLiked, channelId ->
                 VideoLocalState(isInWatchLater, isLiked, channelId)

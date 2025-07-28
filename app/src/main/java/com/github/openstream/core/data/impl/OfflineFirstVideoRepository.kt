@@ -14,12 +14,12 @@ class OfflineFirstVideoRepository(
     private val db: OpenStreamDatabase,
 ) : VideoRepository {
     override fun fetchVideo(url: String): Flow<Resource<VideoData>> = flow {
-        val video = VideoRemoteDataSource.fetchVideo(url)
+        var video = VideoRemoteDataSource.fetchVideo(url)
 
         // update video data in db if it's found
         db.videoDao().get(url)?.videoId?.let { id ->
-            val videoData = video.copy(id = id)
-            db.videoDao().upsert(videoData.toDataItem().toEntity())
+            video = video.copy(id = id)
+            db.videoDao().upsert(video.toDataItem().toEntity())
         }
         
         emit(video)
