@@ -40,7 +40,7 @@ class OpenStreamCacheRepository(
     
     override fun clearAllCache(): Flow<Resource<Success>> = flow {
         supervisorScope {
-            val d1 = async { context.deleteDatabase(OpenStreamDatabase.NAME) }
+            val d1 = async { db.clearAllTables() }
             val d2 = async {
                 val imageLoader = context.imageLoader
                 imageLoader.diskCache?.clear()
