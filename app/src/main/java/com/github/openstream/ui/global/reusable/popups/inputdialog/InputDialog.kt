@@ -76,7 +76,7 @@ fun InputDialog(
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
             ) {
                 Button(
                     onClick = { PopupController.dismissInputDialog() },

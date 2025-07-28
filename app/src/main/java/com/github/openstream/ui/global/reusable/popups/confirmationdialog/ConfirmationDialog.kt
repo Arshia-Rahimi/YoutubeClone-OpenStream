@@ -27,7 +27,7 @@ fun ConfirmationDialog(
         parameters = { parametersOf(type) },
         key = type.hashCode().toString(),
     )
-
+    
     OpenStreamDialog(
         dismiss = PopupController::dismissConfirmationDialog,
     ) {
@@ -44,7 +44,7 @@ fun ConfirmationDialog(
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
             ) {
                 Button(
                     onClick = PopupController::dismissConfirmationDialog,
