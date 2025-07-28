@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flow
 class OnlineSearchRepository(
     private val db: OpenStreamDatabase,
 ) : SearchRepository {
-
+    
     override fun search(
         query: String,
         contentFilter: List<String>,
@@ -28,56 +28,48 @@ class OnlineSearchRepository(
         val firstPage = syncDataItemsWithDB(searchResult.items)
         emit(searchResult.copy(items = firstPage))
     }.asResult(
-        Dispatchers.IO, this::class.simpleName, "search()")
-
+        Dispatchers.IO, this::class.simpleName, "search()"
+    )
+    
     override fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>> =
         flow {
             val result = SearchRemoteDataSource.fetchNextPage(currentSearch)
             val nextPage = syncDataItemsWithDB(result)
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage()")
-
-    suspend fun syncDataItemsWithDB(dataItemList: List<DataItem>): List<DataItem> =
+    
+    private suspend fun syncDataItemsWithDB(dataItemList: List<DataItem>): List<DataItem> =
         buildList {
             dataItemList.map { item ->
                 when (item) {
-                    is PlaylistItem if item is PlaylistItem.OnlinePlaylistItem -> {
-                        val playlistId = db.playlistDao().get(item.url)?.playlistId
-                        if (playlistId == null) {
-                            add(item)
-                        } else {
-                            val updatedPlaylist = item.toOfflineFirstPlaylistItem(playlistId)
-                            db.playlistDao().upsert(updatedPlaylist.toEntity())
-                            add(updatedPlaylist)
+                    is PlaylistItem.OnlinePlaylistItem -> {
+                        var playlist = item
+                        db.playlistDao().get(playlist.url)?.playlistId?.let { id ->
+                            playlist = playlist.toOfflineFirstPlaylistItem(id)
                         }
+                        add(playlist)
                     }
-
+                    
                     is VideoItem -> {
-                        val videoId = db.videoDao().get(item.url)?.videoId
-
-                        if (videoId == null) {
-                            add(item)
-                        } else {
-                            val updatedVideo = item.copy(id = videoId)
-                            db.videoDao().upsert(updatedVideo.toEntity())
-                            add(updatedVideo)
+                        var video = item
+                        db.videoDao().get(item.url)?.videoId?.let { id ->
+                            video = video.copy(id = id)
+                            db.videoDao().upsert(video.toEntity())
                         }
+                        add(video)
                     }
-
+                    
                     is ChannelItem.OnlineChannelItem -> {
-                        val channelId = db.channelDao().get(item.url)?.channelId
-                        if (channelId == null) {
-                            add(item)
-                        } else {
-                            val updatedChannel = item.toOfflineFirstChannelItem(channelId)
-                            db.channelDao().upsert(updatedChannel.toEntity())
-                            add(updatedChannel)
+                        var channel = item
+                        db.channelDao().get(item.url)?.channelId?.let { id ->
+                            channel = channel.toOfflineFirstChannelItem(id)
                         }
+                        add(channel)
                     }
-
-                    else -> {}
+                    
+                    else -> add(item)
                 }
             }
         }
-
+    
 }
