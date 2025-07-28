@@ -29,7 +29,7 @@ class OfflineFirstChannelRepository(
     private val scope: CoroutineScope,
 ) : ChannelRepository {
     override val subscriptions = db.channelDao().index()
-        .map { it.map { channel -> channel.toDataItem() } }
+        .map { it.map { channel -> channel.toDataItem() }.sortedBy { channel -> channel.name } }
         .shareIn(
             scope = scope,
             started = SharingStarted.Lazily,
