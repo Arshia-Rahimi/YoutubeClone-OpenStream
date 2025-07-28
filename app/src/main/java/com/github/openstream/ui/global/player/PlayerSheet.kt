@@ -253,13 +253,15 @@ private fun PlayerSheet(
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
                     val name =
-                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) fetchingState.video.name else tempVideoName
-                        Text(
-                            text = name,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
+                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) fetchingState.video.name
+                        else tempVideoName
+                    
+                    Text(
+                        text = name,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
                     if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                         Text(
                             text = (currentPosition / 1000).toTime() + " / " + (fetchingState.video.duration / 1000).toTime(),
