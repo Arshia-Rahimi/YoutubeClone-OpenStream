@@ -38,8 +38,7 @@ class MainActivity : ComponentActivity() {
     
     override fun onDestroy() {
         super.onDestroy()
-        val player by inject<OpenStreamMediaPlayer>()
-        player.player.release()
+        inject<OpenStreamMediaPlayer>().value.clear()
     }
     
     private fun loadNewPipeConfig() {

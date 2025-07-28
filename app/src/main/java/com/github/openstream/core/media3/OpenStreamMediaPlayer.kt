@@ -41,29 +41,7 @@ class OpenStreamMediaPlayer(
 ) {
     private val mainThreadScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
-    val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
-        addListener(object : Player.Listener {
-            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                super.onPlayWhenReadyChanged(playWhenReady, reason)
-                _isPlaying.value = playWhenReady
-            }
-            
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
-                _isBuffering.value = playbackState == Player.STATE_BUFFERING
-            }
-            
-            override fun onPlayerError(error: PlaybackException) {
-                super.onPlayerError(error)
-                logger.e("OpenStreamMediaPlayer", "player error", error)
-            }
-            
-            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-                super.onPlaybackParametersChanged(playbackParameters)
-                _playbackSpeed.value = playbackParameters.speed
-            }
-        })
-    }
+    var player: ExoPlayer? = null
     
     sealed interface FetchingState {
         data object Loading : FetchingState
@@ -88,16 +66,25 @@ class OpenStreamMediaPlayer(
     val isPlaying = _isPlaying.asStateFlow()
     
     val playerPosition = isPlaying.transform { isPlaying ->
-        emit(player.currentPosition)
-        while (isPlaying) {
+        val player = player
+        if (player == null) emit(0L)
+        else {
             emit(player.currentPosition)
-            delay(500L)
+            while (isPlaying) {
+                emit(player.currentPosition)
+                delay(500L)
+            }
         }
     }
     
     val bufferedPosition = flow {
         while (true) {
-            emit(player.bufferedPosition)
+            val player = player
+            if (player == null) {
+                emit(0L)
+            } else {
+                emit(player.bufferedPosition)
+            }
             delay(500L)
         }
     }
@@ -105,8 +92,40 @@ class OpenStreamMediaPlayer(
     private val _playbackSpeed = MutableStateFlow(1f)
     val playbackSpeed = _playbackSpeed.asStateFlow()
     
+    fun buildPlayer(): ExoPlayer {
+        val newPlayer = ExoPlayer.Builder(context).build().apply {
+            addListener(object : Player.Listener {
+                override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                    super.onPlayWhenReadyChanged(playWhenReady, reason)
+                    _isPlaying.value = playWhenReady
+                }
+                
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                    _isBuffering.value = playbackState == Player.STATE_BUFFERING
+                }
+                
+                override fun onPlayerError(error: PlaybackException) {
+                    super.onPlayerError(error)
+                    logger.e("OpenStreamMediaPlayer", "player error", error)
+                }
+                
+                override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+                    super.onPlaybackParametersChanged(playbackParameters)
+                    _playbackSpeed.value = playbackParameters.speed
+                }
+            })
+        }
+        player = newPlayer
+        return newPlayer
+    }
+    
     fun start(video: VideoItem) {
+        clear()
+        
         logger.i(this::class.simpleName, "start player")
+        val player = buildPlayer()
+        
         scope.launch {
             withContext(Dispatchers.Main) {
                 player.pause()
@@ -148,36 +167,38 @@ class OpenStreamMediaPlayer(
     fun clear() {
         logger.i(this::class.simpleName, "clear player")
         mainThreadScope.launch {
+            val player = player ?: return@launch
             player.pause()
             player.clearMediaItems()
+            player.release()
         }
     }
     
     fun setPlaybackSpeed(speed: Float) {
         mainThreadScope.launch {
-            player.setPlaybackSpeed(speed)
+            player?.setPlaybackSpeed(speed)
         }
     }
     
     fun resume() {
-        mainThreadScope.launch { player.play() }
+        mainThreadScope.launch { player?.play() }
     }
     
     fun pause() {
-        mainThreadScope.launch { player.pause() }
+        mainThreadScope.launch { player?.pause() }
     }
     
     fun seekTo(ms: Long) {
-        mainThreadScope.launch { player.seekTo(ms) }
+        mainThreadScope.launch { player?.seekTo(ms) }
     }
     
     fun seekForward() {
-        mainThreadScope.launch { player.seekTo(playerPosition.first() + SEEK_INCREMENT) }
+        mainThreadScope.launch { player?.seekTo(playerPosition.first() + SEEK_INCREMENT) }
     }
     
     fun seekBackward() {
         mainThreadScope.launch {
-            player.seekTo(
+            player?.seekTo(
                 (playerPosition.first() - SEEK_INCREMENT)
                     .coerceAtLeast(0L)
             )
@@ -192,6 +213,7 @@ class OpenStreamMediaPlayer(
         if (isAudioOnlyModeEnabled.value) return
         
         mainThreadScope.launch {
+            val player = player ?: return@launch
             _currentQuality.value = videoOption
             
             val wasPlaying = player.isPlaying
@@ -213,6 +235,7 @@ class OpenStreamMediaPlayer(
             is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
+        val player = player ?: return
         
         val isAudioOnly = !_isAudioOnlyModeEnabled.value
         _isAudioOnlyModeEnabled.value = isAudioOnly

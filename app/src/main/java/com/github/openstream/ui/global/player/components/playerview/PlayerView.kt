@@ -153,7 +153,7 @@ private fun BoxScope.PlayerView(
     showController: Boolean,
     videoData: VideoData,
     isAudioOnlyModeEnabled: Boolean,
-    player: Player,
+    player: Player?,
     isInLandscape: Boolean,
     isBuffering: Boolean,
     currentPosition: Long,
