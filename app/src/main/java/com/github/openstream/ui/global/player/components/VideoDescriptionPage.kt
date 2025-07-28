@@ -69,6 +69,7 @@ fun VideoDescriptionPage(
     toggleVideoLiked: () -> Unit,
     videoLocalState: VideoLocalState,
     switchPlaybackQuality: (VideoOption) -> Unit,
+    tempVideoName: String,
     playbackSpeed: Float,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
     toPlaylistScreen: (String) -> Unit,
@@ -92,8 +93,8 @@ fun VideoDescriptionPage(
                 isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
                 playbackSpeed = playbackSpeed,
             )
-
-
+        
+        
         is OpenStreamMediaPlayer.FetchingState.Error ->
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -107,8 +108,27 @@ fun VideoDescriptionPage(
                     Text(stringResource(R.string.retry))
                 }
             }
-
-        is OpenStreamMediaPlayer.FetchingState.Loading -> Unit
+        
+        is OpenStreamMediaPlayer.FetchingState.Loading -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = tempVideoName,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                )
+            }
+        }
     }
 }
 
@@ -130,7 +150,7 @@ fun VideoDescription(
     collapseMiniPlayer: () -> Unit,
 ) {
     val videoItem = remember { videoData.toDataItem() }
-
+    
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -399,6 +419,7 @@ private fun Preview() {
             toPlaylistScreen = {},
             playbackSpeed = 1f,
             isAudioOnlyModeEnabled = false,
+            tempVideoName = "asdgahg",
         )
     }
 }

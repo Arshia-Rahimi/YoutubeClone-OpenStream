@@ -78,6 +78,7 @@ fun PlayerSheet(
 ) {
     val viewModel = koinViewModel<PlayerViewModel>()
     
+    val tempVideoName by viewModel.tempVideoName.collectAsStateWithLifecycle()
     val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
     val showMiniPlayer by viewModel.showMiniPlayer.collectAsStateWithLifecycle()
     val fetchingState by viewModel.fetchingState.collectAsStateWithLifecycle()
@@ -153,6 +154,7 @@ fun PlayerSheet(
             fetchingState = fetchingState,
             playbackSpeed = playbackSpeed,
             isPlaying = isPlaying,
+            tempVideoName = tempVideoName ?: "",
             dispose = viewModel::dispose,
             toggleVideoLiked = viewModel::toggleVideoLiked,
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
@@ -169,6 +171,7 @@ private fun PlayerSheet(
     dragState: AnchoredDraggableState<PlayerSheetState>,
     sheetState: PlayerSheetState,
     playerWidth: Float,
+    tempVideoName: String,
     density: Density,
     screenWidth: Dp,
     sheetDragProgress: Float,
@@ -249,13 +252,15 @@ private fun PlayerSheet(
                         .alpha(miniPlayerContentAlpha),
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
+                    val name =
+                        if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) fetchingState.video.name else tempVideoName
                         Text(
-                            text = fetchingState.video.name,
+                            text = name,
                             color = MaterialTheme.colorScheme.onPrimary,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                         )
+                    if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                         Text(
                             text = (currentPosition / 1000).toTime() + " / " + (fetchingState.video.duration / 1000).toTime(),
                             color = MaterialTheme.colorScheme.onBackground,
@@ -304,6 +309,7 @@ private fun PlayerSheet(
         ) {
             VideoDescriptionPage(
                 subscribe = subscribe,
+                tempVideoName = tempVideoName,
                 isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
                 collapseMiniPlayer = collapseMiniPlayer,
                 toPlaylistScreen = toPlaylistScreen,

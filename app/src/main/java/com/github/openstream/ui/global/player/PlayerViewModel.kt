@@ -34,6 +34,8 @@ class PlayerViewModel(
 ) : ViewModel() {
 
     val playerInstance = player.player
+    
+    val tempVideoName = MutableStateFlow<String?>(null)
 
     val fetchingState = player.fetchingState
     val currentQuality = player.currentQuality
@@ -108,6 +110,7 @@ class PlayerViewModel(
         player.switchPlaybackQuality(videoOption)
 
     private fun start(videoItem: VideoItem) {
+        tempVideoName.value = videoItem.name
         _showMiniPlayer.value = true
         player.start(videoItem)
     }
