@@ -103,12 +103,11 @@ fun PlayerView(
                 onFalse = { background(Color.Black) },
                 onTrue = { background(MaterialTheme.colorScheme.tertiaryContainer) },
             )
-            .onCondition(isSheetExpanded) {
+            .onCondition(isSheetExpanded && fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                 pointerInput(Unit) {
                     detectTapGestures(
-                        onTap = { if (isSheetExpanded) showController = !showController },
+                        onTap = { showController = !showController },
                         onDoubleTap = { offset ->
-                            if (!isSheetExpanded) return@detectTapGestures
                             when {
                                 offset.x < width / 3f -> PlayerAction.SeekBackward.send()
                                 offset.x > 2 * width / 3f -> PlayerAction.SeekForward.send()
