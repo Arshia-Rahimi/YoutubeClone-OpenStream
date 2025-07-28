@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -241,7 +242,9 @@ private fun PlayerSheet(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PlayerView(
-                modifier = Modifier.width(playerWidth.dp)
+                modifier = Modifier
+                    .width(playerWidth.dp)
+                    .aspectRatio(16 / 9f)
             )
             
             if (sheetDragProgress < MiniPlayerConfig.CONTENT_VISIBILITY_THRESHOLD) {

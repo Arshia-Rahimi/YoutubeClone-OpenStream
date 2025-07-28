@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,8 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import com.github.openstream.R
@@ -94,15 +95,14 @@ fun PlayerView(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .aspectRatio(16 / 9f)
+            .onGloballyPositioned {
+                width = it.size.width.toFloat()
+            }
             .onCondition(
                 condition = fetchingState !is OpenStreamMediaPlayer.FetchingState.Success,
                 onFalse = { background(Color.Black) },
                 onTrue = { background(MaterialTheme.colorScheme.tertiaryContainer) },
             )
-            .onGloballyPositioned {
-                width = it.size.width.toFloat()
-            }
             .onCondition(isSheetExpanded) {
                 pointerInput(Unit) {
                     detectTapGestures(
@@ -153,7 +153,7 @@ private fun BoxScope.PlayerView(
     showController: Boolean,
     videoData: VideoData,
     isAudioOnlyModeEnabled: Boolean,
-    player: Player?,
+    player: ExoPlayer,
     isInLandscape: Boolean,
     isBuffering: Boolean,
     currentPosition: Long,
@@ -165,12 +165,15 @@ private fun BoxScope.PlayerView(
         AsyncImage(
             model = videoData.thumbnail,
             contentDescription = "thumbnail",
-            modifier = Modifier.matchParentSize(),
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(16 / 9f),
         )
     } else {
         AndroidView(
             modifier = Modifier
-                .matchParentSize(),
+                .fillMaxHeight()
+                .aspectRatio(16 / 9f),
             factory = { context ->
                 PlayerView(context).also {
                     it.player = player
@@ -178,6 +181,9 @@ private fun BoxScope.PlayerView(
                     it.setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
                 }
             },
+            update = {
+                it.player = player
+            }
         )
     }
     

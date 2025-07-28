@@ -116,8 +116,9 @@ class PlayerViewModel(
     }
 
     fun dispose() {
-        player.clear()
+        tempVideoName.value = null
         _showMiniPlayer.value = false
+        player.clear()
     }
 
     fun toggleVideoWatchLater() {

@@ -104,7 +104,6 @@ fun Navigation() {
         if (shouldShowFullscreenPlayer) {
             FullScreenPlayerView()
         } else {
-            // todo: test this
             val context = LocalContext.current
             val window = (context as? Activity)?.window
             val view = LocalView.current
