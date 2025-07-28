@@ -20,11 +20,9 @@ import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -39,8 +37,6 @@ class OpenStreamMediaPlayer(
     private val scope: CoroutineScope,
     private val logger: Logger,
 ) {
-    private val mainThreadScope: CoroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
         addListener(object : Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
@@ -147,47 +143,38 @@ class OpenStreamMediaPlayer(
     
     fun clear() {
         logger.i(this::class.simpleName, "clear player")
-        mainThreadScope.launch {
-            player.pause()
-            player.clearMediaItems()
-        }
+        player.pause()
+        player.clearMediaItems()
     }
     
     fun destroy() {
-        mainThreadScope.launch {
-            player.release()
-        }
+        player.release()
     }
     
     fun setPlaybackSpeed(speed: Float) {
-        mainThreadScope.launch {
-            player.setPlaybackSpeed(speed)
-        }
+        player.setPlaybackSpeed(speed)
     }
     
     fun resume() {
-        mainThreadScope.launch { player.play() }
+        player.play()
     }
     
     fun pause() {
-        mainThreadScope.launch { player.pause() }
+        player.pause()
     }
     
     fun seekTo(ms: Long) {
-        mainThreadScope.launch { player.seekTo(ms) }
+        player.seekTo(ms)
     }
     
     fun seekForward() {
-        mainThreadScope.launch { player.seekTo(playerPosition.first() + SEEK_INCREMENT) }
+        player.seekTo(player.currentPosition + SEEK_INCREMENT)
     }
     
     fun seekBackward() {
-        mainThreadScope.launch {
-            player.seekTo(
-                (playerPosition.first() - SEEK_INCREMENT)
-                    .coerceAtLeast(0L)
-            )
-        }
+        player.seekTo(
+            (player.currentPosition - SEEK_INCREMENT).coerceAtLeast(0L)
+        )
     }
     
     fun switchPlaybackQuality(videoOption: VideoOption) {
@@ -197,21 +184,19 @@ class OpenStreamMediaPlayer(
         }
         if (isAudioOnlyModeEnabled.value) return
         
-        mainThreadScope.launch {
-            _currentQuality.value = videoOption
-            
-            val wasPlaying = player.isPlaying
-            player.pause()
-            
-            val currentPosition = player.currentPosition
-            val mediaSource = videoData.getMediaSource(videoOption)
-            player.setMediaSource(mediaSource)
-            player.prepare()
-            player.seekTo(currentPosition)
-            
-            if (wasPlaying) player.play()
-            logger.i(this::class.simpleName, "switched playback quality")
-        }
+        _currentQuality.value = videoOption
+        
+        val wasPlaying = player.isPlaying
+        player.pause()
+        
+        val currentPosition = player.currentPosition
+        val mediaSource = videoData.getMediaSource(videoOption)
+        player.setMediaSource(mediaSource)
+        player.prepare()
+        player.seekTo(currentPosition)
+        
+        if (wasPlaying) player.play()
+        logger.i(this::class.simpleName, "switched playback quality")
     }
     
     fun toggleAudioOnlyMode() {
