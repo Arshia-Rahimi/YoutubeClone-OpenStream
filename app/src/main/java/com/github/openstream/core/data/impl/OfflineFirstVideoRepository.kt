@@ -25,6 +25,4 @@ class OfflineFirstVideoRepository(
         emit(video)
     }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo()")
     
-    override suspend fun getVideoId(url: String) = db.videoDao().getVideoId(url)
-    
 }

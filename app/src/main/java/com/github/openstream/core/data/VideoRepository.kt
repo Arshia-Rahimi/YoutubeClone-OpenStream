@@ -6,7 +6,4 @@ import kotlinx.coroutines.flow.Flow
 
 interface VideoRepository {
     fun fetchVideo(url: String): Flow<Resource<VideoData>>
-
-    suspend fun getVideoId(url: String): Long?
-    
 }
