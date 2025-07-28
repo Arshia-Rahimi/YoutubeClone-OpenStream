@@ -153,6 +153,12 @@ class OpenStreamMediaPlayer(
         }
     }
     
+    fun destroy() {
+        mainThreadScope.launch {
+            player.release()
+        }
+    }
+    
     fun setPlaybackSpeed(speed: Float) {
         mainThreadScope.launch {
             player.setPlaybackSpeed(speed)
