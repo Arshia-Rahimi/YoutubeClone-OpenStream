@@ -35,31 +35,27 @@ class OfflineFirstChannelRepository(
             started = SharingStarted.Lazily,
             replay = 1,
         )
-
+    
     override val subscribedVideos = db.channelDao().getAllChannelVideos()
         .map { list -> list.map { video -> video.toDataItem() } }
-
+    
     override fun subscribe(channel: ChannelItem.OnlineChannelItem): Flow<Resource<ChannelItem.OfflineFirstChannelItem>> =
         flow {
             val id = db.channelDao().insert(channel.toEntity())
             emit(channel.toOfflineFirstChannelItem(id))
         }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe()")
-
-    override fun unSubscribe(channelId: Long): Flow<Resource<Success>> =
+    
+    override fun unSubscribe(channel: ChannelItem.OfflineFirstChannelItem): Flow<Resource<ChannelItem.OnlineChannelItem>> =
         flow {
-            supervisorScope {
-                val d1 = async { db.channelDao().delete(channelId) }
-                val d2 = async { db.channelDao().deleteAllChannelVideos(channelId) }
-                d1.await()
-                d2.await()
-                emit(Success)
-            }
+            db.channelDao().deleteAllChannelVideos(channel.id)
+            db.channelDao().delete(channel.id)
+            emit(channel.toOnlineChannelItem())
         }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe()")
-
+    
     override fun getChannel(url: String): Flow<Resource<ChannelExtractor>> = flow {
         emit(ChannelRemoteDataSource.getChannelData(url))
     }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel()")
-
+    
     override fun getTabFirstPage(
         channel: ChannelItem,
         tab: ChannelTab,
@@ -83,7 +79,7 @@ class OfflineFirstChannelRepository(
             }
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage()")
-
+    
     override fun getTabNextPage(
         channel: ChannelItem,
         tab: ChannelTab,
@@ -107,7 +103,7 @@ class OfflineFirstChannelRepository(
             }
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage()")
-
+    
     override fun updateSubscriptions(): Flow<Resource<Success>> =
         flow {
             supervisorScope {
@@ -118,7 +114,7 @@ class OfflineFirstChannelRepository(
                         val tabs = extractor.tabs.filter {
                             it.name in listOf("videos", "livestreams")
                         }
-
+                        
                         val videos = buildList {
                             tabs.forEach { tab ->
                                 ChannelRemoteDataSource.fetchTab(extractor, tab)
@@ -136,7 +132,7 @@ class OfflineFirstChannelRepository(
                 emit(Success)
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions()")
-
+    
     override fun getChannelId(url: String) = db.channelDao().getChannelId(url)
-
+    
 }

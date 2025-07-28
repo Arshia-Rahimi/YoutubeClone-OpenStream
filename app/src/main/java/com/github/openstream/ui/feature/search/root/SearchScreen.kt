@@ -85,6 +85,7 @@ fun SearchScreen(
                     addToWatchLater = viewModel::addToWatchLater,
                     scrollToTopTab = Tabs.Search,
                     savePlaylist = viewModel::savePlaylist,
+                    unsubscribe = viewModel::unsubscribe,
                     subscribe = viewModel::subscribe,
                 )
             }

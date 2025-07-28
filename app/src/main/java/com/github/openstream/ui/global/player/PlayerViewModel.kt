@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
-import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.OpenStreamMediaPlayer.FetchingState
 import com.github.openstream.core.shared.DefaultPlaylists
@@ -17,20 +16,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val playlistRepo: PlaylistRepository,
     private val channelRepo: ChannelRepository,
-    private val videoRepo: VideoRepository,
 ) : ViewModel() {
 
     val playerInstance = player.player
@@ -169,8 +165,10 @@ class PlayerViewModel(
     }
 
     fun subscribe(channel: ChannelItem.OnlineChannelItem) {
-        viewModelScope.launch {
-            channelRepo.subscribe(channel).collect()
-        }
+        channelRepo.subscribe(channel).launchIn(viewModelScope)
+    }
+    
+    fun unsubscribe(channel: ChannelItem.OfflineFirstChannelItem) {
+        channelRepo.unSubscribe(channel).launchIn(viewModelScope)
     }
 }

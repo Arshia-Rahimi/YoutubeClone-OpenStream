@@ -8,10 +8,12 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.shared.DefaultPlaylists
+import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.core.shared.dataitem.VideoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+
 
 class SubscriptionsViewModel(
     private val channelRepo: ChannelRepository,
@@ -54,6 +56,10 @@ class SubscriptionsViewModel(
                     else -> {}
                 }
             }.launchIn(viewModelScope)
+    }
+    
+    fun unsubscribe(channel: ChannelItem.OfflineFirstChannelItem) {
+        channelRepo.unSubscribe(channel).launchIn(viewModelScope)
     }
 
 }

@@ -106,6 +106,7 @@ fun SubscriptionsScreen(
                     
                     SubscriptionsPage.CHANNELS.ordinal ->
                         DataItemList(
+                            unsubscribe = viewModel::unsubscribe,
                             items = viewModel.subscriptions as SnapshotStateList<DataItem>,
                             toChannelScreen = toChannelScreen,
                             scrollToTopTab = Tabs.Subscriptions,

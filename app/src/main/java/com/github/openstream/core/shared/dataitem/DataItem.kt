@@ -210,5 +210,14 @@ sealed interface ChannelItem : DataItem {
             avatar = avatar,
             channelId = id,
         )
+        
+        fun toOnlineChannelItem() = OnlineChannelItem(
+            name = name,
+            url = url,
+            avatar = avatar,
+            description = description,
+            subscriberCount = subscriberCount,
+            isVerified = isVerified,
+        )
     }
 }

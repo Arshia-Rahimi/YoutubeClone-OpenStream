@@ -8,16 +8,6 @@ sealed interface Confirmation {
     val confirmButton: Int
     val confirmationText: Int
     
-    data class UnsubscribeItem(
-        val channelId: Long,
-    ) : Confirmation {
-        @StringRes
-        override val confirmButton = R.string.confirm_unsubscribe
-        
-        @StringRes
-        override val confirmationText = R.string.unsubscribe
-    }
-    
     data class DeletePlaylistItem(
         val playlist: PlaylistItem.LocalPlaylistItem,
     ) : Confirmation {

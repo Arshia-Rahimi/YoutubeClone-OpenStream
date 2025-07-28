@@ -161,6 +161,7 @@ fun PlayerSheet(
             toggleVideoWatchLater = viewModel::toggleVideoWatchLater,
             videoLocalState = videoLocalState,
             switchPlaybackQuality = viewModel::switchPlaybackQuality,
+            unsubscribe = viewModel::unsubscribe,
             isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
         )
     }
@@ -190,6 +191,7 @@ private fun PlayerSheet(
     toggleVideoLiked: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    unsubscribe: (ChannelItem.OfflineFirstChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
     toPlaylistScreen: (String) -> Unit,
 ) {
@@ -326,6 +328,7 @@ private fun PlayerSheet(
                 switchPlaybackQuality = switchPlaybackQuality,
                 currentQuality = currentQuality,
                 playbackSpeed = playbackSpeed,
+                unsubscribe = unsubscribe,
             )
         }
     }

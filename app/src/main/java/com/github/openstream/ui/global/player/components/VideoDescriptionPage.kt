@@ -72,6 +72,7 @@ fun VideoDescriptionPage(
     tempVideoName: String,
     playbackSpeed: Float,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    unsubscribe: (ChannelItem.OfflineFirstChannelItem) -> Unit,
     toPlaylistScreen: (String) -> Unit,
     collapseMiniPlayer: () -> Unit,
 ) {
@@ -92,6 +93,7 @@ fun VideoDescriptionPage(
                 collapseMiniPlayer = collapseMiniPlayer,
                 isAudioOnlyModeEnabled = isAudioOnlyModeEnabled,
                 playbackSpeed = playbackSpeed,
+                unsubscribe = unsubscribe,
             )
         
         
@@ -147,6 +149,7 @@ fun VideoDescription(
     switchPlaybackQuality: (VideoOption) -> Unit,
     toPlaylistScreen: (String) -> Unit,
     subscribe: (ChannelItem.OnlineChannelItem) -> Unit,
+    unsubscribe: (ChannelItem.OfflineFirstChannelItem) -> Unit,
     collapseMiniPlayer: () -> Unit,
 ) {
     val videoItem = remember { videoData.toDataItem() }
@@ -205,6 +208,7 @@ fun VideoDescription(
                 collapseMiniPlayer()
             },
             subscribe = subscribe,
+            unsubscribe = unsubscribe,
             item = if (videoLocalState.channelId != null) ChannelItem.OfflineFirstChannelItem(
                 url = videoData.channelUrl,
                 name = videoData.channelName,
@@ -420,6 +424,7 @@ private fun Preview() {
             playbackSpeed = 1f,
             isAudioOnlyModeEnabled = false,
             tempVideoName = "asdgahg",
+            unsubscribe = {},
         )
     }
 }
