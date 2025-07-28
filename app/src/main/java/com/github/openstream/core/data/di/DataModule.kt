@@ -6,12 +6,12 @@ import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.PreferencesRepository
 import com.github.openstream.core.data.SearchRepository
 import com.github.openstream.core.data.VideoRepository
-import com.github.openstream.core.data.impl.CoilCacheRepository
 import com.github.openstream.core.data.impl.DataStorePreferencesRepository
 import com.github.openstream.core.data.impl.OfflineFirstChannelRepository
 import com.github.openstream.core.data.impl.OfflineFirstPlaylistRepository
 import com.github.openstream.core.data.impl.OfflineFirstVideoRepository
 import com.github.openstream.core.data.impl.OnlineSearchRepository
+import com.github.openstream.core.data.impl.OpenStreamCacheRepository
 import com.github.openstream.core.shared.KoinQualifiers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -27,8 +27,8 @@ val dataModule = module {
     factoryOf(::OfflineFirstVideoRepository) { bind<VideoRepository>() }
 
     factoryOf(::OfflineFirstPlaylistRepository) { bind<PlaylistRepository>() }
-
-    factoryOf(::CoilCacheRepository) { bind<CacheRepository>() }
+    
+    factoryOf(::OpenStreamCacheRepository) { bind<CacheRepository>() }
 
     factory {
         DataStorePreferencesRepository(

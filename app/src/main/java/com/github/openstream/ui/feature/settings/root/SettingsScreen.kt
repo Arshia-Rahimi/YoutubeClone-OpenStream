@@ -66,6 +66,18 @@ fun SettingsScreen(
                 }
             )
             settingsItem(
+                title = "clear all cache",
+                action = {
+                    Button(
+                        onClick = viewModel::clearCache,
+                        enabled = !viewModel.clearCacheLoading,
+                    ) {
+                        if (viewModel.clearCacheLoading) CircularProgressIndicator()
+                        else Text("clear", fontSize = 12.sp)
+                    }
+                }
+            )
+            settingsItem(
                 title = "log screen",
                 action = {
                     Button(

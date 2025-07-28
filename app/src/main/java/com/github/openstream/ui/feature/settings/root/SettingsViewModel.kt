@@ -8,20 +8,19 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.CacheRepository
-import com.github.openstream.core.data.VideoRepository
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class SettingsViewModel(
-    private val videoRepo: VideoRepository,
     private val cacheRepo: CacheRepository,
 ) : ViewModel() {
 
     var localVideoHistoryLoading by mutableStateOf(false)
     var diskImageCacheLoading by mutableStateOf(false)
+    var clearCacheLoading by mutableStateOf(false)
 
     fun clearLocalVideoHistory() {
-        videoRepo.deleteLocalVideoHistory().onEach {
+        cacheRepo.deleteLocalVideoHistory().onEach {
             when (it) {
                 is Resource.Success -> {
                     localVideoHistoryLoading = false
@@ -52,6 +51,24 @@ class SettingsViewModel(
                 }
 
                 else -> diskImageCacheLoading = true
+            }
+        }.launchIn(viewModelScope)
+    }
+    
+    fun clearCache() {
+        cacheRepo.clearAllCache().onEach {
+            when (it) {
+                is Resource.Success -> {
+                    clearCacheLoading = false
+                    SnackBarController.sendEvent("cleared all cache")
+                }
+                
+                is Resource.Error -> {
+                    clearCacheLoading = false
+                    SnackBarController.sendEvent("failed to clear cache")
+                }
+                
+                else -> clearCacheLoading = true
             }
         }.launchIn(viewModelScope)
     }

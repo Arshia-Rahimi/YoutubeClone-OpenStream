@@ -50,7 +50,6 @@ interface ChannelDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun upsertChannelVideos(vararg channelVideos: ChannelVideoCrossRef)
 
-
     @Query("SELECT channelId FROM channels WHERE url = :channelUrl")
     fun getChannelId(channelUrl: String): Flow<Long?>
     
