@@ -11,7 +11,7 @@ object VideoRemoteDataSource {
         val extractor = YtService.getStreamExtractor(url)
         extractor.fetchPage()
         return VideoData(
-            thumbnail = extractor.thumbnails.first().url,
+            thumbnail = extractor.thumbnails.last().url,
             name = extractor.name,
             url = extractor.url,
             description = extractor.description.content,

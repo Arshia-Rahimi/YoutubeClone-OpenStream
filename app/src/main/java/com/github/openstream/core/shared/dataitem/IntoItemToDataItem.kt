@@ -12,9 +12,9 @@ fun List<InfoItem>.toListOfDataItem(): List<DataItem> =
 fun List<InfoItem>.toListOfVideos(): List<VideoItem> =
     buildList {
         this@toListOfVideos
-            .filter { it is StreamInfoItem }
-            .forEach {
-                it.toDataItem()?.let { add(it as VideoItem) }
+            .filterIsInstance<StreamInfoItem>()
+            .forEach { video ->
+                video.toDataItem()?.let { add(it as VideoItem) }
             }
     }
 
@@ -22,7 +22,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
     is PlaylistInfoItem -> PlaylistItem.OnlinePlaylistItem(
         url = url,
         name = name,
-        thumbnail = thumbnails.first().url,
+        thumbnail = thumbnails.last().url,
         channelName = uploaderName ?: "",
         channelUrl = url,
         isChannelVerified = isUploaderVerified,
@@ -32,7 +32,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
     is ChannelInfoItem -> ChannelItem.OnlineChannelItem(
         url = url,
         name = name,
-        avatar = thumbnails.first().url,
+        avatar = thumbnails.last().url,
         description = description ?: "",
         subscriberCount = subscriberCount,
         isVerified = isVerified,
@@ -41,14 +41,14 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
     is StreamInfoItem -> VideoItem(
         url = url,
         name = name,
-        thumbnail = thumbnails.first().url,
+        thumbnail = thumbnails.last().url,
         channelUrl = uploaderUrl,
         viewCount = viewCount,
         shortDescription = shortDescription ?: "",
         duration = duration,
         isChannelVerified = isUploaderVerified,
         isShort = isShortFormContent,
-        channelAvatars = uploaderAvatars.firstOrNull()?.url,
+        channelAvatars = uploaderAvatars.lastOrNull()?.url,
         channelName = uploaderName,
         uploadDate = uploadDate?.offsetDateTime()?.toInstant()?.toEpochMilli(),
         streamType = when (streamType) {

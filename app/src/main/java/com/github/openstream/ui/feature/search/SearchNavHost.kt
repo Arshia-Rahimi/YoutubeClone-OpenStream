@@ -85,7 +85,6 @@ fun SearchNavHost(
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Search.Playlist>().playlist,
                 toChannelScreen = { url -> navController.navigate(Tabs.Search.Channel(url)) },
-                navigateBack = { navController.navigateUp() },
             )
         }
     }

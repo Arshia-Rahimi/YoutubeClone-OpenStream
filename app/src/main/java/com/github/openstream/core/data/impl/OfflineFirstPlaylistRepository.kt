@@ -18,13 +18,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.supervisorScope
 
 class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
@@ -108,8 +108,8 @@ class OfflineFirstPlaylistRepository(
         val currentPlaylists =
             db.playlistDao().getVideoWithPlaylists(videoId)?.playlists?.map { it.playlistId }
                 ?: emptyList()
-
-        coroutineScope {
+        
+        supervisorScope {
             playlistsMap.map { (playlist, isInPlaylist) ->
                 async {
                     when {
@@ -161,6 +161,7 @@ class OfflineFirstPlaylistRepository(
             val firstPage = PlaylistRemoteDataSource.fetchFirstPage(playlist)
             val ids =
                 db.videoDao().upsertAndReturnIds(*firstPage.map { it.toEntity() }.toTypedArray())
+            
             db.playlistDao().addToPlaylist(
                 *ids
                     .map {
@@ -171,6 +172,7 @@ class OfflineFirstPlaylistRepository(
                     }
                     .toTypedArray()
             )
+            
             emit(Success)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage()")
     
@@ -205,7 +207,7 @@ class OfflineFirstPlaylistRepository(
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
         val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideos(playlistId)
-            ?.videos?.sortedBy { it.uploadDate }?.firstNotNullOfOrNull { it.thumbnail }
+            ?.videos?.maxBy { it.videoId }?.thumbnail
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }

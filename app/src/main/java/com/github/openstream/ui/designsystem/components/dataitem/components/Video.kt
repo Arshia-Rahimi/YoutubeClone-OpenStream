@@ -57,6 +57,7 @@ fun Video(
     removeFromPlaylist: ((VideoItem) -> Unit)? = null,
 ) {
     var isDropDownExpanded by remember { mutableStateOf(false) }
+    
     Row(
         modifier = modifier
             .fillMaxWidth()

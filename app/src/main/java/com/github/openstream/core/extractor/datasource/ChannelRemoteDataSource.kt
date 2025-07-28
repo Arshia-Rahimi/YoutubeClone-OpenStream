@@ -46,7 +46,7 @@ object ChannelRemoteDataSource {
                 name = channelExtractor.name,
                 subscriberCount = channelExtractor.subscriberCount,
                 description = channelExtractor.description,
-                avatar = channelExtractor.avatars.first().url,
+                avatar = channelExtractor.avatars.last().url,
                 isVerified = channelExtractor.isVerified,
                 url = url,
             )
