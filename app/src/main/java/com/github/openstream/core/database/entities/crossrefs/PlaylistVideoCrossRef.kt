@@ -11,4 +11,5 @@ import androidx.room.Index
 data class PlaylistVideoCrossRef(
     val playlistId: Long,
     val videoId: Long,
+    val timestamp: Long = System.currentTimeMillis(),
 )

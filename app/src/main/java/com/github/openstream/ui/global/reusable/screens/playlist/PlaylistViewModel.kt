@@ -132,7 +132,10 @@ class PlaylistViewModel(
                 }
         
         val playlist = playlist.value
-        playlistRepo.getPlaylistSavedVideos(playlist as PlaylistItem.LocalPlaylistItem)
+        playlistRepo.getPlaylistSavedVideos(
+            playlist as PlaylistItem.LocalPlaylistItem,
+            playlist.id in DefaultPlaylists.all
+        )
             .onEach { newVideos ->
                 videos.clear()
                 videos.addAll(newVideos ?: emptyList())

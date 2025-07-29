@@ -37,7 +37,10 @@ interface PlaylistRepository {
     
     fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean>
     
-    fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>?>
+    fun getPlaylistSavedVideos(
+        playlist: PlaylistItem.LocalPlaylistItem,
+        sortFromNewest: Boolean = false
+    ): Flow<List<VideoItem>?>
 
     // youtube playlists
     fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<PlaylistExtractor>>

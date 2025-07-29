@@ -20,6 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -132,10 +133,18 @@ class OfflineFirstPlaylistRepository(
 
     override fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean> =
         db.playlistDao().isInPlaylist(videoId, playlistId)
-
-    override fun getPlaylistSavedVideos(playlist: PlaylistItem.LocalPlaylistItem): Flow<List<VideoItem>?> =
-        db.playlistDao().getPlaylistWithVideosFlow(playlist.id)
-            .map { it?.videos?.map { video -> video.toDataItem() } }
+    
+    override fun getPlaylistSavedVideos(
+        playlist: PlaylistItem.LocalPlaylistItem,
+        sortFromNewest: Boolean
+    ): Flow<List<VideoItem>?> =
+        when (sortFromNewest) {
+            false -> db.playlistDao().getPlaylistWithVideosFlow(playlist.id)
+                .map { it?.videos?.map { video -> video.toDataItem() } }
+            
+            true -> db.playlistDao().getPlaylistWithVideosFlowSorted(playlist.id)
+                .map { it?.videos?.map { video -> video.toDataItem() } }
+        }
     //
 
     // youtube playlists
@@ -206,8 +215,8 @@ class OfflineFirstPlaylistRepository(
     //
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
-        val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideos(playlistId)
-            ?.videos?.maxBy { it.videoId }?.thumbnail
+        val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideosFlowSorted(playlistId)
+            .first()?.videos?.first()?.thumbnail
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }
