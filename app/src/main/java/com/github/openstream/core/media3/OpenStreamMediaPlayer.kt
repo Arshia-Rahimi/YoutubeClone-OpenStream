@@ -189,10 +189,12 @@ class OpenStreamMediaPlayer(
         _currentQuality.value = videoOption
         
         val wasPlaying = player.isPlaying
-        player.pause()
         
         val currentPosition = player.currentPosition
         val mediaSource = videoData.getMediaSource(videoOption)
+        
+        player.pause()
+        player.clearMediaItems()
         player.setMediaSource(mediaSource)
         player.prepare()
         player.seekTo(currentPosition)
@@ -215,6 +217,7 @@ class OpenStreamMediaPlayer(
         
         val wasPlaying = player.isPlaying
         player.pause()
+        player.clearMediaItems()
         
         if (isAudioOnly) {
             logger.i(this::class.simpleName, "switch to audio only")
