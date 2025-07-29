@@ -32,8 +32,6 @@ import com.github.openstream.R
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.shared.dataitem.ChannelItem
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
-import com.github.openstream.ui.global.reusable.popups.PopupController
-import com.github.openstream.ui.global.reusable.popups.confirmationdialog.model.Confirmation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +39,7 @@ fun ChannelTopBar(
     item: ChannelItem,
     openBottomSheet: () -> Unit,
     subscribe: (ChannelItem) -> Unit,
+    unSubscribe: (ChannelItem) -> Unit,
     channelId: Long?,
 ) {
     CenterAlignedTopAppBar(
@@ -111,11 +110,7 @@ fun ChannelTopBar(
                     }
 
                     else -> Button(
-                        onClick = {
-                            PopupController.openConfirmationDialog(
-                                Confirmation.UnsubscribeItem(channelId)
-                            )
-                        },
+                        onClick = { unSubscribe(item) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF242424),
                         )
@@ -150,6 +145,7 @@ private fun Preview() {
             openBottomSheet = {},
             subscribe = {},
             channelId = null,
+            unSubscribe = {},
         )
     }
 }

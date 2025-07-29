@@ -152,4 +152,21 @@ class ChannelViewModel(
             ).collect()
         }
     }
+    
+    fun unSubscribe(channel: ChannelItem) {
+        val id = channelId.value ?: return
+        viewModelScope.launch {
+            channelRepo.unSubscribe(
+                ChannelItem.OfflineFirstChannelItem(
+                    name = channel.name,
+                    url = channel.url,
+                    avatar = channel.avatar,
+                    description = channel.description,
+                    subscriberCount = channel.subscriberCount,
+                    isVerified = channel.isVerified,
+                    id = id,
+                )
+            ).collect()
+        }
+    }
 }

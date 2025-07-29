@@ -19,11 +19,6 @@ data class PlaylistWithVideos(
 
 data class PlaylistWithVideosWithPivot(
     @Embedded val playlist: PlaylistEntity,
-    @Relation(
-        parentColumn = "playlistId",
-        entityColumn = "videoId",
-        associateBy = Junction(PlaylistVideoCrossRef::class),
-    )
-    val videos: List<VideoEntity>,
+    @Embedded val video: VideoEntity,
     @Embedded(prefix = "pivot_") val pivot: PlaylistVideoCrossRef
 )

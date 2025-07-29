@@ -78,9 +78,9 @@ interface PlaylistDao {
     INNER JOIN playlist_video pv ON p.playlistId = pv.playlistId
     INNER JOIN videos v ON v.videoId = pv.videoId
     WHERE p.playlistId = :id
-    ORDER BY pv.timestamp"""
+    ORDER BY pv.timestamp DESC"""
     )
-    fun getPlaylistWithVideosFlowSorted(id: Long): Flow<PlaylistWithVideosWithPivot?>
+    fun getPlaylistWithVideosFlowSorted(id: Long): Flow<List<PlaylistWithVideosWithPivot?>>
     
     @Query("DELETE FROM playlist_video")
     suspend fun deleteAllVideos()

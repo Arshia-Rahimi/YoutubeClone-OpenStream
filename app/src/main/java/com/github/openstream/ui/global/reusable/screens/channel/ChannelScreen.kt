@@ -76,6 +76,7 @@ fun ChannelScreen(
             subscribe = viewModel::subscribe,
             navigateBack = navigateBack,
             toPlaylistScreen = toPlaylistScreen,
+            unSubscribe = viewModel::unSubscribe,
             getTabNextPage = viewModel::getTabNextPage,
             getTabFirstPage = viewModel::getTabFirstPage,
             addToWatchLater = viewModel::addToWatchLater,
@@ -98,6 +99,7 @@ private fun ChannelScreen(
     channelId: Long?,
     savePlaylist: (PlaylistItem.OnlinePlaylistItem) -> Unit,
     subscribe: (ChannelItem) -> Unit,
+    unSubscribe: (ChannelItem) -> Unit,
 ) {
     val pagerState = rememberPagerState { tabResults.size }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -124,6 +126,7 @@ private fun ChannelScreen(
                 subscribe = subscribe,
                 channelId = channelId,
                 openBottomSheet = { isBottomSheetVisible = true },
+                unSubscribe = unSubscribe,
             )
         }
     ) { ip ->

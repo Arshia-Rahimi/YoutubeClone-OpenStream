@@ -143,7 +143,7 @@ class OfflineFirstPlaylistRepository(
                 .map { it?.videos?.map { video -> video.toDataItem() } }
             
             true -> db.playlistDao().getPlaylistWithVideosFlowSorted(playlist.id)
-                .map { it?.videos?.map { video -> video.toDataItem() } }
+                .map { stream -> stream.mapNotNull { data -> data?.video?.toDataItem() } }
         }
     //
 
@@ -216,7 +216,7 @@ class OfflineFirstPlaylistRepository(
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
         val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideosFlowSorted(playlistId)
-            .first()?.videos?.first()?.thumbnail
+            .first().first()?.video?.thumbnail
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }
