@@ -18,8 +18,8 @@ data class PlaylistEntity(
     val url: String? = null,
 ) : OpenStreamEntity {
     fun toDataItem(): PlaylistItem =
-        when {
-            url == null -> PlaylistItem.LocalOnlyPlaylistItem(
+        when (url) {
+            null -> PlaylistItem.LocalOnlyPlaylistItem(
                 name = name,
                 thumbnail = thumbnail,
                 count = count,
