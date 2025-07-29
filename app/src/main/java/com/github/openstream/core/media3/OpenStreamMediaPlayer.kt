@@ -38,6 +38,8 @@ class OpenStreamMediaPlayer(
     private val logger: Logger,
 ) {
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
+        repeatMode = Player.REPEAT_MODE_ALL
+        
         addListener(object : Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 super.onPlayWhenReadyChanged(playWhenReady, reason)

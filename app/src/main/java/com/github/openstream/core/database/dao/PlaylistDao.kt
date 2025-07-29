@@ -70,13 +70,27 @@ interface PlaylistDao {
     
     @Query(
         """
-    SELECT p.*, v.*,
-           pv.playlistId AS pivot_playlistId,
-           pv.videoId AS pivot_videoId,
-           pv.timestamp AS pivot_timestamp
+    SELECT
+        p.*,
+    
+        v.videoId AS video_videoId,
+        v.name AS video_name,
+        v.url AS video_url,
+        v.channel_name AS video_channel_name,
+        v.thumbnail AS video_thumbnail,
+        v.view_count AS video_view_count,
+        v.upload_date AS video_upload_date,
+        v.stream_type AS video_stream_type,
+        v.duration AS video_duration,
+        v.channel_url AS video_channel_url,
+        v.is_channel_verified AS video_is_channel_verified,
+
+        pv.playlistId AS pivot_playlistId,
+        pv.videoId AS pivot_videoId,
+        pv.timestamp AS pivot_timestamp
     FROM playlists p
     INNER JOIN playlist_video pv ON p.playlistId = pv.playlistId
-    INNER JOIN videos v ON v.videoId = pv.videoId
+    INNER JOIN videos v ON pv.videoId = v.videoId
     WHERE p.playlistId = :id
     ORDER BY pv.timestamp DESC"""
     )
