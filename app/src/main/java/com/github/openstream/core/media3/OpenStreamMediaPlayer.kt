@@ -20,10 +20,13 @@ import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +40,8 @@ class OpenStreamMediaPlayer(
     private val scope: CoroutineScope,
     private val logger: Logger,
 ) {
+    private val mainThreadScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
         repeatMode = Player.REPEAT_MODE_ALL
         
@@ -91,14 +96,14 @@ class OpenStreamMediaPlayer(
             emit(player.currentPosition)
             delay(500L)
         }
-    }
+    }.stateIn(mainThreadScope, SharingStarted.WhileSubscribed(5000), 0L)
     
     val bufferedPosition = flow {
         while (true) {
             emit(player.bufferedPosition)
             delay(500L)
         }
-    }
+    }.stateIn(mainThreadScope, SharingStarted.WhileSubscribed(5000), 0L)
     
     private val _playbackSpeed = MutableStateFlow(1f)
     val playbackSpeed = _playbackSpeed.asStateFlow()

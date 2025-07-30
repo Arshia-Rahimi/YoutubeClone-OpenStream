@@ -40,9 +40,7 @@ class PlayerViewModel(
     val isAudioOnlyModeEnabled = player.isAudioOnlyModeEnabled
     
     val currentPosition = player.playerPosition
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
     val bufferedPosition = player.bufferedPosition
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
     val playbackSpeed = player.playbackSpeed
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 1f)
    
