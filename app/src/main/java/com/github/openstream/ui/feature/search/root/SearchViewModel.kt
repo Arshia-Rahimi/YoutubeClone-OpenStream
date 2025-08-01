@@ -15,6 +15,7 @@ import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.SearchResult
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -40,12 +41,15 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
     
+    private var searchJob: Job? = null
+    
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
     
     fun search() {
-        searchRepo.search(searchQuery.value)
+        searchJob?.cancel()
+        searchJob = searchRepo.search(searchQuery.value)
             .onEach {
                 _uiState.value = when (it) {
                     is Resource.Loading -> UiState.Loading
@@ -62,7 +66,8 @@ class SearchViewModel(
     fun getNextPage() {
         if (_uiState.value !is UiState.Success) return
         (_uiState.value as UiState.Success).searchResult.let {
-            searchRepo.getNextPage(it).onEach { result ->
+            searchJob?.cancel()
+            searchJob = searchRepo.getNextPage(it).onEach { result ->
                 when (result) {
                     is Resource.Success -> items.addAll(result.data)
                     else -> {}

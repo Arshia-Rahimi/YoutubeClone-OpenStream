@@ -23,6 +23,7 @@ import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,6 +79,8 @@ class OpenStreamMediaPlayer(
     }
     private val session = MediaSession.Builder(context, player).build()
     
+    private var fetchJob: Job? = null
+    
     sealed interface FetchingState {
         data object Loading : FetchingState
         data class Success(val video: VideoData) : FetchingState
@@ -120,7 +123,8 @@ class OpenStreamMediaPlayer(
     
     fun start(video: VideoItem) {
         logger.i(this::class.simpleName, "start player")
-        scope.launch {
+        fetchJob?.cancel()
+        fetchJob = scope.launch {
             withContext(Dispatchers.Main) {
                 player.pause()
                 player.clearMediaItems()
