@@ -23,10 +23,13 @@ import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,8 +48,12 @@ class OpenStreamMediaPlayer(
         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
         .build()
             
+    private val mainThreadScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
         setAudioAttributes(attributes, true)
+        repeatMode = Player.REPEAT_MODE_ALL
+        
         addListener(object : Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 super.onPlayWhenReadyChanged(playWhenReady, reason)
@@ -99,14 +106,14 @@ class OpenStreamMediaPlayer(
             emit(player.currentPosition)
             delay(500L)
         }
-    }
+    }.stateIn(mainThreadScope, SharingStarted.WhileSubscribed(5000), 0L)
     
     val bufferedPosition = flow {
         while (true) {
             emit(player.bufferedPosition)
             delay(500L)
         }
-    }
+    }.stateIn(mainThreadScope, SharingStarted.WhileSubscribed(5000), 0L)
     
     private val _playbackSpeed = MutableStateFlow(1f)
     val playbackSpeed = _playbackSpeed.asStateFlow()
@@ -197,10 +204,12 @@ class OpenStreamMediaPlayer(
         _currentQuality.value = videoOption
         
         val wasPlaying = player.isPlaying
-        player.pause()
         
         val currentPosition = player.currentPosition
         val mediaSource = videoData.getMediaSource(videoOption)
+        
+        player.pause()
+        player.clearMediaItems()
         player.setMediaSource(mediaSource)
         player.prepare()
         player.seekTo(currentPosition)
@@ -223,6 +232,7 @@ class OpenStreamMediaPlayer(
         
         val wasPlaying = player.isPlaying
         player.pause()
+        player.clearMediaItems()
         
         if (isAudioOnly) {
             logger.i(this::class.simpleName, "switch to audio only")

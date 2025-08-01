@@ -63,20 +63,6 @@ class OfflineFirstChannelRepository(
     ): Flow<Resource<List<DataItem>?>> =
         flow {
             val nextPage = ChannelRemoteDataSource.fetchTab(channelExtractor, tab)
-            if (tab.name in "videos" && channel is ChannelItem.OfflineFirstChannelItem) {
-                val ids = db.videoDao()
-                    .upsertAndReturnIds(
-                        *nextPage?.filterIsInstance<VideoItem>()
-                            ?.map { it.toEntity() }
-                            ?.toTypedArray() ?: emptyArray()
-                    )
-                db.channelDao()
-                    .upsertChannelVideos(
-                        *ids
-                            .map { ChannelVideoCrossRef(channel.id, it) }
-                            .toTypedArray()
-                    )
-            }
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage()")
     
@@ -87,20 +73,6 @@ class OfflineFirstChannelRepository(
     ): Flow<Resource<List<DataItem>?>> =
         flow {
             val nextPage = ChannelRemoteDataSource.fetchNextPage(channelExtractor, tab)
-            if (tab.name in "videos" && channel is ChannelItem.OfflineFirstChannelItem) {
-                val ids = db.videoDao()
-                    .upsertAndReturnIds(
-                        *nextPage?.filterIsInstance<VideoItem>()
-                            ?.map { it.toEntity() }
-                            ?.toTypedArray() ?: emptyArray()
-                    )
-                db.channelDao()
-                    .upsertChannelVideos(
-                        *ids
-                            .map { ChannelVideoCrossRef(channel.id, it) }
-                            .toTypedArray()
-                    )
-            }
             emit(nextPage)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage()")
     
@@ -108,6 +80,12 @@ class OfflineFirstChannelRepository(
         flow {
             supervisorScope {
                 val subscriptions = subscriptions.first()
+                subscriptions.map {
+                    async {
+                        db.channelDao().deleteAllChannelVideos(it.id)
+                    }
+                }.awaitAll()
+                
                 subscriptions.map { channel ->
                     async {
                         val extractor = ChannelRemoteDataSource.getChannelData(channel.url)
