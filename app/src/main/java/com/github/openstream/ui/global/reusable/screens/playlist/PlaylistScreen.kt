@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.openstream.core.common.compose.ObserveForEvents
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.core.shared.dataitem.DataItem
 import com.github.openstream.core.shared.dataitem.PlaylistItem
@@ -21,6 +22,7 @@ import org.koin.core.parameter.parametersOf
 fun PlaylistScreen(
     playlist: PlaylistItem,
     toChannelScreen: (String) -> Unit,
+    navigateBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<PlaylistViewModel>(
         parameters = { parametersOf(playlist) },
@@ -28,6 +30,10 @@ fun PlaylistScreen(
     )
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val playlist by viewModel.playlist.collectAsStateWithLifecycle()
+
+    ObserveForEvents(viewModel.navBack) {
+        navigateBack()
+    }
     
     PlaylistScreen(
         playlist = playlist,

@@ -85,6 +85,7 @@ fun SettingsNavHost(
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Settings.Playlist>().playlist,
                 toChannelScreen = { url -> navController.navigate(Tabs.Settings.Channel(url)) },
+                navigateBack = { navController.navigateUp() },
             )
         }
         composable<Tabs.Settings.Log> {

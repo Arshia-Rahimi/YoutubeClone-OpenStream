@@ -85,6 +85,7 @@ fun LibraryNavHost(
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Library.Playlist>().playlist,
                 toChannelScreen = { url -> navController.navigate(Tabs.Library.Channel(url)) },
+                navigateBack = { navController.navigateUp() },
             )
         }
     }

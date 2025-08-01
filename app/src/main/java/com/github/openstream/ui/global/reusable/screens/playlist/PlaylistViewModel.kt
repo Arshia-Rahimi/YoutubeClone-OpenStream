@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.onFirst
+import com.github.openstream.core.common.util.sendPulse
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.core.shared.dataitem.DataItem
@@ -15,6 +16,7 @@ import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.OfflineFirstPlaylistExtractor
 import com.github.openstream.core.shared.extractor.OnlinePlaylistExtractor
 import com.github.openstream.core.shared.extractor.PlaylistExtractor
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 
 class PlaylistViewModel(
@@ -45,6 +48,9 @@ class PlaylistViewModel(
         }
     
     var playlistObject: PlaylistExtractor? = null
+
+    private val _navBack = Channel<Unit>()
+    val navBack = _navBack.receiveAsFlow()
     
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -68,7 +74,7 @@ class PlaylistViewModel(
                 playlistRepo.getPlaylistSavedVideos((playlistObject as OfflineFirstPlaylistExtractor).data)
                     .onEach { newVideos ->
                         videos.clear()
-                        videos.addAll(newVideos ?: emptyList())
+                        newVideos?.let { videos.addAll(it) } ?: _navBack.sendPulse()
                     }.launchIn(viewModelScope)
             }
         }
@@ -139,7 +145,7 @@ class PlaylistViewModel(
         )
             .onEach { newVideos ->
                 videos.clear()
-                videos.addAll(newVideos ?: emptyList())
+                newVideos?.let { videos.addAll(it) } ?: _navBack.sendPulse()
             }.onFirst {
                 // if is offlineFirst and there is no videos saved fetch it
                 if (videos.isEmpty() && playlist is PlaylistItem.OfflineFirstPlaylistItem) {

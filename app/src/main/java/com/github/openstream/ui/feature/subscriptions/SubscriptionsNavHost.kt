@@ -85,6 +85,7 @@ fun SubscriptionsNavHost(
             PlaylistScreen(
                 playlist = it.toRoute<Tabs.Subscriptions.Playlist>().playlist,
                 toChannelScreen = { url -> navController.navigate(Tabs.Subscriptions.Channel(url)) },
+                navigateBack = { navController.navigateUp() },
             )
         }
     }

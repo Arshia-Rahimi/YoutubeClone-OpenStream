@@ -19,6 +19,6 @@ data class PlaylistWithVideos(
 
 data class PlaylistWithVideosWithPivot(
     @Embedded val playlist: PlaylistEntity,
-    @Embedded val video: VideoEntity,
+    @Embedded(prefix = "video_") val video: VideoEntity,
     @Embedded(prefix = "pivot_") val pivot: PlaylistVideoCrossRef
 )

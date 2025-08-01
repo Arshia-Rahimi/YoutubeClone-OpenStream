@@ -19,58 +19,69 @@ interface PlaylistDao {
     companion object {
         const val TABLE_NAME = "playlists"
     }
-    
+
     @Query("SELECT * FROM $TABLE_NAME ORDER BY playlistId")
     fun indexFlow(): Flow<List<PlaylistEntity>>
-    
+
     @Query("SELECT * FROM $TABLE_NAME ORDER BY playlistId")
     fun index(): List<PlaylistEntity>
-    
+
     @Query("SELECT * FROM $TABLE_NAME WHERE playlistId = :playlistId")
     fun get(playlistId: Long): PlaylistEntity?
-    
+
     @Query("SELECT * FROM $TABLE_NAME WHERE url = :url")
     fun get(url: String): PlaylistEntity?
-    
+
     @Query("SELECT * FROM $TABLE_NAME WHERE playlistId = :playlistId")
     fun getAsFlow(playlistId: Long): Flow<PlaylistEntity?>
-    
+
     @Insert
     suspend fun insert(vararg playlistEntities: PlaylistEntity): List<Long>
-    
+
     @Upsert
     suspend fun upsert(vararg playlistEntities: PlaylistEntity)
-    
+
     @Delete
     suspend fun delete(vararg playlistEntities: PlaylistEntity)
-    
+
     @Query("UPDATE $TABLE_NAME SET thumbnail = :thumbnail WHERE playlistId = :id")
     suspend fun updatePlaylistThumbnail(id: Long, thumbnail: String?)
-    
+
     @Query("UPDATE $TABLE_NAME SET count = :count WHERE playlistId = :id")
     suspend fun updatePlaylistCount(id: Long, count: Long)
-    
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToPlaylist(vararg playlistVideoCrossRef: PlaylistVideoCrossRef)
-    
+
     @Delete
     suspend fun removeFromPlaylist(vararg playlistVideoCrossRef: PlaylistVideoCrossRef)
-    
+
     @Transaction
     @Query("SELECT * FROM videos WHERE videoId = :id")
     suspend fun getVideoWithPlaylists(id: Long): VideoWithPlaylists?
-    
+
     @Transaction
     @Query("SELECT * FROM playlists WHERE playlistId = :id")
     suspend fun getPlaylistWithVideos(id: Long): PlaylistWithVideos?
-    
+
     @Transaction
     @Query("SELECT * FROM playlists WHERE playlistId = :id")
     fun getPlaylistWithVideosFlow(id: Long): Flow<PlaylistWithVideos?>
-    
+
     @Query(
         """
-    SELECT p.*, v.*,
+    SELECT p.*,
+            v.videoId AS video_videoId,
+            v.url AS video_url,
+            v.name AS video_name,
+            v.thumbnail AS video_thumbnail,
+            v.view_count AS video_view_count,
+            v.upload_date AS video_upload_date,
+            v.stream_type AS video_stream_type,
+            v.duration AS video_duration,
+            v.channel_name AS video_channel_name,
+            v.channel_url AS video_channel_url,
+            v.is_channel_verified AS video_is_channel_verified,
            pv.playlistId AS pivot_playlistId,
            pv.videoId AS pivot_videoId,
            pv.timestamp AS pivot_timestamp
@@ -81,10 +92,10 @@ interface PlaylistDao {
     ORDER BY pv.timestamp DESC"""
     )
     fun getPlaylistWithVideosFlowSorted(id: Long): Flow<List<PlaylistWithVideosWithPivot?>>
-    
+
     @Query("DELETE FROM playlist_video")
     suspend fun deleteAllVideos()
-    
+
     @Query(
         """
         SELECT EXISTS(
@@ -94,5 +105,5 @@ interface PlaylistDao {
     """
     )
     fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean>
-    
+
 }

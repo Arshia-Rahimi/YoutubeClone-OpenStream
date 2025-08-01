@@ -2,6 +2,8 @@ package com.github.openstream.core.media3
 
 import android.content.Context
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
@@ -12,6 +14,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.session.MediaSession
 import com.github.openstream.core.common.util.Logger
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.VideoRepository
@@ -37,7 +40,13 @@ class OpenStreamMediaPlayer(
     private val scope: CoroutineScope,
     private val logger: Logger,
 ) {
+    private val attributes = AudioAttributes.Builder()
+        .setUsage(C.USAGE_MEDIA)
+        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+        .build()
+            
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
+        setAudioAttributes(attributes, true)
         addListener(object : Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 super.onPlayWhenReadyChanged(playWhenReady, reason)
@@ -60,6 +69,7 @@ class OpenStreamMediaPlayer(
             }
         })
     }
+    private val session = MediaSession.Builder(context, player).build()
     
     sealed interface FetchingState {
         data object Loading : FetchingState
