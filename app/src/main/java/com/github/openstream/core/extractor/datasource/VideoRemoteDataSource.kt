@@ -31,6 +31,7 @@ object VideoRemoteDataSource {
             audioStream = extractor.audioStreams.first().content,
             likeCount = extractor.likeCount,
             channelAvatar = extractor.uploaderAvatars.first().url,
+            position = 0L,
             streamType = when (extractor.streamType) {
                 StreamType.LIVE_STREAM -> com.github.openstream.core.shared.StreamType.LIVE_STREAM
                 StreamType.POST_LIVE_STREAM -> com.github.openstream.core.shared.StreamType.POST_LIVE_STREAM

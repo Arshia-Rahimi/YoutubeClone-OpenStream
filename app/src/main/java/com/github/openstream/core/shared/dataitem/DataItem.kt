@@ -27,9 +27,10 @@ data class VideoItem(
     val isShort: Boolean,
     val channelAvatars: String?,
     val id: Long? = null,
-    val position: Long = 0,
+    val position: Long,
 ) : DataItem {
     override fun toEntity(): VideoEntity = VideoEntity(
+        videoId = id ?: 0L,
         name = name,
         url = url,
         thumbnail = thumbnail,
@@ -134,6 +135,7 @@ sealed interface PlaylistItem : DataItem {
                 isChannelVerified = isChannelVerified,
                 url = url,
                 thumbnail = thumbnail ?: "",
+                playlistId = 0,
             )
 
         fun toOfflineFirstPlaylistItem(playlistId: Long) =
@@ -145,7 +147,7 @@ sealed interface PlaylistItem : DataItem {
                 channelUrl = channelUrl,
                 channelName = channelName,
                 isChannelVerified = isChannelVerified,
-                url = url
+                url = url,
             )
     }
 }
@@ -180,6 +182,7 @@ sealed interface ChannelItem : DataItem {
             subscriberCount = subscriberCount,
             description = description,
             avatar = avatar,
+            channelId = 0,
         )
 
         fun toOfflineFirstChannelItem(id: Long) = OfflineFirstChannelItem(

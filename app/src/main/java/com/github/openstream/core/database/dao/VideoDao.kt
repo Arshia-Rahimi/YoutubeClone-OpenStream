@@ -13,6 +13,9 @@ import com.github.openstream.core.shared.StreamType
 
 @Dao
 interface VideoDao {
+    
+    @Query("SELECT * FROM videos")
+    suspend fun index(): List<VideoEntity>
 
     @Query("SELECT * FROM videos WHERE videoId = :videoId")
     suspend fun get(videoId: Long): VideoEntity

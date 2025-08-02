@@ -13,7 +13,7 @@ val databaseModule = module {
         Room.databaseBuilder(
             androidContext(),
             OpenStreamDatabase::class.java,
-            OpenStreamDatabase.Companion.NAME,
+            OpenStreamDatabase.NAME,
         ).addCallback(object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)

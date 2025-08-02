@@ -21,12 +21,12 @@ data class VideoData(
     val audioStream: String,
     val videoOptions: List<VideoOption>,
     val id: Long? = null,
-    val position: Long = 0,
+    val position: Long,
 ) {
     fun toDataItem() = VideoItem(
         id = id,
         name = name,
-        thumbnail = null,
+        thumbnail = thumbnail,
         url = url,
         streamType = streamType,
         channelName = channelName,
@@ -38,6 +38,7 @@ data class VideoData(
         shortDescription = description,
         viewCount = viewCount,
         uploadDate = uploadDate,
+        position = position,
     )
 
 }

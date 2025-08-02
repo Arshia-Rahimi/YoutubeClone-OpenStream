@@ -5,9 +5,10 @@ import java.time.Instant
 import java.util.Locale
 
 fun Long.toTime(): String {
-    val hours = this / 3600
-    val minutes = (this / 60) - (hours * 60)
-    val seconds = this % 60
+    val totalSeconds = this / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds / 60) - (hours * 60)
+    val seconds = totalSeconds % 60
 
     val hoursString = if (hours == 0L) "" else if (hours in 1..9) "0$hours:" else "$hours:"
     val minutesString = if (minutes < 10) "0$minutes:" else "$minutes:"

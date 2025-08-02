@@ -269,7 +269,7 @@ private fun PlayerSheet(
                     )
                     if (fetchingState is OpenStreamMediaPlayer.FetchingState.Success) {
                         Text(
-                            text = (currentPosition / 1000).toTime() + " / " + (fetchingState.video.duration / 1000).toTime(),
+                            text = currentPosition.toTime() + " / " + fetchingState.video.duration.toTime(),
                             color = MaterialTheme.colorScheme.onBackground,
                             maxLines = 1,
                         )

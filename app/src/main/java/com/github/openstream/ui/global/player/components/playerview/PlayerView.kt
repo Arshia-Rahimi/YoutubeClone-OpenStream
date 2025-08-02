@@ -209,7 +209,6 @@ private fun BoxScope.PlayerController(
     currentPosition: Long,
     bufferedPosition: Long,
 ) {
-    // todo: fix player controller in full screen
     
     Column(
         modifier = Modifier
@@ -262,11 +261,10 @@ private fun BoxScope.PlayerController(
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            val progress = currentPosition / videoData.duration.toFloat()
+            val progress = (currentPosition / videoData.duration.toFloat())
             var sliderProgress by remember { mutableFloatStateOf(0f) }
             var isUserChangingSliderValue by remember { mutableStateOf(false) }
             
-            // todo: fix the thumb
             LaunchedEffect(isBuffering, isUserChangingSliderValue, progress) {
                 if (!isUserChangingSliderValue && !isBuffering) {
                     sliderProgress = progress
@@ -293,8 +291,7 @@ private fun BoxScope.PlayerController(
                             .background(Color(0xFF808080)),
                     ) {
                         val bufferedWidth =
-                            size.width * (bufferedPosition.toFloat() / videoData.duration.toFloat())
-                                .coerceIn(0f, 1f)
+                            size.width * (bufferedPosition / videoData.duration.toFloat()).coerceIn(0f, 1f)
                         val progressWidth = size.width * it.value
                         
                         clipRect {
@@ -333,7 +330,7 @@ private fun BoxScope.PlayerController(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = (currentPosition / 1000).toTime() + " / " + (videoData.duration / 1000).toTime(),
+                    text = currentPosition.toTime() + " / " + videoData.duration.toTime(),
                     color = Color.White,
                     maxLines = 1,
                 )

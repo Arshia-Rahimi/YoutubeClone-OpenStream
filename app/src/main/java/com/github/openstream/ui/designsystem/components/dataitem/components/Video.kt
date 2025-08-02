@@ -102,12 +102,12 @@ fun Video(
                     color = Color.White,
                 )
             }
+            val progress = item.position.toFloat() / item.duration
             Canvas(
                 modifier = Modifier.fillMaxWidth()
                     .height(2.dp)
                     .align(Alignment.BottomStart),
             ) {
-                val progress = (item.position / item.duration).toFloat()
                 clipRect {
                     drawRect(
                         color = Color(0xFFCC2849),

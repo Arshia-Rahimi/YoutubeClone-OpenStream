@@ -1,7 +1,7 @@
 package com.github.openstream.core.data.impl
 
 import android.content.Context
-import coil3.imageLoader
+import com.github.openstream.core.common.android.restartApp
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
@@ -16,8 +16,8 @@ import kotlinx.coroutines.supervisorScope
 class OpenStreamCacheRepository(
     private val db: OpenStreamDatabase,
     private val context: Context,
-): CacheRepository {
-    
+) : CacheRepository {
+
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> =
         flow {
             supervisorScope {
@@ -30,19 +30,11 @@ class OpenStreamCacheRepository(
                 emit(Success)
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory()")
-    
+
     override fun clearAllCache(): Flow<Resource<Success>> = flow {
-        supervisorScope {
-            val d1 = async { db.clearAllTables() }
-            val d2 = async {
-                val imageLoader = context.imageLoader
-                imageLoader.diskCache?.clear()
-                imageLoader.memoryCache?.clear()
-            }
-            d1.await()
-            d2.await()
-            emit(Success)
-        }
+        context.deleteDatabase(OpenStreamDatabase.NAME)
+        emit(Success)
+        context.restartApp()
     }.asResult(Dispatchers.IO, this::class.simpleName, "clearAllCache()")
-    
+
 }

@@ -45,7 +45,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
         channelUrl = uploaderUrl,
         viewCount = viewCount,
         shortDescription = shortDescription ?: "",
-        duration = duration,
+        duration = duration * 1000,
         isChannelVerified = isUploaderVerified,
         isShort = isShortFormContent,
         channelAvatars = uploaderAvatars.lastOrNull()?.url,
@@ -56,6 +56,7 @@ private fun InfoItem.toDataItem(): DataItem? = when (this) {
             StreamType.POST_LIVE_STREAM -> com.github.openstream.core.shared.StreamType.POST_LIVE_STREAM
             else -> com.github.openstream.core.shared.StreamType.NORMAL
         },
+        position = 0L,
     )
 
     else -> null

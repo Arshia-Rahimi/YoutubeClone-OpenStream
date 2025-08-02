@@ -21,7 +21,7 @@ data class VideoEntity(
     @ColumnInfo("channel_name") val channelName: String,
     @ColumnInfo("channel_url") val channelUrl: String,
     @ColumnInfo("is_channel_verified") val isChannelVerified: Boolean,
-    val position: Long = 0,
+    val position: Long,
 ) : OpenStreamEntity {
     fun toDataItem() = VideoItem(
         name = name,

@@ -124,7 +124,6 @@ fun SearchField(
                         NoRippleIconButton(
                             onClick = {
                                 setSearchQuery("")
-                                focusManager.clearFocus()
                             },
                         ) {
                             Icon(
