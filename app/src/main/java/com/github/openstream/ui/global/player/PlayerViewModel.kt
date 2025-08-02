@@ -44,7 +44,6 @@ class PlayerViewModel(
     val playbackSpeed = player.playbackSpeed
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 1f)
    
-
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
 
@@ -97,7 +96,7 @@ class PlayerViewModel(
         is PlayerAction.Retry -> player.retry()
         is PlayerAction.Pause -> player.pause()
         is PlayerAction.Resume -> player.resume()
-        is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed.speed)
+        is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed.value)
     }
 
     fun updateSheetState(sheetState: PlayerSheetState) {

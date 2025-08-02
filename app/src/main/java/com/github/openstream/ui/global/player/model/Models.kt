@@ -11,7 +11,7 @@ enum class PlayerSheetState {
 }
 
 enum class PlaybackSpeed(
-    val speed: Float,
+    val value: Float,
     val string: String,
 ) {
     X_0_25(0.25f, "0.25"),
