@@ -128,7 +128,6 @@ class OpenStreamMediaPlayer(
 
     fun start(video: VideoItem) {
         logger.i(this::class.simpleName, "start player")
-        fetchJob?.cancel()
         clear()
         fetchJob = scope.launch {
             videoRepo.fetchVideo(video.url).collect {
@@ -167,6 +166,7 @@ class OpenStreamMediaPlayer(
 
     fun clear() {
         logger.i(this::class.simpleName, "clear player")
+        fetchJob?.cancel()
         player.pause()
         saveVideo()
         player.clearMediaItems()
