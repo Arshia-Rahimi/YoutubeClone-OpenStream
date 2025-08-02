@@ -110,9 +110,8 @@ class SearchViewModel(
                     val currentChannel =
                         (uiState.value as UiState.Success).searchResult.items
                             .filterIsInstance<ChannelItem>()
-                            .first { it.url == channel.url } as ChannelItem
-                    println(currentChannel)
-                    println(result.data)
+                            .firstOrNull { it.url == channel.url } ?: return@onEach
+                    
                     items.replaceFirstWith(result.data) {
                         it is ChannelItem && it.url == currentChannel.url
                     }
@@ -131,7 +130,7 @@ class SearchViewModel(
                     val currentChannel =
                         (uiState.value as UiState.Success).searchResult.items
                             .filterIsInstance<ChannelItem>()
-                            .first { it.url == channel.url } as ChannelItem
+                            .firstOrNull { it.url == channel.url } ?: return@onEach
                     
                     items.replaceFirstWith(result.data) {
                         it is ChannelItem && it.url == currentChannel.url
