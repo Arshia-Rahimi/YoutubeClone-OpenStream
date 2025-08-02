@@ -54,18 +54,6 @@ fun SettingsScreen(
                 }
             )
             settingsItem(
-                title = "clear disk image cache",
-                action = {
-                    Button(
-                        onClick = viewModel::clearDiskImageCache,
-                        enabled = !viewModel.diskImageCacheLoading,
-                    ) {
-                        if (viewModel.diskImageCacheLoading) CircularProgressIndicator()
-                        else Text("clear", fontSize = 12.sp)
-                    }
-                }
-            )
-            settingsItem(
                 title = "clear all cache",
                 action = {
                     Button(
@@ -93,7 +81,6 @@ fun SettingsScreen(
 
 private fun LazyListScope.settingsItem(
     title: String,
-    modifier: Modifier = Modifier,
     action: @Composable () -> Unit,
 ) {
     item {

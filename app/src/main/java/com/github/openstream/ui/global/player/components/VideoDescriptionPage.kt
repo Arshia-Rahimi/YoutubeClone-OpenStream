@@ -48,7 +48,6 @@ import com.github.openstream.core.common.util.timeAgo
 import com.github.openstream.core.common.util.toShortForm
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.shared.dataitem.ChannelItem
-import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
 import com.github.openstream.core.shared.extractor.data.VideoOption
 import com.github.openstream.core.shared.extractor.data.VideoQuality
@@ -84,7 +83,6 @@ fun VideoDescriptionPage(
                 scrollState = rememberScrollState(),
                 currentQuality = currentQuality,
                 toChannelScreen = toChannelScreen,
-                shareVideo = {},
                 toggleVideoLiked = toggleVideoLiked,
                 toggleVideoWatchLater = toggleVideoWatchLater,
                 videoLocalState = videoLocalState,
@@ -143,7 +141,6 @@ fun VideoDescription(
     isAudioOnlyModeEnabled: Boolean,
     currentQuality: VideoQuality?,
     toChannelScreen: (String) -> Unit,
-    shareVideo: (VideoItem) -> Unit,
     toggleVideoLiked: () -> Unit,
     toggleVideoWatchLater: () -> Unit,
     switchPlaybackQuality: (VideoOption) -> Unit,
@@ -322,19 +319,6 @@ fun VideoDescription(
                                 tint = Color.White,
                             )
                         }
-                    }
-                }
-            }
-            item {
-                OptionsRowItem {
-                    IconButton(
-                        onClick = { shareVideo(videoItem) },
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.share),
-                            contentDescription = "share video",
-                            tint = Color.White,
-                        )
                     }
                 }
             }

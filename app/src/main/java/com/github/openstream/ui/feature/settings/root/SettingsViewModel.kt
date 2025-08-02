@@ -16,7 +16,6 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     var localVideoHistoryLoading by mutableStateOf(false)
-    var diskImageCacheLoading by mutableStateOf(false)
     var clearCacheLoading by mutableStateOf(false)
 
     fun clearLocalVideoHistory() {
@@ -33,24 +32,6 @@ class SettingsViewModel(
                 }
 
                 else -> localVideoHistoryLoading = true
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    fun clearDiskImageCache() {
-        cacheRepo.clearDiskImageCache().onEach {
-            when (it) {
-                is Resource.Success -> {
-                    diskImageCacheLoading = false
-                    SnackBarController.sendEvent("cleared disk image cache")
-                }
-
-                is Resource.Error -> {
-                    diskImageCacheLoading = false
-                    SnackBarController.sendEvent("failed to clear disk image cache")
-                }
-
-                else -> diskImageCacheLoading = true
             }
         }.launchIn(viewModelScope)
     }

@@ -44,65 +44,66 @@ class OpenStreamMediaPlayer(
     private val scope: CoroutineScope,
     private val logger: Logger,
 ) {
-    private val attributes = AudioAttributes.Builder()
-        .setUsage(C.USAGE_MEDIA)
-        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-        .build()
-            
-    private val mainThreadScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    
+    sealed interface FetchingState {
+        data object Loading : FetchingState
+        data class Success(val video: VideoData) : FetchingState
+        data class Error(val videoItem: VideoItem, val message: String? = null) : FetchingState
+    }
+
+    val mainThreadScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
     val player: ExoPlayer = ExoPlayer.Builder(context).build().apply {
-        setAudioAttributes(attributes, true)
+        setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                .build(),
+            true
+        )
+
         repeatMode = Player.REPEAT_MODE_ALL
-        
+
         addListener(object : Player.Listener {
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 super.onPlayWhenReadyChanged(playWhenReady, reason)
                 _isPlaying.value = playWhenReady
             }
-            
+
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 _isBuffering.value = playbackState == Player.STATE_BUFFERING
             }
-            
+
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 logger.e("OpenStreamMediaPlayer", "player error", error)
             }
-            
+
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
                 super.onPlaybackParametersChanged(playbackParameters)
                 _playbackSpeed.value = playbackParameters.speed
             }
         })
     }
-    private val session = MediaSession.Builder(context, player).build()
-    
+
     private var fetchJob: Job? = null
-    
-    sealed interface FetchingState {
-        data object Loading : FetchingState
-        data class Success(val video: VideoData) : FetchingState
-        data class Error(val videoItem: VideoItem, val message: String? = null) : FetchingState
-    }
-    
+
     private val _isBuffering = MutableStateFlow(false)
     val isBuffering = _isBuffering.asStateFlow()
-    
+
     private val _fetchingState: MutableStateFlow<FetchingState> =
         MutableStateFlow(FetchingState.Loading)
     val fetchingState = _fetchingState.asStateFlow()
-    
+
     private val _currentQuality: MutableStateFlow<VideoOption?> = MutableStateFlow(null)
     val currentQuality = _currentQuality.asStateFlow()
-    
+
     private val _isAudioOnlyModeEnabled = MutableStateFlow(false)
     val isAudioOnlyModeEnabled = _isAudioOnlyModeEnabled.asStateFlow()
-    
+
     private val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
-    
+
     val playerPosition = isPlaying.transform { isPlaying ->
         emit(player.currentPosition)
         while (isPlaying) {
@@ -110,25 +111,26 @@ class OpenStreamMediaPlayer(
             delay(500L)
         }
     }.stateIn(mainThreadScope, SharingStarted.WhileSubscribed(5000), 0L)
-    
+
     val bufferedPosition = flow {
         while (true) {
             emit(player.bufferedPosition)
             delay(500L)
         }
     }.stateIn(mainThreadScope, SharingStarted.WhileSubscribed(5000), 0L)
-    
+
     private val _playbackSpeed = MutableStateFlow(1f)
     val playbackSpeed = _playbackSpeed.asStateFlow()
     
+    init { 
+        MediaSession.Builder(context, player).build()
+    }
+
     fun start(video: VideoItem) {
         logger.i(this::class.simpleName, "start player")
         fetchJob?.cancel()
+        clear()
         fetchJob = scope.launch {
-            withContext(Dispatchers.Main) {
-                player.pause()
-                player.clearMediaItems()
-            }
             videoRepo.fetchVideo(video.url).collect {
                 when (it) {
                     is Resource.Loading -> _fetchingState.value = FetchingState.Loading
@@ -137,7 +139,7 @@ class OpenStreamMediaPlayer(
                         _fetchingState.value =
                             FetchingState.Error(video, it.error?.localizedMessage ?: "")
                     }
-                    
+
                     is Resource.Success -> {
                         _fetchingState.value = FetchingState.Success(it.data)
                         withContext(Dispatchers.Main) {
@@ -147,6 +149,7 @@ class OpenStreamMediaPlayer(
                                 player.setMediaSource(it.data.getMediaSource())
                             }
                             player.prepare()
+                            player.seekTo(it.data.position)
                             player.play()
                         }
                     }
@@ -154,90 +157,103 @@ class OpenStreamMediaPlayer(
             }
         }
     }
-    
+
     fun retry() {
         when (_fetchingState.value) {
             is FetchingState.Error -> (_fetchingState.value as FetchingState.Error).videoItem
             else -> return
         }.let { start(it) }
     }
-    
+
     fun clear() {
         logger.i(this::class.simpleName, "clear player")
         player.pause()
+        saveVideo()
         player.clearMediaItems()
     }
-    
+
+    fun saveVideo() {
+        scope.launch {
+            when (val state = fetchingState.value) {
+                is FetchingState.Success -> videoRepo.saveVideo(
+                    state.video.toDataItem().copy(position = playerPosition.value)
+                )
+
+                else -> Unit
+            }
+        }
+    }
+
     fun destroy() {
         player.release()
     }
-    
+
     fun setPlaybackSpeed(speed: Float) {
         player.setPlaybackSpeed(speed)
     }
-    
+
     fun resume() {
         player.play()
     }
-    
+
     fun pause() {
         player.pause()
     }
-    
+
     fun seekTo(ms: Long) {
         player.seekTo(ms)
     }
-    
+
     fun seekForward() {
         player.seekTo(player.currentPosition + SEEK_INCREMENT)
     }
-    
+
     fun seekBackward() {
         player.seekTo(
             (player.currentPosition - SEEK_INCREMENT).coerceAtLeast(0L)
         )
     }
-    
+
     fun switchPlaybackQuality(videoOption: VideoOption) {
         val videoData = when (fetchingState.value) {
             is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
         if (isAudioOnlyModeEnabled.value) return
-        
+
         _currentQuality.value = videoOption
-        
+
         val wasPlaying = player.isPlaying
-        
+
         val currentPosition = player.currentPosition
         val mediaSource = videoData.getMediaSource(videoOption)
-        
+
         player.pause()
         player.clearMediaItems()
         player.setMediaSource(mediaSource)
         player.prepare()
         player.seekTo(currentPosition)
-        
+
         if (wasPlaying) player.play()
         logger.i(this::class.simpleName, "switched playback quality")
     }
-    
+
     fun toggleAudioOnlyMode() {
         val videoData = when (fetchingState.value) {
             is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
-        
+
         val isAudioOnly = !_isAudioOnlyModeEnabled.value
         _isAudioOnlyModeEnabled.value = isAudioOnly
-        
+
         val currentQuality = _currentQuality.value ?: return
         val currentPosition = player.currentPosition
-        
+
         val wasPlaying = player.isPlaying
         player.pause()
         player.clearMediaItems()
-        
+
         if (isAudioOnly) {
             logger.i(this::class.simpleName, "switch to audio only")
             player.setMediaItem(videoData.getAudioOnlyMediaItem())
@@ -245,29 +261,29 @@ class OpenStreamMediaPlayer(
             logger.i(this::class.simpleName, "switch to video and audio")
             player.setMediaSource(videoData.getMediaSource(currentQuality))
         }
-        
+
         player.prepare()
         player.seekTo(currentPosition)
         if (wasPlaying) player.play()
     }
-    
+
     private fun VideoData.getMediaSource(videoOption: VideoOption? = null): MediaSource {
         val option = videoOption ?: this.videoOptions.last()
         _currentQuality.value = option
-        
+
         val videoItem = MediaItem.Builder().setUri(option.content).build()
         val audioItem = MediaItem.Builder().setUri(audioStream).build()
         val dataSourceFactory = DefaultDataSource.Factory(context)
-        
+
         val videoSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(videoItem)
         val audioSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(audioItem)
-        
+
         return MergingMediaSource(true, true, videoSource, audioSource)
     }
-    
+
     private fun VideoData.getAudioOnlyMediaItem() =
         MediaItem.Builder().setUri(audioStream).build()
-    
+
 }

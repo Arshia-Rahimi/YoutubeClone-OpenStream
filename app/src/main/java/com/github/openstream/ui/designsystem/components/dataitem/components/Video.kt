@@ -1,5 +1,6 @@
 package com.github.openstream.ui.designsystem.components.dataitem.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -97,6 +101,20 @@ fun Video(
                     fontSize = 10.sp,
                     color = Color.White,
                 )
+            }
+            Canvas(
+                modifier = Modifier.fillMaxWidth()
+                    .height(2.dp)
+                    .align(Alignment.BottomStart),
+            ) {
+                val progress = (item.position / item.duration).toFloat()
+                clipRect {
+                    drawRect(
+                        color = Color(0xFFCC2849),
+                        topLeft = Offset(0f, 0f),
+                        size = Size(progress * size.width, size.height),
+                    )
+                }
             }
         }
         Column(
@@ -248,7 +266,8 @@ private fun Preview() {
                 url = "",
                 thumbnail = "",
                 uploadDate = null,
-                duration = 14533L,
+                duration = 20000L,
+                position = 10000L,
             ),
             toChannelScreen = {},
             shouldViewChannel = true,

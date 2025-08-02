@@ -21,6 +21,7 @@ data class VideoData(
     val audioStream: String,
     val videoOptions: List<VideoOption>,
     val id: Long? = null,
+    val position: Long = 0,
 ) {
     fun toDataItem() = VideoItem(
         id = id,

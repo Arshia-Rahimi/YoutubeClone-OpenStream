@@ -176,7 +176,7 @@ class OfflineFirstPlaylistRepository(
                     .map {
                         PlaylistVideoCrossRef(
                             playlistId = playlist.id,
-                            videoId = it
+                            videoId = it,
                         )
                     }
                     .toTypedArray()
@@ -188,7 +188,7 @@ class OfflineFirstPlaylistRepository(
     override fun getNextPage(currentPlaylist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>> =
         flow {
             val nextPage = PlaylistRemoteDataSource.fetchNextPage(currentPlaylist)
-            db.videoDao().upsert(*nextPage.map { it.toEntity() }.toTypedArray())
+            db.videoDao().upsertAndReturnIds(*nextPage.map { it.toEntity() }.toTypedArray())
             emit(Success)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage()")
     //

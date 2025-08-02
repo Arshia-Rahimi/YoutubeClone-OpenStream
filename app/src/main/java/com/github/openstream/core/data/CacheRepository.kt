@@ -7,7 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface CacheRepository {
     fun deleteLocalVideoHistory(): Flow<Resource<Success>>
     
-    fun clearDiskImageCache(): Flow<Resource<Success>>
-    
     fun clearAllCache(): Flow<Resource<Success>>
 }

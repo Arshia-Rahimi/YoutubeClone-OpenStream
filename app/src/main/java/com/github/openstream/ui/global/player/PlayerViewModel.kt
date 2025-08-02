@@ -134,13 +134,13 @@ class PlayerViewModel(
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
-            )
+            ).launchIn(viewModelScope)
 
             false -> playlistRepo.addToPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
-            )
-        }.launchIn(viewModelScope)
+            ).launchIn(viewModelScope)
+        }
     }
 
     fun toggleVideoLiked() {
@@ -153,13 +153,13 @@ class PlayerViewModel(
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
-            )
+            ).launchIn(viewModelScope)
 
             false -> playlistRepo.addToPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
-            )
-        }.launchIn(viewModelScope)
+            ).launchIn(viewModelScope)
+        }
     }
 
     fun subscribe(channel: ChannelItem.OnlineChannelItem) {

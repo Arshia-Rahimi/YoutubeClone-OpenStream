@@ -27,6 +27,7 @@ data class VideoItem(
     val isShort: Boolean,
     val channelAvatars: String?,
     val id: Long? = null,
+    val position: Long = 0,
 ) : DataItem {
     override fun toEntity(): VideoEntity = VideoEntity(
         name = name,
@@ -39,6 +40,7 @@ data class VideoItem(
         channelUrl = channelUrl,
         channelName = channelName,
         isChannelVerified = isChannelVerified,
+        position = position,
     )
 
     override val key: String

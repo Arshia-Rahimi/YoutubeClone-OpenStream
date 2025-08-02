@@ -84,6 +84,7 @@ interface PlaylistDao {
         v.duration AS video_duration,
         v.channel_url AS video_channel_url,
         v.is_channel_verified AS video_is_channel_verified,
+        v.position AS video_position,
 
         pv.playlistId AS pivot_playlistId,
         pv.videoId AS pivot_videoId,

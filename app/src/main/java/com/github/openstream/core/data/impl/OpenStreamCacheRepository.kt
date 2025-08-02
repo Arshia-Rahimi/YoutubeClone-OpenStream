@@ -31,13 +31,6 @@ class OpenStreamCacheRepository(
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory()")
     
-    
-    override fun clearDiskImageCache() = flow { 
-        val imageLoader = context.imageLoader
-        imageLoader.diskCache?.clear()
-        emit(Success)
-    }.asResult(Dispatchers.IO, this::class.simpleName, "clearDiskImageCache()")
-    
     override fun clearAllCache(): Flow<Resource<Success>> = flow {
         supervisorScope {
             val d1 = async { db.clearAllTables() }

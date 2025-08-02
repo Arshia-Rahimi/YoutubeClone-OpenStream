@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
+import coil3.imageLoader
 import com.github.openstream.core.extractor.OkHttpDownloader
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
@@ -38,10 +39,14 @@ class MainActivity : ComponentActivity() {
     
     override fun onDestroy() {
         super.onDestroy()
+        // release player
         val player by inject<OpenStreamMediaPlayer>()
         player.clear()
         player.destroy()
-        
+
+        // clear coil cache
+        imageLoader.diskCache?.clear()
+        imageLoader.memoryCache?.clear()
     }
     
     private fun loadNewPipeConfig() {

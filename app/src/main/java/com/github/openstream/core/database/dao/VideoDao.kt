@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
 import com.github.openstream.core.database.entities.VideoEntity
+import com.github.openstream.core.shared.StreamType
 
 @Dao
 interface VideoDao {
@@ -25,18 +26,57 @@ interface VideoDao {
     @Update
     suspend fun update(vararg videoEntity: VideoEntity)
 
+    @Query(
+        """
+        UPDATE videos SET 
+            name = :name,
+            thumbnail = :thumbnail,
+            view_count = :viewCount,
+            upload_date = :uploadDate,
+            stream_type = :streamType,
+            duration = :duration,
+            channel_name = :channelName,
+            channel_url = :channelUrl,
+            is_channel_verified = :isChannelVerified
+        WHERE videoId = :videoId
+    """
+    )
+    suspend fun partialUpdate(
+        videoId: Long,
+        name: String,
+        thumbnail: String?,
+        viewCount: Long,
+        uploadDate: Long?,
+        streamType: StreamType,
+        duration: Long,
+        channelName: String,
+        channelUrl: String,
+        isChannelVerified: Boolean
+    )
+
     @Transaction
     suspend fun upsertAndReturnIds(vararg videoEntity: VideoEntity): List<Long> =
         buildList {
             videoEntity.forEach {
                 val id = insert(it).first()
                 if (id == -1L) {
-                    update(it)
+                    partialUpdate(
+                        videoId = it.videoId,
+                        name = it.name,
+                        thumbnail = it.thumbnail,
+                        viewCount = it.viewCount,
+                        uploadDate = it.uploadDate,
+                        streamType = it.streamType,
+                        duration = it.duration,
+                        channelName = it.channelName,
+                        channelUrl = it.channelUrl,
+                        isChannelVerified = it.isChannelVerified,
+                    )
                     add(it.videoId)
                 } else add(id)
             }
         }
-
+    
     @Upsert
     suspend fun upsert(vararg videoEntities: VideoEntity)
 
