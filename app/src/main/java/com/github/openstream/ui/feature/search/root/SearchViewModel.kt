@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
+import com.github.openstream.core.common.util.replaceFirstWith
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
 import com.github.openstream.core.data.SearchRepository
@@ -106,11 +107,15 @@ class SearchViewModel(
                 is Resource.Error -> SnackBarController.sendEvent("failed to subscribe to channel")
                 is Resource.Success -> {
                     if (uiState.value !is UiState.Success) return@onEach
-//                    val currentChannel =
-//                        (uiState.value as UiState.Success).searchResult.items.first { it == channel } as ChannelItem
-//                        items.replaceFirstWith(result.data) {
-//                            it is ChannelItem && it.url == currentChannel.url
-//                        }
+                    val currentChannel =
+                        (uiState.value as UiState.Success).searchResult.items
+                            .filterIsInstance<ChannelItem>()
+                            .first { it.url == channel.url } as ChannelItem
+                    println(currentChannel)
+                    println(result.data)
+                    items.replaceFirstWith(result.data) {
+                        it is ChannelItem && it.url == currentChannel.url
+                    }
                 }
             }
         }.launchIn(viewModelScope)
@@ -123,11 +128,14 @@ class SearchViewModel(
                 is Resource.Error -> SnackBarController.sendEvent("failed to subscribe to channel")
                 is Resource.Success -> {
                     if (uiState.value !is UiState.Success) return@onEach
-//                    val currentChannel =
-//                        (uiState.value as UiState.Success).searchResult.items.first { it == channel } as ChannelItem
-//                    items.replaceFirstWith(result.data) {
-//                        it is ChannelItem && it.url == currentChannel.url
-//                    }
+                    val currentChannel =
+                        (uiState.value as UiState.Success).searchResult.items
+                            .filterIsInstance<ChannelItem>()
+                            .first { it.url == channel.url } as ChannelItem
+                    
+                    items.replaceFirstWith(result.data) {
+                        it is ChannelItem && it.url == currentChannel.url
+                    }
                 }
             }
         }.launchIn(viewModelScope)
