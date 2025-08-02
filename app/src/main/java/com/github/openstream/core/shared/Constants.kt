@@ -11,10 +11,11 @@ object KoinQualifiers {
 }
 
 object DefaultPlaylists {
-    val all = arrayOf(WATCH_LATER_ID, LIKED_VIDEOS_ID)
+    val all = arrayOf(WATCH_LATER_ID, LIKED_VIDEOS_ID, HISTORY_ID)
 
-    const val WATCH_LATER_ID = 0L
+    const val HISTORY_ID = 0L
     const val LIKED_VIDEOS_ID = 1L
+    const val WATCH_LATER_ID = 2L
 }
 
 const val LOG_FILENAME = "openstream-log.txt"

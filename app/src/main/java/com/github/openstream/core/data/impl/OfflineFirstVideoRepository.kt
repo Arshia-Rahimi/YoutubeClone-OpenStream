@@ -18,8 +18,12 @@ class OfflineFirstVideoRepository(
         var video = VideoRemoteDataSource.fetchVideo(url)
 
         // update video data in db if it's found
-        db.videoDao().get(url)?.let {
-            video = video.copy(id = it.videoId, position = it.position)
+        val savedVideo = db.videoDao().get(url)
+        
+        if(savedVideo == null) {
+            db.videoDao().insert(video.toDataItem().toEntity())
+        } else {
+            video = video.copy(id = savedVideo.videoId, position = savedVideo.position)
             db.videoDao().upsert(video.toDataItem().toEntity())
         }
         
