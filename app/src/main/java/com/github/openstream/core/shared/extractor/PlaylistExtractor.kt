@@ -38,6 +38,7 @@ data class OnlinePlaylistExtractor(
             channelUrl = data.channelUrl,
             isChannelVerified = data.isChannelVerified,
             url = data.url,
+            timestamp = System.currentTimeMillis(),
         ),
     )
 }

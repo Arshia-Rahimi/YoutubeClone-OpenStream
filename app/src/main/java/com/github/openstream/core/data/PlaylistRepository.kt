@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 interface PlaylistRepository {
-    val playlists: SharedFlow<List<PlaylistItem>>
+    val playlists: SharedFlow<List<PlaylistItem.LocalPlaylistItem>>
 
     // local playlists
     fun getPlaylistItem(playlistId: Long): Flow<PlaylistItem>

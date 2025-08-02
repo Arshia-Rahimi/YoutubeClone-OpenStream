@@ -62,6 +62,7 @@ sealed interface PlaylistItem : DataItem {
         override val thumbnail: String?
         override val count: Long
         val id: Long
+        val timestamp: Long
         override val key: String
             get() = "playlist-$id-"
     }
@@ -80,6 +81,7 @@ sealed interface PlaylistItem : DataItem {
         override val thumbnail: String?,
         override val count: Long,
         override val id: Long,
+        override val timestamp: Long,
     ) : LocalPlaylistItem {
         override fun toEntity() =
             PlaylistEntity(
@@ -87,6 +89,7 @@ sealed interface PlaylistItem : DataItem {
                 count = count,
                 thumbnail = thumbnail ?: "",
                 playlistId = id,
+                timestamp = timestamp,
             )
     }
 
@@ -100,6 +103,7 @@ sealed interface PlaylistItem : DataItem {
         override val channelUrl: String,
         override val isChannelVerified: Boolean,
         override val url: String,
+        override val timestamp: Long,
     ) : LocalPlaylistItem, YoutubePlaylistItem {
         override fun toEntity() = PlaylistEntity(
             name = name,
@@ -110,6 +114,7 @@ sealed interface PlaylistItem : DataItem {
             url = url,
             thumbnail = thumbnail ?: "",
             playlistId = id,
+            timestamp = timestamp,
         )
     }
 
@@ -148,6 +153,7 @@ sealed interface PlaylistItem : DataItem {
                 channelName = channelName,
                 isChannelVerified = isChannelVerified,
                 url = url,
+                timestamp = System.currentTimeMillis(),
             )
     }
 }

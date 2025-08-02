@@ -16,6 +16,7 @@ data class PlaylistEntity(
     @ColumnInfo("is_channel_verified") val isChannelVerified: Boolean? = null,
     val thumbnail: String? = null,
     val url: String? = null,
+    val timestamp: Long = System.currentTimeMillis(),
 ) : OpenStreamEntity {
     fun toDataItem(): PlaylistItem =
         when (url) {
@@ -24,6 +25,7 @@ data class PlaylistEntity(
                 thumbnail = thumbnail,
                 count = count,
                 id = playlistId,
+                timestamp = timestamp,
             )
 
             else -> PlaylistItem.OfflineFirstPlaylistItem(
@@ -35,6 +37,7 @@ data class PlaylistEntity(
                 count = count,
                 isChannelVerified = isChannelVerified == true,
                 id = playlistId,
+                timestamp = timestamp,
             )
         }
 }

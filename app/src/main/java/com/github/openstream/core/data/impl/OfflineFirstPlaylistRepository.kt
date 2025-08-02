@@ -20,6 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -34,6 +35,7 @@ class OfflineFirstPlaylistRepository(
 
     override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
+        .filterIsInstance<List<PlaylistItem.LocalPlaylistItem>>()
         .shareIn(
             scope = scope,
             started = SharingStarted.Lazily,

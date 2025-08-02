@@ -32,8 +32,8 @@ class LibraryViewModel(
         playlistRepo.playlists
             .combine(sortType) { newPlaylists, sortType ->
                 val sortedPlaylists = when (sortType) {
-                    LibrarySortType.CREATED_AT_ASC -> newPlaylists
-                    LibrarySortType.CREATED_AT_DESC -> newPlaylists.reversed()
+                    LibrarySortType.CREATED_AT_ASC -> newPlaylists.sortedBy { it.timestamp }
+                    LibrarySortType.CREATED_AT_DESC -> newPlaylists.sortedByDescending { it.timestamp }
                     LibrarySortType.NAME_ASC -> newPlaylists.sortedBy { it.name }
                     LibrarySortType.NAME_DESC -> newPlaylists.sortedByDescending { it.name }
                     LibrarySortType.SIZE_ASC -> newPlaylists.sortedByDescending { it.count }
