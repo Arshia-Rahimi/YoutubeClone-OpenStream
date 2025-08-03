@@ -140,6 +140,7 @@ class OpenStreamMediaPlayer(
     fun start(video: VideoItem) {
         logger.i(this::class.simpleName, "start player")
         clear()
+        fetchJob?.cancel()
         fetchJob = scope.launch {
             videoRepo.fetchVideo(video.url).collect {
                 when (it) {
@@ -176,21 +177,20 @@ class OpenStreamMediaPlayer(
     }
     
     fun clear() {
-        mainThreadScope.launch {
-            logger.i(this::class.simpleName, "clear player")
-            fetchJob?.cancel()
-            player.pause()
-            when (val state = fetchingState.value) {
-                is FetchingState.Success -> withContext(Dispatchers.IO) {
-                    videoRepo.saveVideo(
-                        state.video.toDataItem().copy(position = playerPosition.value)
-                    )
-                }
-                
-                else -> Unit
+        logger.i(this::class.simpleName, "clear player")
+        fetchJob?.cancel()
+        player.pause()
+        val position = playerPosition.value
+        when (val state = fetchingState.value) {
+            is FetchingState.Success -> scope.launch {
+                videoRepo.saveVideo(
+                    state.video.toDataItem().copy(position = position)
+                )
             }
-            player.clearMediaItems()
+            
+            else -> Unit
         }
+        player.clearMediaItems()
     }
     
     fun destroy() {

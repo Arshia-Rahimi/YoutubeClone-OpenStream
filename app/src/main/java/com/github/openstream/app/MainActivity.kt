@@ -50,8 +50,6 @@ class MainActivity : ComponentActivity() {
     }
     
     private fun loadNewPipeConfig() {
-//        val downloader = OkHttpDownloader.init(null)
-        val downloader: Downloader by inject()
-        NewPipe.init(downloader, Localization("en", "US"))
+        NewPipe.init(inject<Downloader>().value, Localization("en", "US"))
     }
 }

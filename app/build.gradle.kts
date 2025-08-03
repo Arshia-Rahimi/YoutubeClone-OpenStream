@@ -108,8 +108,6 @@ dependencies {
     implementation(libs.newpipe.extractor)
     // desugaring
     coreLibraryDesugaring(libs.desugaring)
-    // okhttp
-    implementation(libs.okhttp)
     // media3
     implementation(libs.media3.ui)
     implementation(libs.media3.exoplayer)
