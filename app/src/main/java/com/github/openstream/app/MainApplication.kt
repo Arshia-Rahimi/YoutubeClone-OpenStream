@@ -6,6 +6,7 @@ import com.github.openstream.core.common.util.LoggerImpl
 import com.github.openstream.core.data.di.dataModule
 import com.github.openstream.core.database.di.databaseModule
 import com.github.openstream.core.datastore.dataStoreModule
+import com.github.openstream.core.extractor.di.extractorModule
 import com.github.openstream.core.media3.di.media3Module
 import com.github.openstream.core.shared.LOG_FILENAME
 import com.github.openstream.ui.di.viewModelModule
@@ -29,6 +30,7 @@ class MainApplication : Application(), KoinStartup {
             databaseModule,
             media3Module,
             dataStoreModule,
+            extractorModule,
             appModule,
         )
     }

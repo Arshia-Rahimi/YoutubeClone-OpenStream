@@ -8,11 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.data.CacheRepository
+import com.github.openstream.core.data.PreferencesRepository
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val cacheRepo: CacheRepository,
+    private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
 
     var localVideoHistoryLoading by mutableStateOf(false)
@@ -52,6 +55,12 @@ class SettingsViewModel(
                 else -> clearCacheLoading = true
             }
         }.launchIn(viewModelScope)
+    }
+    
+    fun setCookies(cookies: String) {
+        viewModelScope.launch {
+            preferencesRepo.setCookies(cookies)
+        }
     }
     
 }

@@ -7,12 +7,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import coil3.imageLoader
-import com.github.openstream.core.extractor.OkHttpDownloader
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.ui.designsystem.theme.OpenStreamTheme
 import com.github.openstream.ui.navigation.Navigation
 import org.koin.android.ext.android.inject
 import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.downloader.Downloader
 import org.schabi.newpipe.extractor.localization.Localization
 
 class MainActivity : ComponentActivity() {
@@ -50,7 +50,8 @@ class MainActivity : ComponentActivity() {
     }
     
     private fun loadNewPipeConfig() {
-        val downloader = OkHttpDownloader.init(null)
+//        val downloader = OkHttpDownloader.init(null)
+        val downloader: Downloader by inject()
         NewPipe.init(downloader, Localization("en", "US"))
     }
 }
