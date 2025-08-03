@@ -20,8 +20,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -70,19 +70,22 @@ class PlayerViewModel(
     val videoLocalState = fetchingState.flatMapLatest {
         if (it !is FetchingState.Success) flow { emit(VideoLocalState()) }
         else {
-            val videoId = it.video.id
-            if (videoId == null) {
-                channelRepo.getChannelId(it.video.channelUrl).map { id ->
-                    VideoLocalState(channelId = id)
-                }
-            } else {
-                combine(
-                    videoRepo.isInPlaylist(videoId, DefaultPlaylists.WATCH_LATER_ID),
-                    videoRepo.isInPlaylist(videoId, DefaultPlaylists.LIKED_VIDEOS_ID),
-                    channelRepo.getChannelId(it.video.channelUrl),
-                ) { isInWatchLater, isLiked, channelId ->
-                    VideoLocalState(isInWatchLater, isLiked, channelId)
-                }
+            combine(
+                it.video.id?.let { id ->
+                    videoRepo.isInPlaylist(
+                        id,
+                        DefaultPlaylists.WATCH_LATER_ID
+                    )
+                } ?: flowOf(false),
+                it.video.id?.let { id ->
+                    videoRepo.isInPlaylist(
+                        id,
+                        DefaultPlaylists.LIKED_VIDEOS_ID
+                    )
+                } ?: flowOf(false),
+                channelRepo.getChannelId(it.video.channelUrl),
+            ) { isInWatchLater, isLiked, channelId ->
+                VideoLocalState(isInWatchLater, isLiked, channelId)
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoLocalState())
@@ -125,7 +128,7 @@ class PlayerViewModel(
     
     fun toggleVideoWatchLater() {
         val videoData = when (fetchingState.value) {
-            is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
+            is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
         
@@ -144,7 +147,7 @@ class PlayerViewModel(
     
     fun toggleVideoLiked() {
         val videoData = when (fetchingState.value) {
-            is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
+            is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
         

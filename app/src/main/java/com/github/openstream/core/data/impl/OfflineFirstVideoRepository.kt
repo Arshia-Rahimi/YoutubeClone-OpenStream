@@ -19,13 +19,19 @@ class OfflineFirstVideoRepository(
 
         // update video data in db if it's found
         val savedVideo = db.videoDao().get(url)
+        println(savedVideo)
+//        var id: Long
         
         if(savedVideo == null) {
-            db.videoDao().insert(video.toDataItem().toEntity())
+//            id = db.videoDao().insert(video.toDataItem().toEntity()).first()
         } else {
+//            id = savedVideo.videoId
             video = video.copy(id = savedVideo.videoId, position = savedVideo.position)
             db.videoDao().upsert(video.toDataItem().toEntity())
         }
+//        db.playlistDao().addToPlaylist(
+//            PlaylistVideoCrossRef(DefaultPlaylists.HISTORY_ID, id)
+//        )
         
         emit(video)
     }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo()")

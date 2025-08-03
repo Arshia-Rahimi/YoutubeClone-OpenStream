@@ -17,9 +17,9 @@ val databaseModule = module {
         ).addCallback(object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
-                db.execSQL(
-                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name, timestamp) VALUES (${DefaultPlaylists.HISTORY_ID}, 'history', NULL, 0, 0, NULL, 0)"
-                )
+//                db.execSQL(
+//                    "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name, timestamp) VALUES (${DefaultPlaylists.HISTORY_ID}, 'history', NULL, 0, 0, NULL, 0)"
+//                )
                 db.execSQL(
                     "INSERT INTO playlists (playlistId, name, channel_url, is_channel_verified, count, channel_name, timestamp) VALUES (${DefaultPlaylists.WATCH_LATER_ID}, 'watch later', NULL, 0, 0, NULL, 1)"
                 )
