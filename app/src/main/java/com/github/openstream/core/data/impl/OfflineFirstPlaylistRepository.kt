@@ -133,8 +133,6 @@ class OfflineFirstPlaylistRepository(
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "saveVideoToPlaylists()")
 
-    override fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean> =
-        db.playlistDao().isInPlaylist(videoId, playlistId)
     
     override fun getPlaylistSavedVideos(
         playlist: PlaylistItem.LocalPlaylistItem,
@@ -218,14 +216,14 @@ class OfflineFirstPlaylistRepository(
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
         val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideosFlowSorted(playlistId)
-            .first().first()?.video?.thumbnail
+            .first().firstOrNull()?.video?.thumbnail
 
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }
 
     private suspend fun updatePlaylistCount(playlistId: Long) {
         val playlistVideosCount = db.playlistDao().getPlaylistWithVideos(playlistId)
-            ?.videos?.size ?: return
+            ?.videos?.size ?: 0
 
         db.playlistDao().updatePlaylistCount(playlistId, playlistVideosCount.toLong())
     }

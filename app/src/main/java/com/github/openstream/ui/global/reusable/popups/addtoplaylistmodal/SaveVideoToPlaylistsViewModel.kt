@@ -26,6 +26,7 @@ class SaveVideoToPlaylistsViewModel(
                     clear()
                     playlists.filterIsInstance<PlaylistItem.LocalOnlyPlaylistItem>()
                         .filter { it.id != DefaultPlaylists.LIKED_VIDEOS_ID }
+                        .filter { it.id != DefaultPlaylists.HISTORY_ID }
                         .sortedBy { it.id }
                         .forEach { playlist ->
                             put(playlist, currentPlaylists[playlist.id] == true)

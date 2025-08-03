@@ -33,5 +33,8 @@ class OfflineFirstVideoRepository(
     override suspend fun saveVideo(video: VideoItem) {
         db.videoDao().upsert(video.toEntity())
     }
+    
+    override fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean> =
+        db.playlistDao().isInPlaylist(videoId, playlistId)
 
 }

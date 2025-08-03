@@ -253,9 +253,9 @@ class OpenStreamMediaPlayer(
             preferencesRepo.setAudioOnlyMode(isAudioOnly)
             
             val currentQuality = _currentQuality.value ?: return@launch
-            val currentPosition = player.currentPosition
             
             withContext(Dispatchers.IO) {
+                val currentPosition = player.currentPosition
                 val wasPlaying = player.isPlaying
                 
                 player.pause()

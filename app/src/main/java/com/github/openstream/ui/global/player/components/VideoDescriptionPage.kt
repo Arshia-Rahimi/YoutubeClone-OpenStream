@@ -310,7 +310,7 @@ fun VideoDescription(
                         horizontalArrangement = Arrangement.SpaceAround,
                     ) {
                         IconButton(
-                            onClick = toggleVideoLiked,
+                            onClick = { toggleVideoLiked() },
                             modifier = Modifier.fillMaxHeight(),
                         ) {
                             Icon(
@@ -325,7 +325,7 @@ fun VideoDescription(
             item {
                 OptionsRowItem {
                     IconButton(
-                        onClick = toggleVideoWatchLater,
+                        onClick = { toggleVideoWatchLater() },
                     ) {
                         Icon(
                             painter = painterResource(if (videoLocalState.isInWatchLater) R.drawable.watch_later_filled else R.drawable.watch_later),

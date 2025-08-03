@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.data.ChannelRepository
 import com.github.openstream.core.data.PlaylistRepository
+import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.media3.OpenStreamMediaPlayer
 import com.github.openstream.core.media3.OpenStreamMediaPlayer.FetchingState
 import com.github.openstream.core.shared.DefaultPlaylists
@@ -20,19 +21,21 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlayerViewModel(
     private val player: OpenStreamMediaPlayer,
     private val playlistRepo: PlaylistRepository,
+    private val videoRepo: VideoRepository,
     private val channelRepo: ChannelRepository,
 ) : ViewModel() {
-
+    
     val playerInstance = player.player
     
     val tempVideoName = MutableStateFlow<String?>(null)
-
+    
     val fetchingState = player.fetchingState
     val currentQuality = player.currentQuality
     val isPlaying = player.isPlaying
@@ -43,18 +46,18 @@ class PlayerViewModel(
     val bufferedPosition = player.bufferedPosition
     val playbackSpeed = player.playbackSpeed
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 1f)
-   
+    
     private val _showMiniPlayer = MutableStateFlow(false)
     val showMiniPlayer = _showMiniPlayer.asStateFlow()
-
+    
     private val _sheetState = MutableStateFlow(PlayerSheetState.MINI_PLAYER)
     val sheetState = _sheetState.asStateFlow()
     
     private val _isInLandscape = MutableStateFlow(false)
     val isInLandscape = _isInLandscape.asStateFlow()
-
+    
     val isInitialSnapDone = MutableStateFlow(false)
-
+    
     val shouldShowFullscreenPlayer =
         combine(
             showMiniPlayer,
@@ -63,30 +66,27 @@ class PlayerViewModel(
         ) { showMiniPlayer, sheetState, isInLandscape ->
             showMiniPlayer && (sheetState == PlayerSheetState.EXPANDED) && isInLandscape
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
+    
     val videoLocalState = fetchingState.flatMapLatest {
         if (it !is FetchingState.Success) flow { emit(VideoLocalState()) }
         else {
-            combine(
-                it.video.id?.let { id ->
-                    playlistRepo.isInPlaylist(
-                        id,
-                        DefaultPlaylists.WATCH_LATER_ID
-                    )
-                } ?: flow { emit(false) },
-                it.video.id?.let { id ->
-                    playlistRepo.isInPlaylist(
-                        id,
-                        DefaultPlaylists.LIKED_VIDEOS_ID
-                    )
-                } ?: flow { emit(false) },
-                channelRepo.getChannelId(it.video.channelUrl),
-            ) { isInWatchLater, isLiked, channelId ->
-                VideoLocalState(isInWatchLater, isLiked, channelId)
+            val videoId = it.video.id
+            if (videoId == null) {
+                channelRepo.getChannelId(it.video.channelUrl).map { id ->
+                    VideoLocalState(channelId = id)
+                }
+            } else {
+                combine(
+                    videoRepo.isInPlaylist(videoId, DefaultPlaylists.WATCH_LATER_ID),
+                    videoRepo.isInPlaylist(videoId, DefaultPlaylists.LIKED_VIDEOS_ID),
+                    channelRepo.getChannelId(it.video.channelUrl),
+                ) { isInWatchLater, isLiked, channelId ->
+                    VideoLocalState(isInWatchLater, isLiked, channelId)
+                }
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), VideoLocalState())
-
+    
     fun processAction(action: PlayerAction) = when (action) {
         is PlayerAction.Start -> start(action.videoItem)
         is PlayerAction.SeekTo -> player.seekTo(action.ms)
@@ -98,7 +98,7 @@ class PlayerViewModel(
         is PlayerAction.Resume -> player.resume()
         is PlayerAction.SetPlaybackSpeed -> player.setPlaybackSpeed(action.speed.value)
     }
-
+    
     fun updateSheetState(sheetState: PlayerSheetState) {
         _sheetState.value = sheetState
     }
@@ -107,60 +107,60 @@ class PlayerViewModel(
         _isInLandscape.value =
             orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     }
-
+    
     fun switchPlaybackQuality(videoOption: VideoOption) =
         player.switchPlaybackQuality(videoOption)
-
+    
     private fun start(videoItem: VideoItem) {
         tempVideoName.value = videoItem.name
         _showMiniPlayer.value = true
         player.start(videoItem)
     }
-
+    
     fun dispose() {
         tempVideoName.value = null
         _showMiniPlayer.value = false
         player.clear()
     }
-
+    
     fun toggleVideoWatchLater() {
         val videoData = when (fetchingState.value) {
             is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
-
+        
         when (videoLocalState.value.isInWatchLater) {
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
             ).launchIn(viewModelScope)
-
+            
             false -> playlistRepo.addToPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.WATCH_LATER_ID,
             ).launchIn(viewModelScope)
         }
     }
-
+    
     fun toggleVideoLiked() {
         val videoData = when (fetchingState.value) {
             is FetchingState.Error -> (fetchingState.value as FetchingState.Success).video
             else -> return
         }
-
+        
         when (videoLocalState.value.isLiked) {
             true -> playlistRepo.removeFromPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
             ).launchIn(viewModelScope)
-
+            
             false -> playlistRepo.addToPlaylist(
                 listOf(videoData.toDataItem()),
                 DefaultPlaylists.LIKED_VIDEOS_ID,
             ).launchIn(viewModelScope)
         }
     }
-
+    
     fun subscribe(channel: ChannelItem.OnlineChannelItem) {
         channelRepo.subscribe(channel).launchIn(viewModelScope)
     }

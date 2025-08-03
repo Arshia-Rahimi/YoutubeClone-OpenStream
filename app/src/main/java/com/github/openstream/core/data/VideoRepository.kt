@@ -9,4 +9,7 @@ interface VideoRepository {
     fun fetchVideo(url: String): Flow<Resource<VideoData>>
     
     suspend fun saveVideo(video: VideoItem)
+    
+    fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean>
+    
 }
