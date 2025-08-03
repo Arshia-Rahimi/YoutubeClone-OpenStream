@@ -23,5 +23,13 @@ class DataStorePreferencesRepository(
     override suspend fun setLibrarySortType(sortType: LibrarySortType) {
         dataStore.updateData { preferences.first().copy(librarySortType = sortType) }
     }
-
+    
+    override suspend fun setCookies(cookies: String) {
+        dataStore.updateData { preferences.first().copy(cookies = cookies) }
+    }
+    
+    override suspend fun setAudioOnlyMode(enabled: Boolean) {
+        dataStore.updateData { preferences.first().copy(isAudioOnlyModeEnabled = enabled) }
+    }
+    
 }

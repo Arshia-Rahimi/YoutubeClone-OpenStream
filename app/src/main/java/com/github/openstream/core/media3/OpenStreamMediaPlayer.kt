@@ -17,6 +17,7 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
 import com.github.openstream.core.common.util.Logger
 import com.github.openstream.core.common.util.Resource
+import com.github.openstream.core.data.PreferencesRepository
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -41,6 +43,7 @@ const val SEEK_INCREMENT = 10_000L
 class OpenStreamMediaPlayer(
     private val context: Context,
     private val videoRepo: VideoRepository,
+    private val preferencesRepo: PreferencesRepository,
     private val scope: CoroutineScope,
     private val logger: Logger,
 ) {
@@ -97,9 +100,10 @@ class OpenStreamMediaPlayer(
 
     private val _currentQuality: MutableStateFlow<VideoOption?> = MutableStateFlow(null)
     val currentQuality = _currentQuality.asStateFlow()
-
-    private val _isAudioOnlyModeEnabled = MutableStateFlow(false)
-    val isAudioOnlyModeEnabled = _isAudioOnlyModeEnabled.asStateFlow()
+    
+    val isAudioOnlyModeEnabled = preferencesRepo.preferences
+        .map { it.isAudioOnlyModeEnabled }
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
@@ -142,7 +146,7 @@ class OpenStreamMediaPlayer(
                     is Resource.Success -> {
                         _fetchingState.value = FetchingState.Success(it.data)
                         withContext(Dispatchers.Main) {
-                            if (_isAudioOnlyModeEnabled.value) {
+                            if (isAudioOnlyModeEnabled.value) {
                                 player.setMediaItem(it.data.getAudioOnlyMediaItem())
                             } else {
                                 player.setMediaSource(it.data.getMediaSource())
@@ -239,32 +243,37 @@ class OpenStreamMediaPlayer(
     }
 
     fun toggleAudioOnlyMode() {
-        val videoData = when (fetchingState.value) {
-            is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
-            else -> return
+        scope.launch {
+            val videoData = when (fetchingState.value) {
+                is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
+                else -> return@launch
+            }
+            
+            val isAudioOnly = !isAudioOnlyModeEnabled.value
+            preferencesRepo.setAudioOnlyMode(isAudioOnly)
+            
+            val currentQuality = _currentQuality.value ?: return@launch
+            val currentPosition = player.currentPosition
+            
+            withContext(Dispatchers.IO) {
+                val wasPlaying = player.isPlaying
+                
+                player.pause()
+                player.clearMediaItems()
+                
+                if (isAudioOnly) {
+                    logger.i(this::class.simpleName, "switch to audio only")
+                    player.setMediaItem(videoData.getAudioOnlyMediaItem())
+                } else {
+                    logger.i(this::class.simpleName, "switch to video and audio")
+                    player.setMediaSource(videoData.getMediaSource(currentQuality))
+                }
+                
+                player.prepare()
+                player.seekTo(currentPosition)
+                if (wasPlaying) player.play()
+            }
         }
-
-        val isAudioOnly = !_isAudioOnlyModeEnabled.value
-        _isAudioOnlyModeEnabled.value = isAudioOnly
-
-        val currentQuality = _currentQuality.value ?: return
-        val currentPosition = player.currentPosition
-
-        val wasPlaying = player.isPlaying
-        player.pause()
-        player.clearMediaItems()
-
-        if (isAudioOnly) {
-            logger.i(this::class.simpleName, "switch to audio only")
-            player.setMediaItem(videoData.getAudioOnlyMediaItem())
-        } else {
-            logger.i(this::class.simpleName, "switch to video and audio")
-            player.setMediaSource(videoData.getMediaSource(currentQuality))
-        }
-
-        player.prepare()
-        player.seekTo(currentPosition)
-        if (wasPlaying) player.play()
     }
 
     private fun VideoData.getMediaSource(videoOption: VideoOption? = null): MediaSource {

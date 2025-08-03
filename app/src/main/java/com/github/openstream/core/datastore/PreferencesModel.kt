@@ -6,4 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PreferencesModel(
     val librarySortType: LibrarySortType = LibrarySortType.CREATED_AT_ASC,
+    val cookies: String? = null,
+    val isAudioOnlyModeEnabled: Boolean = false,
 )

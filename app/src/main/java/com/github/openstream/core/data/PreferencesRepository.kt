@@ -8,4 +8,9 @@ interface PreferencesRepository {
     val preferences: SharedFlow<PreferencesModel>
 
     suspend fun setLibrarySortType(sortType: LibrarySortType)
+    
+    suspend fun setCookies(cookies: String)
+    
+    suspend fun setAudioOnlyMode(enabled: Boolean)
+    
 }
