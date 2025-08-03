@@ -23,6 +23,8 @@ interface Logger {
     
     fun e(tag: String?, message: String?, throwable: Throwable? = null)
     
+    suspend fun clearLog()
+    
     val logStream: Flow<String>
     
 }
@@ -56,24 +58,7 @@ class LoggerImpl(
     
     init {
         scope.launch {
-            if (!logFile.createNewFile()) return@launch
-            logFile.appendText("log created:\n")
-            val deviceInfo = mapOf(
-                "manufacturer" to Build.MANUFACTURER,
-                "brand" to Build.BRAND,
-                "model" to Build.MODEL,
-                "device" to Build.DEVICE,
-                "product" to Build.PRODUCT,
-                "hardware" to Build.HARDWARE,
-                "board" to Build.BOARD,
-                "bootloader" to Build.BOOTLOADER,
-                "fingerprint" to Build.FINGERPRINT,
-                "version_sdk" to Build.VERSION.SDK_INT.toString(),
-                "version_release" to Build.VERSION.RELEASE,
-                "version_codename" to Build.VERSION.CODENAME,
-            )
-            logFile.appendText("device info:\n")
-            logFile.appendText("$deviceInfo\n")
+            createLogFile()
         }
     }
     
@@ -90,6 +75,34 @@ class LoggerImpl(
         }
         Log.e("log-$tag", message, throwable)
     }
+    
+    override suspend fun clearLog() {
+        logFile.delete()
+        createLogFile()
+    }
+    
+    private fun createLogFile() {
+        if (!logFile.createNewFile()) return
+        
+        logFile.appendText("log created\n")
+        val deviceInfo = mapOf(
+            "manufacturer" to Build.MANUFACTURER,
+            "brand" to Build.BRAND,
+            "model" to Build.MODEL,
+            "device" to Build.DEVICE,
+            "product" to Build.PRODUCT,
+            "hardware" to Build.HARDWARE,
+            "board" to Build.BOARD,
+            "bootloader" to Build.BOOTLOADER,
+            "fingerprint" to Build.FINGERPRINT,
+            "version_sdk" to Build.VERSION.SDK_INT.toString(),
+            "version_release" to Build.VERSION.RELEASE,
+            "version_codename" to Build.VERSION.CODENAME,
+        )
+        logFile.appendText("device info:\n")
+        logFile.appendText("$deviceInfo\n")
+    }
+    
     
 }
 

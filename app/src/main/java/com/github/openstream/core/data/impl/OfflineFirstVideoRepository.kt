@@ -17,21 +17,11 @@ class OfflineFirstVideoRepository(
     override fun fetchVideo(url: String): Flow<Resource<VideoData>> = flow {
         var video = VideoRemoteDataSource.fetchVideo(url)
 
-        // update video data in db if it's found
         val savedVideo = db.videoDao().get(url)
-        println(savedVideo)
-//        var id: Long
-        
-        if(savedVideo == null) {
-//            id = db.videoDao().insert(video.toDataItem().toEntity()).first()
-        } else {
-//            id = savedVideo.videoId
+        if (savedVideo != null) {
             video = video.copy(id = savedVideo.videoId, position = savedVideo.position)
             db.videoDao().upsert(video.toDataItem().toEntity())
         }
-//        db.playlistDao().addToPlaylist(
-//            PlaylistVideoCrossRef(DefaultPlaylists.HISTORY_ID, id)
-//        )
         
         emit(video)
     }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo")

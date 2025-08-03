@@ -28,7 +28,7 @@ class OnlineSearchRepository(
         val firstPage = syncDataItemsWithDB(searchResult.items)
         emit(searchResult.copy(items = firstPage))
     }.asResult(
-        Dispatchers.IO, this::class.simpleName, "search()"
+        Dispatchers.IO, this::class.simpleName, "search"
     )
     
     override fun getNextPage(currentSearch: SearchResult): Flow<Resource<List<DataItem>>> =
