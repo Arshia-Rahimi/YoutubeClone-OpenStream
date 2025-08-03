@@ -113,4 +113,7 @@ interface PlaylistDao {
     )
     fun isInPlaylist(videoId: Long, playlistId: Long): Flow<Boolean>
     
+    @Query("UPDATE playlists SET thumbnail = null, count = 0")
+    fun clearWatchHistory()
+    
 }

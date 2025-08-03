@@ -27,9 +27,7 @@ class OpenStreamCacheRepository(
                 val d1 = async { db.videoDao().deleteAll() }
                 val d2 = async { db.playlistDao().deleteAllVideos() }
                 val d3 = async { db.channelDao().deleteAllVideos() }
-                d1.await()
-                d2.await()
-                d3.await()
+                awaitAll(d1, d2, d3)
                 emit(Success)
             }
         }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory")
@@ -38,8 +36,7 @@ class OpenStreamCacheRepository(
         supervisorScope {
             val d1 = async { context.deleteDatabase(OpenStreamDatabase.NAME) }
             val d2 = async { getLogger().clearLog() }
-            d1.await()
-            d2.await()
+            awaitAll(d1, d2)
             emit(Success)
             context.restartApp()
         }
@@ -48,22 +45,9 @@ class OpenStreamCacheRepository(
     override fun clearWatchHistory(): Flow<Resource<Success>> = flow {
         supervisorScope {
             val d1 = async { db.playlistDao().deletePlaylistVideos(DefaultPlaylists.HISTORY_ID) }
-            val d2 = db.videoDao().index().map {
-                async {
-                    if (it.position == 0L) return@async
-                    db.videoDao().upsert(it.copy(position = 0L))
-                }
-            }
-            val d3 = async {
-                db.playlistDao().updatePlaylistCount(DefaultPlaylists.HISTORY_ID, 0L)
-            }
-            val d4 = async {
-                db.playlistDao().updatePlaylistThumbnail(DefaultPlaylists.HISTORY_ID, null)
-            }
-            d1.await()
-            d2.awaitAll()
-            d3.await()
-            d4.await()
+            val d2 = async { db.videoDao().clearWatchHistory() }
+            val d3 = async { db.playlistDao().clearWatchHistory() }
+            awaitAll(d1, d2, d3)
             emit(Success)
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "clear watch history")

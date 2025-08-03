@@ -88,5 +88,8 @@ interface VideoDao {
 
     @Query("DELETE FROM videos")
     suspend fun deleteAll()
+    
+    @Query("UPDATE videos SET position = 0")
+    suspend fun clearWatchHistory()
 
 }
