@@ -47,7 +47,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-XXLanguage:+WhenGuards")
+        freeCompilerArgs = listOf("-Xcontext-parameters")
     }
     buildFeatures {
         compose = true
