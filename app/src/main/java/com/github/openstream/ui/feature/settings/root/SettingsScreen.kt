@@ -57,30 +57,6 @@ fun SettingsScreen(
                 .fillMaxSize(),
         ) {
             settingsItem(
-                title = "clear local video history",
-                action = {
-                    Button(
-                        onClick = viewModel::clearLocalVideoHistory,
-                        enabled = !viewModel.localVideoHistoryLoading,
-                    ) {
-                        if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
-                        else Text("clear", fontSize = 12.sp)
-                    }
-                }
-            )
-            settingsItem(
-                title = "clear all cache",
-                action = {
-                    Button(
-                        onClick = viewModel::clearCache,
-                        enabled = !viewModel.clearCacheLoading,
-                    ) {
-                        if (viewModel.clearCacheLoading) CircularProgressIndicator()
-                        else Text("clear", fontSize = 12.sp)
-                    }
-                }
-            )
-            settingsItem(
                 title = "log screen",
                 action = {
                     Button(
@@ -97,6 +73,42 @@ fun SettingsScreen(
                         onClick = { showCookiesDialog = true },
                     ) {
                         Text("set", fontSize = 12.sp)
+                    }
+                }
+            )
+            settingsItem(
+                title = "clear local video history",
+                action = {
+                    Button(
+                        onClick = viewModel::clearLocalVideoHistory,
+                        enabled = !viewModel.localVideoHistoryLoading,
+                    ) {
+                        if (viewModel.localVideoHistoryLoading) CircularProgressIndicator()
+                        else Text("clear", fontSize = 12.sp)
+                    }
+                }
+            )
+            settingsItem(
+                title = "clear watch history",
+                action = {
+                    Button(
+                        onClick = viewModel::clearWatchHistory,
+                        enabled = !viewModel.clearWatchHistoryLoading,
+                    ) {
+                        if (viewModel.clearWatchHistoryLoading) CircularProgressIndicator()
+                        else Text("clear", fontSize = 12.sp)
+                    }
+                }
+            )
+            settingsItem(
+                title = "clear all cache",
+                action = {
+                    Button(
+                        onClick = viewModel::clearCache,
+                        enabled = !viewModel.clearCacheLoading,
+                    ) {
+                        if (viewModel.clearCacheLoading) CircularProgressIndicator()
+                        else Text("clear", fontSize = 12.sp)
                     }
                 }
             )

@@ -52,8 +52,8 @@ class OnlineSearchRepository(
                     
                     is VideoItem -> {
                         var video = item
-                        db.videoDao().get(item.url)?.videoId?.let { id ->
-                            video = video.copy(id = id)
+                        db.videoDao().get(item.url)?.let {
+                            video = video.copy(id = it.videoId, position = it.position)
                             db.videoDao().upsertAndReturnIds(video.toEntity())
                         }
                         add(video)

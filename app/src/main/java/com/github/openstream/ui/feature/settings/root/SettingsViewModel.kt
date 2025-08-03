@@ -17,10 +17,11 @@ class SettingsViewModel(
     private val cacheRepo: CacheRepository,
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
-
+    
     var localVideoHistoryLoading by mutableStateOf(false)
     var clearCacheLoading by mutableStateOf(false)
-
+    var clearWatchHistoryLoading by mutableStateOf(false)
+    
     fun clearLocalVideoHistory() {
         cacheRepo.deleteLocalVideoHistory().onEach {
             when (it) {
@@ -28,12 +29,12 @@ class SettingsViewModel(
                     localVideoHistoryLoading = false
                     SnackBarController.sendEvent("cleared local video history")
                 }
-
+                
                 is Resource.Error -> {
                     localVideoHistoryLoading = false
                     SnackBarController.sendEvent("failed to clear local video history")
                 }
-
+                
                 else -> localVideoHistoryLoading = true
             }
         }.launchIn(viewModelScope)
@@ -56,6 +57,25 @@ class SettingsViewModel(
             }
         }.launchIn(viewModelScope)
     }
+    
+    fun clearWatchHistory() {
+        cacheRepo.clearWatchHistory().onEach {
+            when (it) {
+                is Resource.Success -> {
+                    clearWatchHistoryLoading = false
+                    SnackBarController.sendEvent("cleared watch history")
+                }
+                
+                is Resource.Error -> {
+                    clearWatchHistoryLoading = false
+                    SnackBarController.sendEvent("failed to clear watch history")
+                }
+                
+                else -> clearCacheLoading = true
+            }
+        }.launchIn(viewModelScope)
+    }
+    
     
     fun setCookies(cookies: String) {
         viewModelScope.launch {

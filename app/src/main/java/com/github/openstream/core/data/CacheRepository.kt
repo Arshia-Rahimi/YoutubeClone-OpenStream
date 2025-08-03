@@ -8,4 +8,6 @@ interface CacheRepository {
     fun deleteLocalVideoHistory(): Flow<Resource<Success>>
     
     fun clearAllCache(): Flow<Resource<Success>>
+    
+    fun clearWatchHistory(): Flow<Resource<Success>>
 }
