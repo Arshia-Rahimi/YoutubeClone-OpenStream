@@ -97,8 +97,13 @@ class OfflineFirstChannelRepository(
                             tabs.forEach { tab ->
                                 ChannelRemoteDataSource.fetchTab(extractor, tab)
                                     ?.filterIsInstance<VideoItem>()
-                                    ?.map { videoItem -> videoItem.toEntity() }
-                                    ?.let { videos -> addAll(videos) }
+                                    ?.map { item ->
+                                        var video = item
+                                        db.videoDao().get(item.url)?.videoId?.let { id ->
+                                            video = video.copy(id = id)
+                                        }
+                                        video.toEntity()
+                                    }?.let(::addAll)
                             }
                         }
                         val ids = db.videoDao().upsertAndReturnIds(*videos.toTypedArray())
