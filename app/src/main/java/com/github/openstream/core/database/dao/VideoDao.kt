@@ -18,7 +18,7 @@ interface VideoDao {
     suspend fun index(): List<VideoEntity>
 
     @Query("SELECT * FROM videos WHERE videoId = :videoId")
-    suspend fun get(videoId: Long): VideoEntity
+    suspend fun get(videoId: Long): VideoEntity?
 
     @Query("SELECT * FROM videos WHERE url = :url")
     suspend fun get(url: String): VideoEntity?
