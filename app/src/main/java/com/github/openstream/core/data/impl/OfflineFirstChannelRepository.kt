@@ -43,18 +43,18 @@ class OfflineFirstChannelRepository(
         flow {
             val id = db.channelDao().insert(channel.toEntity())
             emit(channel.toOfflineFirstChannelItem(id))
-        }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "subscribe")
     
     override fun unSubscribe(channel: ChannelItem.OfflineFirstChannelItem): Flow<Resource<ChannelItem.OnlineChannelItem>> =
         flow {
             db.channelDao().deleteAllChannelVideos(channel.id)
             db.channelDao().delete(channel.id)
             emit(channel.toOnlineChannelItem())
-        }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "unsubscribe")
     
     override fun getChannel(url: String): Flow<Resource<ChannelExtractor>> = flow {
         emit(ChannelRemoteDataSource.getChannelData(url))
-    }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "getChannel")
     
     override fun getTabFirstPage(
         channel: ChannelItem,
@@ -64,7 +64,7 @@ class OfflineFirstChannelRepository(
         flow {
             val nextPage = ChannelRemoteDataSource.fetchTab(channelExtractor, tab)
             emit(nextPage)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabFirstPage")
     
     override fun getTabNextPage(
         channel: ChannelItem,
@@ -74,7 +74,7 @@ class OfflineFirstChannelRepository(
         flow {
             val nextPage = ChannelRemoteDataSource.fetchNextPage(channelExtractor, tab)
             emit(nextPage)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getTabNextPage")
     
     override fun updateSubscriptions(): Flow<Resource<Success>> =
         flow {
@@ -109,7 +109,7 @@ class OfflineFirstChannelRepository(
                 }.awaitAll()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "updateSubscriptions")
     
     override fun getChannelId(url: String) = db.channelDao().getChannelId(url)
     

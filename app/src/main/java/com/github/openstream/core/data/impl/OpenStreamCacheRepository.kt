@@ -29,12 +29,12 @@ class OpenStreamCacheRepository(
                 d3.await()
                 emit(Success)
             }
-        }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory")
 
     override fun clearAllCache(): Flow<Resource<Success>> = flow {
         context.deleteDatabase(OpenStreamDatabase.NAME)
         emit(Success)
         context.restartApp()
-    }.asResult(Dispatchers.IO, this::class.simpleName, "clearAllCache()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "clearAllCache")
 
 }

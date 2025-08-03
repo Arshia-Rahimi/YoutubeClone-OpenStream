@@ -36,7 +36,7 @@ class OnlineSearchRepository(
             val result = SearchRemoteDataSource.fetchNextPage(currentSearch)
             val nextPage = syncDataItemsWithDB(result)
             emit(nextPage)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage")
     
     private suspend fun syncDataItemsWithDB(dataItemList: List<DataItem>): List<DataItem> =
         buildList {

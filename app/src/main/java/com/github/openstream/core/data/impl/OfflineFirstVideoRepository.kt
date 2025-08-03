@@ -34,7 +34,7 @@ class OfflineFirstVideoRepository(
 //        )
         
         emit(video)
-    }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo")
 
     override suspend fun saveVideo(video: VideoItem) {
         db.videoDao().upsert(video.toEntity())

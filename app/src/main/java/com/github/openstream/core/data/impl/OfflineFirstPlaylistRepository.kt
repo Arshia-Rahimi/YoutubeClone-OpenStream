@@ -49,14 +49,14 @@ class OfflineFirstPlaylistRepository(
     override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
         db.playlistDao().insert(PlaylistEntity(name = playlistName, count = 0L))
         emit(Success)
-    }.asResult(Dispatchers.IO, this::class.simpleName, "createPlaylist()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "createPlaylist")
 
     override fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>> =
         flow {
             require(playlist.id !in DefaultPlaylists.all)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "deletePlaylist()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "deletePlaylist")
 
     override fun addToPlaylist(
         videos: List<VideoItem>,
@@ -81,7 +81,7 @@ class OfflineFirstPlaylistRepository(
         updatePlaylistCount(playlist.playlistId)
 
         emit(Success)
-    }.asResult(Dispatchers.IO, this::class.simpleName, "addToPlaylist()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "addToPlaylist")
 
     override fun removeFromPlaylist(
         videos: List<VideoItem>,
@@ -101,7 +101,7 @@ class OfflineFirstPlaylistRepository(
         updatePlaylistCount(playlistId)
 
         emit(Success)
-    }.asResult(Dispatchers.IO, this::class.simpleName, "removeFromPlaylist()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "removeFromPlaylist")
 
     override fun saveVideoToPlaylists(
         video: VideoItem,
@@ -131,7 +131,7 @@ class OfflineFirstPlaylistRepository(
             }.awaitAll()
             emit(Success)
         }
-    }.asResult(Dispatchers.IO, this::class.simpleName, "saveVideoToPlaylists()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "saveVideoToPlaylists")
 
     
     override fun getPlaylistSavedVideos(
@@ -157,11 +157,11 @@ class OfflineFirstPlaylistRepository(
                 return@flow
             }
             emit(data)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylist()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylist")
     
     override fun getPlaylist(url: String) = flow {
         emit(PlaylistRemoteDataSource.fetchPlaylist(url))
-    }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylist()")
+    }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylist")
     //
 
     // offline first playlists
@@ -183,14 +183,14 @@ class OfflineFirstPlaylistRepository(
             )
             
             emit(Success)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage")
     
     override fun getNextPage(currentPlaylist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>> =
         flow {
             val nextPage = PlaylistRemoteDataSource.fetchNextPage(currentPlaylist)
             db.videoDao().upsertAndReturnIds(*nextPage.map { it.toEntity() }.toTypedArray())
             emit(Success)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage")
     //
 
     // online playlists
@@ -201,17 +201,17 @@ class OfflineFirstPlaylistRepository(
             
             db.playlistDao().insert(playlist.toEntity())
             emit(Success)
-        }.asResult(Dispatchers.IO, this::class.simpleName, "savePlaylist()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "savePlaylist")
 
     override fun getPlaylistFirstPage(playlist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>> =
         flow {
             emit(PlaylistRemoteDataSource.fetchFirstPage(playlist))
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage")
     
     override fun getNextPage(currentPlaylist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>> =
         flow {
             emit(PlaylistRemoteDataSource.fetchNextPage(currentPlaylist))
-        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage()")
+        }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage")
     //
 
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
