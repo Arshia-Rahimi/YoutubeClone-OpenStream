@@ -4,7 +4,9 @@ import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.asResult
 import com.github.openstream.core.data.VideoRepository
 import com.github.openstream.core.database.OpenStreamDatabase
+import com.github.openstream.core.database.entities.crossrefs.PlaylistVideoCrossRef
 import com.github.openstream.core.extractor.datasource.VideoRemoteDataSource
+import com.github.openstream.core.shared.DefaultPlaylists
 import com.github.openstream.core.shared.dataitem.VideoItem
 import com.github.openstream.core.shared.extractor.data.VideoData
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +20,16 @@ class OfflineFirstVideoRepository(
         var video = VideoRemoteDataSource.fetchVideo(url)
 
         val savedVideo = db.videoDao().get(url)
+        var id: Long
         if (savedVideo != null) {
+            id = savedVideo.videoId
             video = video.copy(id = savedVideo.videoId, position = savedVideo.position)
             db.videoDao().upsert(video.toDataItem().toEntity())
+        } else {
+            id = db.videoDao().insert(video.toDataItem().toEntity()).first()
+            video = video.copy(id = id)
         }
+        db.playlistDao().addToPlaylist(PlaylistVideoCrossRef(DefaultPlaylists.HISTORY_ID, id))
         
         emit(video)
     }.asResult(Dispatchers.IO, this::class.simpleName, "fetchVideo")

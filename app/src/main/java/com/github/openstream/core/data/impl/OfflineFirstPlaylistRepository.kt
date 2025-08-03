@@ -32,7 +32,7 @@ class OfflineFirstPlaylistRepository(
     private val db: OpenStreamDatabase,
     private val scope: CoroutineScope,
 ) : PlaylistRepository {
-
+    
     override val playlists = db.playlistDao().indexFlow()
         .map { it.map { playlist -> playlist.toDataItem() } }
         .filterIsInstance<List<PlaylistItem.LocalPlaylistItem>>()
@@ -41,23 +41,24 @@ class OfflineFirstPlaylistRepository(
             started = SharingStarted.Lazily,
             replay = 1,
         )
-
+    
     // local playlists
     override fun getPlaylistItem(playlistId: Long) =
         db.playlistDao().getAsFlow(playlistId).mapNotNull { it?.toDataItem() }
-
+    
     override fun createPlaylist(playlistName: String): Flow<Resource<Success>> = flow {
         db.playlistDao().insert(PlaylistEntity(name = playlistName, count = 0L))
         emit(Success)
     }.asResult(Dispatchers.IO, this::class.simpleName, "createPlaylist")
-
+    
     override fun deletePlaylist(playlist: PlaylistItem.LocalPlaylistItem): Flow<Resource<Success>> =
         flow {
             require(playlist.id !in DefaultPlaylists.all)
+            db.playlistDao().deletePlaylistVideos(playlist.id)
             db.playlistDao().delete(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO, this::class.simpleName, "deletePlaylist")
-
+    
     override fun addToPlaylist(
         videos: List<VideoItem>,
         playlistId: Long,
@@ -65,24 +66,24 @@ class OfflineFirstPlaylistRepository(
         val playlist = db.playlistDao().get(playlistId)
         requireNotNull(playlist) { "playlist doesn't exist" }
         require(playlist.url == null) { ("playlist isn't local") }
-
+        
         val (localVideos, onlineVideos) = videos.partition { it.id != null }
         val onlineVideosIds =
             db.videoDao().insert(*onlineVideos.map { it.toEntity() }.toTypedArray())
         val allIds = localVideos.mapNotNull { it.id }.union(onlineVideosIds)
-
+        
         db.playlistDao().addToPlaylist(
             *allIds
                 .map { PlaylistVideoCrossRef(playlist.playlistId, it) }
                 .toTypedArray()
         )
-
+        
         updatePlaylistThumbnail(playlist.playlistId)
         updatePlaylistCount(playlist.playlistId)
-
+        
         emit(Success)
     }.asResult(Dispatchers.IO, this::class.simpleName, "addToPlaylist")
-
+    
     override fun removeFromPlaylist(
         videos: List<VideoItem>,
         playlistId: Long,
@@ -90,19 +91,19 @@ class OfflineFirstPlaylistRepository(
         val playlist = db.playlistDao().get(playlistId)
         requireNotNull(playlist) { "playlist doesn't exist" }
         require(playlist.url == null) { ("playlist isn't local") }
-
+        
         db.playlistDao().removeFromPlaylist(
             *videos.mapNotNull { it.id }
                 .map { PlaylistVideoCrossRef(playlist.playlistId, it) }
                 .toTypedArray()
         )
-
+        
         updatePlaylistThumbnail(playlistId)
         updatePlaylistCount(playlistId)
-
+        
         emit(Success)
     }.asResult(Dispatchers.IO, this::class.simpleName, "removeFromPlaylist")
-
+    
     override fun saveVideoToPlaylists(
         video: VideoItem,
         playlistsMap: Map<PlaylistItem.LocalOnlyPlaylistItem, Boolean>
@@ -119,12 +120,12 @@ class OfflineFirstPlaylistRepository(
                         isInPlaylist && playlist.id !in currentPlaylists ->
                             db.playlistDao()
                                 .addToPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
-
+                        
                         !isInPlaylist && playlist.id in currentPlaylists ->
                             db.playlistDao()
                                 .removeFromPlaylist(PlaylistVideoCrossRef(playlist.id, videoId))
                     }
-
+                    
                     updatePlaylistThumbnail(playlist.id)
                     updatePlaylistCount(playlist.id)
                 }
@@ -132,7 +133,7 @@ class OfflineFirstPlaylistRepository(
             emit(Success)
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "saveVideoToPlaylists")
-
+    
     
     override fun getPlaylistSavedVideos(
         playlist: PlaylistItem.LocalPlaylistItem,
@@ -146,7 +147,7 @@ class OfflineFirstPlaylistRepository(
                 .map { stream -> stream.mapNotNull { data -> data?.video?.toDataItem() } }
         }
     //
-
+    
     // youtube playlists
     override fun getPlaylist(playlist: PlaylistItem.YoutubePlaylistItem): Flow<Resource<PlaylistExtractor>> =
         flow {
@@ -163,23 +164,24 @@ class OfflineFirstPlaylistRepository(
         emit(PlaylistRemoteDataSource.fetchPlaylist(url))
     }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylist")
     //
-
+    
     // offline first playlists
     override fun getPlaylistFirstPage(playlist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>> =
         flow {
             val firstPage = PlaylistRemoteDataSource.fetchFirstPage(playlist)
-            val ids =
-                db.videoDao().upsertAndReturnIds(*firstPage.map { it.toEntity() }.toTypedArray())
+            val ids = firstPage
+                .map { item ->
+                    var video = item
+                    db.videoDao().get(item.url)?.videoId?.let {
+                        video = video.copy(id = it)
+                    }
+                    video.toEntity()
+                }
+                .toTypedArray()
+                .let { db.videoDao().upsertAndReturnIds(*it) }
             
             db.playlistDao().addToPlaylist(
-                *ids
-                    .map {
-                        PlaylistVideoCrossRef(
-                            playlistId = playlist.id,
-                            videoId = it,
-                        )
-                    }
-                    .toTypedArray()
+                *ids.map { PlaylistVideoCrossRef(playlist.id, it) }.toTypedArray()
             )
             
             emit(Success)
@@ -188,11 +190,25 @@ class OfflineFirstPlaylistRepository(
     override fun getNextPage(currentPlaylist: OfflineFirstPlaylistExtractor): Flow<Resource<Success>> =
         flow {
             val nextPage = PlaylistRemoteDataSource.fetchNextPage(currentPlaylist)
-            db.videoDao().upsertAndReturnIds(*nextPage.map { it.toEntity() }.toTypedArray())
+            val ids = nextPage
+                .map { item ->
+                    var video = item
+                    db.videoDao().get(item.url)?.videoId?.let {
+                        video = video.copy(id = it)
+                    }
+                    video.toEntity()
+                }
+                .toTypedArray()
+                .let { db.videoDao().upsertAndReturnIds(*it) }
+            
+            db.playlistDao().addToPlaylist(
+                *ids.map { PlaylistVideoCrossRef(currentPlaylist.id, it) }.toTypedArray()
+            )
+            
             emit(Success)
         }.asResult(Dispatchers.IO, this::class.simpleName, "getNextPage")
     //
-
+    
     // online playlists
     override fun savePlaylist(playlist: PlaylistItem.OnlinePlaylistItem): Flow<Resource<Success>> =
         flow {
@@ -202,7 +218,7 @@ class OfflineFirstPlaylistRepository(
             db.playlistDao().insert(playlist.toEntity())
             emit(Success)
         }.asResult(Dispatchers.IO, this::class.simpleName, "savePlaylist")
-
+    
     override fun getPlaylistFirstPage(playlist: OnlinePlaylistExtractor): Flow<Resource<List<VideoItem>>> =
         flow {
             emit(PlaylistRemoteDataSource.fetchFirstPage(playlist))
@@ -213,19 +229,19 @@ class OfflineFirstPlaylistRepository(
             emit(PlaylistRemoteDataSource.fetchNextPage(currentPlaylist))
         }.asResult(Dispatchers.IO, this::class.simpleName, "getPlaylistFirstPage")
     //
-
+    
     private suspend fun updatePlaylistThumbnail(playlistId: Long) {
         val latestVideoThumbnail = db.playlistDao().getPlaylistWithVideosFlowSorted(playlistId)
             .first().firstOrNull()?.video?.thumbnail
-
+        
         db.playlistDao().updatePlaylistThumbnail(playlistId, latestVideoThumbnail)
     }
-
+    
     private suspend fun updatePlaylistCount(playlistId: Long) {
         val playlistVideosCount = db.playlistDao().getPlaylistWithVideos(playlistId)
             ?.videos?.size ?: 0
-
+        
         db.playlistDao().updatePlaylistCount(playlistId, playlistVideosCount.toLong())
     }
-
+    
 }

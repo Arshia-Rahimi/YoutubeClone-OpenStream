@@ -44,6 +44,9 @@ interface PlaylistDao {
     @Delete
     suspend fun delete(vararg playlistEntities: PlaylistEntity)
     
+    @Query("DELETE FROM playlist_video WHERE playlistId = :playlistId")
+    suspend fun deletePlaylistVideos(playlistId: Long)
+    
     @Query("UPDATE $TABLE_NAME SET thumbnail = :thumbnail WHERE playlistId = :id")
     suspend fun updatePlaylistThumbnail(id: Long, thumbnail: String?)
     
