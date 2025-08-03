@@ -54,8 +54,14 @@ class OpenStreamCacheRepository(
                     db.videoDao().upsert(it.copy(position = 0L))
                 }
             }
+            val d3 = async { db.playlistDao().updatePlaylistCount(DefaultPlaylists.HISTORY_ID, 0L) }
+            val d4 = async {
+                db.playlistDao().updatePlaylistThumbnail(DefaultPlaylists.HISTORY_ID, null)
+            }
             d1.await()
             d2.awaitAll()
+            d3.await()
+            d4.await()
             emit(Success)
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "clear watch history")

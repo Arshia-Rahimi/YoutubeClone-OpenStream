@@ -71,7 +71,7 @@ class SettingsViewModel(
                     SnackBarController.sendEvent("failed to clear watch history")
                 }
                 
-                else -> clearCacheLoading = true
+                else -> clearWatchHistoryLoading = true
             }
         }.launchIn(viewModelScope)
     }
