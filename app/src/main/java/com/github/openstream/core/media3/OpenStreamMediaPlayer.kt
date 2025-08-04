@@ -107,11 +107,7 @@ class OpenStreamMediaPlayer(
     val isAudioOnlyModeEnabled = preferencesRepo.preferences
         .map { it.isAudioOnlyModeEnabled }
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), false)
-        .apply {
-            onEach {
-                switchAudioOnlyMode(it)
-            }.launchIn(scope)
-        }
+        .apply { onEach { switchAudioOnlyMode(it) }.launchIn(scope) }
     
     private val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
@@ -255,17 +251,16 @@ class OpenStreamMediaPlayer(
         }
     }
     
-    private suspend fun switchAudioOnlyMode(enabled: Boolean) = withContext(Dispatchers.IO) {
+    private suspend fun switchAudioOnlyMode(enabled: Boolean) = withContext(Dispatchers.Main) {
         val videoData = when (fetchingState.value) {
             is FetchingState.Success -> (fetchingState.value as FetchingState.Success).video
             else -> return@withContext
         }
         
-        val currentQuality = _currentQuality.value ?: return@withContext
-        val currentPosition = player.currentPosition
+        val currentQuality = _currentQuality.value
         val wasPlaying = player.isPlaying
-        
         player.pause()
+        val currentPosition = player.currentPosition
         player.clearMediaItems()
         
         if (enabled) {
