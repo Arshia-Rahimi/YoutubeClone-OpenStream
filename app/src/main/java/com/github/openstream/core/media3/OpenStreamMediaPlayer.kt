@@ -5,6 +5,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
@@ -284,10 +285,24 @@ class OpenStreamMediaPlayer(
         val option = videoOption ?: this.videoOptions.last()
         _currentQuality.value = option
         
-        val videoItem = MediaItem.Builder().setUri(option.content).build()
-        val audioItem = MediaItem.Builder().setUri(audioStream).build()
-        val dataSourceFactory = DefaultDataSource.Factory(context)
+        val videoItem = MediaItem.Builder().setUri(option.content)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(name)
+                    .setArtist(channelName)
+                    .build()
+            )
+            .build()
+        val audioItem = MediaItem.Builder().setUri(audioStream)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(name)
+                    .setArtist(channelName)
+                    .build()
+            )
+            .build()
         
+        val dataSourceFactory = DefaultDataSource.Factory(context)
         val videoSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(videoItem)
         val audioSource = ProgressiveMediaSource.Factory(dataSourceFactory)
@@ -297,6 +312,13 @@ class OpenStreamMediaPlayer(
     }
     
     private fun VideoData.getAudioOnlyMediaItem() =
-        MediaItem.Builder().setUri(audioStream).build()
+        MediaItem.Builder().setUri(audioStream)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(name)
+                    .setArtist(channelName)
+                    .build()
+            )
+            .build()
     
 }
