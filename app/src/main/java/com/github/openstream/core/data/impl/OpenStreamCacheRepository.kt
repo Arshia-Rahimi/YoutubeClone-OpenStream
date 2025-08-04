@@ -5,13 +5,12 @@ import com.github.openstream.core.common.android.restartApp
 import com.github.openstream.core.common.util.Resource
 import com.github.openstream.core.common.util.Success
 import com.github.openstream.core.common.util.asResult
-import com.github.openstream.core.common.util.async
-import com.github.openstream.core.common.util.asyncList
 import com.github.openstream.core.common.util.getLogger
 import com.github.openstream.core.data.CacheRepository
 import com.github.openstream.core.database.OpenStreamDatabase
 import com.github.openstream.core.shared.DefaultPlaylists
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,21 +23,19 @@ class OpenStreamCacheRepository(
     
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> = flow {
         supervisorScope {
-            asyncList {
-                async { db.videoDao().deleteAll() }
-                async { db.playlistDao().deleteAllVideos() }
-                async { db.channelDao().deleteAllVideos() }
-            }.awaitAll()
+            val d1 = async { db.videoDao().deleteAll() }
+            val d2 = async { db.playlistDao().deleteAllVideos() }
+            val d3 = async { db.channelDao().deleteAllVideos() }
+            awaitAll(d1, d2, d3)
             emit(Success)
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory")
     
     override fun clearAllCache(): Flow<Resource<Success>> = flow {
         supervisorScope {
-            asyncList {
-                async { context.deleteDatabase(OpenStreamDatabase.NAME) }
-                async { getLogger().clearLog() }
-            }.awaitAll()
+            val d1 = async { context.deleteDatabase(OpenStreamDatabase.NAME) }
+            val d2 = async { getLogger().clearLog() }
+            awaitAll(d1, d2)
             emit(Success)
             context.restartApp()
         }
@@ -46,11 +43,10 @@ class OpenStreamCacheRepository(
     
     override fun clearWatchHistory(): Flow<Resource<Success>> = flow {
         supervisorScope {
-            asyncList {
-                async { db.playlistDao().deletePlaylistVideos(DefaultPlaylists.HISTORY_ID) }
-                async { db.videoDao().clearWatchHistory() }
-                async { db.playlistDao().clearWatchHistory() }
-            }.awaitAll()
+            val d1 = async { db.playlistDao().deletePlaylistVideos(DefaultPlaylists.HISTORY_ID) }
+            val d2 = async { db.videoDao().clearWatchHistory() }
+            val d3 = async { db.playlistDao().clearWatchHistory() }
+            awaitAll(d1, d2, d3)
             emit(Success)
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "clear watch history")

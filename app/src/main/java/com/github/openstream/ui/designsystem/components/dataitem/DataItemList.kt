@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package com.github.openstream.ui.designsystem.components.dataitem
 
 import android.annotation.SuppressLint
@@ -90,7 +88,7 @@ fun DataItemList(
             items(
                 items,
                 key = { it.key + lazyListUniqueId },
-                contentType = { it }
+                contentType = { it },
             ) {
                 DataItem(
                     modifier = Modifier

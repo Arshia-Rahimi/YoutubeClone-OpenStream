@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -180,7 +181,7 @@ private fun ChannelScreen(
                             shouldViewChannel = false,
                             loadNextPage = { getTabNextPage(currentTab) },
                             toPlaylistScreen = toPlaylistScreen,
-                            lazyListUniqueId = "channelScreen/${currentTab.name}",
+                            lazyListUniqueId = "channelScreen/${currentTab.name}/${Uuid.random()}",
                             addToWatchLater = addToWatchLater,
                             savePlaylist = savePlaylist,
                         )
