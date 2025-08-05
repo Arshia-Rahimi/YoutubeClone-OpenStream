@@ -83,6 +83,17 @@ class OpenStreamMediaPlayer(
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
                 logger.e("OpenStreamMediaPlayer", "player error", error)
+                
+                when (val state = fetchingState.value) {
+                    is FetchingState.Success -> scope.launch {
+                        videoRepo.saveVideo(
+                            state.video.toDataItem().copy(position = playerPosition.value)
+                        )
+                    }
+                    
+                    else -> Unit
+                }
+                
             }
             
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
