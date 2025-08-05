@@ -17,11 +17,12 @@ class SettingsViewModel(
     private val cacheRepo: CacheRepository,
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
-    
+
     var localVideoHistoryLoading by mutableStateOf(false)
     var clearCacheLoading by mutableStateOf(false)
     var clearWatchHistoryLoading by mutableStateOf(false)
-    
+    var clearLogLoading by mutableStateOf(false)
+
     fun clearLocalVideoHistory() {
         cacheRepo.deleteLocalVideoHistory().onEach {
             when (it) {
@@ -29,17 +30,17 @@ class SettingsViewModel(
                     localVideoHistoryLoading = false
                     SnackBarController.sendEvent("cleared local video history")
                 }
-                
+
                 is Resource.Error -> {
                     localVideoHistoryLoading = false
                     SnackBarController.sendEvent("failed to clear local video history")
                 }
-                
+
                 else -> localVideoHistoryLoading = true
             }
         }.launchIn(viewModelScope)
     }
-    
+
     fun clearCache() {
         cacheRepo.clearAllCache().onEach {
             when (it) {
@@ -47,17 +48,17 @@ class SettingsViewModel(
                     clearCacheLoading = false
                     SnackBarController.sendEvent("cleared all cache")
                 }
-                
+
                 is Resource.Error -> {
                     clearCacheLoading = false
                     SnackBarController.sendEvent("failed to clear cache")
                 }
-                
+
                 else -> clearCacheLoading = true
             }
         }.launchIn(viewModelScope)
     }
-    
+
     fun clearWatchHistory() {
         cacheRepo.clearWatchHistory().onEach {
             when (it) {
@@ -65,22 +66,40 @@ class SettingsViewModel(
                     clearWatchHistoryLoading = false
                     SnackBarController.sendEvent("cleared watch history")
                 }
-                
+
                 is Resource.Error -> {
                     clearWatchHistoryLoading = false
                     SnackBarController.sendEvent("failed to clear watch history")
                 }
-                
+
                 else -> clearWatchHistoryLoading = true
             }
         }.launchIn(viewModelScope)
     }
-    
-    
+
+    fun clearLog() {
+        cacheRepo.clearLog().onEach {
+            when (it) {
+                is Resource.Success -> {
+                    clearLogLoading = false
+                    SnackBarController.sendEvent("cleared log")
+                }
+
+                is Resource.Error -> {
+                    clearLogLoading = false
+                    SnackBarController.sendEvent("failed to clear log")
+                }
+
+                else -> clearLogLoading = true
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun setCookies(cookies: String) {
         viewModelScope.launch {
             preferencesRepo.setCookies(cookies)
         }
+
     }
     
 }

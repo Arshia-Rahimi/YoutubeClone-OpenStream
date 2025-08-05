@@ -20,7 +20,7 @@ class OpenStreamCacheRepository(
     private val db: OpenStreamDatabase,
     private val context: Context,
 ) : CacheRepository {
-    
+
     override fun deleteLocalVideoHistory(): Flow<Resource<Success>> = flow {
         supervisorScope {
             val d1 = async { db.videoDao().deleteAll() }
@@ -30,7 +30,7 @@ class OpenStreamCacheRepository(
             emit(Success)
         }
     }.asResult(Dispatchers.IO, this::class.simpleName, "deleteLocalVideoHistory")
-    
+
     override fun clearAllCache(): Flow<Resource<Success>> = flow {
         supervisorScope {
             val d1 = async { context.deleteDatabase(OpenStreamDatabase.NAME) }
@@ -40,7 +40,12 @@ class OpenStreamCacheRepository(
             context.restartApp()
         }
     }.asResult(Dispatchers.IO)
-    
+
+    override fun clearLog(): Flow<Resource<Success>> = flow {
+        getLogger().clearLog()
+        emit(Success)
+    }.asResult(Dispatchers.IO)
+
     override fun clearWatchHistory(): Flow<Resource<Success>> = flow {
         supervisorScope {
             val d1 = async { db.playlistDao().deletePlaylistVideos(DefaultPlaylists.HISTORY_ID) }
