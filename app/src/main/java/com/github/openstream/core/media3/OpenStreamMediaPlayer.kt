@@ -141,9 +141,7 @@ class OpenStreamMediaPlayer(
     private val _playbackSpeed = MutableStateFlow(1f)
     val playbackSpeed = _playbackSpeed.asStateFlow()
     
-    init {
-        MediaSession.Builder(context, player).build()
-    }
+    private val session = MediaSession.Builder(context, player).build()
     
     fun start(video: VideoItem) {
         logger.i(this::class.simpleName, "start player")
@@ -202,6 +200,7 @@ class OpenStreamMediaPlayer(
     }
     
     fun destroy() {
+        session.release()
         player.release()
     }
     
