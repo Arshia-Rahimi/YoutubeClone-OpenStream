@@ -84,16 +84,20 @@ class OpenStreamMediaPlayer(
                 super.onPlayerError(error)
                 logger.e("OpenStreamMediaPlayer", "player error", error)
                 
-                when (val state = fetchingState.value) {
-                    is FetchingState.Success -> scope.launch {
-                        videoRepo.saveVideo(
-                            state.video.toDataItem().copy(position = playerPosition.value)
-                        )
-                    }
-                    
-                    else -> Unit
-                }
+                val video =
+                    if (fetchingState.value is FetchingState.Success) (fetchingState.value as FetchingState.Success).video else return
                 
+                player.pause()
+                val position = player.currentPosition
+                player.clearMediaItems()
+                if (isAudioOnlyModeEnabled.value) {
+                    player.setMediaItem(video.getAudioOnlyMediaItem())
+                } else {
+                    player.setMediaSource(video.getMediaSource())
+                }
+                player.prepare()
+                player.seekTo(position)
+                player.play()
             }
             
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
