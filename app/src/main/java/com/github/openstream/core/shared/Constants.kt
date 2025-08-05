@@ -6,10 +6,6 @@ object MiniPlayerConfig {
     const val CONTENT_VISIBILITY_THRESHOLD = 1f
 }
 
-object KoinQualifiers {
-    const val PREFERENCES = "preferences"
-}
-
 object DefaultPlaylists {
     val all = arrayOf(WATCH_LATER_ID, LIKED_VIDEOS_ID, HISTORY_ID)
 

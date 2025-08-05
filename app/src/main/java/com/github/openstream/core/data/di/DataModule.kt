@@ -12,7 +12,7 @@ import com.github.openstream.core.data.impl.OfflineFirstPlaylistRepository
 import com.github.openstream.core.data.impl.OfflineFirstVideoRepository
 import com.github.openstream.core.data.impl.OnlineSearchRepository
 import com.github.openstream.core.data.impl.OpenStreamCacheRepository
-import com.github.openstream.core.shared.KoinQualifiers
+import com.github.openstream.core.datastore.PreferencesModel
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
@@ -32,7 +32,7 @@ val dataModule = module {
 
     factory {
         DataStorePreferencesRepository(
-            dataStore = get(named(KoinQualifiers.PREFERENCES)),
+            dataStore = get(named(PreferencesModel.NAME)),
             scope = get(),
         )
     } binds arrayOf(PreferencesRepository::class)
