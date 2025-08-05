@@ -330,7 +330,8 @@ private fun BoxScope.PlayerController(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = currentPosition.toTime() + " / " + videoData.duration.toTime(),
+                    text = (sliderProgress * videoData.duration).toLong()
+                        .toTime() + " / " + videoData.duration.toTime(),
                     color = Color.White,
                     maxLines = 1,
                 )
