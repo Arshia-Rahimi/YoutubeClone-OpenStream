@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 
-class GenericDataStoreSerializer<T : @Serializable Any>(
+class GenericDataStoreSerializer<T : @Serializable DataStoreModel>(
     override val defaultValue: T,
     private val serializer: KSerializer<T>,
 ) : Serializer<T> {
@@ -20,7 +20,8 @@ class GenericDataStoreSerializer<T : @Serializable Any>(
                 string = input.readBytes().decodeToString()
             )
         } catch (e: Exception) {
-            defaultValue.also { Log.e("DataStoreSerializer", e.localizedMessage ?: "error") }
+            Log.e("DataStoreSerializer", e.localizedMessage ?: "error")
+            defaultValue
         }
     
     override suspend fun writeTo(t: T, output: OutputStream) =
@@ -30,4 +31,5 @@ class GenericDataStoreSerializer<T : @Serializable Any>(
                 value = t,
             ).encodeToByteArray()
         )
+    
 }
