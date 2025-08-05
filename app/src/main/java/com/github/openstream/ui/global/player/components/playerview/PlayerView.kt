@@ -78,10 +78,9 @@ fun PlayerView(
     val isBuffering by viewModel.isBuffering.collectAsStateWithLifecycle()
     val isAudioOnlyModeEnabled by viewModel.isAudioOnlyModeEnabled.collectAsStateWithLifecycle()
     val isInLandscape by viewModel.isInLandscape.collectAsStateWithLifecycle()
-    
     val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
-    val isSheetExpanded by remember { derivedStateOf { sheetState == PlayerSheetState.EXPANDED } }
     
+    val isSheetExpanded by remember { derivedStateOf { sheetState == PlayerSheetState.EXPANDED } }
     var showController by remember { mutableStateOf(false) }
     var width by remember { mutableFloatStateOf(0f) }
     
