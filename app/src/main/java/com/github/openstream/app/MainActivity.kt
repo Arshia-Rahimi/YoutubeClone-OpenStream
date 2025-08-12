@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = false
         
-        loadNewPipeConfig()
+        NewPipe.init(inject<Downloader>().value, Localization("en", "US"))
         
         setContent {
             OpenStreamTheme {
@@ -50,7 +50,4 @@ class MainActivity : ComponentActivity() {
         imageLoader.memoryCache?.clear()
     }
     
-    private fun loadNewPipeConfig() {
-        NewPipe.init(inject<Downloader>().value, Localization("en", "US"))
-    }
 }
