@@ -5,7 +5,7 @@ An open source andorid front-end for youtube.
 ## Screenshots
 
 
-## features
+## Features
 
 - ad-free and backgound playback
 - audio only playback
@@ -14,7 +14,7 @@ An open source andorid front-end for youtube.
 - view watch history
 - subscribe to channels locally
 
-## libraries
+## Libraries used
 
 - [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) for scraping youtube
 - media3 for video and audio playback
@@ -25,4 +25,4 @@ An open source andorid front-end for youtube.
 - ktor http client
 - coil for image caching
 
-## license
+## License
