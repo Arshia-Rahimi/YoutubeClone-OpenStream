@@ -24,5 +24,3 @@ An open source andorid front-end for youtube.
 - Koin for dependency injection
 - ktor http client
 - coil for image caching
-
-## License
