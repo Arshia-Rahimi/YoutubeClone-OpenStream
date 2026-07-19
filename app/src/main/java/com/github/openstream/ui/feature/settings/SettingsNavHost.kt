@@ -10,6 +10,7 @@ import com.github.openstream.core.common.compose.popToRoot
 import com.github.openstream.core.shared.dataitem.PlaylistItem
 import com.github.openstream.ui.feature.settings.log.LogScreen
 import com.github.openstream.ui.feature.settings.root.SettingsScreen
+import com.github.openstream.ui.feature.settings.webview.YoutubeLoginWebView
 import com.github.openstream.ui.global.reusable.screens.channel.ChannelScreen
 import com.github.openstream.ui.global.reusable.screens.playlist.PlaylistScreen
 import com.github.openstream.ui.navigation.NavigationViewModel
@@ -93,6 +94,9 @@ fun SettingsNavHost(
             LogScreen(
                 navigateBack = { navController.popBackStack() },
             )
+        }
+        composable<Tabs.Settings.WebView> {
+            YoutubeLoginWebView()
         }
     }
 }

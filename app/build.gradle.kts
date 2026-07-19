@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.github.openstream"
-    compileSdk = 35
+    compileSdk = 37
     
     defaultConfig {
         applicationId = "com.github.openstream"
@@ -24,6 +24,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

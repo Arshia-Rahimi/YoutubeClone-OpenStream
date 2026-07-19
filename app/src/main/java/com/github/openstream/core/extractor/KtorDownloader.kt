@@ -1,22 +1,28 @@
 package com.github.openstream.core.extractor
 
+import com.github.openstream.core.data.PreferencesRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.UserAgent
+import io.ktor.client.request.header
 import io.ktor.client.request.headers
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.util.toMap
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.schabi.newpipe.extractor.downloader.Downloader
 import org.schabi.newpipe.extractor.downloader.Request
 import org.schabi.newpipe.extractor.downloader.Response
 
-class KtorDownloader : Downloader() {
+class KtorDownloader(
+    private val preferencesRepo: PreferencesRepository,
+): Downloader() {
     
     private val client = HttpClient(CIO) {
         install(UserAgent) {
@@ -25,19 +31,23 @@ class KtorDownloader : Downloader() {
         }
     }
     
-    override fun execute(request: Request): Response? = runBlocking {
+    override fun execute(request: Request): Response = runBlocking {
         return@runBlocking client.request(request.url()) {
             method = HttpMethod(request.httpMethod())
             
             headers {
-                request.headers().forEach { k, v ->
+                request.headers().forEach { (k, v) ->
                     remove(k)
                     v.forEach {
                         append(k, it)
                     }
                 }
             }
-            
+
+            preferencesRepo.preferences.first().cookies?.let {
+                header(HttpHeaders.Cookie, it)
+            }
+
             request.dataToSend()?.let {
                 setBody(it)
             }

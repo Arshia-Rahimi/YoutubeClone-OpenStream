@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.openstream.core.common.compose.SnackBarController
 import com.github.openstream.core.common.util.Resource
+import com.github.openstream.core.common.util.onFirst
 import com.github.openstream.core.data.CacheRepository
 import com.github.openstream.core.data.PreferencesRepository
 import kotlinx.coroutines.flow.SharingStarted
