@@ -77,6 +77,9 @@ sealed class Tabs(
         
         @Serializable
         data object Log
+
+        @Serializable
+        data object WebView
     }
 
 }

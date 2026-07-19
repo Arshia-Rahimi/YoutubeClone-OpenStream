@@ -27,5 +27,8 @@ class DataStorePreferencesRepository(
     override suspend fun setAudioOnlyMode(enabled: Boolean) {
         dataStore.updateData { preferences.first().copy(isAudioOnlyModeEnabled = enabled) }
     }
-    
+
+    override suspend fun setCookies(cookies: String?) {
+        dataStore.updateData { preferences.first().copy(cookies = cookies) }
+    }
 }

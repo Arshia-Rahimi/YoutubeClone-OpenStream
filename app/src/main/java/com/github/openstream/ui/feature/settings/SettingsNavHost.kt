@@ -68,6 +68,7 @@ fun SettingsNavHost(
         composable<Tabs.Settings.Root> {
             SettingsScreen(
                 toLogScreen = { navController.navigate(Tabs.Settings.Log) },
+                toWebViewScreen = { navController.navigate(Tabs.Settings.WebView) },
             )
         }
         composable<Tabs.Settings.Channel> {

@@ -10,5 +10,6 @@ interface PreferencesRepository {
     suspend fun setLibrarySortType(sortType: LibrarySortType)
     
     suspend fun setAudioOnlyMode(enabled: Boolean)
-    
+
+    suspend fun setCookies(cookies: String?)
 }

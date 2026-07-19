@@ -15,21 +15,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.openstream.R
+import com.github.openstream.ui.navigation.NavigationViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     toLogScreen: () -> Unit,
+    toWebViewScreen: () -> Unit,
 ) {
     val viewModel = koinViewModel<SettingsViewModel>()
-    
+    val cookies by viewModel.cookies.collectAsStateWithLifecycle()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -96,6 +101,22 @@ fun SettingsScreen(
                     ) {
                         if (viewModel.clearCacheLoading) CircularProgressIndicator()
                         else Text("clear", fontSize = 12.sp)
+                    }
+                }
+            )
+            settingsItem(
+                title = if(cookies != null) "cookies set" else "no cookies set",
+                action = {
+                    Button(
+                        onClick = if(cookies != null) viewModel::clearCookies else toWebViewScreen,
+                        enabled = !viewModel.clearCookiesLoading,
+                    ) {
+                        if(cookies != null) {
+                            if (viewModel.clearCookiesLoading) CircularProgressIndicator()
+                            else Text("clear", fontSize = 12.sp)
+                        } else {
+                            Text("login to youtube")
+                        }
                     }
                 }
             )
