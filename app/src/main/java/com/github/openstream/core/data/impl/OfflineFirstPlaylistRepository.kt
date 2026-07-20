@@ -144,7 +144,7 @@ class OfflineFirstPlaylistRepository(
                 .map { it?.videos?.map { video -> video.toDataItem() } }
             
             true -> db.playlistDao().getPlaylistWithVideosFlowSorted(playlist.id)
-                .map { stream -> stream.mapNotNull { data -> data?.video?.toDataItem() } }
+                .map { stream -> stream.map { data -> data.video.toDataItem() } }
         }
     //
     

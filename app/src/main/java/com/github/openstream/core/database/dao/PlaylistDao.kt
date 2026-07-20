@@ -98,7 +98,7 @@ interface PlaylistDao {
     WHERE p.playlistId = :id
     ORDER BY pv.timestamp DESC"""
     )
-    fun getPlaylistWithVideosFlowSorted(id: Long): Flow<List<PlaylistWithVideosWithPivot?>>
+    fun getPlaylistWithVideosFlowSorted(id: Long): Flow<List<PlaylistWithVideosWithPivot>>
     
     @Query("DELETE FROM playlist_video")
     suspend fun deleteAllVideos()
